@@ -38,6 +38,11 @@ in with consts; {
               path = "~/dotfiles";
               devices = [ "rui-arch" "rui-nixos" "rui-nixos-pi" ];
             };
+            "nixos-config" = {
+              id = "nixos-config";
+              path = "~/nixos-config";
+              devices = [ "rui-arch" "rui-nixos" "rui-nixos-pi" ];
+            };
           };
 
           gui = {

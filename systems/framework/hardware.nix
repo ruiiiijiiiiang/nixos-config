@@ -1,6 +1,10 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, modulesPath, ... }:
 with lib;
 {
+  imports = [
+    (modulesPath + "/installer/scan/not-detected.nix")
+  ];
+
   boot = {
     loader.systemd-boot.enable = true;
     loader.efi.canTouchEfiVariables = true;
@@ -31,13 +35,13 @@ with lib;
     kernelParams = [
       "quiet"
       "splash"
-      "resume=UUID=e01c20a2-fff9-4685-ab9d-1c20da55f6a0"
+      "resume=/dev/disk/by-label/NIXSWAP"
     ];
   };
 
   fileSystems = {
     "/boot" = {
-      device = "/dev/disk/by-uuid/7279-99D8";
+      device = "/dev/disk/by-label/NIXBOOT";
       fsType = "vfat";
       options = [
         "fmask=0022"
@@ -46,7 +50,7 @@ with lib;
     };
 
     "/" = {
-      device = "/dev/disk/by-uuid/e1da5afa-cc18-4576-be7d-4edb5f93d857";
+      device = "/dev/disk/by-label/NIXROOT";
       fsType = "btrfs";
       options = [
         "noatime"
@@ -57,7 +61,7 @@ with lib;
     };
 
     "/home" = {
-      device = "/dev/disk/by-uuid/e1da5afa-cc18-4576-be7d-4edb5f93d857";
+      device = "/dev/disk/by-label/NIXROOT";
       fsType = "btrfs";
       options = [
         "noatime"
@@ -68,7 +72,7 @@ with lib;
     };
 
     "/nix" = {
-      device = "/dev/disk/by-uuid/e1da5afa-cc18-4576-be7d-4edb5f93d857";
+      device = "/dev/disk/by-label/NIXROOT";
       fsType = "btrfs";
       options = [
         "noatime"
@@ -79,7 +83,7 @@ with lib;
     };
 
     "/tmp" = {
-      device = "/dev/disk/by-uuid/e1da5afa-cc18-4576-be7d-4edb5f93d857";
+      device = "/dev/disk/by-label/NIXROOT";
       fsType = "btrfs";
       options = [
         "noatime"
@@ -91,7 +95,7 @@ with lib;
     };
 
     "/var/log" = {
-      device = "/dev/disk/by-uuid/e1da5afa-cc18-4576-be7d-4edb5f93d857";
+      device = "/dev/disk/by-label/NIXROOT";
       fsType = "btrfs";
       options = [
         "noatime"
@@ -104,7 +108,7 @@ with lib;
   };
 
   swapDevices = [
-    { device = "/dev/disk/by-uuid/e01c20a2-fff9-4685-ab9d-1c20da55f6a0"; }
+    { device = "/dev/disk/by-label/NIXSWAP"; }
   ];
 
   zramSwap.enable = true;

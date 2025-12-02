@@ -38,8 +38,6 @@
     kdePackages.yakuake
     kdePackages.qtdeclarative
     ungoogled-chromium
-    sniffnet
-    yaak
     ciscoPacketTracer8
     wireshark
     telegram-desktop
@@ -49,7 +47,6 @@
 
     # --- Desktop Environment: Niri (Wayland) ---
     networkmanagerapplet
-    libnotify
     rofi
     niriswitcher
     swaybg
@@ -147,7 +144,10 @@
   programs = {
     git.enable = true;
     lazygit.enable = true;
-    niri.enable = true;
+    niri = {
+      enable = true;
+      useNautilus = false;
+    };
     firefox.enable = true;
     steam.enable = true;
     wireshark.enable = true;

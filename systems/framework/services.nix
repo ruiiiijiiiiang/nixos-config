@@ -19,11 +19,6 @@
 
     blueman.enable = true;
 
-    dbus.packages = [
-      pkgs.kdePackages.xdg-desktop-portal-kde
-      pkgs.xdg-desktop-portal
-    ];
-
     pipewire = {
       enable = true;
       alsa.enable = true;
@@ -43,7 +38,6 @@
     config.common.default-portal = "kde";
     extraPortals = [
       pkgs.kdePackages.xdg-desktop-portal-kde
-      pkgs.xdg-desktop-portal
     ];
   };
 

@@ -26,11 +26,11 @@ in with consts; with keys; {
     openssh = {
       enable = true;
       settings = {
-        AllowedUsers = "rui";
         PermitRootLogin = "no";
         PasswordAuthentication = false;
       };
     };
+
     fail2ban = {
       enable = true;
       maxretry = 5;

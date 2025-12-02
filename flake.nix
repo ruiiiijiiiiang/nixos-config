@@ -24,7 +24,6 @@
   outputs = {
     self,
     nixpkgs,
-    nixos-hardware,
     home-manager,
     ...
   }@inputs:
@@ -55,13 +54,6 @@
         system = "aarch64-linux";
         specialArgs = { inherit inputs; };
         modules = [
-          ({ modulesPath, ...}: {
-            imports = [
-              "${modulesPath}/installer/sd-card/sd-image-aarch64.nix"
-            ];
-            sdImage.compressImage = false;
-          })
-          nixos-hardware.nixosModules.raspberry-pi-4
           ./systems/pi
         ];
       };

@@ -5,7 +5,8 @@ let
 in with consts; {
   networking = {
     extraHosts = ''
-      ${addresses.home.hosts.arch} rui-arch
+      ${addresses.home.hosts.arch} arch
+      ${addresses.home.hosts.nixos} nixos
       ${addresses.home.hosts.pi} pi
       ${addresses.home.hosts.pi} public.${domains.home}
       ${addresses.home.hosts.pi} monit.${domains.home}
