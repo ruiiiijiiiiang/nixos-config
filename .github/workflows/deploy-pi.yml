@@ -23,7 +23,7 @@ jobs:
       - name: Install and Connect WireGuard
         run: |
           sudo apt-get update
-          sudo apt-get install -y wireguard-tools openresolv
+          sudo apt-get install -y wireguard-tools
 
           echo "${{ secrets.WG_CONF }}" | sudo tee /etc/wireguard/wg0.conf > /dev/null
 
