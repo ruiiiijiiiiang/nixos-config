@@ -46,7 +46,7 @@ jobs:
         env:
           NIX_SSHOPTS: "-o StrictHostKeyChecking=no"
         run: |
-          nixos-rebuild switch \
+          nix run github:nixos/nixpkgs/nixos-unstable#nixos-rebuild -- switch \
             --flake .#rui-nixos-pi \
             --target-host rui@192.168.68.80 \
             --use-remote-sudo \

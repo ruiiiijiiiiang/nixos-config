@@ -68,10 +68,10 @@ Secrets are managed declaratively and securely using `agenix`.
 - **Decryption:** The `pi` host is configured to decrypt secrets at build time. The `age.identityPaths` option in `systems/pi/default.nix` points to the host's SSH private key (`/home/rui/.ssh/id_ed25519`), which is used for decryption.
 - **Declaration:** The `secrets/secrets.nix` file maps each secret file to the public key(s) that can encrypt it. For the `pi` host, this is the `rui-nixos-pi` SSH key.
 - **Usage:** Modules that require secrets, like `vaultwarden`, reference the decrypted path via `config.age.secrets.<secret-name>.path`. For example:
-  `nix
-  # modules/vaultwarden/default.nix
-  services.vaultwarden = {
-  environmentFile = config.age.secrets.vaultwarden-env.path; # ...
-  };
-  `
+  ```nix
+    # modules/vaultwarden/default.nix
+    services.vaultwarden = {
+      environmentFile = config.age.secrets.vaultwarden-env.path;
+    };
+  ```
   This setup ensures that secrets are never stored in plain text in the Nix store and that only the target host can decrypt them.
