@@ -7,16 +7,16 @@ in with consts; {
     extraHosts = ''
       ${addresses.home.hosts.arch} arch
       ${addresses.home.hosts.nixos} nixos
-      ${addresses.home.hosts.pi} pi
-      ${addresses.home.hosts.pi} public.${domains.home}
-      ${addresses.home.hosts.pi} monit.${domains.home}
-      ${addresses.home.hosts.pi} atuin.${domains.home}
-      ${addresses.home.hosts.pi} ha.${domains.home}
-      ${addresses.home.hosts.pi} zwave.${domains.home}
-      ${addresses.home.hosts.pi} microbin.${domains.home}
-      ${addresses.home.hosts.pi} pihole.${domains.home}
-      ${addresses.home.hosts.pi} syncthing.${domains.home}
-      ${addresses.home.hosts.pi} vault.${domains.home}
+      ${addresses.home.hosts.pi.ethernet} pi
+      ${addresses.home.hosts.pi.ethernet} public.${domains.home}
+      ${addresses.home.hosts.pi.ethernet} monit.${domains.home}
+      ${addresses.home.hosts.pi.ethernet} atuin.${domains.home}
+      ${addresses.home.hosts.pi.ethernet} ha.${domains.home}
+      ${addresses.home.hosts.pi.ethernet} zwave.${domains.home}
+      ${addresses.home.hosts.pi.ethernet} microbin.${domains.home}
+      ${addresses.home.hosts.pi.ethernet} pihole.${domains.home}
+      ${addresses.home.hosts.pi.ethernet} syncthing.${domains.home}
+      ${addresses.home.hosts.pi.ethernet} vault.${domains.home}
     '';
     useDHCP = mkDefault true;
     networkmanager.enable = mkDefault true;

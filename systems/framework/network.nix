@@ -15,7 +15,7 @@ in with consts; with keys; {
     wg-quick.interfaces.wg-home = {
       privateKeyFile = config.age.secrets.wg-privatekey.path;
       address = [ "${addresses.vpn.hosts.nixos}/32" ];
-      dns = [ addresses.home.hosts.pi ];
+      dns = [ addresses.home.hosts.pi.ethernet addresses.home.hosts.pi.wifi ];
       peers = [
         {
           inherit (wg.wg-home) publicKey;

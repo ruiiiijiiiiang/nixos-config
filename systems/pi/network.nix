@@ -11,6 +11,7 @@ in with consts; with keys; {
     };
     firewall = {
       allowedTCPPorts = [ 22 80 443 ];
+      checkReversePath = "loose";
       extraCommands = ''
         iptables -A nixos-fw -p tcp --source ${addresses.home.network} --dport ${toString ports.homeassistant} -j nixos-fw-accept
         iptables -A nixos-fw -p tcp --source ${addresses.vpn.network} --dport ${toString ports.homeassistant} -j nixos-fw-accept
