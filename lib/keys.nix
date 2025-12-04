@@ -10,6 +10,9 @@
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMIJNc2DNOvGnp388Mr2WNYa4/pUq/kbyrpTJkc5Q8Oe raspberry-pi4"
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK4UQIyLo0sqjKZjBAPD/G3xHy/qT4DlbF34J5krTKBn root@rui-nixos-pi"
     ];
+    github-action = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIXXmiNdwQD1JdRzZYP2nKb6vR7ZxFxPhSQnJVgG1Dpm github-action"
+    ];
   };
 
   wg = {

@@ -8,7 +8,7 @@
         "flakes"
       ];
       auto-optimise-store = true;
-      trusted-users = [ "root" "rui" ];
+      trusted-users = [ "root" "@wheel" ];
     };
     optimise = {
       automatic = true;

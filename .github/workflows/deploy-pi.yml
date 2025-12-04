@@ -24,9 +24,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y wireguard-tools
-
           echo "${{ secrets.WG_CONF }}" | sudo tee /etc/wireguard/wg0.conf > /dev/null
-
           sudo chmod 600 /etc/wireguard/wg0.conf
           sudo wg-quick up wg0
           sudo wg show
@@ -36,10 +34,8 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
-
           eval $(ssh-agent -s)
           ssh-add ~/.ssh/id_ed25519
-
           ssh-keyscan -H 192.168.68.80 >> ~/.ssh/known_hosts
 
       - name: NixOS Rebuild & Switch
@@ -48,6 +44,5 @@ jobs:
         run: |
           nix run github:nixos/nixpkgs/nixos-unstable#nixos-rebuild -- switch \
             --flake .#rui-nixos-pi \
-            --target-host rui@192.168.68.80 \
-            --use-remote-sudo \
+            --target-host root@192.168.68.80 \
             --show-trace

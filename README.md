@@ -75,3 +75,14 @@ Secrets are managed declaratively and securely using `agenix`.
     };
   ```
   This setup ensures that secrets are never stored in plain text in the Nix store and that only the target host can decrypt them.
+
+### Build & Deployment
+
+Deployment is automated via a GitHub Actions workflow, which can be triggered manually.
+
+The workflow performs the following steps:
+
+1.  **Cross-Compilation Setup:** It sets up QEMU to enable building for the `aarch64-linux` architecture on an `x86_64` runner.
+2.  **Connect to Home Network:** The runner establishes a secure connection to the home network by setting up and activating a WireGuard VPN client. The VPN configuration is stored securely in GitHub secrets.
+3.  **SSH Access:** An SSH private key, also stored in secrets, is loaded into the `ssh-agent`. This allows the runner to authenticate with the Raspberry Pi.
+4.  **Deploy Configuration:** Finally, the workflow executes the `nixos-rebuild switch` command. This command builds the NixOS configuration for the `rui-nixos-pi` host from the flake, and then deploys it to the target Raspberry Pi over SSH.

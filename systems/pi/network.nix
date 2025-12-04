@@ -27,7 +27,7 @@ in with consts; with keys; {
     openssh = {
       enable = true;
       settings = {
-        PermitRootLogin = "no";
+        PermitRootLogin = "prohibit-password";
         PasswordAuthentication = false;
       };
     };
@@ -41,4 +41,5 @@ in with consts; with keys; {
   };
 
   users.users.rui.openssh.authorizedKeys.keys = ssh.rui-arch ++ ssh.rui-nixos;
+  users.users.root.openssh.authorizedKeys.keys = ssh.github-action;
 }
