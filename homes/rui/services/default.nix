@@ -2,7 +2,6 @@
 
 {
   imports = [
-    ./niriswitcher.nix
     ./swaybg.nix
     ./swayidle.nix
     ./swaync.nix

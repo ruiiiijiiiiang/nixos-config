@@ -48,7 +48,6 @@
     # --- Desktop Environment: Niri (Wayland) ---
     networkmanagerapplet
     rofi
-    niriswitcher
     swaybg
     swaynotificationcenter
     swayidle

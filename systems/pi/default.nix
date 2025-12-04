@@ -1,4 +1,4 @@
-{ lib, inputs, ... }:
+{ ... }:
 
 {
   imports = [
@@ -12,10 +12,7 @@
     ./nixos.nix
     ./packages.nix
     ./services.nix
-    inputs.agenix.nixosModules.default
   ];
-
-  age.identityPaths = [ "/home/rui/.ssh/id_ed25519" ];
 
   system.stateVersion = "25.05";
 }

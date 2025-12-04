@@ -1,4 +1,4 @@
-{ lib, inputs, ... }:
+{ ... }:
 
 {
   imports = [
@@ -7,7 +7,6 @@
     ./packages.nix
     ./services.nix
     ./users.nix
-    inputs.agenix.nixosModules.default
   ];
 
   environment.variables = {
@@ -15,6 +14,4 @@
     EDITOR = "nvim";
     NH_FLAKE = "/home/rui/nixos-config/";
   };
-
-  age.identityPaths = [ "/home/rui/.ssh/id_ed25519" ];
 }

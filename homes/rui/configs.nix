@@ -22,7 +22,6 @@ let
     { name = "lsd"; paths = [".config/lsd"]; }
     { name = "ncspot"; paths = [".config/ncspot"]; }
     { name = "niri"; paths = [".config/niri"]; }
-    { name = "niriswitcher"; paths = [".config/niriswitcher"]; }
     { name = "noxdir"; paths = [".noxdir"]; }
     { name = "nvim"; paths = [".config/nvim"]; }
     { name = "posting"; paths = [".config/posting" ".local/share/posting/themes"]; }

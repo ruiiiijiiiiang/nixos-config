@@ -60,6 +60,7 @@
     };
 
     devShells.${system} = {
+      rust = import ./shells/rust { inherit pkgs; };
       devops = import ./shells/devops { inherit pkgs; };
       forensics = import ./shells/forensics { inherit pkgs; };
       default = self.devShells.${system}.devops;
