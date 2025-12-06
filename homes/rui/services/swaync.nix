@@ -12,7 +12,8 @@ let
     echo "Starting swaync from $SWAYNC_PATH..."
     exec "$SWAYNC_PATH"
   '';
-in {
+in
+{
   systemd.user.services.swaync = {
     Unit = {
       Description = "Sway Notification Center";

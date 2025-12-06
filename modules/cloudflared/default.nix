@@ -3,12 +3,15 @@ with lib;
 let
   cfg = config.rui.cloudflared;
   consts = import ../../lib/consts.nix;
-in with consts; {
+in
+with consts;
+{
   config = mkIf cfg.enable {
     age.secrets = {
       cloudflare-tunnel-token.file = ../../secrets/cloudflare-tunnel-token.age;
     };
 
+    # To add a tunnel, do `cloudflared tunnel route dns home {subdomain}.ruijiang.me`
     services.cloudflared = {
       enable = true;
       tunnels = {
@@ -18,14 +21,14 @@ in with consts; {
           ingress = {
             "public.${domains.home}" = {
               service = "https://${addresses.localhost}:443";
-                originRequest = {
+              originRequest = {
                 originServerName = "public.${domains.home}";
               };
             };
-            "microbin.${domains.home}" = {
+            "bin.${domains.home}" = {
               service = "https://${addresses.localhost}:443";
-                originRequest = {
-                originServerName = "microbin.${domains.home}";
+              originRequest = {
+                originServerName = "bin.${domains.home}";
               };
             };
             service = "http_status:404";

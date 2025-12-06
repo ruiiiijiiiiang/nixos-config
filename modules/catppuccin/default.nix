@@ -1,8 +1,14 @@
-{ config, lib, inputs, ... }:
+{
+  config,
+  lib,
+  inputs,
+  ...
+}:
 with lib;
 let
   cfg = config.rui.catppuccin;
-in {
+in
+{
   imports = [
     inputs.catppuccin.nixosModules.catppuccin
   ];

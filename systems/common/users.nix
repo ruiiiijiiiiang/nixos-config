@@ -1,7 +1,9 @@
 { ... }:
 let
   consts = import ../../lib/consts.nix;
-in with consts; {
+in
+with consts;
+{
   users = {
     users.rui = {
       isNormalUser = true;

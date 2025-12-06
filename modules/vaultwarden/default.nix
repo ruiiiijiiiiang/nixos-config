@@ -3,7 +3,9 @@ with lib;
 let
   cfg = config.rui.vaultwarden;
   consts = import ../../lib/consts.nix;
-in with consts; {
+in
+with consts;
+{
   config = mkIf cfg.enable {
     age.secrets = {
       vaultwarden-env.file = ../../secrets/vaultwarden-env.age;

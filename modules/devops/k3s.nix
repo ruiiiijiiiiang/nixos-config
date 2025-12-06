@@ -1,8 +1,14 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 with lib;
 let
   cfg = config.rui.devops;
-in {
+in
+{
   config = mkIf cfg.enable {
     services.k3s = {
       enable = true;

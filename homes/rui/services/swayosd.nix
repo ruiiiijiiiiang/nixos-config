@@ -12,7 +12,8 @@ let
     echo "Starting swayosd from $SWAYOSD_PATH..."
     exec "$SWAYOSD_PATH"
   '';
-in {
+in
+{
   systemd.user.services.swayosd-server = {
     Unit = {
       Description = "Sway Onscreen Display";

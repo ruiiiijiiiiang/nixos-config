@@ -3,7 +3,9 @@ with lib;
 let
   cfg = config.rui.syncthing;
   consts = import ../../lib/consts.nix;
-in with consts; {
+in
+with consts;
+{
   config = mkIf cfg.enable {
     services = {
       syncthing = {
@@ -31,17 +33,30 @@ in with consts; {
             "default" = {
               id = "default";
               path = "~/Sync";
-              devices = [ "rui-arch" "rui-nixos" "rui-nixos-pi" "Rui-Desktop" ];
+              devices = [
+                "rui-arch"
+                "rui-nixos"
+                "rui-nixos-pi"
+                "Rui-Desktop"
+              ];
             };
             "dotfiles" = {
               id = "dotfiles";
               path = "~/dotfiles";
-              devices = [ "rui-arch" "rui-nixos" "rui-nixos-pi" ];
+              devices = [
+                "rui-arch"
+                "rui-nixos"
+                "rui-nixos-pi"
+              ];
             };
             "nixos-config" = {
               id = "nixos-config";
               path = "~/nixos-config";
-              devices = [ "rui-arch" "rui-nixos" "rui-nixos-pi" ];
+              devices = [
+                "rui-arch"
+                "rui-nixos"
+                "rui-nixos-pi"
+              ];
             };
           };
 

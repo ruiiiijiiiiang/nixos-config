@@ -1,9 +1,16 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 with lib;
 let
   cfg = config.rui.monit;
   consts = import ../../lib/consts.nix;
-in with consts; {
+in
+with consts;
+{
   config = mkIf cfg.enable {
     services = {
       monit = {
@@ -32,49 +39,54 @@ in with consts; {
             if does not exist then alert
 
           ${optionalString config.rui.acme.enable ''
-          check program acme with path "/bin/sh -c 'if [ $(systemctl is-failed acme-${domains.home}.service) = \"failed\" ]; then exit 1; else exit 0; fi'"
-            if status != 0 then alert
-          check program ddns with path "/bin/sh -c 'if [ $(systemctl is-failed cloudflare-dyndns.service) = \"failed\" ]; then exit 1; else exit 0; fi'"
-            if status != 0 then alert
+            check program acme with path "/bin/sh -c 'if [ $(systemctl is-failed acme-${domains.home}.service) = \"failed\" ]; then exit 1; else exit 0; fi'"
+              if status != 0 then alert
+            check program ddns with path "/bin/sh -c 'if [ $(systemctl is-failed cloudflare-dyndns.service) = \"failed\" ]; then exit 1; else exit 0; fi'"
+              if status != 0 then alert
           ''}
 
           ${optionalString config.rui.atuin.enable ''
-          check process atuin matching "atuin"
-            if does not exist then alert
+            check process atuin matching "atuin"
+              if does not exist then alert
           ''}
 
           ${optionalString config.rui.cloudflared.enable ''
-          check process cloudflared matching "cloudflared"
-            if does not exist then alert
+            check process cloudflared matching "cloudflared"
+              if does not exist then alert
           ''}
 
           ${optionalString config.rui.dns.enable ''
-          check process pihole matching "pihole-FTL"
-            if does not exist then alert
-          check process unbound matching "bin/unbound"
-            if does not exist then alert
+            check process pihole matching "pihole-FTL"
+              if does not exist then alert
+            check process unbound matching "bin/unbound"
+              if does not exist then alert
           ''}
 
           ${optionalString config.rui.homeassistant.enable ''
-          check host homeassistant address ${addresses.localhost}
-            if failed port ${toString ports.homeassistant} protocol http then alert
-          check host zwave address ${addresses.localhost}
-            if failed port ${toString ports.zwave.server} protocol http then alert
+            check host homeassistant address ${addresses.localhost}
+              if failed port ${toString ports.homeassistant} protocol http then alert
+            check host zwave address ${addresses.localhost}
+              if failed port ${toString ports.zwave.server} protocol http then alert
+          ''}
+
+          ${optionalString config.rui.bentopdf.enable ''
+            check host bentopdf address ${addresses.localhost}
+              if failed port ${toString ports.bentopdf} protocol http then alert
           ''}
 
           ${optionalString config.rui.microbin.enable ''
-          check process microbin matching "microbin"
-            if does not exist then alert
+            check process microbin matching "microbin"
+              if does not exist then alert
           ''}
 
           ${optionalString config.rui.syncthing.enable ''
-          check process syncthing matching "syncthing"
-            if does not exist then alert
+            check process syncthing matching "syncthing"
+              if does not exist then alert
           ''}
 
           ${optionalString config.rui.vaultwarden.enable ''
-          check process vaultwarden matching "vaultwarden"
-            if does not exist then alert
+            check process vaultwarden matching "vaultwarden"
+              if does not exist then alert
           ''}
         '';
       };

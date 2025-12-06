@@ -3,7 +3,9 @@ with lib;
 let
   cfg = config.rui.nginx;
   consts = import ../../lib/consts.nix;
-in with consts; {
+in
+with consts;
+{
   config = mkIf cfg.enable {
     services = {
       nginx = {

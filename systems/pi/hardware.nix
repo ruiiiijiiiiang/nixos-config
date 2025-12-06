@@ -1,4 +1,10 @@
-{ inputs, lib, pkgs, modulesPath, ... }:
+{
+  inputs,
+  lib,
+  pkgs,
+  modulesPath,
+  ...
+}:
 with lib;
 {
   imports = [
@@ -8,7 +14,10 @@ with lib;
   sdImage.compressImage = false;
 
   boot = {
-    supportedFilesystems = mkForce [ "vfat" "ext4" ];
+    supportedFilesystems = mkForce [
+      "vfat"
+      "ext4"
+    ];
     kernelPackages = pkgs.linuxPackages_rpi4;
     initrd.allowMissingModules = true;
   };

@@ -3,14 +3,21 @@ with lib;
 let
   consts = import ../../lib/consts.nix;
   keys = import ../../lib/keys.nix;
-in with consts; with keys; {
+in
+with consts;
+with keys;
+{
   networking = {
     hostName = "rui-nixos-pi";
     networkmanager = {
       wifi.powersave = false;
     };
     firewall = {
-      allowedTCPPorts = [ 22 80 443 ];
+      allowedTCPPorts = [
+        22
+        80
+        443
+      ];
       checkReversePath = "loose";
       extraCommands = ''
         iptables -A nixos-fw -p tcp --source ${addresses.home.network} --dport ${toString ports.homeassistant} -j nixos-fw-accept

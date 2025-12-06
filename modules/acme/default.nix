@@ -1,9 +1,16 @@
-{ config, lib, inputs, ... }:
+{
+  config,
+  lib,
+  inputs,
+  ...
+}:
 with lib;
 let
   consts = import ../../lib/consts.nix;
   cfg = config.rui.acme;
-in with consts; {
+in
+with consts;
+{
   config = mkIf cfg.enable {
     age.secrets = {
       cloudflare-token = {
@@ -43,7 +50,10 @@ in with consts; {
     services.cloudflare-dyndns = {
       enable = true;
       apiTokenFile = config.age.secrets.cloudflare-dns-token.path;
-      domains = [ domains.home "*.${domains.home}" ];
+      domains = [
+        domains.home
+        "*.${domains.home}"
+      ];
       proxied = true;
     };
   };

@@ -3,7 +3,9 @@ with lib;
 let
   cfg = config.rui.microbin;
   consts = import ../../lib/consts.nix;
-in with consts; {
+in
+with consts;
+{
   config = mkIf cfg.enable {
     services = {
       microbin = {
@@ -14,7 +16,7 @@ in with consts; {
         };
       };
 
-      nginx.virtualHosts."microbin.${domains.home}" = {
+      nginx.virtualHosts."bin.${domains.home}" = {
         useACMEHost = domains.home;
         forceSSL = true;
         locations."/" = {

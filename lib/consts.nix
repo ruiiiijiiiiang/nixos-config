@@ -38,7 +38,8 @@
     monit = 2812;
     unbound = 5335;
     pihole = 8008;
-    microbin = 8080;
+    bentopdf = 8080;
+    microbin = 8088;
     zwave = {
       server = 8091;
       websocket = 3000;

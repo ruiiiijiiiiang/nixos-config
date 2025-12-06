@@ -1,9 +1,16 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 with lib;
 let
   consts = import ../../lib/consts.nix;
   cfg = config.rui.atuin;
-in with consts; {
+in
+with consts;
+{
   config = mkIf cfg.enable {
     services = {
       postgresql = {
@@ -26,8 +33,8 @@ in with consts; {
         maxHistoryLength = 100000;
         openRegistration = false;
         database = {
-            createLocally = true;
-            uri = "postgresql:///atuin?host=/run/postgresql";
+          createLocally = true;
+          uri = "postgresql:///atuin?host=/run/postgresql";
         };
       };
 

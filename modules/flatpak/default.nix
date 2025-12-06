@@ -1,8 +1,14 @@
-{ config, lib, inputs, ... }:
+{
+  config,
+  lib,
+  inputs,
+  ...
+}:
 with lib;
 let
   cfg = config.rui.flatpak;
-in {
+in
+{
   imports = [
     inputs.nix-flatpak.nixosModules.nix-flatpak
   ];

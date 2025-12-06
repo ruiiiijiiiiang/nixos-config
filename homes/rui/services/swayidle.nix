@@ -15,7 +15,8 @@ let
       timeout 1200 "systemctl suspend" \
       before-sleep "swaylock -f"
   '';
-in {
+in
+{
   systemd.user.services.swayidle = {
     Unit = {
       Description = "Sway Idle Management Daemon";

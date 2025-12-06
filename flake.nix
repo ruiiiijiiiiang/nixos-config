@@ -21,65 +21,67 @@
     doxx.url = "github:bgreenwell/doxx";
   };
 
-  outputs = {
-    self,
-    nixpkgs,
-    home-manager,
-    ...
-  }@inputs:
-  let
-    system = "x86_64-linux";
-    pkgs = import nixpkgs { inherit system; };
-    inherit (nixpkgs.lib) nixosSystem;
-    inherit (home-manager.lib) homeManagerConfiguration;
-  in {
-    nixosConfigurations = {
-      rui-nixos = nixosSystem {
-        inherit system;
-        specialArgs = { inherit inputs; };
-        modules = [
-          ./systems/framework
-        ];
+  outputs =
+    {
+      self,
+      nixpkgs,
+      home-manager,
+      ...
+    }@inputs:
+    let
+      system = "x86_64-linux";
+      pkgs = import nixpkgs { inherit system; };
+      inherit (nixpkgs.lib) nixosSystem;
+      inherit (home-manager.lib) homeManagerConfiguration;
+    in
+    {
+      nixosConfigurations = {
+        rui-nixos = nixosSystem {
+          inherit system;
+          specialArgs = { inherit inputs; };
+          modules = [
+            ./systems/framework
+          ];
+        };
+
+        rui-nixos-vm = nixosSystem {
+          inherit system;
+          specialArgs = { inherit inputs; };
+          modules = [
+            ./systems/vm
+          ];
+        };
+
+        rui-nixos-pi = nixosSystem {
+          system = "aarch64-linux";
+          specialArgs = { inherit inputs; };
+          modules = [
+            ./systems/pi
+          ];
+        };
       };
 
-      rui-nixos-vm = nixosSystem {
-        inherit system;
-        specialArgs = { inherit inputs; };
-        modules = [
-          ./systems/vm
-        ];
+      devShells.${system} = {
+        rust = import ./shells/rust { inherit pkgs; };
+        devops = import ./shells/devops { inherit pkgs; };
+        forensics = import ./shells/forensics { inherit pkgs; };
+        default = self.devShells.${system}.devops;
       };
 
-      rui-nixos-pi = nixosSystem {
-        system = "aarch64-linux";
-        specialArgs = { inherit inputs; };
-        modules = [
-          ./systems/pi
-        ];
+      homeConfigurations = {
+        rui = homeManagerConfiguration {
+          inherit pkgs;
+          modules = [
+            ./homes/rui
+          ];
+        };
+
+        rui-vm = homeManagerConfiguration {
+          inherit pkgs;
+          modules = [
+            ./homes/vm
+          ];
+        };
       };
     };
-
-    devShells.${system} = {
-      rust = import ./shells/rust { inherit pkgs; };
-      devops = import ./shells/devops { inherit pkgs; };
-      forensics = import ./shells/forensics { inherit pkgs; };
-      default = self.devShells.${system}.devops;
-    };
-
-    homeConfigurations = {
-      rui = homeManagerConfiguration {
-        inherit pkgs;
-        modules = [
-          ./homes/rui
-        ];
-      };
-
-      rui-vm = homeManagerConfiguration {
-        inherit pkgs;
-        modules = [
-          ./homes/vm
-        ];
-      };
-    };
-  };
 }

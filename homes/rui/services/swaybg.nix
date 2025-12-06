@@ -12,7 +12,8 @@ let
     echo "Starting swaybg from $SWAYBG_PATH..."
     exec "$SWAYBG_PATH" -i /home/rui/Pictures/wallpaper.png -m fill
   '';
-in {
+in
+{
   systemd.user.services.swaybg = {
     Unit = {
       Description = "Sway Wallpaper Utility";

@@ -4,6 +4,7 @@
   rui = {
     acme.enable = true;
     atuin.enable = true;
+    bentopdf.enable = true;
     cloudflared.enable = true;
     dns.enable = true;
     homeassistant.enable = true;
@@ -18,6 +19,9 @@
   };
 
   virtualisation = {
+    oci-containers = {
+      backend = "podman";
+    };
     podman = {
       enable = true;
       dockerCompat = true;

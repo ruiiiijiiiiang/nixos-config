@@ -3,7 +3,9 @@ with lib;
 let
   cfg = config.rui.dns;
   consts = import ../../lib/consts.nix;
-in with consts; {
+in
+with consts;
+{
   config = mkIf cfg.enable {
     networking = {
       nameservers = [ addresses.localhost ];

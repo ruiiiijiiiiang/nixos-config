@@ -2,10 +2,12 @@
 with lib;
 let
   cfg = config.rui;
-in {
+in
+{
   imports = [
     ./acme
     ./atuin
+    ./bentopdf
     ./catppuccin
     ./cloudflared
     ./dns
@@ -26,6 +28,9 @@ in {
     };
     atuin = {
       enable = mkEnableOption "atuin server setup";
+    };
+    bentopdf = {
+      enable = mkEnableOption "bentopdf service setup";
     };
     catppuccin = {
       enable = mkEnableOption "custom catppuccin theme setup";
@@ -66,14 +71,18 @@ in {
 
   config.assertions = [
     {
-      assertion = (cfg.atuin.enable ||
-        cfg.dns.enable ||
-        cfg.homeassistant.enable ||
-        cfg.microbin.enable ||
-        cfg.monit.enable ||
-        cfg.syncthing.proxied ||
-        cfg.vaultwarden.enable
-      ) -> cfg.nginx.enable;
+      assertion =
+        (
+          cfg.atuin.enable
+          || cfg.bentopdf.enable
+          || cfg.dns.enable
+          || cfg.homeassistant.enable
+          || cfg.microbin.enable
+          || cfg.monit.enable
+          || cfg.syncthing.proxied
+          || cfg.vaultwarden.enable
+        )
+        -> cfg.nginx.enable;
       message = "Error: You have enabled a service that requires a proxy server, but 'rui.nginx.enable' is false.";
     }
   ];

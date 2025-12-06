@@ -1,9 +1,17 @@
-{ config, lib, inputs, ... }:
+{
+  config,
+  lib,
+  inputs,
+  ...
+}:
 with lib;
 let
   consts = import ../../lib/consts.nix;
   keys = import ../../lib/keys.nix;
-in with consts; with keys; {
+in
+with consts;
+with keys;
+{
   age.secrets = {
     wg-privatekey.file = ../../secrets/wg-privatekey.age;
     wg-presharedkey.file = ../../secrets/wg-presharedkey.age;
@@ -15,7 +23,10 @@ in with consts; with keys; {
     wg-quick.interfaces.wg-home = {
       privateKeyFile = config.age.secrets.wg-privatekey.path;
       address = [ "${addresses.vpn.hosts.nixos}/32" ];
-      dns = [ addresses.home.hosts.pi.ethernet addresses.home.hosts.pi.wifi ];
+      dns = [
+        addresses.home.hosts.pi.ethernet
+        addresses.home.hosts.pi.wifi
+      ];
       peers = [
         {
           inherit (wg.wg-home) publicKey;

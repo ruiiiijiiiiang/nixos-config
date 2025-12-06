@@ -19,7 +19,8 @@ let
     echo "Starting waybar from $WAYBAR_PATH using config file $CONFIG_FILE..."
     exec "$WAYBAR_PATH" -c "$CONFIG_FILE"
   '';
-in {
+in
+{
   systemd.user.services.waybar = {
     Unit = {
       Description = "Waybar status bar";
