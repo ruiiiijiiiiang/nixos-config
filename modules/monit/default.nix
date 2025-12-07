@@ -38,13 +38,6 @@ with consts;
           check process nginx matching "nginx"
             if does not exist then alert
 
-          ${optionalString config.rui.acme.enable ''
-            check program acme with path "/bin/sh -c 'if [ $(systemctl is-failed acme-${domains.home}.service) = \"failed\" ]; then exit 1; else exit 0; fi'"
-              if status != 0 then alert
-            check program ddns with path "/bin/sh -c 'if [ $(systemctl is-failed cloudflare-dyndns.service) = \"failed\" ]; then exit 1; else exit 0; fi'"
-              if status != 0 then alert
-          ''}
-
           ${optionalString config.rui.atuin.enable ''
             check process atuin matching "atuin"
               if does not exist then alert
@@ -62,20 +55,13 @@ with consts;
               if does not exist then alert
           ''}
 
-          ${optionalString config.rui.homeassistant.enable ''
-            check host homeassistant address ${addresses.localhost}
-              if failed port ${toString ports.homeassistant} protocol http then alert
-            check host zwave address ${addresses.localhost}
-              if failed port ${toString ports.zwave.server} protocol http then alert
-          ''}
-
-          ${optionalString config.rui.bentopdf.enable ''
-            check host bentopdf address ${addresses.localhost}
-              if failed port ${toString ports.bentopdf} protocol http then alert
-          ''}
-
           ${optionalString config.rui.microbin.enable ''
             check process microbin matching "microbin"
+              if does not exist then alert
+          ''}
+
+          ${optionalString config.rui.seafile.enable ''
+            check process seafile matching "seafile"
               if does not exist then alert
           ''}
 
@@ -87,6 +73,25 @@ with consts;
           ${optionalString config.rui.vaultwarden.enable ''
             check process vaultwarden matching "vaultwarden"
               if does not exist then alert
+          ''}
+
+          ${optionalString config.rui.acme.enable ''
+            check program acme with path "/bin/sh -c 'if [ $(systemctl is-failed acme-${domains.home}.service) = \"failed\" ]; then exit 1; else exit 0; fi'"
+              if status != 0 then alert
+            check program ddns with path "/bin/sh -c 'if [ $(systemctl is-failed cloudflare-dyndns.service) = \"failed\" ]; then exit 1; else exit 0; fi'"
+              if status != 0 then alert
+          ''}
+
+          ${optionalString config.rui.homeassistant.enable ''
+            check host homeassistant address ${addresses.localhost}
+              if failed port ${toString ports.homeassistant} protocol http then alert
+            check host zwave address ${addresses.localhost}
+              if failed port ${toString ports.zwave.server} protocol http then alert
+          ''}
+
+          ${optionalString config.rui.bentopdf.enable ''
+            check host bentopdf address ${addresses.localhost}
+              if failed port ${toString ports.bentopdf} protocol http then alert
           ''}
         '';
       };

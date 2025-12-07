@@ -16,8 +16,10 @@ in
     ./microbin
     ./monit
     ./nginx
+    ./seafile
     ./syncthing
     ./vaultwarden
+    ./website
 
     ./devops
   ];
@@ -56,12 +58,18 @@ in
     nginx = {
       enable = mkEnableOption "enable nginx as a reverse proxy";
     };
+    seafile = {
+      enable = mkEnableOption "enable seafile service";
+    };
     syncthing = {
       enable = mkEnableOption "enable and configure syncthing service";
       proxied = mkEnableOption "put syncthing behind a reverse proxy";
     };
     vaultwarden = {
       enable = mkEnableOption "enable private bitwarden";
+    };
+    website = {
+      enable = mkEnableOption "enable personal website hosting";
     };
 
     devops = {
@@ -79,8 +87,10 @@ in
           || cfg.homeassistant.enable
           || cfg.microbin.enable
           || cfg.monit.enable
+          || cfg.seafile.enable
           || cfg.syncthing.proxied
           || cfg.vaultwarden.enable
+          || cfg.website.enable
         )
         -> cfg.nginx.enable;
       message = "Error: You have enabled a service that requires a proxy server, but 'rui.nginx.enable' is false.";

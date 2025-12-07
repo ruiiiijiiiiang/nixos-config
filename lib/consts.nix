@@ -39,6 +39,10 @@
     unbound = 5335;
     pihole = 8008;
     bentopdf = 8080;
+    seafile = {
+      web = 8000;
+      fileServer = 8082;
+    };
     microbin = 8088;
     zwave = {
       server = 8091;
@@ -51,6 +55,7 @@
     };
     syncthing = 8384;
     atuin = 8888;
+    website = 8964;
     wireguard = 51820;
   };
 }

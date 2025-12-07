@@ -11,11 +11,13 @@
     microbin.enable = true;
     monit.enable = true;
     nginx.enable = true;
+    seafile.enable = false;
     syncthing = {
       enable = true;
       proxied = true;
     };
     vaultwarden.enable = true;
+    website.enable = true;
   };
 
   virtualisation = {

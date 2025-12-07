@@ -27,6 +27,10 @@ with consts;
           ${optionalString config.rui.microbin.enable ''
             limit_req_zone $binary_remote_addr zone=microbin_limit:10m rate=1r/s;
           ''}
+
+          ${optionalString config.rui.website.enable ''
+            limit_req_zone $binary_remote_addr zone=website_limit:10m rate=1r/s;
+          ''}
         '';
 
         virtualHosts."_" = {
