@@ -19,7 +19,6 @@
     lazynmap.url = "github:ruiiiijiiiiang/lazynmap";
     noxdir.url = "github:crumbyte/noxdir";
     doxx.url = "github:bgreenwell/doxx";
-    website.url = "github:ruiiiijiiiiang/website";
   };
 
   outputs =

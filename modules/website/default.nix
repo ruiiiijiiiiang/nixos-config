@@ -1,35 +1,20 @@
 {
-  inputs,
   config,
   lib,
-  pkgs,
   ...
 }:
 with lib;
 let
   cfg = config.rui.website;
   consts = import ../../lib/consts.nix;
-  website = inputs.website.packages.${pkgs.stdenv.system}.default;
 in
 with consts;
 {
   config = mkIf cfg.enable {
-    systemd.services.personal-website = {
-      description = "My Personal Website";
-      after = [ "network.target" ];
-      wantedBy = [ "multi-user.target" ];
-
-      serviceConfig = {
-        ExecStart = "${website}/bin/server";
-        WorkingDirectory = "${website}/share/website";
-        DynamicUser = true;
-        Restart = "always";
-        RestartSec = "5s";
-        Environment = [
-          "IP=0.0.0.0"
-          "PORT=${toString ports.website}"
-        ];
-      };
+    virtualisation.oci-containers.containers.website = {
+      image = "ghcr.io/ruiiiijiiiiang/website:latest";
+      extraOptions = [ "--network=host" ];
+      autoStart = true;
     };
 
     services.nginx.virtualHosts."public.${domains.home}" = {
