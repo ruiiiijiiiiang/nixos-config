@@ -93,6 +93,11 @@ with consts;
             check host bentopdf address ${addresses.localhost}
               if failed port ${toString ports.bentopdf} protocol http then alert
           ''}
+
+          ${optionalString config.rui.website.enable ''
+            check host website address ${addresses.localhost}
+              if failed port ${toString ports.website} protocol http then alert
+          ''}
         '';
       };
 
