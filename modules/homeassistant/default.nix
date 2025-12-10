@@ -26,8 +26,8 @@ with consts;
     };
 
     systemd.tmpfiles.rules = [
-      "d /var/lib/home-assistant 0755 root root -"
-      "d /var/lib/zwave-js-ui 0755 root root -"
+      "d /var/lib/home-assistant 0775 root wheel -"
+      "d /var/lib/zwave-js-ui 0775 root wheel -"
     ];
 
     services = {
