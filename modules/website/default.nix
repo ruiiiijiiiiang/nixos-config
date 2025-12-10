@@ -13,8 +13,7 @@ with consts;
   config = mkIf cfg.enable {
     virtualisation.oci-containers.containers.website = {
       image = "ghcr.io/ruiiiijiiiiang/website:latest";
-      architecture = "aarch64";
-      extraOptions = [ "--network=host" ];
+      extraOptions = [ "--arch=arm64" "--network=host" ];
       autoStart = true;
     };
 
