@@ -1,17 +1,12 @@
 { inputs, pkgs, ... }:
-
+with inputs;
 {
-  nixpkgs.config.permittedInsecurePackages = [
-    "libxml2-2.13.8" # Required for PacketTracer
-    "ciscoPacketTracer8-8.2.2"
-  ];
-
   environment.systemPackages = with pkgs; [
     # --- Terminal Emulators ---
     wezterm
 
     # --- TUI Applications ---
-    inputs.doxx.packages.${pkgs.stdenv.system}.default
+    doxx.packages.${stdenv.system}.default
     imagemagick
     smassh
     pastel
@@ -21,12 +16,12 @@
     xplr
     gnupg
     gh
-    inputs.lazynmap.packages.${pkgs.stdenv.system}.default
+    lazynmap.packages.${stdenv.system}.default
     rustscan
-    inputs.agenix.packages.${pkgs.stdenv.system}.default
+    agenix.packages.${stdenv.system}.default
 
     # --- GUI Applications ---
-    inputs.zen-browser.packages.${pkgs.stdenv.system}.default
+    zen-browser.packages.${stdenv.system}.default
     vivaldi
     zed-editor
     libreoffice-qt
@@ -38,7 +33,6 @@
     kdePackages.yakuake
     kdePackages.qtdeclarative
     ungoogled-chromium
-    ciscoPacketTracer8
     wireshark
     telegram-desktop
     protonmail-bridge-gui
@@ -151,6 +145,7 @@
     steam.enable = true;
     wireshark.enable = true;
     tcpdump.enable = true;
+    obs-studio.enable = true;
   };
 
   fonts = {

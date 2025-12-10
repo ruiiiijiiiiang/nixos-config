@@ -40,7 +40,7 @@ The networking is configured with security and local DNS resolution in mind.
   2.  Pi-hole forwards DNS queries to a local Unbound instance.
   3.  Unbound resolves queries by forwarding them to Quad9's DNS servers using DNS-over-TLS, preventing ISP snooping.
 - **External Access:** Services are exposed to the internet securely via a Cloudflare Tunnel, managed by the `cloudflared` service. This avoids opening multiple ports on the firewall.
-- **VPN Access:** A local router runs a WireGuard VPN server, allowing mobile devices (phones, laptops, etc.) to securely reach the home network. The router only has port forwarding open on `443/tcp` for maximum security, directing all external traffic to the Cloudflare Tunnel.
+- **VPN Access:** A local router runs a WireGuard VPN server, allowing mobile devices (phones, laptops, etc.) to securely reach the home network.
 
 ### Reverse Proxy (Nginx)
 

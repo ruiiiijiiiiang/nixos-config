@@ -4,10 +4,12 @@ pkgs.mkShell {
   name = "forensics-env";
 
   buildInputs = with pkgs; [
+    binwalk
     steghide
     file
     exiftool
     binsider
+    zsteg
   ];
 
   shellHook = ''
