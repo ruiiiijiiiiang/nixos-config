@@ -14,7 +14,7 @@ with consts;
     virtualisation.oci-containers.containers.website = {
       image = "ghcr.io/ruiiiijiiiiang/website:latest";
       ports = [ "${toString ports.website}:${toString ports.website}" ];
-      volumes = [ "/var/lib/blog:/app:ro" ];
+      volumes = [ "/var/lib/blog:/app/blog:ro" ];
       extraOptions = [ "--arch=arm64" ];
     };
 
@@ -36,9 +36,6 @@ with consts;
         keepalive_timeout 10;
         send_timeout 10;
         server_tokens off;
-
-        add_header Referrer-Policy "no-referrer-when-downgrade" always;
-        add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline';" always;
       '';
     };
   };
