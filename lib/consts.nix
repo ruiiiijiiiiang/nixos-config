@@ -44,10 +44,7 @@
       fileServer = 8082;
     };
     microbin = 8088;
-    zwave = {
-      server = 8091;
-      websocket = 3000;
-    };
+    zwave = 8091;
     homeassistant = 8123;
     vaultwarden = {
       server = 8222;

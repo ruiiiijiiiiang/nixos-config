@@ -1,9 +1,4 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
+{ config, lib, ... }:
 with lib;
 let
   cfg = config.rui.monit;
@@ -86,7 +81,7 @@ with consts;
             check host homeassistant address ${addresses.localhost}
               if failed port ${toString ports.homeassistant} protocol http then alert
             check host zwave address ${addresses.localhost}
-              if failed port ${toString ports.zwave.server} protocol http then alert
+              if failed port ${toString ports.zwave} protocol http then alert
           ''}
 
           ${optionalString config.rui.bentopdf.enable ''

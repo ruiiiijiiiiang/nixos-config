@@ -13,10 +13,9 @@ with consts;
   config = mkIf cfg.enable {
     virtualisation.oci-containers.containers.website = {
       image = "ghcr.io/ruiiiijiiiiang/website:latest";
-      extraOptions = [ "--arch=arm64" "--network=host" ];
-      volumes = [
-        "/var/lib/blog:/var/lib/blog:ro"
-      ];
+      ports = [ "${toString ports.website}:${toString ports.website}" ];
+      volumes = [ "/var/lib/blog:/app:ro" ];
+      extraOptions = [ "--arch=arm64" ];
     };
 
     systemd.tmpfiles.rules = [
@@ -30,7 +29,16 @@ with consts;
         proxyPass = "http://${addresses.localhost}:${toString ports.website}";
       };
       extraConfig = ''
-        limit_req zone=website_limit burst=10 nodelay;
+        allow all;
+        limit_req zone=website_req_limit burst=10 nodelay;
+        limit_conn website_conn_limit 20;
+
+        keepalive_timeout 10;
+        send_timeout 10;
+        server_tokens off;
+
+        add_header Referrer-Policy "no-referrer-when-downgrade" always;
+        add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline';" always;
       '';
     };
   };

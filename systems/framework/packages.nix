@@ -1,12 +1,12 @@
 { inputs, pkgs, ... }:
 with inputs;
+with pkgs;
 {
-  environment.systemPackages = with pkgs; [
+  environment.systemPackages = [
     # --- Terminal Emulators ---
     wezterm
 
     # --- TUI Applications ---
-    doxx.packages.${stdenv.system}.default
     imagemagick
     smassh
     pastel
@@ -16,8 +16,9 @@ with inputs;
     xplr
     gnupg
     gh
-    lazynmap.packages.${stdenv.system}.default
     rustscan
+    lazynmap.packages.${stdenv.system}.default
+    inputs.doxx.packages.${stdenv.system}.default
     agenix.packages.${stdenv.system}.default
 
     # --- GUI Applications ---
@@ -73,7 +74,6 @@ with inputs;
 
     # --- Development Tools: Language Tooling ---
     # AI
-    crush
     gemini-cli
     github-copilot-cli
 
@@ -150,7 +150,7 @@ with inputs;
 
   fonts = {
     enableGhostscriptFonts = true;
-    packages = with pkgs; [
+    packages = [
       noto-fonts
       noto-fonts-color-emoji
       noto-fonts-monochrome-emoji

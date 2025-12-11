@@ -10,7 +10,7 @@ with consts;
     virtualisation.oci-containers.containers = {
       bentopdf = {
         image = "bentopdf/bentopdf:latest";
-        extraOptions = [ "--network=host" ];
+        ports = [ "${toString ports.bentopdf}:${toString ports.bentopdf}" ];
       };
     };
 

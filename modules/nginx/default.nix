@@ -25,11 +25,13 @@ with consts;
           deny all;
 
           ${optionalString config.rui.microbin.enable ''
-            limit_req_zone $binary_remote_addr zone=microbin_limit:10m rate=1r/s;
+            limit_req_zone $binary_remote_addr zone=microbin_req_limit:10m rate=1r/s;
+            limit_conn_zone $binary_remote_addr zone=microbin_conn_limit:10m;
           ''}
 
           ${optionalString config.rui.website.enable ''
-            limit_req_zone $binary_remote_addr zone=website_limit:10m rate=1r/s;
+            limit_req_zone $binary_remote_addr zone=website_req_limit:10m rate=1r/s;
+            limit_conn_zone $binary_remote_addr zone=website_conn_limit:10m;
           ''}
         '';
 
