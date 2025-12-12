@@ -41,6 +41,10 @@ with consts;
         locations."/" = {
           proxyPass = "http://${addresses.localhost}:${toString ports.homeassistant}";
           proxyWebsockets = true;
+          extraConfig = ''
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+          '';
         };
       };
 
@@ -50,6 +54,10 @@ with consts;
         locations."/" = {
           proxyPass = "http://${addresses.localhost}:${toString ports.zwave}";
           proxyWebsockets = true;
+          extraConfig = ''
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+          '';
         };
       };
     };

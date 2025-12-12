@@ -35,24 +35,32 @@
   };
 
   ports = {
-    monit = 2812;
-    unbound = 5335;
-    pihole = 8008;
+    atuin = 8888;
     bentopdf = 8080;
+    beszel = {
+      hub = 8090;
+      agent = 45876;
+    };
+    homeassistant = 8123;
+    microbin = 8088;
+    monit = 2812;
+    pihole = 8008;
+    portainer = {
+      server = 9000;
+      edge = 8000;
+    };
     seafile = {
-      web = 8000;
+      web = 8001;
       fileServer = 8082;
     };
-    microbin = 8088;
-    zwave = 8091;
-    homeassistant = 8123;
+    syncthing = 8384;
+    unbound = 5335;
     vaultwarden = {
       server = 8222;
       websocket = 3012;
     };
-    syncthing = 8384;
-    atuin = 8888;
     website = 8964;
     wireguard = 51820;
+    zwave = 8091;
   };
 }

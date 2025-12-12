@@ -8,6 +8,7 @@ in
     ./acme
     ./atuin
     ./bentopdf
+    ./beszel
     ./catppuccin
     ./cloudflared
     ./dns
@@ -16,6 +17,7 @@ in
     ./microbin
     ./monit
     ./nginx
+    ./portainer
     ./seafile
     ./syncthing
     ./vaultwarden
@@ -33,6 +35,9 @@ in
     };
     bentopdf = {
       enable = mkEnableOption "bentopdf service setup";
+    };
+    beszel = {
+      enable = mkEnableOption "enable beszel for service monitoring";
     };
     catppuccin = {
       enable = mkEnableOption "custom catppuccin theme setup";
@@ -57,6 +62,9 @@ in
     };
     nginx = {
       enable = mkEnableOption "enable nginx as a reverse proxy";
+    };
+    portainer = {
+      enable = mkEnableOption "enable portainer for managing docker containers";
     };
     seafile = {
       enable = mkEnableOption "enable seafile service";
@@ -83,10 +91,12 @@ in
         (
           cfg.atuin.enable
           || cfg.bentopdf.enable
+          || cfg.beszel.enable
           || cfg.dns.enable
           || cfg.homeassistant.enable
           || cfg.microbin.enable
           || cfg.monit.enable
+          || cfg.portainer.enable
           || cfg.seafile.enable
           || cfg.syncthing.proxied
           || cfg.vaultwarden.enable

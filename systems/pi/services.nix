@@ -5,12 +5,14 @@
     acme.enable = true;
     atuin.enable = true;
     bentopdf.enable = true;
+    beszel.enable = true;
     cloudflared.enable = true;
     dns.enable = true;
     homeassistant.enable = true;
     microbin.enable = true;
     monit.enable = true;
     nginx.enable = true;
+    portainer.enable = true;
     seafile.enable = false;
     syncthing = {
       enable = true;
@@ -27,7 +29,12 @@
     podman = {
       enable = true;
       dockerCompat = true;
-      autoPrune.enable = true;
+      dockerSocket.enable = true;
+      autoPrune = {
+        enable = true;
+        dates = "weekly";
+        flags = [ "--all" ];
+      };
     };
   };
 

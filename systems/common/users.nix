@@ -10,6 +10,7 @@ with consts;
       extraGroups = [
         "wheel"
         "networkmanager"
+        "podman"
       ];
       initialPassword = "yoloswag";
       group = "rui";

@@ -1,8 +1,4 @@
-{
-  config,
-  lib,
-  ...
-}:
+{ config, lib, ... }:
 with lib;
 let
   cfg = config.rui.website;
@@ -16,6 +12,9 @@ with consts;
       ports = [ "${toString ports.website}:${toString ports.website}" ];
       volumes = [ "/var/lib/blog:/app/blog:ro" ];
       extraOptions = [ "--arch=arm64" ];
+      labels = {
+        "io.containers.autoupdate" = "registry";
+      };
     };
 
     systemd.tmpfiles.rules = [

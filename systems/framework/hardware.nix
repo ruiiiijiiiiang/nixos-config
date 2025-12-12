@@ -33,9 +33,9 @@ with lib;
     kernelModules = [
       "mt7921e"
     ];
-    blacklistedKernelModules = [
-      "kvm-amd" # "kvm-amd" conflicts with virtualbox
-    ];
+    # blacklistedKernelModules = [
+    #   "kvm-amd" # "kvm-amd" conflicts with virtualbox
+    # ];
     extraModulePackages = [ ];
 
     kernelParams = [
