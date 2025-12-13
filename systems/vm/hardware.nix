@@ -35,5 +35,11 @@ with lib;
 
   nixpkgs.hostPlatform = mkDefault "x86_64-linux";
   hardware.enableRedistributableFirmware = true;
-  virtualisation.vmware.guest.enable = true;
+
+  # Flip as needed
+  virtualisation = {
+    vmware.guest.enable = false;
+    virtualbox.guest.enable = false;
+    hyperVGuest.enable = false;
+  };
 }

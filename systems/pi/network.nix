@@ -13,6 +13,7 @@ with keys;
       wifi.powersave = false;
     };
     firewall = {
+      enable = true;
       allowedTCPPorts = [
         22
         80
