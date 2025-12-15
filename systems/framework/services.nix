@@ -15,6 +15,10 @@
       enable = true;
       wayland.enable = true;
     };
+    displayManager.dms-greeter = {
+      enable = true;
+      compositor.name = "niri";
+    };
     desktopManager.plasma6.enable = true;
 
     blueman.enable = true;

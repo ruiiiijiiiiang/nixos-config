@@ -15,6 +15,7 @@ with consts;
       initialPassword = "yoloswag";
       group = "rui";
       home = "/home/rui";
+      createHome = true;
     };
 
     groups.rui = {

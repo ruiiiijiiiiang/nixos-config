@@ -8,7 +8,7 @@ with consts;
 with keys;
 {
   networking = {
-    hostName = "rui-nixos-pi";
+    hostName = "rui-nixos-vm-network";
     networkmanager = {
       wifi.powersave = false;
     };
@@ -20,14 +20,6 @@ with keys;
         443
       ];
       checkReversePath = "loose";
-      extraCommands = ''
-        iptables -A nixos-fw -p tcp --source ${addresses.home.network} --dport ${toString ports.homeassistant} -j nixos-fw-accept
-        iptables -A nixos-fw -p tcp --source ${addresses.vpn.network} --dport ${toString ports.homeassistant} -j nixos-fw-accept
-      '';
-      extraStopCommands = ''
-        iptables -D nixos-fw -p tcp --source ${addresses.home.network} --dport ${toString ports.homeassistant} -j nixos-fw-accept || true
-        iptables -D nixos-fw -p tcp --source ${addresses.vpn.network} --dport ${toString ports.homeassistant} -j nixos-fw-accept || true
-      '';
     };
   };
 

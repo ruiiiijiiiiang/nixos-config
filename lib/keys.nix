@@ -10,6 +10,10 @@
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMIJNc2DNOvGnp388Mr2WNYa4/pUq/kbyrpTJkc5Q8Oe raspberry-pi4"
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK4UQIyLo0sqjKZjBAPD/G3xHy/qT4DlbF34J5krTKBn root@rui-nixos-pi"
     ];
+    rui-nixos-vm-network = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAZBzyGnYs0UkG7IxaAM1hvaFQ5XH736AHSGBkLWFa2n rui@rui-nixos-vm-network"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB7ngRbvBzXV7amObcv4d/Cv0wzaZSBUGAyN1v1TqbRf root@rui-nixos-vm-network"
+    ];
     github-action = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIXXmiNdwQD1JdRzZYP2nKb6vR7ZxFxPhSQnJVgG1Dpm github-action"
     ];

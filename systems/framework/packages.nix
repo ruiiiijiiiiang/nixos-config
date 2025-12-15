@@ -2,6 +2,10 @@
 with inputs;
 with pkgs;
 {
+  imports = [
+    inputs.dankMaterialShell.nixosModules.dankMaterialShell
+  ];
+
   environment.systemPackages = [
     # --- Terminal Emulators ---
     wezterm
@@ -42,6 +46,7 @@ with pkgs;
 
     # --- Desktop Environment: Niri (Wayland) ---
     networkmanagerapplet
+    vicinae
     rofi
     swaybg
     swaynotificationcenter
@@ -141,6 +146,7 @@ with pkgs;
       enable = true;
       useNautilus = false;
     };
+    dms-shell.enable = true;
     firefox.enable = true;
     steam.enable = true;
     wireshark.enable = true;

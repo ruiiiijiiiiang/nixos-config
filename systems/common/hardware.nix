@@ -1,0 +1,11 @@
+{ lib, pkgs, ... }:
+with lib;
+{
+  boot = {
+    initrd.allowMissingModules = true;
+    kernelPackages = mkDefault pkgs.linuxPackages_latest;
+  };
+
+  zramSwap.enable = true;
+  nixpkgs.hostPlatform = mkDefault "x86_64-linux";
+}

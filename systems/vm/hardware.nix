@@ -1,5 +1,4 @@
-{ lib, pkgs, ... }:
-with lib;
+{ ... }:
 {
   boot = {
     loader = {
@@ -9,7 +8,6 @@ with lib;
       };
     };
 
-    kernelPackages = pkgs.linuxPackages_latest;
     initrd.availableKernelModules = [
       "ahci"
       "ata_piix"
@@ -32,9 +30,6 @@ with lib;
   };
 
   swapDevices = [ ];
-
-  nixpkgs.hostPlatform = mkDefault "x86_64-linux";
-  hardware.enableRedistributableFirmware = true;
 
   # Flip as needed
   virtualisation = {

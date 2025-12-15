@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   modulesPath,
   ...
 }:
@@ -17,8 +16,6 @@ with lib;
 
     binfmt.emulatedSystems = [ "aarch64-linux" ]; # to build aarch64 kernel for pi
 
-    kernelPackages = pkgs.linuxPackages_latest;
-
     initrd.availableKernelModules = [
       "nvme"
       "xhci_pci"
@@ -33,9 +30,6 @@ with lib;
     kernelModules = [
       "mt7921e"
     ];
-    # blacklistedKernelModules = [
-    #   "kvm-amd" # "kvm-amd" conflicts with virtualbox
-    # ];
     extraModulePackages = [ ];
 
     kernelParams = [
@@ -117,12 +111,8 @@ with lib;
     { device = "/dev/disk/by-label/NIXSWAP"; }
   ];
 
-  zramSwap.enable = true;
-
-  nixpkgs.hostPlatform = mkDefault "x86_64-linux";
   hardware = {
     cpu.amd.updateMicrocode = mkDefault config.hardware.enableRedistributableFirmware;
-    enableRedistributableFirmware = true;
     bluetooth.enable = true;
   };
 

@@ -19,8 +19,5 @@ with lib;
       "ext4"
     ];
     kernelPackages = pkgs.linuxPackages_rpi4;
-    initrd.allowMissingModules = true;
   };
-
-  zramSwap.enable = true;
 }

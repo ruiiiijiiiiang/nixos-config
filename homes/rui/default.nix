@@ -5,6 +5,6 @@
     ../common
     ./configs.nix
     ./files
-    ./services
+    # ./services
   ];
 }
