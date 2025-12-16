@@ -3,6 +3,7 @@
 {
   imports = [
     ../../modules
+    ../common/server
     ../common/hardware.nix
     ../common/network.nix
     ../common/nixos.nix
@@ -10,7 +11,6 @@
     ../common/users.nix
     ./hardware.nix
     ./network.nix
-    ./nixos.nix
     ./packages.nix
     ./services.nix
   ];

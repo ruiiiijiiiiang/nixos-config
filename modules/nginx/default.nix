@@ -7,6 +7,15 @@ in
 with consts;
 {
   config = mkIf cfg.enable {
+    age.secrets = {
+      cloudflare-token = {
+        file = ../../secrets/cloudflare-token.age;
+        owner = "acme";
+        group = "acme";
+        mode = "440";
+      };
+    };
+
     services = {
       nginx = {
         enable = true;
@@ -46,6 +55,22 @@ with consts;
     users.users.nginx = {
       isSystemUser = true;
       group = "nginx";
+      extraGroups = [ "acme" ];
+    };
+
+    security.acme = {
+      acceptTerms = true;
+      defaults.email = "me@ruijiang.me";
+      certs."${domains.home}" = {
+        domain = domains.home;
+        extraDomainNames = [ "*.${domains.home}" ];
+        dnsProvider = "cloudflare";
+        dnsResolver = "1.1.1.1:53";
+        dnsPropagationCheck = true;
+        environmentFile = config.age.secrets.cloudflare-token.path;
+        group = "nginx";
+        reloadServices = [ "nginx" ];
+      };
     };
   };
 }

@@ -80,6 +80,14 @@
             ./systems/vm-network
           ];
         };
+
+        rui-nixos-vm-app = nixosSystem {
+          inherit system;
+          specialArgs = { inherit inputs; };
+          modules = [
+            ./systems/vm-app
+          ];
+        };
       };
 
       devShells.${system} = {

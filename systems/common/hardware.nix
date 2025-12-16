@@ -8,4 +8,6 @@ with lib;
 
   zramSwap.enable = true;
   nixpkgs.hostPlatform = mkDefault "x86_64-linux";
+
+  services.fstrim.enable = true;
 }

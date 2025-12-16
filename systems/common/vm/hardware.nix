@@ -1,6 +1,10 @@
-{ ... }:
-
+{ inputs, ... }:
+with inputs;
 {
+  imports = [
+    disko.nixosModules.disko
+  ];
+
   boot = {
     tmp.useTmpfs = true;
     loader = {
@@ -8,7 +12,7 @@
       efi.canTouchEfiVariables = true;
     };
 
-    initrd.availableKernelModules = [ 
+    initrd.availableKernelModules = [
       "ata_piix"
       "uhci_hcd"
       "virtio_pci"
@@ -64,7 +68,10 @@
                 type = "filesystem";
                 format = "ext4";
                 mountpoint = "/data";
-                mountOptions = [ "defaults" "nofail" ];
+                mountOptions = [
+                  "defaults"
+                  "nofail"
+                ];
               };
             };
           };
@@ -75,13 +82,19 @@
 
   fileSystems."/var" = {
     device = "/data/var";
-    options = [ "bind" "nofail" ];
+    options = [
+      "bind"
+      "nofail"
+    ];
     depends = [ "/data" ];
   };
 
   fileSystems."/home" = {
     device = "/data/home";
-    options = [ "bind" "nofail" ];
+    options = [
+      "bind"
+      "nofail"
+    ];
     depends = [ "/data" ];
   };
 

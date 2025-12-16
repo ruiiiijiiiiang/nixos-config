@@ -16,16 +16,8 @@ with consts;
           set httpd port ${toString ports.monit}
             allow ${addresses.localhost}
 
-          check filesystem sd_card with path /
+          check filesystem filesystem with path /
             if space usage > 90% then alert
-
-          check network ethernet interface end0
-            if failed link then alert
-            if download > 10 MB/s then alert
-
-          check network wifi interface wlan0
-            if failed link then alert
-            if download > 10 MB/s then alert
 
           check process monit matching "monit"
             if does not exist then alert
@@ -57,11 +49,6 @@ with consts;
 
           ${optionalString config.rui.microbin.enable ''
             check process microbin matching "microbin"
-              if does not exist then alert
-          ''}
-
-          ${optionalString config.rui.seafile.enable ''
-            check process seafile matching "seafile"
               if does not exist then alert
           ''}
 

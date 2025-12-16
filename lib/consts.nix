@@ -13,13 +13,14 @@
     home = {
       network = "192.168.68.0/24";
       hosts = {
-        arch = "192.168.68.65";
+        arch = "192.168.68.74";
         pi = {
           ethernet = "192.168.68.80";
           wifi = "192.168.68.88";
         };
         nixos = "192.168.68.85";
         vm-network = "192.168.68.87";
+        vm-app = "192.168.68.53";
         desktop = {
           ethernet = "192.168.68.81";
           wifi = "192.168.68.76";
@@ -49,10 +50,6 @@
     portainer = {
       server = 9000;
       edge = 8000;
-    };
-    seafile = {
-      web = 8001;
-      fileServer = 8082;
     };
     syncthing = 8384;
     unbound = 5335;

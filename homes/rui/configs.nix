@@ -79,10 +79,6 @@ let
         ];
       }
       {
-        name = "rofi";
-        paths = [ ".config/rofi" ];
-      }
-      {
         name = "spicetify";
         paths = [ ".config/spicetify/Themes/text" ];
       }
@@ -94,22 +90,6 @@ let
         name = "superfile";
         paths = [ ".config/superfile" ];
       }
-      # {
-      #   name = "swaylock";
-      #   paths = [ ".config/swaylock" ];
-      # }
-      # {
-      #   name = "swaync";
-      #   paths = [ ".config/swaync" ];
-      # }
-      # {
-      #   name = "swayosd";
-      #   paths = [ ".config/swayosd" ];
-      # }
-      # {
-      #   name = "waybar";
-      #   paths = [ ".config/waybar" ];
-      # }
       {
         name = "wezterm";
         paths = [ ".config/wezterm" ];

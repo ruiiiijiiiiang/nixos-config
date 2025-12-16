@@ -65,11 +65,11 @@ with consts;
 
       pihole-web = {
         enable = true;
-        hostName = "pihole.${domains.home}";
+        hostName = "${cfg.subdomain}.${domains.home}";
         ports = [ "${addresses.localhost}:${toString ports.pihole}o" ];
       };
 
-      nginx.virtualHosts."pihole.${domains.home}" = {
+      nginx.virtualHosts."${cfg.subdomain}.${domains.home}" = {
         useACMEHost = domains.home;
         forceSSL = true;
         locations."/" = {

@@ -14,6 +14,10 @@
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAZBzyGnYs0UkG7IxaAM1hvaFQ5XH736AHSGBkLWFa2n rui@rui-nixos-vm-network"
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB7ngRbvBzXV7amObcv4d/Cv0wzaZSBUGAyN1v1TqbRf root@rui-nixos-vm-network"
     ];
+    rui-nixos-vm-app = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIC7iFfDzcj1WCDIKvT5xD6jw7yYGSQ/vAZQ9cU15jXTt rui@rui-nixos-vm-app"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAcmO69K4CBR/q3EUhNea+gaY3K6nfnMn3HbyvXLbFB7 root@rui-nixos-vm-app"
+    ];
     github-action = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIXXmiNdwQD1JdRzZYP2nKb6vR7ZxFxPhSQnJVgG1Dpm github-action"
     ];

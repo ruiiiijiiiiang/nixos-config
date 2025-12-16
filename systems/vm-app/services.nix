@@ -1,0 +1,7 @@
+{ ... }:
+
+{
+  rui = {
+    nginx.enable = true;
+  };
+}

@@ -1,25 +1,12 @@
-{ lib, ... }:
-with lib;
+{ ... }:
 let
   consts = import ../../lib/consts.nix;
-  keys = import ../../lib/keys.nix;
 in
 with consts;
-with keys;
 {
   networking = {
     hostName = "rui-nixos-pi";
-    networkmanager = {
-      wifi.powersave = false;
-    };
     firewall = {
-      enable = true;
-      allowedTCPPorts = [
-        22
-        80
-        443
-      ];
-      checkReversePath = "loose";
       extraCommands = ''
         iptables -A nixos-fw -p tcp --source ${addresses.home.network} --dport ${toString ports.homeassistant} -j nixos-fw-accept
         iptables -A nixos-fw -p tcp --source ${addresses.vpn.network} --dport ${toString ports.homeassistant} -j nixos-fw-accept
@@ -30,24 +17,4 @@ with keys;
       '';
     };
   };
-
-  services = {
-    openssh = {
-      enable = true;
-      settings = {
-        PermitRootLogin = "prohibit-password";
-        PasswordAuthentication = false;
-      };
-    };
-
-    fail2ban = {
-      enable = true;
-      maxretry = 5;
-      bantime = "24h";
-      ignoreIP = [ addresses.home.network ];
-    };
-  };
-
-  users.users.rui.openssh.authorizedKeys.keys = ssh.rui-arch ++ ssh.rui-nixos;
-  users.users.root.openssh.authorizedKeys.keys = ssh.github-action ++ ssh.rui-nixos;
 }

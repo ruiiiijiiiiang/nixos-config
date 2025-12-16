@@ -18,7 +18,6 @@ in
     ./monit
     ./nginx
     ./portainer
-    ./seafile
     ./syncthing
     ./vaultwarden
     ./website
@@ -47,6 +46,11 @@ in
     };
     dns = {
       enable = mkEnableOption "enable unbound + pihole dns filtering";
+      subdomain = mkOption {
+        type = types.str;
+        description = "subdomain to access pihole web ui";
+        default = "pihole";
+      };
     };
     flatpak = {
       enable = mkEnableOption "enable flatpak service and packages";
@@ -59,15 +63,17 @@ in
     };
     monit = {
       enable = mkEnableOption "enable monit monitoring dashboard";
+      subdomain = mkOption {
+        type = types.str;
+        description = "subdomain to access monit web ui";
+        default = "monit";
+      };
     };
     nginx = {
       enable = mkEnableOption "enable nginx as a reverse proxy";
     };
     portainer = {
       enable = mkEnableOption "enable portainer for managing docker containers";
-    };
-    seafile = {
-      enable = mkEnableOption "enable seafile service";
     };
     syncthing = {
       enable = mkEnableOption "enable and configure syncthing service";
@@ -97,7 +103,6 @@ in
           || cfg.microbin.enable
           || cfg.monit.enable
           || cfg.portainer.enable
-          || cfg.seafile.enable
           || cfg.syncthing.proxied
           || cfg.vaultwarden.enable
           || cfg.website.enable
