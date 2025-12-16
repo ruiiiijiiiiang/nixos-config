@@ -20,4 +20,6 @@ with lib;
     ];
     kernelPackages = pkgs.linuxPackages_rpi4;
   };
+
+  nixpkgs.hostPlatform = "aarch64-linux";
 }
