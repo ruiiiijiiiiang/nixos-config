@@ -6,7 +6,7 @@
 }:
 with lib;
 let
-  cfg = config.rui.catppuccin;
+  cfg = config.custom.catppuccin;
 in
 {
   imports = [

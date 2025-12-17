@@ -1,28 +1,11 @@
 { ... }:
 
 {
-  rui = {
-    atuin.enable = true;
-    bentopdf.enable = true;
+  selfhost = {
     beszel.enable = true;
-    cloudflared.enable = true;
-    dns = {
-      enable = true;
-      subdomain = "pi-pihole";
-    };
+    dns.enable = true;
     homeassistant.enable = true;
-    microbin.enable = true;
-    monit = {
-      enable = true;
-      subdomain = "pi-monit";
-    };
+    monit.enable = true;
     nginx.enable = true;
-    portainer.enable = true;
-    syncthing = {
-      enable = true;
-      proxied = true;
-    };
-    vaultwarden.enable = true;
-    website.enable = true;
   };
 }

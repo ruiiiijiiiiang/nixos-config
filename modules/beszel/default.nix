@@ -2,7 +2,8 @@
 with lib;
 let
   consts = import ../../lib/consts.nix;
-  cfg = config.rui.beszel;
+  cfg = config.selfhost.beszel;
+  fqdn = "${consts.subdomains.${config.networking.hostName}.beszel}.${consts.domains.home}";
 in
 with consts;
 {
@@ -24,8 +25,8 @@ with consts;
         };
       };
 
-      nginx.virtualHosts."beszel.${domains.home}" = {
-        useACMEHost = domains.home;
+      nginx.virtualHosts."${fqdn}" = {
+        useACMEHost = fqdn;
         forceSSL = true;
         locations."/" = {
           proxyPass = "http://${addresses.localhost}:${toString ports.beszel.hub}";

@@ -2,7 +2,9 @@
 with lib;
 let
   consts = import ../../lib/consts.nix;
-  cfg = config.rui.homeassistant;
+  cfg = config.selfhost.homeassistant;
+  haFqdn = "${consts.subdomains.${config.networking.hostName}.homeassistant}.${consts.domains.home}";
+  zwaveFqdn = "${consts.subdomains.${config.networking.hostName}.zwave}.${consts.domains.home}";
 in
 with consts;
 {
@@ -35,8 +37,8 @@ with consts;
     ];
 
     services = {
-      nginx.virtualHosts."ha.${domains.home}" = {
-        useACMEHost = domains.home;
+      nginx.virtualHosts."${haFqdn}" = {
+        useACMEHost = haFqdn;
         forceSSL = true;
         locations."/" = {
           proxyPass = "http://${addresses.localhost}:${toString ports.homeassistant}";
@@ -48,8 +50,8 @@ with consts;
         };
       };
 
-      nginx.virtualHosts."zwave.${domains.home}" = {
-        useACMEHost = domains.home;
+      nginx.virtualHosts."${zwaveFqdn}" = {
+        useACMEHost = zwaveFqdn;
         forceSSL = true;
         locations."/" = {
           proxyPass = "http://${addresses.localhost}:${toString ports.zwave}";

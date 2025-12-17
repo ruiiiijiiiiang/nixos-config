@@ -2,7 +2,8 @@
 with lib;
 let
   consts = import ../../lib/consts.nix;
-  cfg = config.rui.portainer;
+  cfg = config.selfhost.portainer;
+  fqdn = "${consts.subdomains.${config.networking.hostName}.portainer}.${consts.domains.home}";
 in
 with consts;
 {
@@ -26,8 +27,8 @@ with consts;
     ];
 
     services = {
-      nginx.virtualHosts."portainer.${domains.home}" = {
-        useACMEHost = domains.home;
+      nginx.virtualHosts."${fqdn}" = {
+        useACMEHost = fqdn;
         forceSSL = true;
         locations."/" = {
           proxyPass = "http://${addresses.localhost}:${toString ports.portainer.server}";

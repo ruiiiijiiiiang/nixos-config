@@ -6,7 +6,7 @@
 }:
 with lib;
 let
-  cfg = config.rui.devops;
+  cfg = config.custom.devops;
 in
 {
   config = mkIf cfg.enable {

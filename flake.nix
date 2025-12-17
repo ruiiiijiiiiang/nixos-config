@@ -65,7 +65,7 @@
           ];
         };
 
-        rui-nixos-pi = nixosSystem {
+        pi = nixosSystem {
           system = "aarch64-linux";
           specialArgs = { inherit inputs; };
           modules = [
@@ -73,7 +73,7 @@
           ];
         };
 
-        rui-nixos-vm-network = nixosSystem {
+        vm-network = nixosSystem {
           inherit system;
           specialArgs = { inherit inputs; };
           modules = [
@@ -81,7 +81,7 @@
           ];
         };
 
-        rui-nixos-vm-app = nixosSystem {
+        vm-app = nixosSystem {
           inherit system;
           specialArgs = { inherit inputs; };
           modules = [

@@ -1,8 +1,9 @@
 { config, lib, ... }:
 with lib;
 let
-  cfg = config.rui.website;
+  cfg = config.selfhost.website;
   consts = import ../../lib/consts.nix;
+  fqdn = "${consts.subdomains.${config.networking.hostName}.public}.${consts.domains.home}";
 in
 with consts;
 {
@@ -11,7 +12,6 @@ with consts;
       image = "ghcr.io/ruiiiijiiiiang/website:latest";
       ports = [ "${toString ports.website}:${toString ports.website}" ];
       volumes = [ "/var/lib/blog:/app/blog:ro" ];
-      extraOptions = [ "--arch=arm64" ];
       labels = {
         "io.containers.autoupdate" = "registry";
       };
@@ -21,8 +21,8 @@ with consts;
       "d /var/lib/blog 0775 root wheel -"
     ];
 
-    services.nginx.virtualHosts."public.${domains.home}" = {
-      useACMEHost = domains.home;
+    services.nginx.virtualHosts."${fqdn}" = {
+      useACMEHost = fqdn;
       forceSSL = true;
       locations."/" = {
         proxyPass = "http://${addresses.localhost}:${toString ports.website}";

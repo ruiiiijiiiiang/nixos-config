@@ -1,8 +1,9 @@
 { config, lib, ... }:
 with lib;
 let
-  cfg = config.rui.microbin;
+  cfg = config.selfhost.microbin;
   consts = import ../../lib/consts.nix;
+  fqdn = "${consts.subdomains.${config.networking.hostName}.microbin}.${consts.domains.home}";
 in
 with consts;
 {
@@ -16,8 +17,8 @@ with consts;
         };
       };
 
-      nginx.virtualHosts."bin.${domains.home}" = {
-        useACMEHost = domains.home;
+      nginx.virtualHosts."${fqdn}" = {
+        useACMEHost = fqdn;
         forceSSL = true;
         locations."/" = {
           proxyPass = "http://${addresses.localhost}:${toString ports.microbin}";

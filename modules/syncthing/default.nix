@@ -1,8 +1,9 @@
 { config, lib, ... }:
 with lib;
 let
-  cfg = config.rui.syncthing;
+  cfg = config.selfhost.syncthing;
   consts = import ../../lib/consts.nix;
+  fqdn = "${consts.subdomains.${config.networking.hostName}.syncthing}.${consts.domains.home}";
 in
 with consts;
 {
@@ -18,11 +19,11 @@ with consts;
             "rui-arch" = {
               id = "DIKD4FJ-4SE2EKP-3Y23ROB-YAKQJP7-KHN2GRN-CTHD2OF-ECAXI3P-JGSYFQM";
             };
-            "rui-nixos" = {
+            "framework" = {
               id = "WCWDE6A-TKMGJSW-BGAQIPO-U23NZOW-MI7IXKX-6T65RK4-CAGQJ56-YWL3CQJ";
             };
-            "rui-nixos-pi" = {
-              id = "NXD67VO-TJMXS4M-D2Q7OH4-RXP7G5B-LU3X2HE-AGMLZHT-JWCKQFW-7B746AM";
+            "vm-app" = {
+              id = "TKAXHBY-LFRMNI5-NE4Z3GL-QCNH2ZY-KIVYTYI-LZPSQHN-4NIFJDC-6TPHFAI";
             };
             "Rui-Desktop" = {
               id = "A3QHGMY-JKQQREB-KZCSOHS-2N3IXTL-2WZ2TMV-MZRWGIN-BISZOYK-AQGQIAF";
@@ -35,8 +36,8 @@ with consts;
               path = "~/Sync";
               devices = [
                 "rui-arch"
-                "rui-nixos"
-                "rui-nixos-pi"
+                "framework"
+                "vm-app"
                 "Rui-Desktop"
               ];
             };
@@ -45,8 +46,8 @@ with consts;
               path = "~/dotfiles";
               devices = [
                 "rui-arch"
-                "rui-nixos"
-                "rui-nixos-pi"
+                "framework"
+                "vm-app"
               ];
             };
             "nixos-config" = {
@@ -54,8 +55,8 @@ with consts;
               path = "~/nixos-config";
               devices = [
                 "rui-arch"
-                "rui-nixos"
-                "rui-nixos-pi"
+                "framework"
+                "vm-app"
               ];
             };
           };
@@ -67,8 +68,8 @@ with consts;
         };
       };
 
-      nginx.virtualHosts."syncthing.${domains.home}" = mkIf cfg.proxied {
-        useACMEHost = domains.home;
+      nginx.virtualHosts."${fqdn}" = mkIf cfg.proxied {
+        useACMEHost = fqdn;
         forceSSL = true;
         locations."/" = {
           proxyPass = "http://${addresses.localhost}:${toString ports.syncthing}";

@@ -39,6 +39,6 @@ with keys;
     };
   };
 
-  users.users.rui.openssh.authorizedKeys.keys = ssh.rui-arch ++ ssh.rui-nixos;
-  users.users.root.openssh.authorizedKeys.keys = ssh.github-action ++ ssh.rui-nixos;
+  users.users.rui.openssh.authorizedKeys.keys = ssh.rui-arch ++ ssh.framework;
+  users.users.root.openssh.authorizedKeys.keys = ssh.github-action ++ ssh.framework;
 }

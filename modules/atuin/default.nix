@@ -7,7 +7,8 @@
 with lib;
 let
   consts = import ../../lib/consts.nix;
-  cfg = config.rui.atuin;
+  cfg = config.selfhost.atuin;
+  fqdn = "${consts.subdomains.${config.networking.hostName}.atuin}.${consts.domains.home}";
 in
 with consts;
 {
@@ -38,8 +39,8 @@ with consts;
         };
       };
 
-      nginx.virtualHosts."atuin.${domains.home}" = {
-        useACMEHost = domains.home;
+      nginx.virtualHosts."${fqdn}" = {
+        useACMEHost = fqdn;
         forceSSL = true;
         locations."/" = {
           proxyPass = "http://${addresses.localhost}:${toString ports.atuin}";

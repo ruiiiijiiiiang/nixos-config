@@ -1,6 +1,7 @@
 { ... }:
+
 {
   networking = {
-    hostName = "rui-nixos-vm-network";
+    hostName = "vm-network";
   };
 }

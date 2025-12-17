@@ -1,8 +1,9 @@
 { config, lib, ... }:
 with lib;
 let
-  cfg = config.rui.monit;
+  cfg = config.selfhost.monit;
   consts = import ../../lib/consts.nix;
+  fqdn = "${consts.subdomains.${config.networking.hostName}.monit}.${consts.domains.home}";
 in
 with consts;
 {
@@ -25,76 +26,74 @@ with consts;
           check process nginx matching "nginx"
             if does not exist then alert
 
-          ${optionalString config.rui.atuin.enable ''
+          ${optionalString config.selfhost.atuin.enable ''
             check process atuin matching "atuin"
               if does not exist then alert
           ''}
 
-          ${optionalString config.rui.beszel.enable ''
+          ${optionalString config.selfhost.beszel.enable ''
             check process beszel matching "beszel"
               if does not exist then alert
           ''}
 
-          ${optionalString config.rui.cloudflared.enable ''
+          ${optionalString config.selfhost.cloudflared.enable ''
             check process cloudflared matching "cloudflared"
               if does not exist then alert
           ''}
 
-          ${optionalString config.rui.dns.enable ''
+          ${optionalString config.selfhost.dns.enable ''
             check process pihole matching "pihole-FTL"
               if does not exist then alert
             check process unbound matching "bin/unbound"
               if does not exist then alert
           ''}
 
-          ${optionalString config.rui.microbin.enable ''
+          ${optionalString config.selfhost.microbin.enable ''
             check process microbin matching "microbin"
               if does not exist then alert
           ''}
 
-          ${optionalString config.rui.syncthing.enable ''
+          ${optionalString config.selfhost.syncthing.enable ''
             check process syncthing matching "syncthing"
               if does not exist then alert
           ''}
 
-          ${optionalString config.rui.vaultwarden.enable ''
+          ${optionalString config.selfhost.vaultwarden.enable ''
             check process vaultwarden matching "vaultwarden"
               if does not exist then alert
           ''}
 
-          ${optionalString config.rui.acme.enable ''
-            check program acme with path "/bin/sh -c 'if [ $(systemctl is-failed acme-${domains.home}.service) = \"failed\" ]; then exit 1; else exit 0; fi'"
-              if status != 0 then alert
-            check program ddns with path "/bin/sh -c 'if [ $(systemctl is-failed cloudflare-dyndns.service) = \"failed\" ]; then exit 1; else exit 0; fi'"
+          ${optionalString config.selfhost.dyndns.enable ''
+            check program dyndns with path "/bin/sh -c 'if [ $(systemctl is-failed cloudflare-dyndns.service) = \"failed\" ]; then exit 1; else exit 0; fi'"
               if status != 0 then alert
           ''}
 
-          ${optionalString config.rui.homeassistant.enable ''
+          ${optionalString config.selfhost.homeassistant.enable ''
             check host homeassistant address ${addresses.localhost}
               if failed port ${toString ports.homeassistant} protocol http then alert
             check host zwave address ${addresses.localhost}
               if failed port ${toString ports.zwave} protocol http then alert
           ''}
 
-          ${optionalString config.rui.bentopdf.enable ''
+          ${optionalString config.selfhost.bentopdf.enable ''
             check host bentopdf address ${addresses.localhost}
               if failed port ${toString ports.bentopdf} protocol http then alert
           ''}
 
-          ${optionalString config.rui.portainer.enable ''
+          ${optionalString config.selfhost.portainer.enable ''
             check host portainer address ${addresses.localhost}
               if failed port ${toString ports.portainer.server} protocol http then alert
           ''}
 
-          ${optionalString config.rui.website.enable ''
+          ${optionalString config.selfhost.website.enable ''
             check host website address ${addresses.localhost}
               if failed port ${toString ports.website} protocol http then alert
           ''}
         '';
       };
 
-      nginx.virtualHosts."monit.${domains.home}" = {
-        useACMEHost = domains.home;
+      nginx.virtualHosts."${fqdn}" = {
+        useACMEHost = fqdn;
         forceSSL = true;
         locations."/" = {
           proxyPass = "http://${addresses.localhost}:${toString ports.monit}";

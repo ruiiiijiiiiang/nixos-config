@@ -6,7 +6,7 @@
 with lib;
 let
   consts = import ../../lib/consts.nix;
-  cfg = config.rui.acme;
+  cfg = config.selfhost.dyndns;
 in
 with consts;
 {
@@ -14,12 +14,6 @@ with consts;
     age.secrets = {
       cloudflare-dns-token = {
         file = ../../secrets/cloudflare-dns-token.age;
-      };
-    };
-
-    systemd.services."acme-${domains.home}" = {
-      environment = {
-        LEGO_DISABLE_CNAME_SUPPORT = "true";
       };
     };
 

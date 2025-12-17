@@ -17,14 +17,14 @@ with keys;
   };
 
   networking = {
-    hostName = "rui-nixos";
+    hostName = "framework";
 
     wg-quick.interfaces.wg-home = {
       privateKeyFile = config.age.secrets.wg-privatekey.path;
-      address = [ "${addresses.vpn.hosts.nixos}/32" ];
+      address = [ "${addresses.vpn.hosts.framework}/32" ];
       dns = [
-        addresses.home.hosts.pi.ethernet
-        addresses.home.hosts.pi.wifi
+        addresses.home.hosts.vm-network
+        addresses.home.hosts.pi
       ];
       peers = [
         {

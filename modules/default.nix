@@ -1,17 +1,15 @@
 { lib, config, ... }:
 with lib;
-let
-  cfg = config.rui;
-in
 {
   imports = [
-    ./acme
     ./atuin
     ./bentopdf
     ./beszel
     ./catppuccin
     ./cloudflared
+    ./devops
     ./dns
+    ./dyndns
     ./flatpak
     ./homeassistant
     ./microbin
@@ -21,14 +19,9 @@ in
     ./syncthing
     ./vaultwarden
     ./website
-
-    ./devops
   ];
 
-  options.rui = {
-    acme = {
-      enable = mkEnableOption "enable let's encrypt certificate for domain";
-    };
+  options.selfhost = {
     atuin = {
       enable = mkEnableOption "atuin server setup";
     };
@@ -38,22 +31,14 @@ in
     beszel = {
       enable = mkEnableOption "enable beszel for service monitoring";
     };
-    catppuccin = {
-      enable = mkEnableOption "custom catppuccin theme setup";
-    };
     cloudflared = {
       enable = mkEnableOption "set up cloudflare access tunnel";
     };
     dns = {
       enable = mkEnableOption "enable unbound + pihole dns filtering";
-      subdomain = mkOption {
-        type = types.str;
-        description = "subdomain to access pihole web ui";
-        default = "pihole";
-      };
     };
-    flatpak = {
-      enable = mkEnableOption "enable flatpak service and packages";
+    dyndns = {
+      enable = mkEnableOption "enable dynamic dns service";
     };
     homeassistant = {
       enable = mkEnableOption "enable homeassistant with zwave server";
@@ -63,11 +48,6 @@ in
     };
     monit = {
       enable = mkEnableOption "enable monit monitoring dashboard";
-      subdomain = mkOption {
-        type = types.str;
-        description = "subdomain to access monit web ui";
-        default = "monit";
-      };
     };
     nginx = {
       enable = mkEnableOption "enable nginx as a reverse proxy";
@@ -85,15 +65,14 @@ in
     website = {
       enable = mkEnableOption "enable personal website hosting";
     };
-
-    devops = {
-      enable = mkEnableOption "enable devops tools";
-    };
   };
 
   config.assertions = [
     {
       assertion =
+        let
+          cfg = config.selfhost;
+        in
         (
           cfg.atuin.enable
           || cfg.bentopdf.enable
@@ -111,4 +90,16 @@ in
       message = "Error: You have enabled a service that requires a proxy server, but 'rui.nginx.enable' is false.";
     }
   ];
+
+  options.custom = {
+    catppuccin = {
+      enable = mkEnableOption "custom catppuccin theme setup";
+    };
+    flatpak = {
+      enable = mkEnableOption "enable flatpak service and packages";
+    };
+    devops = {
+      enable = mkEnableOption "enable devops tools";
+    };
+  };
 }

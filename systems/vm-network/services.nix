@@ -1,16 +1,10 @@
 { ... }:
 
 {
-  rui = {
-    acme.enable = true;
-    dns = {
-      enable = true;
-      subdomain = "pihole";
-    };
-    monit = {
-      enable = true;
-      subdomain = "vm-network-monit";
-    };
+  selfhost = {
+    dns.enable = true;
+    dyndns.enable = true;
+    monit.enable = true;
     nginx.enable = true;
   };
 }

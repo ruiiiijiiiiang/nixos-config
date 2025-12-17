@@ -43,6 +43,7 @@ with pkgs;
     protonmail-bridge-gui
     obsidian
     neohtop
+    vlc
 
     # --- Desktop Environment: Niri (Wayland) ---
     networkmanagerapplet

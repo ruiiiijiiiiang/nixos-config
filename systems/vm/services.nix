@@ -1,7 +1,7 @@
 { ... }:
 
 {
-  rui = {
+  custom = {
     catppuccin.enable = true;
     devops.enable = true;
   };

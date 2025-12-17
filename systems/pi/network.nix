@@ -5,7 +5,7 @@ in
 with consts;
 {
   networking = {
-    hostName = "rui-nixos-pi";
+    hostName = "pi";
     firewall = {
       extraCommands = ''
         iptables -A nixos-fw -p tcp --source ${addresses.home.network} --dport ${toString ports.homeassistant} -j nixos-fw-accept

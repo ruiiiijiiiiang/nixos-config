@@ -1,7 +1,7 @@
 { lib, config, ... }:
 with lib;
 let
-  cfg = config.rui.cloudflared;
+  cfg = config.selfhost.cloudflared;
   consts = import ../../lib/consts.nix;
 in
 with consts;

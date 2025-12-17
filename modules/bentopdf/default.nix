@@ -2,7 +2,8 @@
 with lib;
 let
   consts = import ../../lib/consts.nix;
-  cfg = config.rui.bentopdf;
+  cfg = config.selfhost.bentopdf;
+  fqdn = "${consts.subdomains.${config.networking.hostName}.bentopdf}.${consts.domains.home}";
 in
 with consts;
 {
@@ -15,8 +16,8 @@ with consts;
     };
 
     services = {
-      nginx.virtualHosts."pdf.${domains.home}" = {
-        useACMEHost = domains.home;
+      nginx.virtualHosts."${fqdn}" = {
+        useACMEHost = fqdn;
         forceSSL = true;
         locations."/" = {
           proxyPass = "http://${addresses.localhost}:${toString ports.bentopdf}";

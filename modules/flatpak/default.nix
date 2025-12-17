@@ -6,7 +6,7 @@
 }:
 with lib;
 let
-  cfg = config.rui.flatpak;
+  cfg = config.custom.flatpak;
 in
 {
   imports = [

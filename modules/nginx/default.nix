@@ -1,8 +1,10 @@
 { config, lib, ... }:
 with lib;
 let
-  cfg = config.rui.nginx;
+  cfg = config.selfhost.nginx;
   consts = import ../../lib/consts.nix;
+  subdomainSet = consts.subdomains.${config.networking.hostName} or null;
+  subdomains = if subdomainSet != null then attrValues subdomainSet else [ ];
 in
 with consts;
 {
@@ -33,12 +35,12 @@ with consts;
           allow ${addresses.vpn.network};
           deny all;
 
-          ${optionalString config.rui.microbin.enable ''
+          ${optionalString config.selfhost.microbin.enable ''
             limit_req_zone $binary_remote_addr zone=microbin_req_limit:10m rate=1r/s;
             limit_conn_zone $binary_remote_addr zone=microbin_conn_limit:10m;
           ''}
 
-          ${optionalString config.rui.website.enable ''
+          ${optionalString config.selfhost.website.enable ''
             limit_req_zone $binary_remote_addr zone=website_req_limit:10m rate=1r/s;
             limit_conn_zone $binary_remote_addr zone=website_conn_limit:10m;
           ''}
@@ -61,16 +63,20 @@ with consts;
     security.acme = {
       acceptTerms = true;
       defaults.email = "me@ruijiang.me";
-      certs."${domains.home}" = {
-        domain = domains.home;
-        extraDomainNames = [ "*.${domains.home}" ];
+      certs = genAttrs (map (name: "${name}.${domains.home}") subdomains) (fqdn: {
+        domain = fqdn;
         dnsProvider = "cloudflare";
         dnsResolver = "1.1.1.1:53";
-        dnsPropagationCheck = true;
         environmentFile = config.age.secrets.cloudflare-token.path;
         group = "nginx";
         reloadServices = [ "nginx" ];
-      };
+      });
     };
+
+    systemd.services = genAttrs (map (name: "acme-${name}.${domains.home}") subdomains) (fqdn: {
+      environment = {
+        LEGO_DISABLE_CNAME_SUPPORT = "true";
+      };
+    });
   };
 }

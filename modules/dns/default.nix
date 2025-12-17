@@ -1,8 +1,9 @@
 { lib, config, ... }:
 with lib;
 let
-  cfg = config.rui.dns;
+  cfg = config.selfhost.dns;
   consts = import ../../lib/consts.nix;
+  fqdn = "${consts.subdomains.${config.networking.hostName}.pihole}.${consts.domains.home}";
 in
 with consts;
 {
@@ -65,12 +66,12 @@ with consts;
 
       pihole-web = {
         enable = true;
-        hostName = "${cfg.subdomain}.${domains.home}";
+        hostName = fqdn;
         ports = [ "${addresses.localhost}:${toString ports.pihole}o" ];
       };
 
-      nginx.virtualHosts."${cfg.subdomain}.${domains.home}" = {
-        useACMEHost = domains.home;
+      nginx.virtualHosts."${fqdn}" = {
+        useACMEHost = fqdn;
         forceSSL = true;
         locations."/" = {
           proxyPass = "http://${addresses.localhost}:${toString ports.pihole}";

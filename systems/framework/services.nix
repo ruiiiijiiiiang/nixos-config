@@ -1,10 +1,13 @@
 { pkgs, ... }:
 
 {
-  rui = {
+  selfhost = {
+    syncthing.enable = true;
+  };
+
+  custom = {
     catppuccin.enable = true;
     flatpak.enable = true;
-    syncthing.enable = true;
   };
 
   services = {
