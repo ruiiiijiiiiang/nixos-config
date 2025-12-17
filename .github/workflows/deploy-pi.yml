@@ -39,6 +39,6 @@ jobs:
           NIX_SSHOPTS: "-o StrictHostKeyChecking=no"
         run: |
           nix run github:nixos/nixpkgs/nixos-unstable#nixos-rebuild -- switch \
-            --flake .#rui-nixos-pi \
+            --flake .#pi \
             --target-host root@192.168.68.80 \
             --show-trace
