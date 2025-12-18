@@ -1,8 +1,4 @@
-{
-  config,
-  lib,
-  ...
-}:
+{ config, lib, ... }:
 with lib;
 let
   consts = import ../../lib/consts.nix;
@@ -25,6 +21,7 @@ with keys;
       dns = [
         addresses.home.hosts.vm-network
         addresses.home.hosts.pi
+        addresses.home.hosts.pi-legacy
       ];
       peers = [
         {

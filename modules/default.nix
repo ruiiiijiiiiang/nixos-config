@@ -12,9 +12,11 @@ with lib;
     ./dyndns
     ./flatpak
     ./homeassistant
+    ./immich
     ./microbin
     ./monit
     ./nginx
+    ./paperless
     ./portainer
     ./syncthing
     ./vaultwarden
@@ -23,10 +25,10 @@ with lib;
 
   options.selfhost = {
     atuin = {
-      enable = mkEnableOption "atuin server setup";
+      enable = mkEnableOption "enable atuin server";
     };
     bentopdf = {
-      enable = mkEnableOption "bentopdf service setup";
+      enable = mkEnableOption "enable bentopdf pdf service";
     };
     beszel = {
       enable = mkEnableOption "enable beszel for service monitoring";
@@ -40,17 +42,23 @@ with lib;
     dyndns = {
       enable = mkEnableOption "enable dynamic dns service";
     };
+    immich = {
+      enable = mkEnableOption "enable immich image storage";
+    };
     homeassistant = {
       enable = mkEnableOption "enable homeassistant with zwave server";
     };
     microbin = {
-      enable = mkEnableOption "enable microbin";
+      enable = mkEnableOption "enable microbin paste-bin";
     };
     monit = {
       enable = mkEnableOption "enable monit monitoring dashboard";
     };
     nginx = {
       enable = mkEnableOption "enable nginx as a reverse proxy";
+    };
+    paperless = {
+      enable = mkEnableOption "enable paperless document management";
     };
     portainer = {
       enable = mkEnableOption "enable portainer for managing docker containers";
@@ -60,7 +68,7 @@ with lib;
       proxied = mkEnableOption "put syncthing behind a reverse proxy";
     };
     vaultwarden = {
-      enable = mkEnableOption "enable private bitwarden";
+      enable = mkEnableOption "enable private bitwarden secret manager";
     };
     website = {
       enable = mkEnableOption "enable personal website hosting";
@@ -79,8 +87,10 @@ with lib;
           || cfg.beszel.enable
           || cfg.dns.enable
           || cfg.homeassistant.enable
+          || cfg.immich.enable
           || cfg.microbin.enable
           || cfg.monit.enable
+          || cfg.paperless.enable
           || cfg.portainer.enable
           || cfg.syncthing.proxied
           || cfg.vaultwarden.enable

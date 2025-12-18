@@ -48,8 +48,18 @@ with consts;
               if does not exist then alert
           ''}
 
+          ${optionalString config.selfhost.immich.enable ''
+            check process immich matching "immich-server"
+              if does not exist then alert
+          ''}
+
           ${optionalString config.selfhost.microbin.enable ''
             check process microbin matching "microbin"
+              if does not exist then alert
+          ''}
+
+          ${optionalString config.selfhost.paperless.enable ''
+            check process paperless matching "paperless-web"
               if does not exist then alert
           ''}
 

@@ -49,11 +49,13 @@ with consts;
       ProtectSystem = mkForce "strict";
     };
 
-    users.users.beszel = {
-      isSystemUser = true;
-      group = "beszel";
-      extraGroups = [ "podman" ];
+    users = {
+      groups.beszel = { };
+      users.beszel = {
+        isSystemUser = true;
+        group = "beszel";
+        extraGroups = [ "podman" ];
+      };
     };
-    users.groups.beszel = { };
   };
 }

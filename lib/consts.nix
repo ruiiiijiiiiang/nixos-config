@@ -10,7 +10,6 @@
 
   subdomains = {
     pi = {
-      beszel = "beszel";
       homeassistant = "ha";
       monit = "pi-monit";
       pihole = "pi-pihole";
@@ -23,8 +22,10 @@
     vm-app = {
       atuin = "atuin";
       bentopdf = "pdf";
+      immich = "immich";
       microbin = "bin";
       monit = "vm-app-monit";
+      paperless = "paperless";
       portainer = "portainer";
       public = "public";
       syncthing = "syncthing";
@@ -42,6 +43,7 @@
         framework = "192.168.68.85";
         vm-network = "192.168.68.87";
         vm-app = "192.168.68.89";
+        pi-legacy = "192.168.68.83";
       };
     };
     vpn = {
@@ -61,8 +63,10 @@
       agent = 45876;
     };
     homeassistant = 8123;
+    immich = 2283;
     microbin = 8088;
     monit = 2812;
+    paperless = 28981;
     pihole = 8008;
     portainer = {
       server = 9000;

@@ -14,18 +14,6 @@ with consts;
 {
   config = mkIf cfg.enable {
     services = {
-      postgresql = {
-        enable = true;
-        package = pkgs.postgresql_14;
-        ensureDatabases = [ "atuin" ];
-        ensureUsers = [
-          {
-            name = "atuin";
-            ensureDBOwnership = true;
-          }
-        ];
-      };
-
       atuin = {
         enable = true;
         openFirewall = false;
@@ -37,6 +25,17 @@ with consts;
           createLocally = true;
           uri = "postgresql:///atuin?host=/run/postgresql";
         };
+      };
+
+      postgresql = {
+        enable = true;
+        ensureDatabases = [ "atuin" ];
+        ensureUsers = [
+          {
+            name = "atuin";
+            ensureDBOwnership = true;
+          }
+        ];
       };
 
       nginx.virtualHosts."${fqdn}" = {

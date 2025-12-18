@@ -3,14 +3,65 @@ with inputs;
 with pkgs;
 {
   imports = [
-    inputs.dankMaterialShell.nixosModules.dankMaterialShell
+    inputs.dankMaterialShell.nixosModules.dank-material-shell
   ];
 
   environment.systemPackages = [
+    # --- System Information & Diagnostics ---
+    pciutils
+    usbutils
+    hwinfo
+    fastfetch
+    kmon
+
+    # --- System & Process Monitoring ---
+    btop
+    bottom
+    sysstat
+    lazyjournal
+
+    # --- Networking & Connectivity ---
+    iw
+    nmap
+    dig
+    mtr
+    wget
+
+    # --- Disk & Filesystem Utilities ---
+    tree
+    ncdu
+    rsync
+    dust
+    dysk
+    inputs.noxdir.packages.${pkgs.stdenv.system}.default
+
+    # --- Archiving & Compression ---
+    unzip
+    unrar
+    ouch
+
     # --- Terminal Emulators ---
     wezterm
 
-    # --- TUI Applications ---
+    # --- Desktop Environment: Niri ---
+    networkmanagerapplet
+    vicinae
+    xwayland-satellite
+    catppuccin-cursors.frappeLavender
+    wl-clipboard
+
+    # --- Desktop Environment: KDE Plasma ---
+    kdePackages.plasma-pa
+    catppuccin-kde
+
+    # --- General TUI Tools ---
+    starship
+    stow
+    tldr
+    atuin
+    onefetch
+    navi
+    carapace
     imagemagick
     smassh
     pastel
@@ -24,6 +75,19 @@ with pkgs;
     lazynmap.packages.${stdenv.system}.default
     inputs.doxx.packages.${stdenv.system}.default
     agenix.packages.${stdenv.system}.default
+    file_clipper.packages.${pkgs.stdenv.system}.default
+
+    # --- File & Text Search/Manipulation CLI Tools ---
+    fzf
+    lsd
+    silver-searcher
+    jq
+    yq
+    miller
+    delta
+    glow
+    fx
+    helix
 
     # --- GUI Applications ---
     zen-browser.packages.${stdenv.system}.default
@@ -45,26 +109,6 @@ with pkgs;
     neohtop
     vlc
 
-    # --- Desktop Environment: Niri (Wayland) ---
-    networkmanagerapplet
-    vicinae
-    rofi
-    swaybg
-    swaynotificationcenter
-    swayidle
-    swaylock-effects
-    swayosd
-    waybar
-    brightnessctl
-    pavucontrol
-    xwayland-satellite
-    catppuccin-cursors.frappeLavender
-    wl-clipboard
-
-    # --- Desktop Environment: KDE Plasma (Core & Theming) ---
-    kdePackages.plasma-pa
-    catppuccin-kde
-
     # --- Audio & Multimedia ---
     easyeffects
     ncspot
@@ -77,8 +121,8 @@ with pkgs;
     lldb
     cmake
     gnumake
-
     # --- Development Tools: Language Tooling ---
+
     # AI
     gemini-cli
     github-copilot-cli
@@ -138,17 +182,30 @@ with pkgs;
     tty-clock
     astroterm
     pipes
+
+    # --- Nix-Specific Tools ---
+    nix-search-cli
+    nix-tree
   ];
 
   programs = {
+    dms-shell.enable = true;
+    firefox.enable = true;
+    nix-index.enable = true;
+    command-not-found.enable = false;
+    fish.enable = true;
+    htop.enable = true;
+    pay-respects.enable = true;
+    yazi.enable = true;
+    direnv.enable = true;
+    zoxide.enable = true;
     git.enable = true;
+    bat.enable = true;
     lazygit.enable = true;
     niri = {
       enable = true;
       useNautilus = false;
     };
-    dms-shell.enable = true;
-    firefox.enable = true;
     steam.enable = true;
     wireshark.enable = true;
     tcpdump.enable = true;
@@ -158,6 +215,7 @@ with pkgs;
   fonts = {
     enableGhostscriptFonts = true;
     packages = [
+      fira
       noto-fonts
       noto-fonts-color-emoji
       noto-fonts-monochrome-emoji

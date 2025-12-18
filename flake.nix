@@ -49,7 +49,7 @@
     in
     {
       nixosConfigurations = {
-        rui-nixos = nixosSystem {
+        framework = nixosSystem {
           inherit system;
           specialArgs = { inherit inputs; };
           modules = [

@@ -1,13 +1,50 @@
-name: Deploy to Raspberry Pi
+name: Deploy to Host
 on:
   workflow_dispatch:
+    inputs:
+      target_host:
+        description: "Target Host (Flake Output)"
+        required: true
+        type: choice
+        default: vm-app
+        options:
+          - pi
+          - vm-app
+          - vm-network
+      runner_os:
+        description: "Runner OS"
+        required: true
+        type: choice
+        default: "ubuntu-latest"
+        options:
+          - "ubuntu-latest"
+          - "ubuntu-24.04-arm"
 
 jobs:
   deploy:
-    runs-on: ubuntu-24.04-arm
+    runs-on: ${{ inputs.runner_os }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Set Host IP Address
+        id: config
+        run: |
+          case "${{ inputs.target_host }}" in
+            "pi")
+              echo "TARGET_IP=192.168.68.80" >> $GITHUB_ENV
+              ;;
+            "vm-app")
+              echo "TARGET_IP=192.168.68.89" >> $GITHUB_ENV
+              ;;
+            "vm-network")
+              echo "TARGET_IP=192.168.68.87" >> $GITHUB_ENV
+              ;;
+            *)
+              echo "Unknown host selected"
+              exit 1
+              ;;
+          esac
 
       - name: Install Nix
         uses: cachix/install-nix-action@v27
@@ -39,6 +76,6 @@ jobs:
           NIX_SSHOPTS: "-o StrictHostKeyChecking=no"
         run: |
           nix run github:nixos/nixpkgs/nixos-unstable#nixos-rebuild -- switch \
-            --flake .#pi \
-            --target-host root@192.168.68.80 \
+            --flake .#${{ inputs.target_host }} \
+            --target-host root@${{ env.TARGET_IP }} \
             --show-trace
