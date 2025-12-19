@@ -53,7 +53,7 @@
           inherit system;
           specialArgs = { inherit inputs; };
           modules = [
-            ./systems/framework
+            ./hosts/framework
           ];
         };
 
@@ -61,7 +61,7 @@
           inherit system;
           specialArgs = { inherit inputs; };
           modules = [
-            ./systems/vm
+            ./hosts/vm
           ];
         };
 
@@ -69,7 +69,7 @@
           system = "aarch64-linux";
           specialArgs = { inherit inputs; };
           modules = [
-            ./systems/pi
+            ./hosts/pi
           ];
         };
 
@@ -77,7 +77,7 @@
           inherit system;
           specialArgs = { inherit inputs; };
           modules = [
-            ./systems/vm-network
+            ./hosts/vm-network
           ];
         };
 
@@ -85,7 +85,7 @@
           inherit system;
           specialArgs = { inherit inputs; };
           modules = [
-            ./systems/vm-app
+            ./hosts/vm-app
           ];
         };
       };
