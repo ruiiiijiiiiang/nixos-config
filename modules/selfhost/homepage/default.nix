@@ -69,14 +69,14 @@ with consts;
               {
                 "Microbin" = {
                   icon = "microbin";
-                  href = "https://microbin.${domains.home}";
+                  href = "https://bin.${domains.home}";
                   description = "Pastebin";
                 };
               }
               {
                 "Shlink" = {
                   icon = "shlink";
-                  href = "https://shlink.${domains.home}/admin/";
+                  href = "https://shlink.${domains.home}/server/home-shlink.ruijiang.me-link/overview";
                   description = "URL Shortener";
                 };
               }
