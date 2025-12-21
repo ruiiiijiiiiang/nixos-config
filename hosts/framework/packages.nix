@@ -193,6 +193,7 @@ with pkgs;
     firefox.enable = true;
     nix-index.enable = true;
     command-not-found.enable = false;
+    neovim.enable = true;
     fish.enable = true;
     htop.enable = true;
     pay-respects.enable = true;

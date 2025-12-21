@@ -16,6 +16,5 @@
 
   programs = {
     vim.enable = true;
-    neovim.enable = true;
   };
 }

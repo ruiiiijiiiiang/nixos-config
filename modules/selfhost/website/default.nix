@@ -15,6 +15,7 @@ with consts;
       labels = {
         "io.containers.autoupdate" = "registry";
       };
+      extraOptions = [ "--pull=always" ];
     };
 
     systemd.tmpfiles.rules = [

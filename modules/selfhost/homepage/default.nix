@@ -67,17 +67,17 @@ with consts;
                 };
               }
               {
+                "Dawarich" = {
+                  icon = "dawarich";
+                  href = "https://gps.${domains.home}";
+                  description = "Location Tracking";
+                };
+              }
+              {
                 "Microbin" = {
                   icon = "microbin";
                   href = "https://bin.${domains.home}";
                   description = "Pastebin";
-                };
-              }
-              {
-                "Shlink" = {
-                  icon = "shlink";
-                  href = "https://shlink.${domains.home}/server/home-shlink.ruijiang.me-link/overview";
-                  description = "URL Shortener";
                 };
               }
               {
@@ -99,6 +99,13 @@ with consts;
                   icon = "vaultwarden";
                   href = "https://vault.${domains.home}";
                   description = "Password Manager";
+                };
+              }
+              {
+                "Yourls" = {
+                  icon = "yourls";
+                  href = "https://url.${domains.home}/admin";
+                  description = "URL Shortener";
                 };
               }
             ];

@@ -12,6 +12,7 @@ with consts;
       bentopdf = {
         image = "bentopdf/bentopdf:latest";
         ports = [ "${toString ports.bentopdf}:${toString ports.bentopdf}" ];
+        extraOptions = [ "--pull=always" ];
       };
     };
 

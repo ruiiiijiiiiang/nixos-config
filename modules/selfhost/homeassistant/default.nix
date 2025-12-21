@@ -18,6 +18,7 @@ with consts;
         ];
         volumes = [ "/var/lib/home-assistant:/config" ];
         environment.TZ = timeZone;
+        extraOptions = [ "--pull=always" ];
       };
 
       zwave-js-ui = {
@@ -27,6 +28,7 @@ with consts;
         extraOptions = [
           "--network=container:homeassistant"
           "--device=/dev/serial/by-id/usb-Silicon_Labs_CP2102N_USB_to_UART_Bridge_Controller_80edec297b57ed1193f12ef21c62bc44-if00-port0:/dev/zwave"
+          "--pull=always"
         ];
       };
     };
@@ -43,10 +45,6 @@ with consts;
         locations."/" = {
           proxyPass = "http://${addresses.localhost}:${toString ports.homeassistant}";
           proxyWebsockets = true;
-          extraConfig = ''
-            proxy_set_header Upgrade $http_upgrade;
-            proxy_set_header Connection "upgrade";
-          '';
         };
       };
 
@@ -56,10 +54,6 @@ with consts;
         locations."/" = {
           proxyPass = "http://${addresses.localhost}:${toString ports.zwave}";
           proxyWebsockets = true;
-          extraConfig = ''
-            proxy_set_header Upgrade $http_upgrade;
-            proxy_set_header Connection "upgrade";
-          '';
         };
       };
     };

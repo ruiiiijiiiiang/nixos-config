@@ -95,6 +95,11 @@ with consts;
               if failed port ${toString ports.bentopdf} protocol http then alert
           ''}
 
+          ${optionalString config.selfhost.dawarich.enable ''
+            check host dawarich address ${addresses.localhost}
+              if failed port ${toString ports.dawarich} protocol http then alert
+          ''}
+
           ${optionalString config.selfhost.portainer.enable ''
             check host portainer address ${addresses.localhost}
               if failed port ${toString ports.portainer.server} protocol http then alert
@@ -103,6 +108,11 @@ with consts;
           ${optionalString config.selfhost.website.enable ''
             check host website address ${addresses.localhost}
               if failed port ${toString ports.website} protocol http then alert
+          ''}
+
+          ${optionalString config.selfhost.yourls.enable ''
+            check host yourls address ${addresses.localhost}
+              if failed port ${toString ports.yourls} protocol http then alert
           ''}
         '';
       };
@@ -113,10 +123,6 @@ with consts;
         locations."/" = {
           proxyPass = "http://${addresses.localhost}:${toString ports.monit}";
           proxyWebsockets = true;
-          extraConfig = ''
-            proxy_set_header Upgrade $http_upgrade;
-            proxy_set_header Connection "upgrade";
-          '';
         };
       };
     };

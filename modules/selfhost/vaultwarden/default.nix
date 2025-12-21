@@ -19,7 +19,7 @@ with consts;
         environmentFile = config.age.secrets.vaultwarden-env.path;
 
         config = {
-          DOMAIN = "https://vault.${domains.home}";
+          DOMAIN = "https://${fqdn}";
           SIGNUPS_ALLOWED = false;
 
           ROCKET_ADDRESS = addresses.localhost;
@@ -40,10 +40,6 @@ with consts;
         locations."/notifications/hub" = {
           proxyPass = "http://${addresses.localhost}:${toString ports.vaultwarden.websocket}";
           proxyWebsockets = true;
-          extraConfig = ''
-            proxy_set_header Upgrade $http_upgrade;
-            proxy_set_header Connection "upgrade";
-          '';
         };
       };
     };

@@ -76,10 +76,6 @@ with consts;
         locations."/" = {
           proxyPass = "http://${addresses.localhost}:${toString ports.pihole}";
           proxyWebsockets = true;
-          extraConfig = ''
-            proxy_set_header Upgrade $http_upgrade;
-            proxy_set_header Connection "upgrade";
-          '';
         };
       };
     };

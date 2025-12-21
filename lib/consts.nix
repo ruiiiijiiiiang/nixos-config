@@ -22,6 +22,7 @@
     vm-app = {
       atuin = "atuin";
       bentopdf = "pdf";
+      dawarich = "gps";
       immich = "immich";
       homepage = "home";
       microbin = "bin";
@@ -29,9 +30,9 @@
       paperless = "paperless";
       portainer = "portainer";
       public = "public";
-      shlink = "shlink";
       syncthing = "syncthing";
       vaultwarden = "vault";
+      yourls = "url";
     };
   };
 
@@ -65,6 +66,7 @@
       hub = 8090;
       agent = 45876;
     };
+    dawarich = 3000;
     homeassistant = 8123;
     homepage = 8089;
     immich = 2283;
@@ -77,10 +79,6 @@
       edge = 8000;
     };
     proxmox = 8006;
-    shlink = {
-      server = 8081;
-      web = 8082;
-    };
     syncthing = 8384;
     unbound = 5335;
     vaultwarden = {
@@ -89,6 +87,7 @@
     };
     website = 8964;
     wireguard = 51820;
+    yourls = 8081;
     zwave = 8091;
   };
 }

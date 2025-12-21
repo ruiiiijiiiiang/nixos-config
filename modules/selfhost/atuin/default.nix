@@ -15,7 +15,7 @@ with consts;
         port = ports.atuin;
         host = addresses.localhost;
         maxHistoryLength = 100000;
-        openRegistration = false;
+        openRegistration = true;
         database = {
           createLocally = true;
           uri = "postgresql:///atuin?host=/run/postgresql";

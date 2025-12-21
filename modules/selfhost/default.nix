@@ -6,6 +6,7 @@ with lib;
     ./bentopdf
     ./beszel
     ./cloudflared
+    ./dawarich
     ./dns
     ./dyndns
     ./homeassistant
@@ -16,10 +17,10 @@ with lib;
     ./nginx
     ./paperless
     ./portainer
-    ./shlink
     ./syncthing
     ./vaultwarden
     ./website
+    ./yourls
   ];
 
   options.selfhost = {
@@ -34,6 +35,9 @@ with lib;
     };
     cloudflared = {
       enable = mkEnableOption "set up cloudflare access tunnel";
+    };
+    dawarich = {
+      enable = mkEnableOption "enable dawarich gps service";
     };
     dns = {
       enable = mkEnableOption "enable unbound + pihole dns filtering";
@@ -65,9 +69,6 @@ with lib;
     portainer = {
       enable = mkEnableOption "enable portainer for managing docker containers";
     };
-    shlink = {
-      enable = mkEnableOption "enable shlink link shortener";
-    };
     syncthing = {
       enable = mkEnableOption "enable and configure syncthing service";
       proxied = mkEnableOption "put syncthing behind a reverse proxy";
@@ -77,6 +78,9 @@ with lib;
     };
     website = {
       enable = mkEnableOption "enable personal website hosting";
+    };
+    yourls = {
+      enable = mkEnableOption "enable yourls url shortener";
     };
   };
 
@@ -90,6 +94,7 @@ with lib;
           cfg.atuin.enable
           || cfg.bentopdf.enable
           || cfg.beszel.enable
+          || cfg.dawarich.enable
           || cfg.dns.enable
           || cfg.homeassistant.enable
           || cfg.homepage.enable
@@ -98,10 +103,10 @@ with lib;
           || cfg.monit.enable
           || cfg.paperless.enable
           || cfg.portainer.enable
-          || cfg.shlink.enable
           || cfg.syncthing.proxied
           || cfg.vaultwarden.enable
           || cfg.website.enable
+          || cfg.yourls.enable
         )
         -> cfg.nginx.enable;
       message = "Error: You have enabled a service that requires a proxy server, but 'selfhost.nginx.enable' is false.";

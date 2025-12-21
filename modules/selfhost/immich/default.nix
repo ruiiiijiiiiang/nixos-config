@@ -35,8 +35,6 @@ with consts;
           proxyPass = "http://${addresses.localhost}:${toString ports.immich}";
           proxyWebsockets = true;
           extraConfig = ''
-            proxy_set_header Upgrade $http_upgrade;
-            proxy_set_header Connection "upgrade";
             client_max_body_size 50000M;
             proxy_read_timeout 600s;
             proxy_send_timeout 600s;

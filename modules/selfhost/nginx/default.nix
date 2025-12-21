@@ -40,11 +40,6 @@ with consts;
             limit_conn_zone $binary_remote_addr zone=microbin_conn_limit:10m;
           ''}
 
-          ${optionalString config.selfhost.shlink.enable ''
-            limit_req_zone $binary_remote_addr zone=shlink_req_limit:10m rate=1r/s;
-            limit_conn_zone $binary_remote_addr zone=shlink_conn_limit:10m;
-          ''}
-
           ${optionalString config.selfhost.website.enable ''
             limit_req_zone $binary_remote_addr zone=website_req_limit:10m rate=1r/s;
             limit_conn_zone $binary_remote_addr zone=website_conn_limit:10m;
