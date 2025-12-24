@@ -16,10 +16,6 @@ with consts;
       "yourls-db" = {
         image = "mariadb:12";
         ports = [ "${toString ports.yourls}:8080" ];
-        environment = {
-          MYSQL_DATABASE = "yourls";
-          MYSQL_USER = "yourls";
-        };
         environmentFiles = [ config.age.secrets.yourls-env.path ];
         volumes = [
           "/var/lib/yourls/mysql:/var/lib/mysql"
@@ -35,8 +31,6 @@ with consts;
         ];
         environment = {
           YOURLS_DB_HOST = addresses.localhost;
-          YOURLS_DB_USER = "yourls";
-          YOURLS_DB_NAME = "yourls";
           YOURLS_SITE = "https://${fqdn}";
         };
         environmentFiles = [ config.age.secrets.yourls-env.path ];

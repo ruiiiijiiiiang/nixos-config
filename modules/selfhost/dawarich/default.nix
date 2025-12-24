@@ -16,16 +16,12 @@ with consts;
       "dawarich-db" = {
         image = "postgis/postgis:16-3.4-alpine";
         ports = [ "${toString ports.dawarich}:${toString ports.dawarich}" ];
-        environment = {
-          POSTGRES_USER = "dawarich";
-          POSTGRES_DB = "dawarich";
-        };
         environmentFiles = [ config.age.secrets.dawarich-env.path ];
         volumes = [ "dawarich-db-data:/var/lib/postgresql/data" ];
       };
 
       "dawarich-redis" = {
-        image = "redis:7-alpine";
+        image = "redis:latest";
         dependsOn = [ "dawarich-db" ];
         extraOptions = [ "--network=container:dawarich-db" ];
         volumes = [ "dawarich-redis-data:/data" ];
@@ -43,8 +39,6 @@ with consts;
           TIME_ZONE = timeZone;
           ALLOW_REGISTRATION = "true";
           DATABASE_HOST = addresses.localhost;
-          DATABASE_USERNAME = "dawarich";
-          DATABASE_NAME = "dawarich";
           REDIS_URL = "redis://${addresses.localhost}:6379/0";
         };
         environmentFiles = [ config.age.secrets.dawarich-env.path ];
@@ -74,8 +68,6 @@ with consts;
           APPLICATION_HOSTS = fqdn;
           TIME_ZONE = timeZone;
           DATABASE_HOST = addresses.localhost;
-          DATABASE_USERNAME = "dawarich";
-          DATABASE_NAME = "dawarich";
           REDIS_URL = "redis://${addresses.localhost}:6379/0";
         };
         environmentFiles = [ config.age.secrets.dawarich-env.path ];

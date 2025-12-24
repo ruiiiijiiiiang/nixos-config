@@ -108,6 +108,20 @@ with consts;
                   description = "URL Shortener";
                 };
               }
+              {
+                "Calendar Parser" = {
+                  icon = "p-cal";
+                  href = "https://calendar-parse.ruiiiijiiiiang.deno.net";
+                  description = "Parse CSV calendar from Pam's boss";
+                };
+              }
+              {
+                "Blog" = {
+                  icon = "booklogr";
+                  href = "https://public.ruijiang.me/blog/0";
+                  description = "Rui's blog";
+                };
+              }
             ];
           }
           {

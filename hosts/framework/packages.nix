@@ -108,6 +108,7 @@ with pkgs;
     obsidian
     neohtop
     vlc
+    mailspring
 
     # --- Audio & Multimedia ---
     easyeffects
