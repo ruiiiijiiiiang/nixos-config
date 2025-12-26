@@ -13,16 +13,16 @@ with consts;
     };
 
     virtualisation.oci-containers.containers = {
-      "yourls-db" = {
+      yourls-db = {
         image = "mariadb:12";
-        ports = [ "${toString ports.yourls}:8080" ];
+        ports = [ "${addresses.localhost}:${toString ports.yourls}:8080" ];
         environmentFiles = [ config.age.secrets.yourls-env.path ];
         volumes = [
           "/var/lib/yourls/mysql:/var/lib/mysql"
         ];
       };
 
-      "yourls" = {
+      yourls = {
         image = "yourls:latest";
         dependsOn = [ "yourls-db" ];
         extraOptions = [

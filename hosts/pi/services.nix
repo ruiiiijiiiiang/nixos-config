@@ -1,5 +1,3 @@
-{ ... }:
-
 {
   selfhost = {
     dns.enable = true;

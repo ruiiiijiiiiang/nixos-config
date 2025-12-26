@@ -40,5 +40,5 @@ with keys;
   };
 
   users.users.rui.openssh.authorizedKeys.keys = ssh.rui-arch ++ ssh.framework;
-  users.users.root.openssh.authorizedKeys.keys = ssh.github-action ++ ssh.framework;
+  users.users.root.openssh.authorizedKeys.keys = [ ssh.github-action ] ++ ssh.framework;
 }

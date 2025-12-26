@@ -88,6 +88,14 @@
             ./hosts/vm-app
           ];
         };
+
+        vm-monitor = nixosSystem {
+          inherit system;
+          specialArgs = { inherit inputs; };
+          modules = [
+            ./hosts/vm-monitor
+          ];
+        };
       };
 
       devShells.${system} = {

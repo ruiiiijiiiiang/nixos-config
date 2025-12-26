@@ -1,5 +1,3 @@
-{ ... }:
-
 {
   # Hide nm-applet tray icon
   home.file.".config/autostart/nm-applet.desktop".text = ''

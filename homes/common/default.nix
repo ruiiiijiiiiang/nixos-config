@@ -1,5 +1,3 @@
-{ ... }:
-
 let
   username = "rui";
   homePath = "/home/${username}";

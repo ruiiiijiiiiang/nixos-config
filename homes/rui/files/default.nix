@@ -1,5 +1,3 @@
-{ ... }:
-
 {
   imports = [
     ./mailspring.desktop.nix

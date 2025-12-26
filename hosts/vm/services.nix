@@ -1,5 +1,3 @@
-{ ... }:
-
 {
   custom = {
     catppuccin.enable = true;

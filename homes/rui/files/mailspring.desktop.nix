@@ -1,5 +1,3 @@
-{ ... }:
-
 {
   # Set up extra flags on Mailspring
   home.file.".local/share/applications/Mailspring.desktop".text = ''
@@ -7,7 +5,7 @@
     Name=Mailspring
     Comment=The best email app for people and teams at work
     GenericName=Mail Client
-    Exec=/nix/store/wnklr8wazavqglmyqz5a2dm9h5986m12-mailspring-1.16.0/bin/mailspring --password-store=kwallet6 %U
+    Exec=env ELECTRON_OZONE_PLATFORM_HINT=x11 mailspring --password-store=kwallet6 %U
     Icon=mailspring
     Type=Application
     StartupNotify=true
@@ -19,6 +17,6 @@
 
     [Desktop Action NewMessage]
     Name=New Message
-    Exec=/nix/store/wnklr8wazavqglmyqz5a2dm9h5986m12-mailspring-1.16.0/bin/mailspring --password-store=kwallet6 mailto:
+    Exec=env ELECTRON_OZONE_PLATFORM_HINT=x11 mailspring --password-store=kwallet6 mailto:
   '';
 }

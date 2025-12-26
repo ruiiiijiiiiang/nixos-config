@@ -1,4 +1,3 @@
-{ ... }:
 let
   consts = import ../../lib/consts.nix;
 in

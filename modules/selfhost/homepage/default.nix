@@ -141,6 +141,20 @@ with consts;
                 };
               }
               {
+                "Beszel" = {
+                  icon = "beszel";
+                  href = "https://beszel.${domains.home}";
+                  description = "Server monitoring";
+                };
+              }
+              {
+                "Wazuh" = {
+                  icon = "wazuh";
+                  href = "https://wazuh.${domains.home}";
+                  description = "Security Monitoring";
+                };
+              }
+              {
                 "Syncthing" = {
                   icon = "syncthing";
                   href = "https://syncthing.${domains.home}";
@@ -189,6 +203,4 @@ with consts;
       };
     };
   };
-  # systemd.services.homepage-dashboard.serviceConfig.EnvironmentFile =
-  #   "/var/lib/homepage-dashboard/.env";
 }

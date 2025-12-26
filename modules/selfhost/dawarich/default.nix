@@ -13,21 +13,21 @@ with consts;
     };
 
     virtualisation.oci-containers.containers = {
-      "dawarich-db" = {
+      dawarich-db = {
         image = "postgis/postgis:16-3.4-alpine";
-        ports = [ "${toString ports.dawarich}:${toString ports.dawarich}" ];
+        ports = [ "${addresses.localhost}:${toString ports.dawarich}:${toString ports.dawarich}" ];
         environmentFiles = [ config.age.secrets.dawarich-env.path ];
         volumes = [ "dawarich-db-data:/var/lib/postgresql/data" ];
       };
 
-      "dawarich-redis" = {
+      dawarich-redis = {
         image = "redis:latest";
         dependsOn = [ "dawarich-db" ];
         extraOptions = [ "--network=container:dawarich-db" ];
         volumes = [ "dawarich-redis-data:/data" ];
       };
 
-      "dawarich-app" = {
+      dawarich-app = {
         image = "freikin/dawarich:latest";
         dependsOn = [
           "dawarich-db"
@@ -39,7 +39,7 @@ with consts;
           TIME_ZONE = timeZone;
           ALLOW_REGISTRATION = "true";
           DATABASE_HOST = addresses.localhost;
-          REDIS_URL = "redis://${addresses.localhost}:6379/0";
+          REDIS_URL = "redis://${addresses.localhost}:${toString ports.redis}/0";
         };
         environmentFiles = [ config.age.secrets.dawarich-env.path ];
         volumes = [
@@ -56,7 +56,7 @@ with consts;
         ];
       };
 
-      "dawarich-sidekiq" = {
+      dawarich-sidekiq = {
         image = "freikin/dawarich:latest";
         dependsOn = [
           "dawarich-db"
@@ -68,7 +68,7 @@ with consts;
           APPLICATION_HOSTS = fqdn;
           TIME_ZONE = timeZone;
           DATABASE_HOST = addresses.localhost;
-          REDIS_URL = "redis://${addresses.localhost}:6379/0";
+          REDIS_URL = "redis://${addresses.localhost}:${toString ports.redis}/0";
         };
         environmentFiles = [ config.age.secrets.dawarich-env.path ];
         volumes = [

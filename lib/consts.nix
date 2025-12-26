@@ -34,6 +34,11 @@
       vaultwarden = "vault";
       yourls = "url";
     };
+    vm-monitor = {
+      beszel = "beszel";
+      monit = "vm-monitor-monit";
+      wazuh = "wazuh";
+    };
   };
 
   addresses = {
@@ -47,6 +52,7 @@
         proxmox = "192.168.68.100";
         vm-network = "192.168.68.87";
         vm-app = "192.168.68.89";
+        vm-monitor = "192.168.68.90";
         pi-legacy = "192.168.68.83";
       };
     };
@@ -79,11 +85,21 @@
       edge = 8000;
     };
     proxmox = 8006;
+    redis = 6379;
     syncthing = 8384;
     unbound = 5335;
     vaultwarden = {
       server = 8222;
       websocket = 3012;
+    };
+    wazuh = {
+      indexer = 9200;
+      manager = 55000;
+      dashboard = 5601;
+      agent = {
+        connection = 1514;
+        enrollment = 1515;
+      };
     };
     website = 8964;
     wireguard = 51820;

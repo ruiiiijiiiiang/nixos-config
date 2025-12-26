@@ -1,5 +1,3 @@
-{ ... }:
-
 {
   # Set up extra flags on vivaldi
   home.file.".local/share/applications/vivaldi-stable.desktop".text = ''

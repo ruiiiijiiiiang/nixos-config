@@ -1,5 +1,3 @@
-{ ... }:
-
 {
   # Hide xwayland bridge
   home.file.".config/autostart/org.kde.xwaylandvideobridge.desktop".text = ''

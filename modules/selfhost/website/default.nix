@@ -10,7 +10,7 @@ with consts;
   config = mkIf cfg.enable {
     virtualisation.oci-containers.containers.website = {
       image = "ghcr.io/ruiiiijiiiiang/website:latest";
-      ports = [ "${toString ports.website}:${toString ports.website}" ];
+      ports = [ "${addresses.localhost}:${toString ports.website}:${toString ports.website}" ];
       volumes = [ "/var/lib/blog:/app/blog:ro" ];
       labels = {
         "io.containers.autoupdate" = "registry";

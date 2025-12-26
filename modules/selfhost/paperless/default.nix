@@ -15,7 +15,7 @@ with consts;
     virtualisation.oci-containers.containers = {
       paperless-db = {
         image = "postgres:16";
-        ports = [ "${toString ports.paperless}:8000" ];
+        ports = [ "${addresses.localhost}:${toString ports.paperless}:8000" ];
         environmentFiles = [ config.age.secrets.paperless-env.path ];
         volumes = [ "/var/storage/paperless/data/postgres:/var/lib/postgresql/data" ];
       };
@@ -42,7 +42,7 @@ with consts;
         ];
 
         environment = {
-          PAPERLESS_REDIS = "redis://${addresses.localhost}:6379";
+          PAPERLESS_REDIS = "redis://${addresses.localhost}:${toString ports.redis}";
           PAPERLESS_DBHOST = addresses.localhost;
           PAPERLESS_URL = "https://${fqdn}";
           PAPERLESS_TIME_ZONE = timeZone;

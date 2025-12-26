@@ -12,8 +12,8 @@ with consts;
       portainer = {
         image = "portainer/portainer-ce";
         ports = [
-          "${toString ports.portainer.server}:${toString ports.portainer.server}"
-          "${toString ports.portainer.edge}:${toString ports.portainer.edge}"
+          "${addresses.localhost}:${toString ports.portainer.server}:${toString ports.portainer.server}"
+          "${addresses.localhost}:${toString ports.portainer.edge}:${toString ports.portainer.edge}"
         ];
         volumes = [
           "/var/run/docker.sock:/var/run/docker.sock:ro"

@@ -31,7 +31,7 @@ with consts;
               if does not exist then alert
           ''}
 
-          ${optionalString config.selfhost.beszel.enable ''
+          ${optionalString config.selfhost.beszel.hub.enable ''
             check process beszel matching "beszel"
               if does not exist then alert
           ''}
@@ -60,11 +60,6 @@ with consts;
 
           ${optionalString config.selfhost.microbin.enable ''
             check process microbin matching "microbin"
-              if does not exist then alert
-          ''}
-
-          ${optionalString config.selfhost.paperless.enable ''
-            check process paperless matching "paperless"
               if does not exist then alert
           ''}
 
@@ -100,6 +95,11 @@ with consts;
               if failed port ${toString ports.dawarich} protocol http then alert
           ''}
 
+          ${optionalString config.selfhost.paperless.enable ''
+            check host paperless address ${addresses.localhost}
+              if failed port ${toString ports.paperless} protocol http then alert
+          ''}
+
           ${optionalString config.selfhost.portainer.enable ''
             check host portainer address ${addresses.localhost}
               if failed port ${toString ports.portainer.server} protocol http then alert
@@ -110,10 +110,10 @@ with consts;
               if failed port ${toString ports.website} protocol http then alert
           ''}
 
-          ${optionalString config.selfhost.yourls.enable ''
-            check host yourls address ${addresses.localhost}
-              if failed port ${toString ports.yourls} protocol http then alert
-          ''}
+          # ${optionalString config.selfhost.yourls.enable ''
+            #   check host yourls address ${addresses.localhost}
+            #     if failed port ${toString ports.yourls} protocol http then alert
+            # ''}
         '';
       };
 

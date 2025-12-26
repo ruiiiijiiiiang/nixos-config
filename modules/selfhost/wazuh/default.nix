@@ -1,6 +1,6 @@
 {
   imports = [
-    ./hub.nix
+    ./server.nix
     ./agent.nix
   ];
 }

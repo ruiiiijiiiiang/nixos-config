@@ -19,6 +19,7 @@ with lib;
     ./portainer
     ./syncthing
     ./vaultwarden
+    ./wazuh
     ./website
     ./yourls
   ];
@@ -31,7 +32,8 @@ with lib;
       enable = mkEnableOption "enable bentopdf pdf service";
     };
     beszel = {
-      enable = mkEnableOption "enable beszel for service monitoring";
+      hub.enable = mkEnableOption "enable beszel hub";
+      agent.enable = mkEnableOption "enable beszel agent";
     };
     cloudflared = {
       enable = mkEnableOption "set up cloudflare access tunnel";
@@ -76,6 +78,10 @@ with lib;
     vaultwarden = {
       enable = mkEnableOption "enable private bitwarden secret manager";
     };
+    wazuh = {
+      server.enable = mkEnableOption "enable wazuh server";
+      agent.enable = mkEnableOption "enable wazuh agent";
+    };
     website = {
       enable = mkEnableOption "enable personal website hosting";
     };
@@ -93,7 +99,7 @@ with lib;
         (
           cfg.atuin.enable
           || cfg.bentopdf.enable
-          || cfg.beszel.enable
+          || cfg.beszel.hub.enable
           || cfg.dawarich.enable
           || cfg.dns.enable
           || cfg.homeassistant.enable
@@ -105,6 +111,7 @@ with lib;
           || cfg.portainer.enable
           || cfg.syncthing.proxied
           || cfg.vaultwarden.enable
+          || cfg.wazuh.server.enable
           || cfg.website.enable
           || cfg.yourls.enable
         )
