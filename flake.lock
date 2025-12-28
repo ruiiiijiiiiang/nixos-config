@@ -43,20 +43,17 @@
     },
     "dankMaterialShell": {
       "inputs": {
-        "dgop": [
-          "dgop"
-        ],
         "nixpkgs": [
           "nixpkgs"
         ],
         "quickshell": "quickshell"
       },
       "locked": {
-        "lastModified": 1766685026,
-        "narHash": "sha256-7WSIuBJeXk8k0OoURUrTnKFGo+X3d4yTkH1RSh43qIQ=",
+        "lastModified": 1766900092,
+        "narHash": "sha256-fY5Rzi95sHEfW5driXAun/gbgvHX7cH35Xg/+WxG42g=",
         "owner": "AvengeMedia",
         "repo": "DankMaterialShell",
-        "rev": "fd839059c09632c26d69a03e88641ff4d4a26cf4",
+        "rev": "84fb567ff50b0373ff43f6d66adb1c1e20884119",
         "type": "github"
       },
       "original": {
@@ -267,11 +264,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1766682973,
-        "narHash": "sha256-GKO35onS711ThCxwWcfuvbIBKXwriahGqs+WZuJ3v9E=",
+        "lastModified": 1766881808,
+        "narHash": "sha256-JR7A2xS3EBPWFeONzhqez5vp7nKEsp7eLj2Ks210Srk=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "91cdb0e2d574c64fae80d221f4bf09d5592e9ec2",
+        "rev": "d2e0458d6531885600b346e161c38790dc356fa8",
         "type": "github"
       },
       "original": {
@@ -523,16 +520,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1764663772,
-        "narHash": "sha256-sHqLmm0wAt3PC4vczJeBozI1/f4rv9yp3IjkClHDXDs=",
+        "lastModified": 1766725085,
+        "narHash": "sha256-O2aMFdDUYJazFrlwL7aSIHbUSEm3ADVZjmf41uBJfHs=",
         "ref": "refs/heads/master",
-        "rev": "26531fc46ef17e9365b03770edd3fb9206fcb460",
-        "revCount": 713,
+        "rev": "41828c4180fb921df7992a5405f5ff05d2ac2fff",
+        "revCount": 715,
         "type": "git",
         "url": "https://git.outfoxxed.me/quickshell/quickshell"
       },
       "original": {
-        "rev": "26531fc46ef17e9365b03770edd3fb9206fcb460",
+        "rev": "41828c4180fb921df7992a5405f5ff05d2ac2fff",
         "type": "git",
         "url": "https://git.outfoxxed.me/quickshell/quickshell"
       }
@@ -693,11 +690,11 @@
         "nixpkgs": "nixpkgs_9"
       },
       "locked": {
-        "lastModified": 1766697593,
-        "narHash": "sha256-mGZBEN67mxeOsBhplBRLm6L+y++8jU46EEUYgemG1aQ=",
+        "lastModified": 1766897152,
+        "narHash": "sha256-mD1GDg1eIHYUwk536j4uJX1IfQArsLQm2SL7rTQwAPI=",
         "owner": "0xc000022070",
         "repo": "zen-browser-flake",
-        "rev": "98d8f48ba80a4b6e3b56addad850d57132301075",
+        "rev": "fe8d1a61a904b336f453d7ab5ae7d691a21c5cbf",
         "type": "github"
       },
       "original": {

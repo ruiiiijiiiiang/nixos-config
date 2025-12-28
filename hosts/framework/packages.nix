@@ -212,6 +212,10 @@ with pkgs;
     wireshark.enable = true;
     tcpdump.enable = true;
     obs-studio.enable = true;
+    kde-pim = {
+      enable = true;
+      kmail = true;
+    };
   };
 
   fonts = {

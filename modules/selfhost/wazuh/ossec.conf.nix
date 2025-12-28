@@ -1,10 +1,4 @@
 ''
-  <!--
-    Wazuh - Agent - Default configuration for amzn 2023
-    More info at: https://documentation.wazuh.com
-    Mailing list: https://groups.google.com/forum/#!forum/wazuh
-  -->
-
   <ossec_config>
     <client>
       <server>
@@ -12,7 +6,7 @@
         <port>1514</port>
         <protocol>tcp</protocol>
       </server>
-      <config-profile>amzn, amzn2023</config-profile>
+      <config-profile>linux</config-profile>
       <notify_time>20</notify_time>
       <time-reconnect>60</time-reconnect>
       <auto_restart>yes</auto_restart>
@@ -56,7 +50,7 @@
     </rootcheck>
 
     <wodle name="cis-cat">
-      <disabled>yes</disabled>
+      <disabled>no</disabled>
       <timeout>1800</timeout>
       <interval>1d</interval>
       <scan-on-start>yes</scan-on-start>
@@ -67,7 +61,7 @@
 
     <!-- Osquery integration -->
     <wodle name="osquery">
-      <disabled>yes</disabled>
+      <disabled>no</disabled>
       <run_daemon>yes</run_daemon>
       <log_path>/var/log/osquery/osqueryd.results.log</log_path>
       <config_path>/etc/osquery/osquery.conf</config_path>

@@ -24,4 +24,6 @@ with inputs;
   environment.systemPackages = with pkgs; [
     agenix.packages.${stdenv.system}.default
   ];
+
+  security.auditd.enable = true;
 }

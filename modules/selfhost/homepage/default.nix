@@ -21,7 +21,7 @@ with consts;
           };
           cardBlur = "xl";
           layout = {
-            "Tools" = {
+            "Apps" = {
               style = "row";
               columns = 4;
             };
@@ -51,7 +51,7 @@ with consts;
 
         services = [
           {
-            "Tools" = [
+            "Apps" = [
               {
                 "Home Assistant" = {
                   icon = "home-assistant";
@@ -78,6 +78,13 @@ with consts;
                   icon = "microbin";
                   href = "https://bin.${domains.home}";
                   description = "Pastebin";
+                };
+              }
+              {
+                "Nextcloud" = {
+                  icon = "nextcloud";
+                  href = "https://nextcloud.${domains.home}";
+                  description = "Cloud Storage";
                 };
               }
               {

@@ -9,6 +9,7 @@
     homepage.enable = true;
     microbin.enable = true;
     monit.enable = true;
+    nextcloud.enable = true;
     nginx.enable = true;
     paperless.enable = true;
     portainer.enable = true;

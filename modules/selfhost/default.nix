@@ -14,6 +14,7 @@ with lib;
     ./immich
     ./microbin
     ./monit
+    ./nextcloud
     ./nginx
     ./paperless
     ./portainer
@@ -62,6 +63,9 @@ with lib;
     monit = {
       enable = mkEnableOption "enable monit monitoring dashboard";
     };
+    nextcloud = {
+      enable = mkEnableOption "enable nextcloud server";
+    };
     nginx = {
       enable = mkEnableOption "enable nginx as a reverse proxy";
     };
@@ -107,6 +111,7 @@ with lib;
           || cfg.immich.enable
           || cfg.microbin.enable
           || cfg.monit.enable
+          || cfg.nextcloud.enable
           || cfg.paperless.enable
           || cfg.portainer.enable
           || cfg.syncthing.proxied

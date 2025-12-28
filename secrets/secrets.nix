@@ -19,6 +19,14 @@ with keys;
     publicKeys = ssh.vm-app;
     armor = true;
   };
+  "nextcloud-pass.age" = {
+    publicKeys = ssh.vm-app;
+    armor = true;
+  };
+  "onlyoffice-secret.age" = {
+    publicKeys = ssh.vm-app;
+    armor = true;
+  };
   "paperless-env.age" = {
     publicKeys = ssh.vm-app;
     armor = true;

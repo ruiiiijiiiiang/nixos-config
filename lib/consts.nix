@@ -27,6 +27,8 @@
       homepage = "home";
       microbin = "bin";
       monit = "vm-app-monit";
+      nextcloud = "nextcloud";
+      onlyoffice = "office";
       paperless = "paperless";
       portainer = "portainer";
       public = "public";
@@ -43,6 +45,7 @@
 
   addresses = {
     localhost = "127.0.0.1";
+    localhost-v6 = "::1";
     home = {
       network = "192.168.68.0/24";
       hosts = {
@@ -78,6 +81,7 @@
     immich = 2283;
     microbin = 8088;
     monit = 2812;
+    onlyoffice = 8001;
     paperless = 28981;
     pihole = 8008;
     portainer = {

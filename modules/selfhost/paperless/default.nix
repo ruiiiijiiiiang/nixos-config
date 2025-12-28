@@ -64,7 +64,7 @@ with consts;
       "d /var/storage/paperless/consume       0750 paperless paperless -"
       "d /var/storage/paperless/data          0750 paperless paperless -"
       "d /var/storage/paperless/data/data     0750 paperless paperless -"
-      "d /var/storage/paperless/data/postgres 0700 paperless paperless -"
+      "d /var/storage/paperless/data/postgres 0700 999 999 -"
     ];
 
     users.groups.paperless = { };
