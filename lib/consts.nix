@@ -38,12 +38,15 @@
     };
     vm-monitor = {
       beszel = "beszel";
+      grafana = "grafana";
       monit = "vm-monitor-monit";
+      prometheus = "prometheus";
       wazuh = "wazuh";
     };
   };
 
   addresses = {
+    any = "0.0.0.0";
     localhost = "127.0.0.1";
     localhost-v6 = "::1";
     home = {
@@ -76,17 +79,29 @@
       agent = 45876;
     };
     dawarich = 3000;
+    grafana = 3001;
     homeassistant = 8123;
     homepage = 8089;
     immich = 2283;
     microbin = 8088;
     monit = 2812;
+    nginx = {
+      stub = 8082;
+    };
     onlyoffice = 8001;
     paperless = 28981;
     pihole = 8008;
     portainer = {
       server = 9000;
       edge = 8000;
+    };
+    prometheus = {
+      server = 9090;
+      exporters = {
+        nginx = 9113;
+        node = 9100;
+        podman = 9882;
+      };
     };
     proxmox = 8006;
     redis = 6379;

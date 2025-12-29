@@ -36,6 +36,7 @@ with consts;
         extraOptions = [ "--network=container:paperless-db" ];
 
         volumes = [
+          "/var/storage/paperless/log:/usr/src/paperless/log"
           "/var/storage/paperless/media:/usr/src/paperless/media"
           "/var/storage/paperless/consume:/usr/src/paperless/consume"
           "/var/storage/paperless/data/data:/usr/src/paperless/data"
@@ -60,6 +61,7 @@ with consts;
 
     systemd.tmpfiles.rules = [
       "d /var/storage/paperless               0750 paperless paperless -"
+      "d /var/storage/paperless/log           0750 paperless paperless -"
       "d /var/storage/paperless/media         0750 paperless paperless -"
       "d /var/storage/paperless/consume       0750 paperless paperless -"
       "d /var/storage/paperless/data          0750 paperless paperless -"

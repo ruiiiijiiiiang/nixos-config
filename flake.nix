@@ -13,6 +13,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     agenix.url = "github:ryantm/agenix";
+    colmena.url = "github:zhaofengli/colmena";
     nix-flatpak.url = "github:gmodena/nix-flatpak";
     catppuccin = {
       url = "github:catppuccin/nix";
@@ -30,7 +31,6 @@
     file_clipper.url = "github:ruiiiijiiiiang/file_clipper";
     lazynmap.url = "github:ruiiiijiiiiang/lazynmap";
     noxdir.url = "github:crumbyte/noxdir";
-    doxx.url = "github:bgreenwell/doxx";
   };
 
   outputs =
@@ -43,57 +43,136 @@
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; };
+      consts = import ./lib/consts.nix;
       inherit (nixpkgs.lib) nixosSystem;
       inherit (home-manager.lib) homeManagerConfiguration;
     in
+    with consts;
     {
       nixosConfigurations = {
         framework = nixosSystem {
           inherit system;
-          specialArgs = { inherit inputs; };
-          modules = [
-            ./hosts/framework
-          ];
+          specialArgs = {
+            inherit inputs;
+            inherit consts;
+          };
+          modules = [ ./hosts/framework ];
         };
 
         rui-nixos-vm = nixosSystem {
           inherit system;
-          specialArgs = { inherit inputs; };
-          modules = [
-            ./hosts/vm
-          ];
+          specialArgs = {
+            inherit inputs;
+            inherit consts;
+          };
+          modules = [ ./hosts/vm ];
         };
 
         pi = nixosSystem {
           system = "aarch64-linux";
-          specialArgs = { inherit inputs; };
-          modules = [
-            ./hosts/pi
-          ];
+          specialArgs = {
+            inherit inputs;
+            inherit consts;
+          };
+          modules = [ ./hosts/pi ];
         };
 
         vm-network = nixosSystem {
           inherit system;
-          specialArgs = { inherit inputs; };
-          modules = [
-            ./hosts/vm-network
-          ];
+          specialArgs = {
+            inherit inputs;
+            inherit consts;
+          };
+          modules = [ ./hosts/vm-network ];
         };
 
         vm-app = nixosSystem {
           inherit system;
-          specialArgs = { inherit inputs; };
-          modules = [
-            ./hosts/vm-app
-          ];
+          specialArgs = {
+            inherit inputs;
+            inherit consts;
+          };
+          modules = [ ./hosts/vm-app ];
         };
 
         vm-monitor = nixosSystem {
           inherit system;
-          specialArgs = { inherit inputs; };
-          modules = [
-            ./hosts/vm-monitor
-          ];
+          specialArgs = {
+            inherit inputs;
+            inherit consts;
+          };
+          modules = [ ./hosts/vm-monitor ];
+        };
+      };
+
+      colmenaHive = inputs.colmena.lib.makeHive self.outputs.colmena;
+      colmena = {
+        meta = {
+          nixpkgs = import nixpkgs {
+            inherit system;
+          };
+          specialArgs = {
+            inherit inputs;
+            inherit consts;
+          };
+        };
+
+        framework = {
+          deployment = {
+            targetHost = addresses.localhost;
+            # targetUser = "rui";
+            allowLocalDeployment = true;
+            tags = [
+              "physical"
+              "gui"
+            ];
+          };
+          imports = [ ./hosts/framework ];
+        };
+
+        pi = {
+          nixpkgs.system = "aarch64-linux";
+          deployment = {
+            targetHost = addresses.home.hosts.pi;
+            tags = [
+              "physical"
+              "server"
+            ];
+          };
+          imports = [ ./hosts/pi ];
+        };
+
+        vm-network = {
+          deployment = {
+            targetHost = addresses.home.hosts.vm-network;
+            tags = [
+              "vm"
+              "server"
+            ];
+          };
+          imports = [ ./hosts/vm-network ];
+        };
+
+        vm-app = {
+          deployment = {
+            targetHost = addresses.home.hosts.vm-app;
+            tags = [
+              "vm"
+              "server"
+            ];
+          };
+          imports = [ ./hosts/vm-app ];
+        };
+
+        vm-monitor = {
+          deployment = {
+            targetHost = addresses.home.hosts.vm-monitor;
+            tags = [
+              "vm"
+              "server"
+            ];
+          };
+          imports = [ ./hosts/vm-monitor ];
         };
       };
 
@@ -101,7 +180,6 @@
         rust = import ./shells/rust { inherit pkgs; };
         devops = import ./shells/devops { inherit pkgs; };
         forensics = import ./shells/forensics { inherit pkgs; };
-        default = self.devShells.${system}.devops;
       };
 
       homeConfigurations = {

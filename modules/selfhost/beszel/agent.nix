@@ -1,9 +1,11 @@
 { config, lib, ... }:
 with lib;
 let
+  consts = import ../../../lib/consts.nix;
   keys = import ../../../lib/keys.nix;
   cfg = config.selfhost.beszel.agent;
 in
+with consts;
 with keys;
 {
   config = mkIf cfg.enable {
@@ -13,6 +15,7 @@ with keys;
         openFirewall = true;
         environment = {
           KEY = ssh.beszel;
+          HUB_URL = "https://beszel.${domains.home}";
         };
       };
     };

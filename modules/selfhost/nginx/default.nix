@@ -35,6 +35,19 @@ with consts;
           allow ${addresses.vpn.network};
           deny all;
 
+          ${optionalString config.selfhost.prometheus.exporters.nginx.enable ''
+            server {
+              listen ${addresses.localhost}:${toString ports.nginx.stub};
+              server_name localhost;
+              location /stub_status {
+                stub_status on;
+                access_log off;
+                allow ${addresses.localhost};
+                deny all;
+              }
+            }
+          ''}
+
           ${optionalString config.selfhost.microbin.enable ''
             limit_req_zone $binary_remote_addr zone=microbin_req_limit:10m rate=1r/s;
             limit_conn_zone $binary_remote_addr zone=microbin_conn_limit:10m;

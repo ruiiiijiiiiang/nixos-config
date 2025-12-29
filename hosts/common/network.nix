@@ -1,18 +1,17 @@
-{ lib, ... }:
+{ consts, lib, ... }:
+with consts;
 with lib;
 let
-  consts = import ../../lib/consts.nix;
   makeHostEntry =
     hostname: ip:
     let
-      hostSubdomainsSet = consts.subdomains.${hostname} or { };
+      hostSubdomainsSet = subdomains.${hostname} or { };
       hostSubdomainList = attrValues hostSubdomainsSet;
-      fqdns = map (sub: "${sub}.${consts.domains.home}") hostSubdomainList;
+      fqdns = map (sub: "${sub}.${domains.home}") hostSubdomainList;
       allNames = [ hostname ] ++ fqdns;
     in
     "${ip} ${lib.concatStringsSep " " allNames}";
 in
-with consts;
 {
   networking = {
     extraHosts = concatStringsSep "\n" (mapAttrsToList makeHostEntry addresses.home.hosts);

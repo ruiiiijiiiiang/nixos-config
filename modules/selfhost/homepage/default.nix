@@ -119,14 +119,14 @@ with consts;
                 "Calendar Parser" = {
                   icon = "p-cal";
                   href = "https://calendar-parse.ruiiiijiiiiang.deno.net";
-                  description = "Parse CSV calendar from Pam's boss";
+                  description = "Parse CSV Calendar from Pam's Boss";
                 };
               }
               {
                 "Blog" = {
                   icon = "booklogr";
                   href = "https://public.ruijiang.me/blog/0";
-                  description = "Rui's blog";
+                  description = "Rui's Blog";
                 };
               }
             ];
@@ -151,7 +151,21 @@ with consts;
                 "Beszel" = {
                   icon = "beszel";
                   href = "https://beszel.${domains.home}";
-                  description = "Server monitoring";
+                  description = "Server Monitoring";
+                };
+              }
+              {
+                "Prometheus" = {
+                  icon = "prometheus";
+                  href = "https://prometheus.${domains.home}";
+                  description = "Metrics Monitoring";
+                };
+              }
+              {
+                "Grafana" = {
+                  icon = "grafana";
+                  href = "https://grafana.${domains.home}";
+                  description = "Metrics Visualization";
                 };
               }
               {

@@ -76,7 +76,7 @@ with consts;
         environment = {
           INDEXER_URL = "https://${addresses.localhost}";
           WAZUH_API_URL = "https://${addresses.localhost}";
-          SERVER_HOST = "0.0.0.0";
+          SERVER_HOST = addresses.any;
         };
         environmentFiles = [ config.age.secrets.wazuh-env.path ];
         volumes = [

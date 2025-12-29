@@ -8,7 +8,9 @@ with lib;
 let
   consts = import ../../../lib/consts.nix;
   cfg = config.selfhost.nextcloud;
-  fqdn = "${consts.subdomains.${config.networking.hostName}.nextcloud}.${consts.domains.home}";
+  nextcloud-fqdn = "${
+    consts.subdomains.${config.networking.hostName}.nextcloud
+  }.${consts.domains.home}";
   office-fqdn = "${
     consts.subdomains.${config.networking.hostName}.onlyoffice
   }.${consts.domains.home}";
@@ -29,54 +31,35 @@ with consts;
     services = {
       nextcloud = {
         enable = true;
-        hostName = fqdn;
+        hostName = nextcloud-fqdn;
         https = true;
-
         config = {
           dbtype = "pgsql";
-          dbuser = "nextcloud";
-          dbhost = "/run/postgresql";
-          dbname = "nextcloud";
           adminpassFile = config.age.secrets.nextcloud-pass.path;
           adminuser = "admin";
         };
 
+        database.createLocally = true;
         configureRedis = true;
 
         maxUploadSize = "16G";
         phpOptions = {
           "opcache.interned_strings_buffer" = "16";
         };
+        phpExtraExtensions = all: [ all.apcu ];
 
         extraAppsEnable = true;
         extraApps = with config.services.nextcloud.package.packages.apps; {
           inherit onlyoffice;
           inherit notes;
+          inherit theming_customcss;
         };
         autoUpdateApps.enable = true;
         settings = {
           allow_local_remote_servers = true;
-          trusted_domains = [ fqdn ];
+          trusted_domains = [ nextcloud-fqdn ];
+          "memcache.local" = "\\OC\\Memcache\\APCu";
         };
-      };
-
-      postgresql = {
-        enable = true;
-        ensureDatabases = [ "nextcloud" ];
-        ensureUsers = [
-          {
-            name = "nextcloud";
-            ensureDBOwnership = true;
-          }
-        ];
-      };
-
-      redis.servers.nextcloud = {
-        enable = true;
-        port = 0;
-        unixSocket = "/run/redis-nextcloud/redis.sock";
-        user = "nextcloud";
-        group = "nextcloud";
       };
 
       onlyoffice = {
@@ -91,8 +74,8 @@ with consts;
       };
 
       nginx.virtualHosts = {
-        "${fqdn}" = {
-          useACMEHost = fqdn;
+        "${nextcloud-fqdn}" = {
+          useACMEHost = nextcloud-fqdn;
           forceSSL = true;
         };
 
@@ -103,9 +86,11 @@ with consts;
       };
     };
 
-    systemd.services.onlyoffice-docservice = {
-      after = [ "agenix.service" ];
-      wants = [ "agenix.service" ];
+    systemd.services = {
+      onlyoffice-docservice = {
+        after = [ "agenix.service" ];
+        wants = [ "agenix.service" ];
+      };
     };
   };
 }

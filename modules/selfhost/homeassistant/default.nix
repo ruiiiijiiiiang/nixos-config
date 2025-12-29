@@ -3,7 +3,7 @@ with lib;
 let
   consts = import ../../../lib/consts.nix;
   cfg = config.selfhost.homeassistant;
-  fqdn = "${consts.subdomains.${config.networking.hostName}.homeassistant}.${consts.domains.home}";
+  ha-fqdn = "${consts.subdomains.${config.networking.hostName}.homeassistant}.${consts.domains.home}";
   zwave-fqdn = "${consts.subdomains.${config.networking.hostName}.zwave}.${consts.domains.home}";
 in
 with consts;
@@ -39,8 +39,8 @@ with consts;
     ];
 
     services = {
-      nginx.virtualHosts."${fqdn}" = {
-        useACMEHost = fqdn;
+      nginx.virtualHosts."${ha-fqdn}" = {
+        useACMEHost = ha-fqdn;
         forceSSL = true;
         locations."/" = {
           proxyPass = "http://${addresses.localhost}:${toString ports.homeassistant}";

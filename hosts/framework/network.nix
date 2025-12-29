@@ -1,7 +1,11 @@
-{ config, lib, ... }:
+{
+  config,
+  consts,
+  lib,
+  ...
+}:
 with lib;
 let
-  consts = import ../../lib/consts.nix;
   keys = import ../../lib/keys.nix;
 in
 with consts;

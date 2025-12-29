@@ -26,6 +26,7 @@ with pkgs;
     dig
     mtr
     wget
+    rustscan
 
     # --- Disk & Filesystem Utilities ---
     tree
@@ -71,9 +72,8 @@ with pkgs;
     xplr
     gnupg
     gh
-    rustscan
+    doxx
     lazynmap.packages.${stdenv.system}.default
-    inputs.doxx.packages.${stdenv.system}.default
     agenix.packages.${stdenv.system}.default
     file_clipper.packages.${pkgs.stdenv.system}.default
 
@@ -187,6 +187,7 @@ with pkgs;
     # --- Nix-Specific Tools ---
     nix-search-cli
     nix-tree
+    inputs.colmena.packages.${stdenv.system}.colmena
   ];
 
   programs = {

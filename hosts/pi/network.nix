@@ -1,6 +1,4 @@
-let
-  consts = import ../../lib/consts.nix;
-in
+{ consts, ... }:
 with consts;
 {
   networking = {

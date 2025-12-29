@@ -18,6 +18,7 @@ with lib;
     ./nginx
     ./paperless
     ./portainer
+    ./prometheus
     ./syncthing
     ./vaultwarden
     ./wazuh
@@ -75,6 +76,14 @@ with lib;
     portainer = {
       enable = mkEnableOption "enable portainer for managing docker containers";
     };
+    prometheus = {
+      server.enable = mkEnableOption "enable prometheus server";
+      exporters = {
+        nginx.enable = mkEnableOption "enable nginx exporter";
+        node.enable = mkEnableOption "enable node exporter";
+        podman.enable = mkEnableOption "enable podman exporter";
+      };
+    };
     syncthing = {
       enable = mkEnableOption "enable and configure syncthing service";
       proxied = mkEnableOption "put syncthing behind a reverse proxy";
@@ -114,6 +123,8 @@ with lib;
           || cfg.nextcloud.enable
           || cfg.paperless.enable
           || cfg.portainer.enable
+          || cfg.prometheus.server.enable
+          || cfg.prometheus.exporters.nginx.enable
           || cfg.syncthing.proxied
           || cfg.vaultwarden.enable
           || cfg.wazuh.server.enable
