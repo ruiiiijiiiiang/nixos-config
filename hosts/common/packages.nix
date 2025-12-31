@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ inputs, pkgs, ... }:
 
 {
   nixpkgs.config.allowUnfree = true;
@@ -12,6 +12,7 @@
     lsof
     ripgrep
     fd
+    inputs.witr.packages.${stdenv.system}.default
   ];
 
   programs = {

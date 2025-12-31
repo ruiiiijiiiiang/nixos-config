@@ -4,7 +4,6 @@
   modulesPath,
   ...
 }:
-with lib;
 {
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
@@ -112,7 +111,7 @@ with lib;
   ];
 
   hardware = {
-    cpu.amd.updateMicrocode = mkDefault config.hardware.enableRedistributableFirmware;
+    cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
     bluetooth.enable = true;
   };
 

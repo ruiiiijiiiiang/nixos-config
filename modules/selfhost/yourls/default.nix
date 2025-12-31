@@ -1,11 +1,15 @@
 { config, lib, ... }:
-with lib;
 let
-  consts = import ../../../lib/consts.nix;
+  inherit (lib) mkIf;
+  inherit (import ../../../lib/consts.nix)
+    addresses
+    domains
+    subdomains
+    ports
+    ;
   cfg = config.selfhost.yourls;
-  fqdn = "${consts.subdomains.${config.networking.hostName}.yourls}.${consts.domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.yourls}.${domains.home}";
 in
-with consts;
 {
   config = mkIf cfg.enable {
     age.secrets = {

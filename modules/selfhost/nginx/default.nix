@@ -1,12 +1,21 @@
 { config, lib, ... }:
-with lib;
 let
+  inherit (lib)
+    mkIf
+    attrValues
+    optionalString
+    genAttrs
+    ;
+  inherit (import ../../../lib/consts.nix)
+    addresses
+    domains
+    subdomains
+    ports
+    ;
   cfg = config.selfhost.nginx;
-  consts = import ../../../lib/consts.nix;
-  subdomainSet = consts.subdomains.${config.networking.hostName} or null;
-  subdomains = if subdomainSet != null then attrValues subdomainSet else [ ];
+  subdomainSet = subdomains.${config.networking.hostName} or null;
+  subdomainList = if subdomainSet != null then attrValues subdomainSet else [ ];
 in
-with consts;
 {
   config = mkIf cfg.enable {
     age.secrets = {
@@ -27,10 +36,8 @@ with consts;
         recommendedOptimisation = true;
 
         appendHttpConfig = ''
-          proxy_set_header Host $host;
-          proxy_set_header X-Real-IP $remote_addr;
-          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-          proxy_set_header X-Forwarded-Proto $scheme;
+          allow ${addresses.localhost};
+          allow ${addresses.localhost-v6};
           allow ${addresses.home.network};
           allow ${addresses.vpn.network};
           deny all;
@@ -76,7 +83,7 @@ with consts;
     security.acme = {
       acceptTerms = true;
       defaults.email = "me@ruijiang.me";
-      certs = genAttrs (map (name: "${name}.${domains.home}") subdomains) (fqdn: {
+      certs = genAttrs (map (name: "${name}.${domains.home}") subdomainList) (fqdn: {
         domain = fqdn;
         dnsProvider = "cloudflare";
         dnsResolver = "1.1.1.1:53";
@@ -86,7 +93,7 @@ with consts;
       });
     };
 
-    systemd.services = genAttrs (map (name: "acme-${name}.${domains.home}") subdomains) (fqdn: {
+    systemd.services = genAttrs (map (name: "acme-${name}.${domains.home}") subdomainList) (fqdn: {
       environment = {
         LEGO_DISABLE_CNAME_SUPPORT = "true";
       };

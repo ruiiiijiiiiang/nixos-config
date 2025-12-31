@@ -31,6 +31,7 @@
     file_clipper.url = "github:ruiiiijiiiiang/file_clipper";
     lazynmap.url = "github:ruiiiijiiiiang/lazynmap";
     noxdir.url = "github:crumbyte/noxdir";
+    witr.url = "github:pranshuparmar/witr";
   };
 
   outputs =
@@ -47,7 +48,6 @@
       inherit (nixpkgs.lib) nixosSystem;
       inherit (home-manager.lib) homeManagerConfiguration;
     in
-    with consts;
     {
       nixosConfigurations = {
         framework = nixosSystem {
@@ -57,15 +57,6 @@
             inherit consts;
           };
           modules = [ ./hosts/framework ];
-        };
-
-        rui-nixos-vm = nixosSystem {
-          inherit system;
-          specialArgs = {
-            inherit inputs;
-            inherit consts;
-          };
-          modules = [ ./hosts/vm ];
         };
 
         pi = nixosSystem {
@@ -103,10 +94,19 @@
           };
           modules = [ ./hosts/vm-monitor ];
         };
+
+        vm-security = nixosSystem {
+          inherit system;
+          specialArgs = {
+            inherit inputs;
+            inherit consts;
+          };
+          modules = [ ./hosts/vm-security ];
+        };
       };
 
       colmenaHive = inputs.colmena.lib.makeHive self.outputs.colmena;
-      colmena = {
+      colmena = with consts; {
         meta = {
           nixpkgs = import nixpkgs {
             inherit system;
@@ -119,8 +119,7 @@
 
         framework = {
           deployment = {
-            targetHost = addresses.localhost;
-            # targetUser = "rui";
+            targetHost = null;
             allowLocalDeployment = true;
             tags = [
               "physical"
@@ -174,6 +173,17 @@
           };
           imports = [ ./hosts/vm-monitor ];
         };
+
+        # vm-security = {
+        #   deployment = {
+        #     targetHost = addresses.home.hosts.vm-security;
+        #     tags = [
+        #       "vm"
+        #       "gui"
+        #     ];
+        #   };
+        #   imports = [ ./hosts/vm-security ];
+        # };
       };
 
       devShells.${system} = {
@@ -190,10 +200,10 @@
           ];
         };
 
-        rui-vm = homeManagerConfiguration {
+        vm-security = homeManagerConfiguration {
           inherit pkgs;
           modules = [
-            ./homes/vm
+            ./homes/vm-security
           ];
         };
       };

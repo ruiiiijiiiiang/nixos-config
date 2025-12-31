@@ -1,7 +1,6 @@
 let
-  keys = import ../lib/keys.nix;
+  inherit (import ../lib/keys.nix) ssh;
 in
-with keys;
 {
   "cloudflare-token.age" = {
     publicKeys = ssh.pi ++ ssh.vm-network ++ ssh.vm-app ++ ssh.vm-monitor;
@@ -20,6 +19,10 @@ with keys;
     armor = true;
   };
   "nextcloud-pass.age" = {
+    publicKeys = ssh.vm-app;
+    armor = true;
+  };
+  "oauth2-env.age" = {
     publicKeys = ssh.vm-app;
     armor = true;
   };

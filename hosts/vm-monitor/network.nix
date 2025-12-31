@@ -1,5 +1,15 @@
+{ consts, lib, ... }:
+let
+  inherit (consts) addresses;
+  mkHostFqdns = import ../../lib/mkHostFqdns.nix { inherit lib; };
+  hostName = "vm-monitor";
+  fqdns = mkHostFqdns hostName;
+in
 {
   networking = {
-    hostName = "vm-monitor";
+    inherit hostName;
+    hosts = {
+      "${addresses.localhost}" = fqdns;
+    };
   };
 }

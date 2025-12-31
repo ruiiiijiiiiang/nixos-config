@@ -1,16 +1,21 @@
 { consts, lib, ... }:
-with consts;
-with lib;
 let
+  inherit (lib)
+    attrValues
+    concatStringsSep
+    mkDefault
+    mapAttrsToList
+    ;
+  inherit (consts) addresses domains subdomains;
   makeHostEntry =
-    hostname: ip:
+    hostName: ip:
     let
-      hostSubdomainsSet = subdomains.${hostname} or { };
+      hostSubdomainsSet = subdomains.${hostName} or { };
       hostSubdomainList = attrValues hostSubdomainsSet;
       fqdns = map (sub: "${sub}.${domains.home}") hostSubdomainList;
-      allNames = [ hostname ] ++ fqdns;
+      allNames = [ hostName ] ++ fqdns;
     in
-    "${ip} ${lib.concatStringsSep " " allNames}";
+    "${ip} ${concatStringsSep " " allNames}";
 in
 {
   networking = {

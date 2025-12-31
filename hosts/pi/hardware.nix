@@ -5,7 +5,6 @@
   modulesPath,
   ...
 }:
-with lib;
 {
   imports = [
     inputs.nixos-hardware.nixosModules.raspberry-pi-4
@@ -14,7 +13,7 @@ with lib;
   sdImage.compressImage = false;
 
   boot = {
-    supportedFilesystems = mkForce [
+    supportedFilesystems = lib.mkForce [
       "vfat"
       "ext4"
     ];

@@ -1,13 +1,16 @@
 { config, lib, ... }:
-with lib;
 let
-  consts = import ../../../lib/consts.nix;
+  inherit (import ../../../lib/consts.nix)
+    addresses
+    domains
+    subdomains
+    ports
+    ;
   cfg = config.selfhost.beszel.hub;
-  fqdn = "${consts.subdomains.${config.networking.hostName}.beszel}.${consts.domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.beszel}.${domains.home}";
 in
-with consts;
 {
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     services = {
       beszel.hub = {
         enable = true;

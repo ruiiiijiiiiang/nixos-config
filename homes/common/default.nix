@@ -4,6 +4,10 @@ let
   flakePath = "${homePath}/nixos-config";
 in
 {
+  imports = [
+    ./configs.nix
+  ];
+
   home = {
     inherit username;
     homeDirectory = homePath;

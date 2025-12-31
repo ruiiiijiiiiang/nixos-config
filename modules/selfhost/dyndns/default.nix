@@ -1,16 +1,10 @@
-{
-  config,
-  lib,
-  ...
-}:
-with lib;
+{ config, lib, ... }:
 let
-  consts = import ../../../lib/consts.nix;
+  inherit (import ../../../lib/consts.nix) domains;
   cfg = config.selfhost.dyndns;
 in
-with consts;
 {
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     age.secrets = {
       cloudflare-dns-token = {
         file = ../../../secrets/cloudflare-dns-token.age;

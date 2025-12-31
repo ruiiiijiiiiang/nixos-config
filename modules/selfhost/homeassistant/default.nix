@@ -1,19 +1,23 @@
 { config, lib, ... }:
-with lib;
 let
-  consts = import ../../../lib/consts.nix;
+  inherit (import ../../../lib/consts.nix)
+    timeZone
+    addresses
+    domains
+    subdomains
+    ports
+    ;
   cfg = config.selfhost.homeassistant;
-  ha-fqdn = "${consts.subdomains.${config.networking.hostName}.homeassistant}.${consts.domains.home}";
-  zwave-fqdn = "${consts.subdomains.${config.networking.hostName}.zwave}.${consts.domains.home}";
+  ha-fqdn = "${subdomains.${config.networking.hostName}.homeassistant}.${domains.home}";
+  zwave-fqdn = "${subdomains.${config.networking.hostName}.zwave}.${domains.home}";
 in
-with consts;
 {
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     virtualisation.oci-containers.containers = {
       homeassistant = {
         image = "ghcr.io/home-assistant/home-assistant:stable";
         ports = [
-          "${addresses.localhost}:${toString ports.homeassistant}:${toString ports.homeassistant}"
+          "${toString ports.homeassistant}:${toString ports.homeassistant}"
           "${addresses.localhost}:${toString ports.zwave}:${toString ports.zwave}"
         ];
         volumes = [ "/var/lib/home-assistant:/config" ];

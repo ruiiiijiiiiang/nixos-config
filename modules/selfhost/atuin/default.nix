@@ -1,11 +1,15 @@
 { config, lib, ... }:
-with lib;
 let
-  consts = import ../../../lib/consts.nix;
+  inherit (lib) mkIf;
+  inherit (import ../../../lib/consts.nix)
+    addresses
+    domains
+    subdomains
+    ports
+    ;
   cfg = config.selfhost.atuin;
-  fqdn = "${consts.subdomains.${config.networking.hostName}.atuin}.${consts.domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.atuin}.${domains.home}";
 in
-with consts;
 {
   config = mkIf cfg.enable {
     services = {

@@ -11,6 +11,7 @@
     nextcloud.enable = true;
     nginx.enable = true;
     paperless.enable = true;
+    pocketid.enable = true;
     portainer.enable = true;
     syncthing = {
       enable = true;

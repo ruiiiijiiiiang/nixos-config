@@ -1,11 +1,16 @@
 { config, lib, ... }:
-with lib;
 let
-  consts = import ../../../lib/consts.nix;
+  inherit (lib) mkIf;
+  inherit (import ../../../lib/consts.nix)
+    timeZone
+    addresses
+    domains
+    subdomains
+    ports
+    ;
   cfg = config.selfhost.paperless;
-  fqdn = "${consts.subdomains.${config.networking.hostName}.paperless}.${consts.domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.paperless}.${domains.home}";
 in
-with consts;
 {
   config = mkIf cfg.enable {
     age.secrets = {

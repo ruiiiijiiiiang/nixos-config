@@ -1,11 +1,15 @@
 { lib, config, ... }:
-with lib;
 let
+  inherit (lib) mkIf;
+  inherit (import ../../../lib/consts.nix)
+    addresses
+    domains
+    subdomains
+    ports
+    ;
   cfg = config.selfhost.immich;
-  consts = import ../../../lib/consts.nix;
-  fqdn = "${consts.subdomains.${config.networking.hostName}.immich}.${consts.domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.immich}.${domains.home}";
 in
-with consts;
 {
   config = mkIf cfg.enable {
     services = {

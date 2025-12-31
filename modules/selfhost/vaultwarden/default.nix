@@ -1,13 +1,16 @@
 { config, lib, ... }:
-with lib;
 let
+  inherit (import ../../../lib/consts.nix)
+    addresses
+    domains
+    subdomains
+    ports
+    ;
   cfg = config.selfhost.vaultwarden;
-  consts = import ../../../lib/consts.nix;
-  fqdn = "${consts.subdomains.${config.networking.hostName}.vaultwarden}.${consts.domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.vaultwarden}.${domains.home}";
 in
-with consts;
 {
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     age.secrets = {
       vaultwarden-env.file = ../../../secrets/vaultwarden-env.age;
     };

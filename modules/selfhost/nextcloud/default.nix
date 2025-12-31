@@ -4,18 +4,13 @@
   pkgs,
   ...
 }:
-with lib;
 let
-  consts = import ../../../lib/consts.nix;
+  inherit (lib) mkIf;
+  inherit (import ../../../lib/consts.nix) domains subdomains ports;
   cfg = config.selfhost.nextcloud;
-  nextcloud-fqdn = "${
-    consts.subdomains.${config.networking.hostName}.nextcloud
-  }.${consts.domains.home}";
-  office-fqdn = "${
-    consts.subdomains.${config.networking.hostName}.onlyoffice
-  }.${consts.domains.home}";
+  nextcloud-fqdn = "${subdomains.${config.networking.hostName}.nextcloud}.${domains.home}";
+  office-fqdn = "${subdomains.${config.networking.hostName}.onlyoffice}.${domains.home}";
 in
-with consts;
 {
   config = mkIf cfg.enable {
     age.secrets = {
@@ -53,6 +48,7 @@ with consts;
           inherit onlyoffice;
           inherit notes;
           inherit theming_customcss;
+          inherit sociallogin;
         };
         autoUpdateApps.enable = true;
         settings = {

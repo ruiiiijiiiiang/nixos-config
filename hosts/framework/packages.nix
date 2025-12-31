@@ -1,21 +1,18 @@
 { inputs, pkgs, ... }:
-with inputs;
-with pkgs;
+
 {
   imports = [
     inputs.dankMaterialShell.nixosModules.dank-material-shell
   ];
 
-  environment.systemPackages = [
+  environment.systemPackages = with pkgs; [
     # --- System Information & Diagnostics ---
     pciutils
     usbutils
     hwinfo
-    fastfetch
     kmon
 
     # --- System & Process Monitoring ---
-    btop
     bottom
     sysstat
     lazyjournal
@@ -34,15 +31,12 @@ with pkgs;
     rsync
     dust
     dysk
-    inputs.noxdir.packages.${pkgs.stdenv.system}.default
+    inputs.noxdir.packages.${stdenv.system}.default
 
     # --- Archiving & Compression ---
     unzip
     unrar
     ouch
-
-    # --- Terminal Emulators ---
-    wezterm
 
     # --- Desktop Environment: Niri ---
     networkmanagerapplet
@@ -56,13 +50,7 @@ with pkgs;
     catppuccin-kde
 
     # --- General TUI Tools ---
-    starship
     stow
-    tldr
-    atuin
-    onefetch
-    navi
-    carapace
     imagemagick
     smassh
     pastel
@@ -73,26 +61,18 @@ with pkgs;
     gnupg
     gh
     doxx
-    lazynmap.packages.${stdenv.system}.default
-    agenix.packages.${stdenv.system}.default
-    file_clipper.packages.${pkgs.stdenv.system}.default
+    inputs.lazynmap.packages.${stdenv.system}.default
+    inputs.agenix.packages.${stdenv.system}.default
 
     # --- File & Text Search/Manipulation CLI Tools ---
-    fzf
-    lsd
-    silver-searcher
     jq
     yq
     miller
-    delta
-    glow
     fx
-    helix
 
     # --- GUI Applications ---
-    zen-browser.packages.${stdenv.system}.default
+    inputs.zen-browser.packages.${stdenv.system}.default
     vivaldi
-    zed-editor
     libreoffice-qt
     mission-center
     kdePackages.kate
@@ -102,13 +82,11 @@ with pkgs;
     kdePackages.yakuake
     kdePackages.qtdeclarative
     ungoogled-chromium
-    wireshark
     telegram-desktop
     protonmail-bridge-gui
     obsidian
     neohtop
     vlc
-    mailspring
 
     # --- Audio & Multimedia ---
     easyeffects
@@ -192,19 +170,10 @@ with pkgs;
 
   programs = {
     dms-shell.enable = true;
-    firefox.enable = true;
     nix-index.enable = true;
     command-not-found.enable = false;
-    neovim.enable = true;
-    fish.enable = true;
     htop.enable = true;
-    pay-respects.enable = true;
-    yazi.enable = true;
     direnv.enable = true;
-    zoxide.enable = true;
-    git.enable = true;
-    bat.enable = true;
-    lazygit.enable = true;
     niri = {
       enable = true;
       useNautilus = false;
@@ -213,15 +182,11 @@ with pkgs;
     wireshark.enable = true;
     tcpdump.enable = true;
     obs-studio.enable = true;
-    kde-pim = {
-      enable = true;
-      kmail = true;
-    };
   };
 
   fonts = {
     enableGhostscriptFonts = true;
-    packages = [
+    packages = with pkgs; [
       fira
       noto-fonts
       noto-fonts-color-emoji

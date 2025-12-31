@@ -4,18 +4,21 @@
   pkgs,
   ...
 }:
-with lib;
 let
-  consts = import ../../../lib/consts.nix;
+  inherit (import ../../../lib/consts.nix)
+    addresses
+    domains
+    subdomains
+    ports
+    ;
   cfg = config.selfhost.wazuh.server;
-  fqdn = "${consts.subdomains.${config.networking.hostName}.wazuh}.${consts.domains.home}";
-  fileContent = import ./opensearch_dashboards.yml.nix;
-  initialFile = pkgs.writeText "opensearch_dashboards.yml" fileContent;
-  targetFile = "/var/wazuh/opensearch_dashboards.yml";
+  fqdn = "${subdomains.${config.networking.hostName}.wazuh}.${domains.home}";
+  dashboardsContent = import ./opensearch_dashboards.yml.nix;
+  initialFile = pkgs.writeText "opensearch_dashboards.yml" dashboardsContent;
+  dashboardsFile = "/var/wazuh/opensearch_dashboards.yml";
 in
-with consts;
 {
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     age.secrets = {
       wazuh-env.file = ../../../secrets/wazuh-env.age;
     };
@@ -102,6 +105,11 @@ with consts;
         locations."/" = {
           proxyPass = "http://${addresses.localhost}:${toString ports.wazuh.dashboard}";
           proxyWebsockets = true;
+          extraConfig = ''
+            auth_request_set $email  $upstream_http_x_email;
+            proxy_set_header X-Email $email;
+          '';
+
         };
       };
     };
@@ -112,14 +120,15 @@ with consts;
     ];
 
     system.activationScripts.wazuh-dashboard-init = ''
-      mkdir -p $(dirname ${targetFile})
-      if [ ! -f ${targetFile} ]; then
-        echo "Initializing ${targetFile} ..."
-        cat ${initialFile} > ${targetFile}
-        chmod 640 ${targetFile}
+      mkdir -p $(dirname ${dashboardsFile})
+      if [ ! -f ${dashboardsFile} ]; then
+        echo "Initializing ${dashboardsFile} ..."
+        cat ${initialFile} > ${dashboardsFile}
+        chmod 640 ${dashboardsFile}
       else
-        echo "${targetFile} already exists. Skipping initialization."
+        echo "${dashboardsFile} already exists. Skipping initialization."
       fi
     '';
+    # sudo podman exec -u 0 -it wazuh-indexer env JAVA_HOME=/usr/share/wazuh-indexer/jdk bash /usr/share/wazuh-indexer/plugins/opensearch-security/tools/securityadmin.sh   -cd /usr/share/wazuh-indexer/config/opensearch-security   -icl   -nhnv   -cacert /usr/share/wazuh-indexer/config/certs/root-ca.pem   -cert /usr/share/wazuh-indexer/config/certs/admin.pem   -key /usr/share/wazuh-indexer/config/certs/admin-key.pem
   };
 }

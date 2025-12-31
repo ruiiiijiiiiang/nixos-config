@@ -1,15 +1,8 @@
-{
-  config,
-  consts,
-  lib,
-  ...
-}:
-with lib;
+{ config, consts, ... }:
 let
-  keys = import ../../lib/keys.nix;
+  inherit (import ../../lib/keys.nix) wg;
+  inherit (consts) addresses domains ports;
 in
-with consts;
-with keys;
 {
   age.secrets = {
     wg-privatekey.file = ../../secrets/wg-privatekey.age;

@@ -1,14 +1,16 @@
 { config, lib, ... }:
-with lib;
 let
-  consts = import ../../../lib/consts.nix;
+  inherit (lib) mkIf;
+  inherit (import ../../../lib/consts.nix)
+    addresses
+    domains
+    subdomains
+    ports
+    ;
   cfg = config.selfhost.prometheus.server;
-  prometheus-fqdn = "${
-    consts.subdomains.${config.networking.hostName}.prometheus
-  }.${consts.domains.home}";
-  grafana-fqdn = "${consts.subdomains.${config.networking.hostName}.grafana}.${consts.domains.home}";
+  prometheus-fqdn = "${subdomains.${config.networking.hostName}.prometheus}.${domains.home}";
+  grafana-fqdn = "${subdomains.${config.networking.hostName}.grafana}.${domains.home}";
 in
-with consts;
 {
   config = mkIf cfg.enable {
     services = {
@@ -20,12 +22,28 @@ with consts;
             job_name = "node-exporter";
             static_configs = [
               {
-                targets = [
-                  "${addresses.localhost}:${toString ports.prometheus.exporters.node}"
-                  "${addresses.home.hosts.pi}:${toString ports.prometheus.exporters.node}"
-                  "${addresses.home.hosts.vm-network}:${toString ports.prometheus.exporters.node}"
-                  "${addresses.home.hosts.vm-app}:${toString ports.prometheus.exporters.node}"
-                ];
+                targets = [ "${addresses.localhost}:${toString ports.prometheus.exporters.node}" ];
+                labels = {
+                  instance = "vm-monitor";
+                };
+              }
+              {
+                targets = [ "${addresses.home.hosts.pi}:${toString ports.prometheus.exporters.node}" ];
+                labels = {
+                  instance = "pi";
+                };
+              }
+              {
+                targets = [ "${addresses.home.hosts.vm-network}:${toString ports.prometheus.exporters.node}" ];
+                labels = {
+                  instance = "vm-network";
+                };
+              }
+              {
+                targets = [ "${addresses.home.hosts.vm-app}:${toString ports.prometheus.exporters.node}" ];
+                labels = {
+                  instance = "vm-app";
+                };
               }
             ];
           }
@@ -33,12 +51,28 @@ with consts;
             job_name = "nginx-exporter";
             static_configs = [
               {
-                targets = [
-                  "${addresses.localhost}:${toString ports.prometheus.exporters.nginx}"
-                  "${addresses.home.hosts.pi}:${toString ports.prometheus.exporters.nginx}"
-                  "${addresses.home.hosts.vm-network}:${toString ports.prometheus.exporters.nginx}"
-                  "${addresses.home.hosts.vm-app}:${toString ports.prometheus.exporters.nginx}"
-                ];
+                targets = [ "${addresses.localhost}:${toString ports.prometheus.exporters.node}" ];
+                labels = {
+                  instance = "vm-monitor";
+                };
+              }
+              {
+                targets = [ "${addresses.home.hosts.pi}:${toString ports.prometheus.exporters.node}" ];
+                labels = {
+                  instance = "pi";
+                };
+              }
+              {
+                targets = [ "${addresses.home.hosts.vm-network}:${toString ports.prometheus.exporters.node}" ];
+                labels = {
+                  instance = "vm-network";
+                };
+              }
+              {
+                targets = [ "${addresses.home.hosts.vm-app}:${toString ports.prometheus.exporters.node}" ];
+                labels = {
+                  instance = "vm-app";
+                };
               }
             ];
           }
@@ -46,11 +80,22 @@ with consts;
             job_name = "podman-exporter";
             static_configs = [
               {
-                targets = [
-                  "${addresses.home.hosts.pi}:${toString ports.prometheus.exporters.podman}"
-                  "${addresses.home.hosts.vm-app}:${toString ports.prometheus.exporters.podman}"
-                  "${addresses.home.hosts.vm-monitor}:${toString ports.prometheus.exporters.podman}"
-                ];
+                targets = [ "${addresses.localhost}:${toString ports.prometheus.exporters.node}" ];
+                labels = {
+                  instance = "vm-monitor";
+                };
+              }
+              {
+                targets = [ "${addresses.home.hosts.pi}:${toString ports.prometheus.exporters.node}" ];
+                labels = {
+                  instance = "pi";
+                };
+              }
+              {
+                targets = [ "${addresses.home.hosts.vm-app}:${toString ports.prometheus.exporters.node}" ];
+                labels = {
+                  instance = "vm-app";
+                };
               }
             ];
           }

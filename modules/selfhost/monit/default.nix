@@ -1,11 +1,15 @@
 { config, lib, ... }:
-with lib;
 let
+  inherit (lib) mkIf optionalString;
+  inherit (import ../../../lib/consts.nix)
+    addresses
+    domains
+    subdomains
+    ports
+    ;
   cfg = config.selfhost.monit;
-  consts = import ../../../lib/consts.nix;
-  fqdn = "${consts.subdomains.${config.networking.hostName}.monit}.${consts.domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.monit}.${domains.home}";
 in
-with consts;
 {
   config = mkIf cfg.enable {
     services = {

@@ -1,5 +1,5 @@
 { inputs, pkgs, ... }:
-with inputs;
+
 {
   virtualisation = {
     oci-containers = {
@@ -21,8 +21,8 @@ with inputs;
     logrotate.enable = true;
   };
 
-  environment.systemPackages = with pkgs; [
-    agenix.packages.${stdenv.system}.default
+  environment.systemPackages = [
+    inputs.agenix.packages.${pkgs.stdenv.system}.default
   ];
 
   security.auditd.enable = true;

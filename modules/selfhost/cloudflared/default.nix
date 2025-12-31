@@ -1,10 +1,9 @@
 { lib, config, ... }:
-with lib;
 let
+  inherit (lib) mkIf;
+  inherit (import ../../../lib/consts.nix) addresses domains;
   cfg = config.selfhost.cloudflared;
-  consts = import ../../../lib/consts.nix;
 in
-with consts;
 {
   config = mkIf cfg.enable {
     age.secrets = {

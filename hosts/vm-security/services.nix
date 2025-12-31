@@ -1,7 +1,6 @@
 {
   custom = {
     catppuccin.enable = true;
-    devops.enable = true;
   };
 
   services = {
@@ -9,6 +8,7 @@
       enable = true;
       displayManager.lightdm.enable = true;
       desktopManager.lxqt.enable = true;
+      videoDrivers = [ "modesetting" ];
     };
 
     pipewire = {
@@ -18,7 +18,5 @@
       pulse.enable = true;
       jack.enable = true;
     };
-
-    openssh.enable = true;
   };
 }

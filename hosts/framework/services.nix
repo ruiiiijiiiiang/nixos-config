@@ -49,4 +49,6 @@
   };
 
   virtualisation.vmware.host.enable = true;
+
+  selfhost.wazuh.agent.enable = true;
 }

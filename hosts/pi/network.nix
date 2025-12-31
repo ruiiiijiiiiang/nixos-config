@@ -1,8 +1,16 @@
-{ consts, ... }:
-with consts;
+{ consts, lib, ... }:
+let
+  inherit (consts) addresses ports;
+  mkHostFqdns = import ../../lib/mkHostFqdns.nix { inherit lib; };
+  hostName = "pi";
+  fqdns = mkHostFqdns hostName;
+in
 {
   networking = {
-    hostName = "pi";
+    inherit hostName;
+    hosts = {
+      "${addresses.localhost}" = fqdns;
+    };
     firewall = {
       extraCommands = ''
         iptables -A nixos-fw -p tcp --source ${addresses.home.network} --dport ${toString ports.homeassistant} -j nixos-fw-accept

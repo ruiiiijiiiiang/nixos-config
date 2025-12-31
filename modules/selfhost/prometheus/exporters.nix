@@ -1,10 +1,9 @@
 { config, lib, ... }:
-with lib;
 let
-  consts = import ../../../lib/consts.nix;
+  inherit (lib) mkIf;
+  inherit (import ../../../lib/consts.nix) addresses ports;
   cfg = config.selfhost.prometheus.exporters;
 in
-with consts;
 {
   services.prometheus.exporters = {
     nginx = mkIf cfg.nginx.enable {

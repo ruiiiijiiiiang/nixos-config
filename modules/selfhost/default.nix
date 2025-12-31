@@ -1,5 +1,4 @@
 { lib, config, ... }:
-with lib;
 {
   imports = [
     ./atuin
@@ -17,6 +16,7 @@ with lib;
     ./nextcloud
     ./nginx
     ./paperless
+    ./pocketid
     ./portainer
     ./prometheus
     ./syncthing
@@ -26,7 +26,7 @@ with lib;
     ./yourls
   ];
 
-  options.selfhost = {
+  options.selfhost = with lib; {
     atuin = {
       enable = mkEnableOption "enable atuin server";
     };
@@ -72,6 +72,9 @@ with lib;
     };
     paperless = {
       enable = mkEnableOption "enable paperless document management";
+    };
+    pocketid = {
+      enable = mkEnableOption "enable pocketid authentication";
     };
     portainer = {
       enable = mkEnableOption "enable portainer for managing docker containers";
@@ -122,6 +125,7 @@ with lib;
           || cfg.monit.enable
           || cfg.nextcloud.enable
           || cfg.paperless.enable
+          || cfg.pocketid.enable
           || cfg.portainer.enable
           || cfg.prometheus.server.enable
           || cfg.prometheus.exporters.nginx.enable

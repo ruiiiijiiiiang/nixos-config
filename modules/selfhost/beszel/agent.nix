@@ -1,12 +1,10 @@
 { config, lib, ... }:
-with lib;
 let
-  consts = import ../../../lib/consts.nix;
-  keys = import ../../../lib/keys.nix;
+  inherit (lib) mkIf mkForce;
+  inherit (import ../../../lib/consts.nix) domains;
+  inherit (import ../../../lib/keys.nix) ssh;
   cfg = config.selfhost.beszel.agent;
 in
-with consts;
-with keys;
 {
   config = mkIf cfg.enable {
     services = {

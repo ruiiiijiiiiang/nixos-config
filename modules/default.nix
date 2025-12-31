@@ -1,5 +1,4 @@
 { lib, ... }:
-with lib;
 {
   imports = [
     ./selfhost
@@ -8,7 +7,7 @@ with lib;
     ./flatpak
   ];
 
-  options.custom = {
+  options.custom = with lib; {
     catppuccin = {
       enable = mkEnableOption "custom catppuccin theme setup";
     };

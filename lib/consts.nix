@@ -30,6 +30,7 @@
       nextcloud = "nextcloud";
       onlyoffice = "office";
       paperless = "paperless";
+      pocketid = "id";
       portainer = "portainer";
       public = "public";
       syncthing = "syncthing";
@@ -88,9 +89,11 @@
     nginx = {
       stub = 8082;
     };
+    oauth2 = 4180;
     onlyoffice = 8001;
     paperless = 28981;
     pihole = 8008;
+    pocketid = 1411;
     portainer = {
       server = 9000;
       edge = 8000;

@@ -1,8 +1,8 @@
 { inputs, ... }:
-with inputs;
+
 {
   imports = [
-    disko.nixosModules.disko
+    inputs.disko.nixosModules.disko
   ];
 
   boot = {
@@ -21,7 +21,7 @@ with inputs;
       "sr_mod"
     ];
     kernelModules = [ "kvm-amd" ];
-    kernelParams = [ "rootdelay=10" ];
+    kernelParams = [ "rootdelay=5" ];
   };
 
   disko.devices = {

@@ -1,11 +1,15 @@
 { config, lib, ... }:
-with lib;
 let
+  inherit (lib) mkIf;
+  inherit (import ../../../lib/consts.nix)
+    addresses
+    domains
+    subdomains
+    ports
+    ;
   cfg = config.selfhost.website;
-  consts = import ../../../lib/consts.nix;
-  fqdn = "${consts.subdomains.${config.networking.hostName}.public}.${consts.domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.public}.${domains.home}";
 in
-with consts;
 {
   config = mkIf cfg.enable {
     virtualisation.oci-containers.containers.website = {

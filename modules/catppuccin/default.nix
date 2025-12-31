@@ -4,7 +4,6 @@
   inputs,
   ...
 }:
-with lib;
 let
   cfg = config.custom.catppuccin;
 in
@@ -13,7 +12,7 @@ in
     inputs.catppuccin.nixosModules.catppuccin
   ];
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     catppuccin = {
       enable = true;
       flavor = "frappe";

@@ -1,5 +1,10 @@
+{ inputs, ... }:
+
 {
   nix = {
+    nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
+    registry.nixpkgs.flake = inputs.nixpkgs;
+
     settings = {
       experimental-features = [
         "nix-command"
@@ -13,7 +18,7 @@
       ];
 
       substituters = [
-        "https://cache.nixos.org/"
+        "https://cache.nixos.org"
         "https://nix-community.cachix.org"
         "https://colmena.cachix.org"
       ];

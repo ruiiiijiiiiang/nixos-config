@@ -1,10 +1,8 @@
-{ consts, lib, ... }:
-with lib;
+{ consts, ... }:
 let
-  keys = import ../../../lib/keys.nix;
+  inherit (consts) addresses;
+  inherit (import ../../../lib/keys.nix) ssh;
 in
-with consts;
-with keys;
 {
   networking = {
     networkmanager = {

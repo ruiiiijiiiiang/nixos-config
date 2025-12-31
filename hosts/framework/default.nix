@@ -2,6 +2,7 @@
   imports = [
     ../../modules
     ../common
+    ../common/gui
     ./hardware.nix
     ./nixos.nix
     ./network.nix

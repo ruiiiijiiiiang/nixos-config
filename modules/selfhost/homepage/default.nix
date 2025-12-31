@@ -1,11 +1,15 @@
 { config, lib, ... }:
-with lib;
 let
-  consts = import ../../../lib/consts.nix;
+  inherit (lib) mkIf;
+  inherit (import ../../../lib/consts.nix)
+    addresses
+    domains
+    subdomains
+    ports
+    ;
   cfg = config.selfhost.homepage;
-  fqdn = "${consts.subdomains.${config.networking.hostName}.homepage}.${consts.domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.homepage}.${domains.home}";
 in
-with consts;
 {
   config = mkIf cfg.enable {
     services = {
@@ -53,65 +57,72 @@ with consts;
           {
             "Apps" = [
               {
+                "Pocket ID" = {
+                  icon = "pocket-id";
+                  href = "https://${subdomains.vm-app.pocketid}.${domains.home}";
+                  description = "Identity Provider";
+                };
+              }
+              {
                 "Home Assistant" = {
                   icon = "home-assistant";
-                  href = "https://ha.${domains.home}";
+                  href = "https://${subdomains.pi.homeassistant}.${domains.home}";
                   description = "Home Automation System";
                 };
               }
               {
                 "Bentopdf" = {
                   icon = "bentopdf";
-                  href = "https://pdf.${domains.home}";
+                  href = "https://${subdomains.vm-app.bentopdf}.${domains.home}";
                   description = "PDF Tool";
                 };
               }
               {
                 "Dawarich" = {
                   icon = "dawarich";
-                  href = "https://gps.${domains.home}";
+                  href = "https://${subdomains.vm-app.dawarich}.${domains.home}";
                   description = "Location Tracking";
                 };
               }
               {
                 "Microbin" = {
                   icon = "microbin";
-                  href = "https://bin.${domains.home}";
+                  href = "https://${subdomains.vm-app.microbin}.${domains.home}";
                   description = "Pastebin";
                 };
               }
               {
                 "Nextcloud" = {
                   icon = "nextcloud";
-                  href = "https://nextcloud.${domains.home}";
+                  href = "https://${subdomains.vm-app.nextcloud}.${domains.home}";
                   description = "Cloud Storage";
                 };
               }
               {
                 "Immich" = {
                   icon = "immich";
-                  href = "https://immich.${domains.home}";
+                  href = "https://${subdomains.vm-app.immich}.${domains.home}";
                   description = "Photos & Video";
                 };
               }
               {
                 "Paperless" = {
                   icon = "paperless";
-                  href = "https://paperless.${domains.home}";
+                  href = "https://${subdomains.vm-app.paperless}.${domains.home}";
                   description = "Document Archive";
                 };
               }
               {
                 "Vaultwarden" = {
                   icon = "vaultwarden";
-                  href = "https://vault.${domains.home}";
+                  href = "https://${subdomains.vm-app.vaultwarden}.${domains.home}";
                   description = "Password Manager";
                 };
               }
               {
                 "Yourls" = {
                   icon = "yourls";
-                  href = "https://url.${domains.home}/admin";
+                  href = "https://${subdomains.vm-app.yourls}.${domains.home}/admin";
                   description = "URL Shortener";
                 };
               }
@@ -143,63 +154,63 @@ with consts;
               {
                 "Portainer" = {
                   icon = "portainer";
-                  href = "https://portainer.${domains.home}";
+                  href = "https://${subdomains.vm-app.portainer}.${domains.home}";
                   description = "Container Dashboard";
                 };
               }
               {
                 "Beszel" = {
                   icon = "beszel";
-                  href = "https://beszel.${domains.home}";
+                  href = "https://${subdomains.vm-monitor.beszel}.${domains.home}";
                   description = "Server Monitoring";
                 };
               }
               {
                 "Prometheus" = {
                   icon = "prometheus";
-                  href = "https://prometheus.${domains.home}";
+                  href = "https://${subdomains.vm-monitor.prometheus}.${domains.home}";
                   description = "Metrics Monitoring";
                 };
               }
               {
                 "Grafana" = {
                   icon = "grafana";
-                  href = "https://grafana.${domains.home}";
+                  href = "https://${subdomains.vm-monitor.grafana}.${domains.home}";
                   description = "Metrics Visualization";
                 };
               }
               {
                 "Wazuh" = {
                   icon = "wazuh";
-                  href = "https://wazuh.${domains.home}";
+                  href = "https://${subdomains.vm-monitor.wazuh}.${domains.home}";
                   description = "Security Monitoring";
                 };
               }
               {
                 "Syncthing" = {
                   icon = "syncthing";
-                  href = "https://syncthing.${domains.home}";
+                  href = "https://${subdomains.vm-app.syncthing}.${domains.home}";
                   description = "File Sync Tool";
                 };
               }
               {
                 "Zwave" = {
                   icon = "z-wave-js-ui";
-                  href = "https://zwave.${domains.home}";
+                  href = "https://${subdomains.pi.zwave}.${domains.home}";
                   description = "Zwave Device Manager";
                 };
               }
               {
                 "Pihole" = {
                   icon = "pi-hole";
-                  href = "https://pihole.${domains.home}";
+                  href = "https://${subdomains.vm-network.pihole}.${domains.home}";
                   description = "DNS Ad Blocker";
                 };
               }
               {
                 "Pihole Backup 1" = {
                   icon = "pi-hole";
-                  href = "https://pi-pihole.${domains.home}";
+                  href = "https://${subdomains.pi.pihole}.${domains.home}";
                   description = "DNS Ad Blocker";
                 };
               }

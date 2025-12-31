@@ -1,13 +1,16 @@
 { config, lib, ... }:
-with lib;
 let
-  consts = import ../../../lib/consts.nix;
+  inherit (import ../../../lib/consts.nix)
+    addresses
+    domains
+    subdomains
+    ports
+    ;
   cfg = config.selfhost.bentopdf;
-  fqdn = "${consts.subdomains.${config.networking.hostName}.bentopdf}.${consts.domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.bentopdf}.${domains.home}";
 in
-with consts;
 {
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     virtualisation.oci-containers.containers = {
       bentopdf = {
         image = "bentopdf/bentopdf:latest";

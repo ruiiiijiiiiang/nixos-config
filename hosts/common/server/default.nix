@@ -1,5 +1,7 @@
 { lib, ... }:
-with lib;
+let
+  inherit (lib) mkForce;
+in
 {
   imports = [
     ./network.nix

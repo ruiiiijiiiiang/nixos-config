@@ -4,8 +4,8 @@
   inputs,
   ...
 }:
-with lib;
 let
+  inherit (lib) mkIf;
   cfg = config.custom.flatpak;
 in
 {

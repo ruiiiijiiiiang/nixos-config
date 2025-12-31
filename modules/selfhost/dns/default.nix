@@ -1,13 +1,16 @@
 { lib, config, ... }:
-with lib;
 let
+  inherit (import ../../../lib/consts.nix)
+    addresses
+    domains
+    subdomains
+    ports
+    ;
   cfg = config.selfhost.dns;
-  consts = import ../../../lib/consts.nix;
-  fqdn = "${consts.subdomains.${config.networking.hostName}.pihole}.${consts.domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.pihole}.${domains.home}";
 in
-with consts;
 {
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     networking = {
       nameservers = [ addresses.localhost ];
     };
@@ -62,6 +65,32 @@ with consts;
             interval = 0;
           };
         };
+        lists = [
+          {
+            url = "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/multi.txt";
+            description = "HaGeZi normal";
+          }
+          {
+            url = "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts";
+            description = "Steven Black";
+          }
+          {
+            url = "https://v.firebog.net/hosts/AdguardDNS.txt";
+            description = "AdguardDNS";
+          }
+          {
+            url = "https://v.firebog.net/hosts/Easyprivacy.txt";
+            description = "Easyprivacy";
+          }
+          {
+            url = "https://v.firebog.net/hosts/Admiral.txt";
+            description = "Admiral";
+          }
+          {
+            url = "https://adaway.org/hosts.txt";
+            description = "adaway";
+          }
+        ];
       };
 
       pihole-web = {

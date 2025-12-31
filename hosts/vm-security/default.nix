@@ -2,11 +2,12 @@
   imports = [
     ../../modules
     ../common
-    ./hardware.nix
+    ../common/vm
+    ../common/gui
     ./network.nix
     ./packages.nix
     ./services.nix
   ];
 
-  system.stateVersion = "25.05";
+  system.stateVersion = "25.11";
 }
