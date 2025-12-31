@@ -32,10 +32,13 @@ in
       enable = true;
       maxretry = 5;
       bantime = "24h";
-      ignoreIP = [ addresses.home.network ];
+      ignoreIP = [
+        addresses.home.network
+        addresses.vpn.network
+      ];
     };
   };
 
   users.users.rui.openssh.authorizedKeys.keys = ssh.rui-arch ++ ssh.framework;
-  users.users.root.openssh.authorizedKeys.keys = [ ssh.github-action ] ++ ssh.framework;
+  users.users.root.openssh.authorizedKeys.keys = ssh.github-action ++ ssh.framework;
 }

@@ -174,16 +174,16 @@
           imports = [ ./hosts/vm-monitor ];
         };
 
-        # vm-security = {
-        #   deployment = {
-        #     targetHost = addresses.home.hosts.vm-security;
-        #     tags = [
-        #       "vm"
-        #       "gui"
-        #     ];
-        #   };
-        #   imports = [ ./hosts/vm-security ];
-        # };
+        vm-security = {
+          deployment = {
+            targetHost = addresses.home.hosts.vm-security;
+            tags = [
+              "vm"
+              "gui"
+            ];
+          };
+          imports = [ ./hosts/vm-security ];
+        };
       };
 
       devShells.${system} = {

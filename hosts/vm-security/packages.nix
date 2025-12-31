@@ -38,6 +38,7 @@
     binsider
     zsteg
 
+    gh
     unzip
     unrar
     ouch

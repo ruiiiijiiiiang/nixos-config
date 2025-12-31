@@ -22,28 +22,12 @@ in
             job_name = "node-exporter";
             static_configs = [
               {
-                targets = [ "${addresses.localhost}:${toString ports.prometheus.exporters.node}" ];
-                labels = {
-                  instance = "vm-monitor";
-                };
-              }
-              {
-                targets = [ "${addresses.home.hosts.pi}:${toString ports.prometheus.exporters.node}" ];
-                labels = {
-                  instance = "pi";
-                };
-              }
-              {
-                targets = [ "${addresses.home.hosts.vm-network}:${toString ports.prometheus.exporters.node}" ];
-                labels = {
-                  instance = "vm-network";
-                };
-              }
-              {
-                targets = [ "${addresses.home.hosts.vm-app}:${toString ports.prometheus.exporters.node}" ];
-                labels = {
-                  instance = "vm-app";
-                };
+                targets = [
+                  "${addresses.localhost}:${toString ports.prometheus.exporters.node}"
+                  "${addresses.home.hosts.pi}:${toString ports.prometheus.exporters.node}"
+                  "${addresses.home.hosts.vm-network}:${toString ports.prometheus.exporters.node}"
+                  "${addresses.home.hosts.vm-app}:${toString ports.prometheus.exporters.node}"
+                ];
               }
             ];
           }
@@ -51,28 +35,12 @@ in
             job_name = "nginx-exporter";
             static_configs = [
               {
-                targets = [ "${addresses.localhost}:${toString ports.prometheus.exporters.node}" ];
-                labels = {
-                  instance = "vm-monitor";
-                };
-              }
-              {
-                targets = [ "${addresses.home.hosts.pi}:${toString ports.prometheus.exporters.node}" ];
-                labels = {
-                  instance = "pi";
-                };
-              }
-              {
-                targets = [ "${addresses.home.hosts.vm-network}:${toString ports.prometheus.exporters.node}" ];
-                labels = {
-                  instance = "vm-network";
-                };
-              }
-              {
-                targets = [ "${addresses.home.hosts.vm-app}:${toString ports.prometheus.exporters.node}" ];
-                labels = {
-                  instance = "vm-app";
-                };
+                targets = [
+                  "${addresses.localhost}:${toString ports.prometheus.exporters.nginx}"
+                  "${addresses.home.hosts.pi}:${toString ports.prometheus.exporters.nginx}"
+                  "${addresses.home.hosts.vm-network}:${toString ports.prometheus.exporters.nginx}"
+                  "${addresses.home.hosts.vm-app}:${toString ports.prometheus.exporters.nginx}"
+                ];
               }
             ];
           }
@@ -80,22 +48,11 @@ in
             job_name = "podman-exporter";
             static_configs = [
               {
-                targets = [ "${addresses.localhost}:${toString ports.prometheus.exporters.node}" ];
-                labels = {
-                  instance = "vm-monitor";
-                };
-              }
-              {
-                targets = [ "${addresses.home.hosts.pi}:${toString ports.prometheus.exporters.node}" ];
-                labels = {
-                  instance = "pi";
-                };
-              }
-              {
-                targets = [ "${addresses.home.hosts.vm-app}:${toString ports.prometheus.exporters.node}" ];
-                labels = {
-                  instance = "vm-app";
-                };
+                targets = [
+                  "${addresses.home.hosts.pi}:${toString ports.prometheus.exporters.podman}"
+                  "${addresses.home.hosts.vm-app}:${toString ports.prometheus.exporters.podman}"
+                  "${addresses.home.hosts.vm-monitor}:${toString ports.prometheus.exporters.podman}"
+                ];
               }
             ];
           }

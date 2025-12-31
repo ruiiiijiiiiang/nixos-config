@@ -1,4 +1,4 @@
-{
+{ homeConfigurations, ... }: {
   imports = [
     ../../modules
     ../common
@@ -8,6 +8,8 @@
     ./packages.nix
     ./services.nix
   ];
+
+  home-manager.users.rui = homeConfigurations.vm-security;
 
   system.stateVersion = "25.11";
 }
