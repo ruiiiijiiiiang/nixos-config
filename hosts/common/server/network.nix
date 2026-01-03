@@ -1,6 +1,4 @@
-{ consts, ... }:
 let
-  inherit (consts) addresses;
   inherit (import ../../../lib/keys.nix) ssh;
 in
 {
@@ -15,6 +13,7 @@ in
         80
         443
       ];
+      allowedUDPPorts = [ ];
       checkReversePath = "loose";
     };
   };
@@ -23,22 +22,15 @@ in
     openssh = {
       enable = true;
       settings = {
-        PermitRootLogin = "prohibit-password";
         PasswordAuthentication = false;
+        PermitRootLogin = "prohibit-password";
+        KbdInteractiveAuthentication = false;
+        AllowTcpForwarding = "no";
+        X11Forwarding = false;
       };
-    };
-
-    fail2ban = {
-      enable = true;
-      maxretry = 5;
-      bantime = "24h";
-      ignoreIP = [
-        addresses.home.network
-        addresses.vpn.network
-      ];
     };
   };
 
   users.users.rui.openssh.authorizedKeys.keys = ssh.rui-arch ++ ssh.framework;
-  users.users.root.openssh.authorizedKeys.keys = ssh.github-action ++ ssh.framework;
+  users.users.root.openssh.authorizedKeys.keys = [ ssh.github-action ] ++ ssh.framework;
 }

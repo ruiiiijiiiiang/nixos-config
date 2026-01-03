@@ -2,15 +2,18 @@
   config,
   lib,
   pkgs,
+  consts,
+  utilFns,
   ...
 }:
 let
-  inherit (import ../../../lib/consts.nix)
+  inherit (consts)
     addresses
     domains
     subdomains
     ports
     ;
+  inherit (utilFns) mkVirtualHost;
   cfg = config.selfhost.wazuh.server;
   fqdn = "${subdomains.${config.networking.hostName}.wazuh}.${domains.home}";
   dashboardsContent = import ./opensearch_dashboards.yml.nix;
@@ -98,20 +101,14 @@ in
       };
     };
 
-    services = {
-      nginx.virtualHosts."${fqdn}" = {
-        useACMEHost = fqdn;
-        forceSSL = true;
-        locations."/" = {
-          proxyPass = "http://${addresses.localhost}:${toString ports.wazuh.dashboard}";
-          proxyWebsockets = true;
-          extraConfig = ''
-            auth_request_set $email  $upstream_http_x_email;
-            proxy_set_header X-Email $email;
-          '';
-
-        };
-      };
+    services.nginx.virtualHosts."${fqdn}" = mkVirtualHost {
+      inherit fqdn;
+      port = ports.wazuh.dashboard;
+      proxyWebsockets = true;
+      extraConfig = ''
+        auth_request_set $email  $upstream_http_x_email;
+        proxy_set_header X-Email $email;
+      '';
     };
 
     networking.firewall.allowedTCPPorts = [

@@ -19,11 +19,17 @@
 
   services = {
     logrotate.enable = true;
+    journald.extraConfig = ''
+      SystemMaxUse=1G
+      Storage=persistent
+    '';
+
+    xserver.enable = false;
+    avahi.enable = false;
+    printing.enable = false;
   };
 
   environment.systemPackages = [
     inputs.agenix.packages.${pkgs.stdenv.system}.default
   ];
-
-  security.auditd.enable = true;
 }

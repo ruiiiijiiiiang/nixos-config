@@ -45,6 +45,10 @@
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; };
       consts = import ./lib/consts.nix;
+      utilFns = import ./lib/utilFns.nix {
+        inherit (nixpkgs) lib;
+        inherit consts;
+      };
       inherit (nixpkgs.lib) nixosSystem;
       inherit (home-manager.lib) homeManagerConfiguration;
     in
@@ -64,6 +68,7 @@
           specialArgs = {
             inherit inputs;
             inherit consts;
+            inherit utilFns;
           };
           modules = [ ./hosts/pi ];
         };
@@ -73,6 +78,7 @@
           specialArgs = {
             inherit inputs;
             inherit consts;
+            inherit utilFns;
           };
           modules = [ ./hosts/vm-network ];
         };
@@ -82,6 +88,7 @@
           specialArgs = {
             inherit inputs;
             inherit consts;
+            inherit utilFns;
           };
           modules = [ ./hosts/vm-app ];
         };
@@ -91,6 +98,7 @@
           specialArgs = {
             inherit inputs;
             inherit consts;
+            inherit utilFns;
           };
           modules = [ ./hosts/vm-monitor ];
         };

@@ -1,11 +1,18 @@
-{ lib, config, ... }:
+{
+  lib,
+  config,
+  consts,
+  utilFns,
+  ...
+}:
 let
-  inherit (import ../../../lib/consts.nix)
+  inherit (consts)
     addresses
     domains
     subdomains
     ports
     ;
+  inherit (utilFns) mkVirtualHost;
   cfg = config.selfhost.dns;
   fqdn = "${subdomains.${config.networking.hostName}.pihole}.${domains.home}";
 in
@@ -99,13 +106,10 @@ in
         ports = [ "${addresses.localhost}:${toString ports.pihole}o" ];
       };
 
-      nginx.virtualHosts."${fqdn}" = {
-        useACMEHost = fqdn;
-        forceSSL = true;
-        locations."/" = {
-          proxyPass = "http://${addresses.localhost}:${toString ports.pihole}";
-          proxyWebsockets = true;
-        };
+      nginx.virtualHosts."${fqdn}" = mkVirtualHost {
+        inherit fqdn;
+        port = ports.pihole;
+        proxyWebsockets = true;
       };
     };
   };

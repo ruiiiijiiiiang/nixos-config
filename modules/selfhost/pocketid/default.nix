@@ -1,11 +1,13 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  consts,
+  utilFns,
+  ...
+}:
 let
-  inherit (import ../../../lib/consts.nix)
-    addresses
-    domains
-    subdomains
-    ports
-    ;
+  inherit (consts) domains subdomains ports;
+  inherit (utilFns) mkVirtualHost;
   cfg = config.selfhost.pocketid;
   fqdn = "${subdomains.${config.networking.hostName}.pocketid}.${domains.home}";
 in
@@ -25,17 +27,14 @@ in
         };
       };
 
-      nginx.virtualHosts."${fqdn}" = {
-        useACMEHost = fqdn;
-        forceSSL = true;
-        locations."/" = {
-          proxyPass = "http://${addresses.localhost}:${toString ports.pocketid}";
-          proxyWebsockets = true;
-        };
+      nginx.virtualHosts."${fqdn}" = mkVirtualHost {
+        inherit fqdn;
+        port = ports.pocketid;
+        proxyWebsockets = true;
       };
 
       oauth2-proxy = {
-        enable = true;
+        enable = false;
         keyFile = config.age.secrets.oauth2-env.path;
         httpAddress = "0.0.0.0:${toString ports.oauth2}";
         upstream = [ "static://202" ];

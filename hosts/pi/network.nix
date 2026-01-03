@@ -1,7 +1,7 @@
-{ consts, lib, ... }:
+{ consts, utilFns, ... }:
 let
   inherit (consts) addresses ports;
-  mkHostFqdns = import ../../lib/mkHostFqdns.nix { inherit lib; };
+  inherit (utilFns) mkHostFqdns;
   hostName = "pi";
   fqdns = mkHostFqdns hostName;
 in

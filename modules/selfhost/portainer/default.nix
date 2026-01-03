@@ -1,12 +1,19 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  consts,
+  utilFns,
+  ...
+}:
 let
   inherit (lib) mkIf;
-  inherit (import ../../../lib/consts.nix)
+  inherit (consts)
     addresses
     domains
     subdomains
     ports
     ;
+  inherit (utilFns) mkVirtualHost;
   cfg = config.selfhost.portainer;
   fqdn = "${subdomains.${config.networking.hostName}.portainer}.${domains.home}";
 in
@@ -30,15 +37,10 @@ in
       "L+ /var/run/docker.sock - - - - /run/podman/podman.sock"
     ];
 
-    services = {
-      nginx.virtualHosts."${fqdn}" = {
-        useACMEHost = fqdn;
-        forceSSL = true;
-        locations."/" = {
-          proxyPass = "http://${addresses.localhost}:${toString ports.portainer.server}";
-          proxyWebsockets = true;
-        };
-      };
+    services.nginx.virtualHosts."${fqdn}" = mkVirtualHost {
+      inherit fqdn;
+      port = ports.portainer.server;
+      proxyWebsockets = true;
     };
   };
 }

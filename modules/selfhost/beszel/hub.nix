@@ -1,11 +1,13 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  consts,
+  utilFns,
+  ...
+}:
 let
-  inherit (import ../../../lib/consts.nix)
-    addresses
-    domains
-    subdomains
-    ports
-    ;
+  inherit (consts) domains subdomains ports;
+  inherit (utilFns) mkVirtualHost;
   cfg = config.selfhost.beszel.hub;
   fqdn = "${subdomains.${config.networking.hostName}.beszel}.${domains.home}";
 in
@@ -17,13 +19,10 @@ in
         port = ports.beszel.hub;
       };
 
-      nginx.virtualHosts."${fqdn}" = {
-        useACMEHost = fqdn;
-        forceSSL = true;
-        locations."/" = {
-          proxyPass = "http://${addresses.localhost}:${toString ports.beszel.hub}";
-          proxyWebsockets = true;
-        };
+      nginx.virtualHosts."${fqdn}" = mkVirtualHost {
+        inherit fqdn;
+        port = ports.beszel.hub;
+        websocket = true;
       };
     };
   };

@@ -19,6 +19,7 @@
     ./pocketid
     ./portainer
     ./prometheus
+    ./stirlingpdf
     ./syncthing
     ./vaultwarden
     ./wazuh
@@ -87,6 +88,9 @@
         podman.enable = mkEnableOption "enable podman exporter";
       };
     };
+    stirlingpdf = {
+      enable = mkEnableOption "enable stirling pdf service";
+    };
     syncthing = {
       enable = mkEnableOption "enable and configure syncthing service";
       proxied = mkEnableOption "put syncthing behind a reverse proxy";
@@ -129,6 +133,7 @@
           || cfg.portainer.enable
           || cfg.prometheus.server.enable
           || cfg.prometheus.exporters.nginx.enable
+          || cfg.stirlingpdf.enable
           || cfg.syncthing.proxied
           || cfg.vaultwarden.enable
           || cfg.wazuh.server.enable

@@ -1,12 +1,19 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  consts,
+  utilFns,
+  ...
+}:
 let
   inherit (lib) mkIf;
-  inherit (import ../../../lib/consts.nix)
+  inherit (consts)
     addresses
     domains
     subdomains
     ports
     ;
+  inherit (utilFns) mkVirtualHost;
   cfg = config.selfhost.microbin;
   fqdn = "${subdomains.${config.networking.hostName}.microbin}.${domains.home}";
 in
@@ -21,12 +28,9 @@ in
         };
       };
 
-      nginx.virtualHosts."${fqdn}" = {
-        useACMEHost = fqdn;
-        forceSSL = true;
-        locations."/" = {
-          proxyPass = "http://${addresses.localhost}:${toString ports.microbin}";
-        };
+      nginx.virtualHosts."${fqdn}" = mkVirtualHost {
+        inherit fqdn;
+        port = ports.microbin;
         extraConfig = ''
           allow all;
           limit_req zone=microbin_req_limit burst=10 nodelay;

@@ -1,12 +1,19 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  consts,
+  utilFns,
+  ...
+}:
 let
-  inherit (import ../../../lib/consts.nix)
+  inherit (consts)
     timeZone
     addresses
     domains
     subdomains
     ports
     ;
+  inherit (utilFns) mkVirtualHost;
   cfg = config.selfhost.homeassistant;
   ha-fqdn = "${subdomains.${config.networking.hostName}.homeassistant}.${domains.home}";
   zwave-fqdn = "${subdomains.${config.networking.hostName}.zwave}.${domains.home}";
@@ -22,7 +29,10 @@ in
         ];
         volumes = [ "/var/lib/home-assistant:/config" ];
         environment.TZ = timeZone;
-        extraOptions = [ "--pull=always" ];
+        extraOptions = [
+          "--pull=always"
+          "--device=/dev/serial/by-id/usb-1a86_USB_Serial-if00-port0"
+        ];
       };
 
       zwave-js-ui = {
@@ -31,8 +41,8 @@ in
         volumes = [ "/var/lib/zwave-js-ui:/usr/src/app/store" ];
         extraOptions = [
           "--network=container:homeassistant"
-          "--device=/dev/serial/by-id/usb-Silicon_Labs_CP2102N_USB_to_UART_Bridge_Controller_80edec297b57ed1193f12ef21c62bc44-if00-port0:/dev/zwave"
           "--pull=always"
+          "--device=/dev/serial/by-id/usb-Silicon_Labs_CP2102N_USB_to_UART_Bridge_Controller_80edec297b57ed1193f12ef21c62bc44-if00-port0:/dev/zwave"
         ];
       };
     };
@@ -43,22 +53,16 @@ in
     ];
 
     services = {
-      nginx.virtualHosts."${ha-fqdn}" = {
-        useACMEHost = ha-fqdn;
-        forceSSL = true;
-        locations."/" = {
-          proxyPass = "http://${addresses.localhost}:${toString ports.homeassistant}";
-          proxyWebsockets = true;
-        };
+      nginx.virtualHosts."${ha-fqdn}" = mkVirtualHost {
+        fqdn = ha-fqdn;
+        port = ports.homeassistant;
+        proxyWebsockets = true;
       };
 
-      nginx.virtualHosts."${zwave-fqdn}" = {
-        useACMEHost = zwave-fqdn;
-        forceSSL = true;
-        locations."/" = {
-          proxyPass = "http://${addresses.localhost}:${toString ports.zwave}";
-          proxyWebsockets = true;
-        };
+      nginx.virtualHosts."${zwave-fqdn}" = mkVirtualHost {
+        fqdn = zwave-fqdn;
+        port = ports.zwave;
+        proxyWebsockets = true;
       };
     };
   };

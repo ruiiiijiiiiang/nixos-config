@@ -1,12 +1,19 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  consts,
+  utilFns,
+  ...
+}:
 let
   inherit (lib) mkIf;
-  inherit (import ../../../lib/consts.nix)
+  inherit (consts)
     addresses
     domains
     subdomains
     ports
     ;
+  inherit (utilFns) mkVirtualHost;
   cfg = config.selfhost.website;
   fqdn = "${subdomains.${config.networking.hostName}.public}.${domains.home}";
 in
@@ -26,12 +33,9 @@ in
       "d /var/lib/blog 0775 root wheel -"
     ];
 
-    services.nginx.virtualHosts."${fqdn}" = {
-      useACMEHost = fqdn;
-      forceSSL = true;
-      locations."/" = {
-        proxyPass = "http://${addresses.localhost}:${toString ports.website}";
-      };
+    services.nginx.virtualHosts."${fqdn}" = mkVirtualHost {
+      inherit fqdn;
+      port = ports.website;
       extraConfig = ''
         allow all;
         limit_req zone=website_req_limit burst=10 nodelay;

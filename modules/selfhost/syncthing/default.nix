@@ -1,12 +1,14 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  consts,
+  utilFns,
+  ...
+}:
 let
   inherit (lib) mkIf;
-  inherit (import ../../../lib/consts.nix)
-    addresses
-    domains
-    subdomains
-    ports
-    ;
+  inherit (consts) domains subdomains ports;
+  inherit (utilFns) mkVirtualHost;
   cfg = config.selfhost.syncthing;
   fqdn = "${subdomains.${config.networking.hostName}.syncthing}.${domains.home}";
 in
@@ -72,13 +74,10 @@ in
         };
       };
 
-      nginx.virtualHosts."${fqdn}" = mkIf cfg.proxied {
-        useACMEHost = fqdn;
-        forceSSL = true;
-        locations."/" = {
-          proxyPass = "http://${addresses.localhost}:${toString ports.syncthing}";
-        };
-      };
+      nginx.virtualHosts."${fqdn}" = mkIf cfg.proxied (mkVirtualHost {
+        inherit fqdn;
+        port = ports.syncthing;
+      });
     };
   };
 }

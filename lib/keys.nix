@@ -1,10 +1,11 @@
 {
   ssh = {
     rui-arch = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMsyTs7DiG/Emm8B/fPqDh5LIEc+1V7DkF/ICIxPy68O me@ruijiang.me"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMsyTs7DiG/Emm8B/fPqDh5LIEc+1V7DkF/ICIxPy68O rui@rui-arch"
     ];
     framework = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIM9m3eaPWXrwynrF4hS5Llwfxm/FpNMjgoz41WnNfCUg me@ruijiang.me"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIM9m3eaPWXrwynrF4hS5Llwfxm/FpNMjgoz41WnNfCUg rui@framework"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMmlTX40GMTcBjzv1dkUCXJvXovAYkuhRm0993iZ8ffW root@framework"
     ];
     pi = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMIJNc2DNOvGnp388Mr2WNYa4/pUq/kbyrpTJkc5Q8Oe rui@pi"

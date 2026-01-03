@@ -1,12 +1,19 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  consts,
+  utilFns,
+  ...
+}:
 let
   inherit (lib) mkIf;
-  inherit (import ../../../lib/consts.nix)
+  inherit (consts)
     addresses
     domains
     subdomains
     ports
     ;
+  inherit (utilFns) mkVirtualHost;
   cfg = config.selfhost.prometheus.server;
   prometheus-fqdn = "${subdomains.${config.networking.hostName}.prometheus}.${domains.home}";
   grafana-fqdn = "${subdomains.${config.networking.hostName}.grafana}.${domains.home}";
@@ -83,21 +90,15 @@ in
       };
 
       nginx.virtualHosts = {
-        "${prometheus-fqdn}" = {
-          useACMEHost = prometheus-fqdn;
-          forceSSL = true;
-          locations."/" = {
-            proxyPass = "http://${addresses.localhost}:${toString ports.prometheus.server}";
-          };
+        "${prometheus-fqdn}" = mkVirtualHost {
+          fqdn = prometheus-fqdn;
+          port = ports.prometheus.server;
         };
 
-        "${grafana-fqdn}" = {
-          useACMEHost = grafana-fqdn;
-          forceSSL = true;
-          locations."/" = {
-            proxyPass = "http://${addresses.localhost}:${toString ports.grafana}";
-            proxyWebsockets = true;
-          };
+        "${grafana-fqdn}" = mkVirtualHost {
+          fqdn = grafana-fqdn;
+          port = ports.grafana;
+          proxyWebsockets = true;
         };
       };
     };

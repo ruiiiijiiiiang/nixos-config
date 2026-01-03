@@ -6,6 +6,7 @@ in
   boot = {
     initrd.allowMissingModules = true;
     kernelPackages = mkDefault pkgs.linuxPackages_latest;
+    tmp.cleanOnBoot = true;
   };
 
   zramSwap.enable = true;

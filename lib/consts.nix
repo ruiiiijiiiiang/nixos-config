@@ -11,13 +11,11 @@
   subdomains = {
     pi = {
       homeassistant = "ha";
-      monit = "pi-monit";
       pihole = "pi-pihole";
       zwave = "zwave";
     };
     vm-network = {
       pihole = "pihole";
-      monit = "vm-network-monit";
     };
     vm-app = {
       atuin = "atuin";
@@ -26,13 +24,13 @@
       immich = "immich";
       homepage = "home";
       microbin = "bin";
-      monit = "vm-app-monit";
       nextcloud = "nextcloud";
       onlyoffice = "office";
       paperless = "paperless";
       pocketid = "id";
       portainer = "portainer";
       public = "public";
+      stirlingpdf = "pdf";
       syncthing = "syncthing";
       vaultwarden = "vault";
       yourls = "url";
@@ -40,7 +38,6 @@
     vm-monitor = {
       beszel = "beszel";
       grafana = "grafana";
-      monit = "vm-monitor-monit";
       prometheus = "prometheus";
       wazuh = "wazuh";
     };
@@ -109,6 +106,7 @@
     };
     proxmox = 8006;
     redis = 6379;
+    stirlingpdf = 8080;
     syncthing = 8384;
     unbound = 5335;
     vaultwarden = {

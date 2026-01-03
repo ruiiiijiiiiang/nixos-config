@@ -1,12 +1,19 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  consts,
+  utilFns,
+  ...
+}:
 let
   inherit (lib) mkIf;
-  inherit (import ../../../lib/consts.nix)
+  inherit (consts)
     addresses
     domains
     subdomains
     ports
     ;
+  inherit (utilFns) mkVirtualHost;
   cfg = config.selfhost.homepage;
   fqdn = "${subdomains.${config.networking.hostName}.homepage}.${domains.home}";
 in
@@ -71,10 +78,10 @@ in
                 };
               }
               {
-                "Bentopdf" = {
-                  icon = "bentopdf";
-                  href = "https://${subdomains.vm-app.bentopdf}.${domains.home}";
-                  description = "PDF Tool";
+                "Stirling PDF" = {
+                  icon = "stirling-pdf";
+                  href = "https://${subdomains.vm-app.stirlingpdf}.${domains.home}";
+                  description = "PDF Editor";
                 };
               }
               {
@@ -226,12 +233,9 @@ in
         ];
       };
 
-      nginx.virtualHosts."${fqdn}" = {
-        useACMEHost = fqdn;
-        forceSSL = true;
-        locations."/" = {
-          proxyPass = "http://${addresses.localhost}:${toString ports.homepage}";
-        };
+      nginx.virtualHosts."${fqdn}" = mkVirtualHost {
+        inherit fqdn;
+        port = ports.homepage;
       };
     };
   };

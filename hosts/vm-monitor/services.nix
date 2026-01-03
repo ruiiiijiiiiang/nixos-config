@@ -4,7 +4,6 @@
       hub.enable = true;
       agent.enable = true;
     };
-    monit.enable = true;
     nginx.enable = true;
     prometheus = {
       server.enable = true;

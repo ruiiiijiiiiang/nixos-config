@@ -11,7 +11,7 @@
         "flakes"
       ];
 
-      auto-optimise-store = true;
+      sandbox = true;
       trusted-users = [
         "root"
         "@wheel"
@@ -27,6 +27,8 @@
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
         "colmena.cachix.org-1:7BzpDnjjH8ki2CT3f6GdOk7QAzPOl+1t3LvTLXqYcSg="
       ];
+
+      auto-optimise-store = true;
     };
 
     optimise = {

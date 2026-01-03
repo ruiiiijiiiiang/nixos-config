@@ -1,12 +1,19 @@
-{ lib, config, ... }:
+{
+  lib,
+  config,
+  consts,
+  utilFns,
+  ...
+}:
 let
   inherit (lib) mkIf;
-  inherit (import ../../../lib/consts.nix)
+  inherit (consts)
     addresses
     domains
     subdomains
     ports
     ;
+  inherit (utilFns) mkVirtualHost;
   cfg = config.selfhost.immich;
   fqdn = "${subdomains.${config.networking.hostName}.immich}.${domains.home}";
 in
@@ -32,19 +39,16 @@ in
         };
       };
 
-      nginx.virtualHosts."${fqdn}" = {
-        useACMEHost = fqdn;
-        forceSSL = true;
-        locations."/" = {
-          proxyPass = "http://${addresses.localhost}:${toString ports.immich}";
-          proxyWebsockets = true;
-          extraConfig = ''
-            client_max_body_size 50000M;
-            proxy_read_timeout 600s;
-            proxy_send_timeout 600s;
-            send_timeout 600s;
-          '';
-        };
+      nginx.virtualHosts."${fqdn}" = mkVirtualHost {
+        inherit fqdn;
+        port = ports.immich;
+        proxyWebsockets = true;
+        extraConfig = ''
+          client_max_body_size 50000M;
+          proxy_read_timeout 600s;
+          proxy_send_timeout 600s;
+          send_timeout 600s;
+        '';
       };
     };
   };

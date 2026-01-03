@@ -1,12 +1,19 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  consts,
+  utilFns,
+  ...
+}:
 let
   inherit (lib) mkIf;
-  inherit (import ../../../lib/consts.nix)
+  inherit (consts)
     addresses
     domains
     subdomains
     ports
     ;
+  inherit (utilFns) mkVirtualHost;
   cfg = config.selfhost.yourls;
   fqdn = "${subdomains.${config.networking.hostName}.yourls}.${domains.home}";
 in
@@ -49,12 +56,9 @@ in
       "d /var/lib/yourls/html 0755 33 33 - -"
     ];
 
-    services.nginx.virtualHosts."${fqdn}" = {
-      useACMEHost = fqdn;
-      forceSSL = true;
-      locations."/" = {
-        proxyPass = "http://${addresses.localhost}:${toString ports.yourls}";
-      };
+    services.nginx.virtualHosts."${fqdn}" = mkVirtualHost {
+      inherit fqdn;
+      port = ports.yourls;
     };
   };
 }

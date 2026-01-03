@@ -2,11 +2,12 @@
   config,
   lib,
   pkgs,
+  consts,
   ...
 }:
 let
   inherit (lib) mkIf;
-  inherit (import ../../../lib/consts.nix) domains subdomains ports;
+  inherit (consts) domains subdomains ports;
   cfg = config.selfhost.nextcloud;
   nextcloud-fqdn = "${subdomains.${config.networking.hostName}.nextcloud}.${domains.home}";
   office-fqdn = "${subdomains.${config.networking.hostName}.onlyoffice}.${domains.home}";

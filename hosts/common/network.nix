@@ -19,6 +19,7 @@ let
 in
 {
   networking = {
+    nftables.enable = mkDefault true;
     extraHosts = concatStringsSep "\n" (mapAttrsToList makeHostEntry addresses.home.hosts);
     useDHCP = mkDefault true;
     networkmanager.enable = mkDefault true;

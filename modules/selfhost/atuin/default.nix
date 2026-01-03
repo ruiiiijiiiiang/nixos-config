@@ -1,12 +1,14 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  consts,
+  utilFns,
+  ...
+}:
 let
   inherit (lib) mkIf;
-  inherit (import ../../../lib/consts.nix)
-    addresses
-    domains
-    subdomains
-    ports
-    ;
+  inherit (consts) domains subdomains ports;
+  inherit (utilFns) mkVirtualHost;
   cfg = config.selfhost.atuin;
   fqdn = "${subdomains.${config.networking.hostName}.atuin}.${domains.home}";
 in
@@ -17,7 +19,6 @@ in
         enable = true;
         openFirewall = false;
         port = ports.atuin;
-        host = addresses.localhost;
         maxHistoryLength = 100000;
         openRegistration = true;
         database = {
@@ -37,12 +38,9 @@ in
         ];
       };
 
-      nginx.virtualHosts."${fqdn}" = {
-        useACMEHost = fqdn;
-        forceSSL = true;
-        locations."/" = {
-          proxyPass = "http://${addresses.localhost}:${toString ports.atuin}";
-        };
+      nginx.virtualHosts."${fqdn}" = mkVirtualHost {
+        inherit fqdn;
+        port = ports.atuin;
       };
     };
   };

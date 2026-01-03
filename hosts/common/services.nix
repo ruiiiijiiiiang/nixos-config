@@ -1,10 +1,21 @@
-{ inputs, ... }:
+{ inputs, pkgs, ... }:
 
 {
   imports = [
     inputs.agenix.nixosModules.default
   ];
-  age.identityPaths = [ "/home/rui/.ssh/id_ed25519" ];
+  age.identityPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+
+  system.autoUpgrade.enable = true;
+
+  security = {
+    protectKernelImage = true;
+    # lockKernelModules = true;
+    apparmor = {
+      enable = true;
+      packages = with pkgs; [ apparmor-profiles ];
+    };
+  };
 
   services = {
     xserver.xkb = {

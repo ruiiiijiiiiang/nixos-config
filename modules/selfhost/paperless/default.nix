@@ -1,13 +1,20 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  consts,
+  utilFns,
+  ...
+}:
 let
   inherit (lib) mkIf;
-  inherit (import ../../../lib/consts.nix)
+  inherit (consts)
     timeZone
     addresses
     domains
     subdomains
     ports
     ;
+  inherit (utilFns) mkVirtualHost;
   cfg = config.selfhost.paperless;
   fqdn = "${subdomains.${config.networking.hostName}.paperless}.${domains.home}";
 in
@@ -81,18 +88,13 @@ in
       description = "Paperless-ngx OCI user";
     };
 
-    services = {
-      nginx.virtualHosts."${fqdn}" = {
-        useACMEHost = fqdn;
-        forceSSL = true;
-        locations."/" = {
-          proxyPass = "http://${addresses.localhost}:${toString ports.paperless}";
-          proxyWebsockets = true;
-          extraConfig = ''
-            client_max_body_size 500M;
-          '';
-        };
-      };
+    services.nginx.virtualHosts."${fqdn}" = mkVirtualHost {
+      inherit fqdn;
+      port = ports.paperless;
+      proxyWebsockets = true;
+      extraConfig = ''
+        client_max_body_size 500M;
+      '';
     };
   };
 }
