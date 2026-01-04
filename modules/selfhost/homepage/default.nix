@@ -159,6 +159,13 @@ in
                 };
               }
               {
+                "Gatus" = {
+                  icon = "gatus";
+                  href = "https://${subdomains.vm-monitor.gatus}.${domains.home}";
+                  description = "Server Health Monitoring";
+                };
+              }
+              {
                 "Portainer" = {
                   icon = "portainer";
                   href = "https://${subdomains.vm-app.portainer}.${domains.home}";

@@ -8,6 +8,7 @@
     ./dawarich
     ./dns
     ./dyndns
+    ./gatus
     ./homeassistant
     ./homepage
     ./immich
@@ -49,6 +50,9 @@
     };
     dyndns = {
       enable = mkEnableOption "enable dynamic dns service";
+    };
+    gatus = {
+      enable = mkEnableOption "enable gatus monitoring dashboard";
     };
     immich = {
       enable = mkEnableOption "enable immich image storage";
@@ -122,6 +126,7 @@
           || cfg.beszel.hub.enable
           || cfg.dawarich.enable
           || cfg.dns.enable
+          || cfg.gatus.enable
           || cfg.homeassistant.enable
           || cfg.homepage.enable
           || cfg.immich.enable

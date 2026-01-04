@@ -122,6 +122,7 @@
           specialArgs = {
             inherit inputs;
             inherit consts;
+            inherit utilFns;
           };
         };
 

@@ -22,7 +22,7 @@ in
       nginx.virtualHosts."${fqdn}" = mkVirtualHost {
         inherit fqdn;
         port = ports.beszel.hub;
-        websocket = true;
+        proxyWebsockets = true;
       };
     };
   };

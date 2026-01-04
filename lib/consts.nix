@@ -19,8 +19,8 @@
     };
     vm-app = {
       atuin = "atuin";
-      bentopdf = "pdf";
       dawarich = "gps";
+      bentopdf = "pdf";
       immich = "immich";
       homepage = "home";
       microbin = "bin";
@@ -37,6 +37,7 @@
     };
     vm-monitor = {
       beszel = "beszel";
+      gatus = "gatus";
       grafana = "grafana";
       prometheus = "prometheus";
       wazuh = "wazuh";
@@ -78,6 +79,7 @@
       agent = 45876;
     };
     dawarich = 3000;
+    gatus = 8083;
     grafana = 3001;
     homeassistant = 8123;
     homepage = 8089;
@@ -109,6 +111,7 @@
     stirlingpdf = 8080;
     syncthing = 8384;
     unbound = 5335;
+    uptimekuma = 3002;
     vaultwarden = {
       server = 8222;
       websocket = 3012;

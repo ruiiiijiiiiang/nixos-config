@@ -11,15 +11,16 @@ in
     hosts = {
       "${addresses.localhost}" = fqdns;
     };
-    firewall = {
-      extraCommands = ''
-        iptables -A nixos-fw -p tcp --source ${addresses.home.network} --dport ${toString ports.homeassistant} -j nixos-fw-accept
-        iptables -A nixos-fw -p tcp --source ${addresses.vpn.network} --dport ${toString ports.homeassistant} -j nixos-fw-accept
-      '';
-      extraStopCommands = ''
-        iptables -D nixos-fw -p tcp --source ${addresses.home.network} --dport ${toString ports.homeassistant} -j nixos-fw-accept || true
-        iptables -D nixos-fw -p tcp --source ${addresses.vpn.network} --dport ${toString ports.homeassistant} -j nixos-fw-accept || true
-      '';
+    nftables.tables = {
+      "user-rules" = {
+        family = "inet";
+        content = ''
+          chain input {
+            type filter hook input priority 0; policy accept;
+            ip saddr { ${addresses.home.network}, ${addresses.vpn.network} } tcp dport ${toString ports.homeassistant} accept
+          }
+        '';
+      };
     };
   };
 }

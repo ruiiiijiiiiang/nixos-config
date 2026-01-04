@@ -6,7 +6,7 @@
     immich.enable = true;
     homepage.enable = true;
     microbin.enable = true;
-    nextcloud.enable = true;
+    # nextcloud.enable = true;
     nginx.enable = true;
     paperless.enable = true;
     pocketid.enable = true;
