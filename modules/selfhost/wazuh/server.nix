@@ -74,7 +74,7 @@ in
           "/var/wazuh/certs/wazuh-manager-key.pem:/etc/ssl/wazuh_certs/wazuh-manager-key.pem"
         ];
         dependsOn = [ "wazuh-indexer" ];
-        extraOptions = [ "--network=container:wazuh-indexer" ];
+        networks = [ "container:wazuh-indexer" ];
       };
 
       wazuh-dashboard = {
@@ -97,7 +97,7 @@ in
           "wazuh-indexer"
           "wazuh-manager"
         ];
-        extraOptions = [ "--network=container:wazuh-indexer" ];
+        networks = [ "container:wazuh-indexer" ];
       };
     };
 

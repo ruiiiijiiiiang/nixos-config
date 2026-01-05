@@ -36,10 +36,7 @@ in
       yourls = {
         image = "yourls:latest";
         dependsOn = [ "yourls-db" ];
-        extraOptions = [
-          "--network=container:yourls-db"
-          "--pull=always"
-        ];
+        networks = [ "container:yourls-db" ];
         environment = {
           YOURLS_DB_HOST = addresses.localhost;
           YOURLS_SITE = "https://${fqdn}";
@@ -47,6 +44,9 @@ in
         environmentFiles = [ config.age.secrets.yourls-env.path ];
         volumes = [
           "/var/lib/yourls/html:/var/www/html"
+        ];
+        extraOptions = [
+          "--pull=always"
         ];
       };
     };

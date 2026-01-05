@@ -29,9 +29,9 @@ in
         ];
         volumes = [ "/var/lib/home-assistant:/config" ];
         environment.TZ = timeZone;
+        devices = [ "/dev/serial/by-id/usb-1a86_USB_Serial-if00-port0" ];
         extraOptions = [
           "--pull=always"
-          "--device=/dev/serial/by-id/usb-1a86_USB_Serial-if00-port0"
         ];
       };
 
@@ -39,10 +39,12 @@ in
         dependsOn = [ "homeassistant" ];
         image = "zwavejs/zwave-js-ui:latest";
         volumes = [ "/var/lib/zwave-js-ui:/usr/src/app/store" ];
+        networks = [ "container:homeassistant" ];
+        devices = [
+          "/dev/serial/by-id/usb-Silicon_Labs_CP2102N_USB_to_UART_Bridge_Controller_80edec297b57ed1193f12ef21c62bc44-if00-port0:/dev/zwave"
+        ];
         extraOptions = [
-          "--network=container:homeassistant"
           "--pull=always"
-          "--device=/dev/serial/by-id/usb-Silicon_Labs_CP2102N_USB_to_UART_Bridge_Controller_80edec297b57ed1193f12ef21c62bc44-if00-port0:/dev/zwave"
         ];
       };
     };

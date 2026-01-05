@@ -36,7 +36,7 @@ in
         image = "redis:latest";
         cmd = [ "redis-server" ];
         dependsOn = [ "paperless-db" ];
-        extraOptions = [ "--network=container:paperless-db" ];
+        networks = [ "container:paperless-db" ];
       };
 
       paperless-app = {
@@ -45,7 +45,7 @@ in
           "paperless-db"
           "paperless-redis"
         ];
-        extraOptions = [ "--network=container:paperless-db" ];
+        networks = [ "container:paperless-db" ];
 
         volumes = [
           "/var/storage/paperless/log:/usr/src/paperless/log"

@@ -33,7 +33,7 @@ in
       dawarich-redis = {
         image = "redis:latest";
         dependsOn = [ "dawarich-db" ];
-        extraOptions = [ "--network=container:dawarich-db" ];
+        networks = [ "container:dawarich-db" ];
         volumes = [ "dawarich-redis-data:/data" ];
       };
 
@@ -43,7 +43,7 @@ in
           "dawarich-db"
           "dawarich-redis"
         ];
-        extraOptions = [ "--network=container:dawarich-db" ];
+        networks = [ "container:dawarich-db" ];
         environment = {
           APPLICATION_HOSTS = fqdn;
           TIME_ZONE = timeZone;
@@ -73,7 +73,7 @@ in
           "dawarich-redis"
           "dawarich-app"
         ];
-        extraOptions = [ "--network=container:dawarich-db" ];
+        networks = [ "container:dawarich-db" ];
         environment = {
           APPLICATION_HOSTS = fqdn;
           TIME_ZONE = timeZone;

@@ -18,6 +18,10 @@ in
     publicKeys = ssh.vm-app;
     armor = true;
   };
+  "karakeep-env.age" = {
+    publicKeys = ssh.vm-app;
+    armor = true;
+  };
   "nextcloud-pass.age" = {
     publicKeys = ssh.vm-app;
     armor = true;
@@ -27,6 +31,10 @@ in
     armor = true;
   };
   "onlyoffice-secret.age" = {
+    publicKeys = ssh.vm-app;
+    armor = true;
+  };
+  "opencloud-env.age" = {
     publicKeys = ssh.vm-app;
     armor = true;
   };

@@ -5,9 +5,10 @@
     dawarich.enable = true;
     immich.enable = true;
     homepage.enable = true;
+    karakeep.enable = true;
     microbin.enable = true;
-    # nextcloud.enable = true;
     nginx.enable = true;
+    opencloud.enable = true;
     paperless.enable = true;
     pocketid.enable = true;
     portainer.enable = true;

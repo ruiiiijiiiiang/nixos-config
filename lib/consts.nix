@@ -23,9 +23,11 @@
       bentopdf = "pdf";
       immich = "immich";
       homepage = "home";
+      karakeep = "karakeep";
       microbin = "bin";
       nextcloud = "nextcloud";
       onlyoffice = "office";
+      opencloud = "opencloud";
       paperless = "paperless";
       pocketid = "id";
       portainer = "portainer";
@@ -84,6 +86,7 @@
     homeassistant = 8123;
     homepage = 8089;
     immich = 2283;
+    karakeep = 8084;
     microbin = 8088;
     monit = 2812;
     nginx = {
@@ -91,6 +94,7 @@
     };
     oauth2 = 4180;
     onlyoffice = 8001;
+    opencloud = 9201;
     paperless = 28981;
     pihole = 8008;
     pocketid = 1411;

@@ -92,6 +92,13 @@ in
                 };
               }
               {
+                "Karakeep" = {
+                  icon = "karakeep";
+                  href = "https://${subdomains.vm-app.karakeep}.${domains.home}";
+                  description = "Bookmark";
+                };
+              }
+              {
                 "Microbin" = {
                   icon = "microbin";
                   href = "https://${subdomains.vm-app.microbin}.${domains.home}";
@@ -99,9 +106,9 @@ in
                 };
               }
               {
-                "Nextcloud" = {
-                  icon = "nextcloud";
-                  href = "https://${subdomains.vm-app.nextcloud}.${domains.home}";
+                "Opencloud" = {
+                  icon = "open-cloud";
+                  href = "https://${subdomains.vm-app.opencloud}.${domains.home}";
                   description = "Cloud Storage";
                 };
               }

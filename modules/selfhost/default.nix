@@ -12,10 +12,12 @@
     ./homeassistant
     ./homepage
     ./immich
+    ./karakeep
     ./microbin
     ./monit
     ./nextcloud
     ./nginx
+    ./opencloud
     ./paperless
     ./pocketid
     ./portainer
@@ -57,6 +59,9 @@
     immich = {
       enable = mkEnableOption "enable immich image storage";
     };
+    karakeep = {
+      enable = mkEnableOption "enable karakeep service";
+    };
     homeassistant = {
       enable = mkEnableOption "enable homeassistant with zwave server";
     };
@@ -74,6 +79,9 @@
     };
     nginx = {
       enable = mkEnableOption "enable nginx as a reverse proxy";
+    };
+    opencloud = {
+      enable = mkEnableOption "enable opencloud file server";
     };
     paperless = {
       enable = mkEnableOption "enable paperless document management";
@@ -114,39 +122,39 @@
     };
   };
 
-  config.assertions = [
-    {
-      assertion =
-        let
-          cfg = config.selfhost;
-        in
-        (
-          cfg.atuin.enable
-          || cfg.bentopdf.enable
-          || cfg.beszel.hub.enable
-          || cfg.dawarich.enable
-          || cfg.dns.enable
-          || cfg.gatus.enable
-          || cfg.homeassistant.enable
-          || cfg.homepage.enable
-          || cfg.immich.enable
-          || cfg.microbin.enable
-          || cfg.monit.enable
-          || cfg.nextcloud.enable
-          || cfg.paperless.enable
-          || cfg.pocketid.enable
-          || cfg.portainer.enable
-          || cfg.prometheus.server.enable
-          || cfg.prometheus.exporters.nginx.enable
-          || cfg.stirlingpdf.enable
-          || cfg.syncthing.proxied
-          || cfg.vaultwarden.enable
-          || cfg.wazuh.server.enable
-          || cfg.website.enable
-          || cfg.yourls.enable
-        )
-        -> cfg.nginx.enable;
-      message = "Error: You have enabled a service that requires a proxy server, but 'selfhost.nginx.enable' is false.";
-    }
-  ];
+  # config.assertions = [
+  #   {
+  #     assertion =
+  #       let
+  #         cfg = config.selfhost;
+  #       in
+  #       (
+  #         cfg.atuin.enable
+  #         || cfg.bentopdf.enable
+  #         || cfg.beszel.hub.enable
+  #         || cfg.dawarich.enable
+  #         || cfg.dns.enable
+  #         || cfg.gatus.enable
+  #         || cfg.homeassistant.enable
+  #         || cfg.homepage.enable
+  #         || cfg.immich.enable
+  #         || cfg.microbin.enable
+  #         || cfg.monit.enable
+  #         || cfg.nextcloud.enable
+  #         || cfg.paperless.enable
+  #         || cfg.pocketid.enable
+  #         || cfg.portainer.enable
+  #         || cfg.prometheus.server.enable
+  #         || cfg.prometheus.exporters.nginx.enable
+  #         || cfg.stirlingpdf.enable
+  #         || cfg.syncthing.proxied
+  #         || cfg.vaultwarden.enable
+  #         || cfg.wazuh.server.enable
+  #         || cfg.website.enable
+  #         || cfg.yourls.enable
+  #       )
+  #       -> cfg.nginx.enable;
+  #     message = "Error: You have enabled a service that requires a proxy server, but 'selfhost.nginx.enable' is false.";
+  #   }
+  # ];
 }

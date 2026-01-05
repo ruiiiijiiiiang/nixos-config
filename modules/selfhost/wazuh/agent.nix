@@ -33,8 +33,8 @@ in
           "/etc/machine-id:/etc/machine-id:ro"
           "/etc/os-release:/etc/os-release:ro"
         ];
+        networks = [ "host" ];
         extraOptions = [
-          "--network=host"
           "--privileged"
           "--pid=host"
         ];
