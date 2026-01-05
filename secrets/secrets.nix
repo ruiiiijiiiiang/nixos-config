@@ -18,6 +18,10 @@ in
     publicKeys = ssh.vm-app;
     armor = true;
   };
+  "immich-env.age" = {
+    publicKeys = ssh.vm-app;
+    armor = true;
+  };
   "karakeep-env.age" = {
     publicKeys = ssh.vm-app;
     armor = true;

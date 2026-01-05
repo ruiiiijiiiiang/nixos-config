@@ -2,7 +2,7 @@
   selfhost = {
     atuin.enable = true;
     cloudflared.enable = true;
-    dawarich.enable = true;
+    # dawarich.enable = true;
     immich.enable = true;
     homepage.enable = true;
     karakeep.enable = true;

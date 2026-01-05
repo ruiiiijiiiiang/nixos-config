@@ -19,7 +19,7 @@ in
 {
   config = lib.mkIf cfg.enable {
     virtualisation.oci-containers.containers = {
-      "stirling-pdf" = {
+      stirling-pdf = {
         image = "stirlingtools/stirling-pdf:latest";
         ports = [ "${addresses.localhost}:${toString ports.stirlingpdf}:${toString ports.stirlingpdf}" ];
         extraOptions = [ "--pull=always" ];

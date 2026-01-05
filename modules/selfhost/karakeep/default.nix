@@ -22,7 +22,7 @@ in
     };
 
     virtualisation.oci-containers.containers = {
-      karakeep = {
+      karakeep-server = {
         image = "ghcr.io/karakeep-app/karakeep:release";
         ports = [ "${addresses.localhost}:${toString ports.karakeep}:3000" ];
         volumes = [ "/var/lib/karakeep:/data" ];
@@ -38,7 +38,7 @@ in
         extraOptions = [ "--pull=always" ];
       };
 
-      chrome = {
+      karakeep-chrome = {
         image = "gcr.io/zenika-hub/alpine-chrome:124";
         dependsOn = [ "karakeep" ];
         networks = [ "container:karakeep" ];
@@ -52,7 +52,7 @@ in
         ];
       };
 
-      meilisearch = {
+      karakeep-meilisearch = {
         image = "getmeili/meilisearch:latest";
         dependsOn = [ "karakeep" ];
         networks = [ "container:karakeep" ];

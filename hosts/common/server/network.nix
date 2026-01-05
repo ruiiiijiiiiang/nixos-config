@@ -16,6 +16,10 @@ in
       allowedUDPPorts = [ ];
       checkReversePath = "loose";
     };
+    nat = {
+      enable = true;
+      internalInterfaces = [ "podman0" ];
+    };
   };
 
   services = {

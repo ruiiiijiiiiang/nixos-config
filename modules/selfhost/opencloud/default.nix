@@ -93,8 +93,8 @@ in
 
     systemd.tmpfiles.rules = [
       "d /var/lib/opencloud 0700 1000 1000 -"
-      "z /var/lib/opencloud/opencloud-data 0700 1000 1000 -"
-      "z /var/lib/opencloud/opencloud-config 0700 1000 1000 -"
+      "d /var/lib/opencloud/opencloud-data 0700 1000 1000 -"
+      "d /var/lib/opencloud/opencloud-config 0700 1000 1000 -"
       "d /var/lib/onlyoffice/data 0755 101 101 -"
       "d /var/lib/onlyoffice/log  0755 101 101 -"
       "d /var/lib/onlyoffice/lib  0755 101 101 -"
