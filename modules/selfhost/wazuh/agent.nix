@@ -34,10 +34,8 @@ in
           "/etc/os-release:/etc/os-release:ro"
         ];
         networks = [ "host" ];
-        extraOptions = [
-          "--privileged"
-          "--pid=host"
-        ];
+        privileged = true;
+        extraOptions = [ "--pid=host" ];
       };
     };
 

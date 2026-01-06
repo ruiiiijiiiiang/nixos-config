@@ -47,7 +47,7 @@ let
       disabledServices = [
         "bentopdf"
         "nextcloud"
-        "onlyoffice"
+        "portainer"
       ];
     }
     ++ mkEndpoints {

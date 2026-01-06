@@ -1,4 +1,4 @@
-{ lib, config, ... }:
+{ lib, ... }:
 {
   imports = [
     ./atuin
@@ -7,6 +7,7 @@
     ./cloudflared
     ./dawarich
     ./dns
+    ./dockhand
     ./dyndns
     ./gatus
     ./homeassistant
@@ -22,6 +23,7 @@
     ./pocketid
     ./portainer
     ./prometheus
+    ./reitti
     ./stirlingpdf
     ./syncthing
     ./vaultwarden
@@ -32,129 +34,100 @@
 
   options.selfhost = with lib; {
     atuin = {
-      enable = mkEnableOption "enable atuin server";
+      enable = mkEnableOption "Atuin shell history sync server";
     };
     bentopdf = {
-      enable = mkEnableOption "enable bentopdf pdf service";
+      enable = mkEnableOption "BentoPDF PDF service";
     };
     beszel = {
-      hub.enable = mkEnableOption "enable beszel hub";
-      agent.enable = mkEnableOption "enable beszel agent";
+      hub.enable = mkEnableOption "Beszel monitoring hub";
+      agent.enable = mkEnableOption "Beszel monitoring agent";
     };
     cloudflared = {
-      enable = mkEnableOption "set up cloudflare access tunnel";
+      enable = mkEnableOption "Cloudflare access tunnel";
     };
     dawarich = {
-      enable = mkEnableOption "enable dawarich gps service";
+      enable = mkEnableOption "Dawarich GPS tracking service";
+    };
+    dockhand = {
+      server.enable = mkEnableOption "Dockhand container management";
+      agent.enable = mkEnableOption "Hawser container agent";
     };
     dns = {
-      enable = mkEnableOption "enable unbound + pihole dns filtering";
+      enable = mkEnableOption "Unbound + Pi-hole DNS filtering";
     };
     dyndns = {
-      enable = mkEnableOption "enable dynamic dns service";
+      enable = mkEnableOption "dynamic DNS service";
     };
     gatus = {
-      enable = mkEnableOption "enable gatus monitoring dashboard";
+      enable = mkEnableOption "Gatus monitoring dashboard";
     };
     immich = {
-      enable = mkEnableOption "enable immich image storage";
+      enable = mkEnableOption "Immich photo and video storage";
     };
     karakeep = {
-      enable = mkEnableOption "enable karakeep service";
+      enable = mkEnableOption "Karakeep service";
     };
     homeassistant = {
-      enable = mkEnableOption "enable homeassistant with zwave server";
+      enable = mkEnableOption "Home Assistant with Z-Wave server";
     };
     homepage = {
-      enable = mkEnableOption "enable homepage dashboard";
+      enable = mkEnableOption "Homepage dashboard";
     };
     microbin = {
-      enable = mkEnableOption "enable microbin paste-bin";
+      enable = mkEnableOption "MicroBin pastebin service";
     };
     monit = {
-      enable = mkEnableOption "enable monit monitoring dashboard";
+      enable = mkEnableOption "Monit monitoring dashboard";
     };
     nextcloud = {
-      enable = mkEnableOption "enable nextcloud server";
+      enable = mkEnableOption "Nextcloud file sync and collaboration";
     };
     nginx = {
-      enable = mkEnableOption "enable nginx as a reverse proxy";
+      enable = mkEnableOption "Nginx reverse proxy";
     };
     opencloud = {
-      enable = mkEnableOption "enable opencloud file server";
+      enable = mkEnableOption "OpenCloud file server";
     };
     paperless = {
-      enable = mkEnableOption "enable paperless document management";
+      enable = mkEnableOption "Paperless-ngx document management";
     };
     pocketid = {
-      enable = mkEnableOption "enable pocketid authentication";
+      enable = mkEnableOption "PocketID authentication service";
     };
     portainer = {
-      enable = mkEnableOption "enable portainer for managing docker containers";
+      enable = mkEnableOption "Portainer container management";
     };
     prometheus = {
-      server.enable = mkEnableOption "enable prometheus server";
+      server.enable = mkEnableOption "Prometheus metrics server";
       exporters = {
-        nginx.enable = mkEnableOption "enable nginx exporter";
-        node.enable = mkEnableOption "enable node exporter";
-        podman.enable = mkEnableOption "enable podman exporter";
+        nginx.enable = mkEnableOption "Prometheus Nginx exporter";
+        node.enable = mkEnableOption "Prometheus Node exporter";
+        podman.enable = mkEnableOption "Prometheus Podman exporter";
       };
     };
+    reitti = {
+      enable = mkEnableOption "Reitti route planning service";
+    };
     stirlingpdf = {
-      enable = mkEnableOption "enable stirling pdf service";
+      enable = mkEnableOption "Stirling-PDF document tools";
     };
     syncthing = {
-      enable = mkEnableOption "enable and configure syncthing service";
-      proxied = mkEnableOption "put syncthing behind a reverse proxy";
+      enable = mkEnableOption "Syncthing file synchronization";
+      proxied = mkEnableOption "Syncthing behind reverse proxy";
     };
     vaultwarden = {
-      enable = mkEnableOption "enable private bitwarden secret manager";
+      enable = mkEnableOption "Vaultwarden password manager";
     };
     wazuh = {
-      server.enable = mkEnableOption "enable wazuh server";
-      agent.enable = mkEnableOption "enable wazuh agent";
+      server.enable = mkEnableOption "Wazuh security monitoring server";
+      agent.enable = mkEnableOption "Wazuh security monitoring agent";
     };
     website = {
-      enable = mkEnableOption "enable personal website hosting";
+      enable = mkEnableOption "Personal website hosting";
     };
     yourls = {
-      enable = mkEnableOption "enable yourls url shortener";
+      enable = mkEnableOption "YOURLS URL shortener";
     };
   };
-
-  # config.assertions = [
-  #   {
-  #     assertion =
-  #       let
-  #         cfg = config.selfhost;
-  #       in
-  #       (
-  #         cfg.atuin.enable
-  #         || cfg.bentopdf.enable
-  #         || cfg.beszel.hub.enable
-  #         || cfg.dawarich.enable
-  #         || cfg.dns.enable
-  #         || cfg.gatus.enable
-  #         || cfg.homeassistant.enable
-  #         || cfg.homepage.enable
-  #         || cfg.immich.enable
-  #         || cfg.microbin.enable
-  #         || cfg.monit.enable
-  #         || cfg.nextcloud.enable
-  #         || cfg.paperless.enable
-  #         || cfg.pocketid.enable
-  #         || cfg.portainer.enable
-  #         || cfg.prometheus.server.enable
-  #         || cfg.prometheus.exporters.nginx.enable
-  #         || cfg.stirlingpdf.enable
-  #         || cfg.syncthing.proxied
-  #         || cfg.vaultwarden.enable
-  #         || cfg.wazuh.server.enable
-  #         || cfg.website.enable
-  #         || cfg.yourls.enable
-  #       )
-  #       -> cfg.nginx.enable;
-  #     message = "Error: You have enabled a service that requires a proxy server, but 'selfhost.nginx.enable' is false.";
-  #   }
-  # ];
 }

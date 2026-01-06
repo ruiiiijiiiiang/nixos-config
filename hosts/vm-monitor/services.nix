@@ -4,6 +4,7 @@
       hub.enable = true;
       agent.enable = true;
     };
+    dockhand.server.enable = true;
     gatus.enable = true;
     nginx.enable = true;
     prometheus = {

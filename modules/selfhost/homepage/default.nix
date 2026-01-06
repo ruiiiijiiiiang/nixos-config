@@ -78,34 +78,6 @@ in
                 };
               }
               {
-                "Stirling PDF" = {
-                  icon = "stirling-pdf";
-                  href = "https://${subdomains.vm-app.stirlingpdf}.${domains.home}";
-                  description = "PDF Editor";
-                };
-              }
-              {
-                "Dawarich" = {
-                  icon = "dawarich";
-                  href = "https://${subdomains.vm-app.dawarich}.${domains.home}";
-                  description = "Location Tracking";
-                };
-              }
-              {
-                "Karakeep" = {
-                  icon = "karakeep";
-                  href = "https://${subdomains.vm-app.karakeep}.${domains.home}";
-                  description = "Bookmark";
-                };
-              }
-              {
-                "Microbin" = {
-                  icon = "microbin";
-                  href = "https://${subdomains.vm-app.microbin}.${domains.home}";
-                  description = "Pastebin";
-                };
-              }
-              {
                 "Opencloud" = {
                   icon = "open-cloud";
                   href = "https://${subdomains.vm-app.opencloud}.${domains.home}";
@@ -134,10 +106,45 @@ in
                 };
               }
               {
+                "Karakeep" = {
+                  icon = "karakeep";
+                  href = "https://${subdomains.vm-app.karakeep}.${domains.home}";
+                  description = "Bookmark";
+                };
+              }
+              {
+                "Microbin" = {
+                  icon = "microbin";
+                  href = "https://${subdomains.vm-app.microbin}.${domains.home}";
+                  description = "Pastebin";
+                };
+              }
+              {
+                "Dawarich" = {
+                  icon = "dawarich";
+                  href = "https://${subdomains.vm-app.dawarich}.${domains.home}";
+                  description = "Location Tracking";
+                };
+              }
+              {
+                "Reitti" = {
+                  icon = "https://raw.githubusercontent.com/dedicatedcode/reitti/refs/heads/main/src/main/resources/static/img/logo.png";
+                  href = "https://${subdomains.vm-app.reitti}.${domains.home}";
+                  description = "Location Tracking";
+                };
+              }
+              {
                 "Yourls" = {
                   icon = "yourls";
                   href = "https://${subdomains.vm-app.yourls}.${domains.home}/admin";
                   description = "URL Shortener";
+                };
+              }
+              {
+                "Stirling PDF" = {
+                  icon = "stirling-pdf";
+                  href = "https://${subdomains.vm-app.stirlingpdf}.${domains.home}";
+                  description = "PDF Editor";
                 };
               }
               {
@@ -173,10 +180,10 @@ in
                 };
               }
               {
-                "Portainer" = {
-                  icon = "portainer";
-                  href = "https://${subdomains.vm-app.portainer}.${domains.home}";
-                  description = "Container Dashboard";
+                "Dockhand" = {
+                  icon = "https://raw.githubusercontent.com/Finsys/dockhand/refs/heads/main/src/images/logo.webp";
+                  href = "https://${subdomains.vm-monitor.dockhand}.${domains.home}";
+                  description = "Container Management Dashboard";
                 };
               }
               {

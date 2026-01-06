@@ -46,6 +46,10 @@ in
     publicKeys = ssh.vm-app;
     armor = true;
   };
+  "reitti-env.age" = {
+    publicKeys = ssh.vm-app;
+    armor = true;
+  };
   "vaultwarden-env.age" = {
     publicKeys = ssh.vm-app;
     armor = true;

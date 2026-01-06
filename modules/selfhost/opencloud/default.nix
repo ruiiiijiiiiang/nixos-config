@@ -76,10 +76,10 @@ in
         dependsOn = [ "opencloud" ];
         networks = [ "container:opencloud" ];
         volumes = [
-          "/var/lib/onlyoffice/data:/var/www/onlyoffice/Data"
-          "/var/lib/onlyoffice/log:/var/log/onlyoffice"
-          "/var/lib/onlyoffice/lib:/var/lib/onlyoffice"
-          "/var/lib/onlyoffice/db:/var/lib/postgresql"
+          "onlyoffice-data:/var/www/onlyoffice/Data"
+          "onlyoffice-log:/var/log/onlyoffice"
+          "onlyoffice-lib:/var/lib/onlyoffice"
+          "onlyoffice-db:/var/lib/postgresql"
         ];
         environment = {
           JWT_ENABLED = "true";
@@ -92,13 +92,8 @@ in
     };
 
     systemd.tmpfiles.rules = [
-      "d /var/lib/opencloud 0700 1000 1000 -"
       "d /var/lib/opencloud/opencloud-data 0700 1000 1000 -"
       "d /var/lib/opencloud/opencloud-config 0700 1000 1000 -"
-      "d /var/lib/onlyoffice/data 0755 101 101 -"
-      "d /var/lib/onlyoffice/log  0755 101 101 -"
-      "d /var/lib/onlyoffice/lib  0755 101 101 -"
-      "d /var/lib/onlyoffice/db   0700 999 999 -"
     ];
 
     services.nginx.virtualHosts = {

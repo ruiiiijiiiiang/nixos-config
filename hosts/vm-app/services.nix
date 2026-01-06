@@ -2,7 +2,7 @@
   selfhost = {
     atuin.enable = true;
     cloudflared.enable = true;
-    # dawarich.enable = true;
+    dawarich.enable = true;
     immich.enable = true;
     homepage.enable = true;
     karakeep.enable = true;
@@ -11,7 +11,7 @@
     opencloud.enable = true;
     paperless.enable = true;
     pocketid.enable = true;
-    portainer.enable = true;
+    reitti.enable = true;
     stirlingpdf.enable = true;
     syncthing = {
       enable = true;
@@ -22,6 +22,7 @@
     yourls.enable = true;
 
     beszel.agent.enable = true;
+    dockhand.agent.enable = true;
     prometheus.exporters = {
       nginx.enable = true;
       node.enable = true;

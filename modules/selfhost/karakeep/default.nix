@@ -27,9 +27,9 @@ in
         ports = [ "${addresses.localhost}:${toString ports.karakeep}:3000" ];
         volumes = [ "/var/lib/karakeep:/data" ];
         environment = {
-          MEILI_ADDR = "http://localhost:7700";
           NEXTAUTH_URL = "https://${fqdn}";
-          BROWSER_WEB_URL = "http://localhost:9222";
+          MEILI_ADDR = "http://${addresses.localhost}:7700";
+          BROWSER_WEB_URL = "http://${addresses.localhost}:9222";
           DATA_DIR = "/data";
           OAUTH_PROVIDER_NAME = "Pocket ID";
           OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING = "true";
@@ -40,8 +40,8 @@ in
 
       karakeep-chrome = {
         image = "gcr.io/zenika-hub/alpine-chrome:124";
-        dependsOn = [ "karakeep" ];
-        networks = [ "container:karakeep" ];
+        dependsOn = [ "karakeep-server" ];
+        networks = [ "container:karakeep-server" ];
         cmd = [
           "--no-sandbox"
           "--disable-gpu"
@@ -54,9 +54,9 @@ in
 
       karakeep-meilisearch = {
         image = "getmeili/meilisearch:latest";
-        dependsOn = [ "karakeep" ];
-        networks = [ "container:karakeep" ];
-        volumes = [ "/var/lib/meilisearch:/meili_data" ];
+        dependsOn = [ "karakeep-server" ];
+        networks = [ "container:karakeep-server" ];
+        volumes = [ "meilisearch-data:/meili_data" ];
         environment = {
           MEILI_NO_ANALYTICS = "true";
         };
@@ -67,7 +67,6 @@ in
 
     systemd.tmpfiles.rules = [
       "d /var/lib/karakeep 0750 karakeep karakeep -"
-      "d /var/lib/meilisearch 0750 karakeep karakeep -"
     ];
 
     users.groups.karakeep = { };

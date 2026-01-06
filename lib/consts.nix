@@ -19,7 +19,7 @@
     };
     vm-app = {
       atuin = "atuin";
-      dawarich = "gps";
+      dawarich = "dawarich";
       bentopdf = "pdf";
       immich = "immich";
       homepage = "home";
@@ -32,6 +32,7 @@
       pocketid = "id";
       portainer = "portainer";
       public = "public";
+      reitti = "reitti";
       stirlingpdf = "pdf";
       syncthing = "syncthing";
       vaultwarden = "vault";
@@ -39,6 +40,7 @@
     };
     vm-monitor = {
       beszel = "beszel";
+      dockhand = "dockhand";
       gatus = "gatus";
       grafana = "grafana";
       prometheus = "prometheus";
@@ -81,12 +83,16 @@
       agent = 45876;
     };
     dawarich = 3000;
+    dockhand = {
+      server = 3003;
+      agent = 2376;
+    };
     gatus = 8083;
     grafana = 3001;
     homeassistant = 8123;
     homepage = 8089;
-    immich = 2283;
     karakeep = 8084;
+    immich = 2283;
     microbin = 8088;
     monit = 2812;
     nginx = {
@@ -112,6 +118,7 @@
     };
     proxmox = 8006;
     redis = 6379;
+    reitti = 8085;
     stirlingpdf = 8080;
     syncthing = 8384;
     unbound = 5335;

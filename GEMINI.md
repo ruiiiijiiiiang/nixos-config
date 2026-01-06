@@ -2,38 +2,73 @@
 
 ## Project Overview
 
-This repository contains a comprehensive NixOS configuration managed using Nix Flakes. It defines the configurations for multiple hosts, including a Raspberry Pi for self-hosting services, several virtual machines, and a framework laptop. The project emphasizes a declarative, reproducible, and secure setup, leveraging various tools and custom modules to manage services, secrets, and deployments.
+This repository contains a comprehensive NixOS configuration managed using Nix Flakes. It defines the configurations for multiple hosts, ranging from physical hardware like a Framework laptop and Raspberry Pi to specialized virtual machines. The project emphasizes a declarative, reproducible, and secure setup, leveraging various tools and custom modules to manage services, secrets, and deployments.
 
-The core of the project is the use of NixOS modules to define the configuration for each host. A common configuration is shared across all hosts, with specific configurations layered on top for each individual host. Services are often containerized using Podman and exposed to the internet securely via Cloudflare Tunnels.
+The project is structured to share common configurations across hosts while allowing for specific overrides and additions. It integrates Home Manager for user-level configuration and uses `agenix` for secure secret management.
+
+## Project Structure
+
+The repository is organized into several key directories:
+
+*   `homes/`: Contains Home Manager configurations for users (e.g., `rui`, `vm-security`).
+*   `hosts/`: Defines host-specific NixOS configurations.
+    *   `common/`: Shared NixOS modules and settings used by multiple hosts.
+    *   `framework/`: Configuration for a Framework laptop (GUI, physical).
+    *   `pi/`: Configuration for a Raspberry Pi (Server, physical).
+    *   `vm-app/`, `vm-monitor/`, `vm-network/`, `vm-security/`: Specialized virtual machine configurations.
+*   `modules/`: Custom NixOS modules for various services and features.
+    *   `selfhost/`: A wide array of self-hosted services (e.g., Immich, Nextcloud, Paperless-ngx, Wazuh, etc.).
+    *   `devops/`: DevOps-related tools like K3s.
+    *   `flatpak/`: Flatpak integration.
+    *   `catppuccin/`: Theming modules.
+*   `lib/`: Utility functions and constants used throughout the configuration.
+*   `secrets/`: Encrypted secrets managed by `agenix`.
+*   `shells/`: Custom development shells (e.g., `rust`, `devops`, `forensics`).
 
 ## Building and Running
 
-This project is a NixOS configuration and is not "built" in the traditional sense. Instead, the configurations are applied to the target systems using the `nixos-rebuild` command.
+### Host Deployment
 
-The `flake.nix` file defines the `nixosConfigurations` for each host. To build and switch to a new generation for a host, you would run the following command on the target machine:
+Configurations are applied to target systems using `nixos-rebuild` or `colmena`.
 
+**Local Deployment:**
 ```bash
 nixos-rebuild switch --flake .#<hostname>
 ```
 
-For example, to apply the configuration for the Raspberry Pi, you would run:
-
+**Remote Deployment (using Colmena):**
 ```bash
-nixos-rebuild switch --flake .#pi
+colmena apply --on <hostname>
 ```
 
-The project also uses `colmena` for remote deployment. The `flake.nix` file defines a `colmenaHive` output that can be used to deploy the configurations to the target hosts. To deploy to a specific host using colmena, you would run:
+### Home Manager
 
+User configurations can be applied separately if needed:
 ```bash
-colmena apply -v --on <hostname>
+home-manager switch --flake .#<username>
 ```
 
-## Development Conventions
+### Development Shells
 
-*   **Nix Flakes:** The project uses Nix Flakes to manage dependencies and provide a reproducible build environment.
-*   **Custom Modules:** The project is organized into a series of custom NixOS modules, located in the `modules/` directory. These modules are used to configure specific services and settings.
-*   **Secret Management:** Secrets are managed using `agenix`, which encrypts them using `age`. The encrypted secrets are stored in the `secrets/` directory.
-*   **Containerization:** Many services are containerized using Podman, which is configured via the `virtualisation.oci-containers` option in NixOS.
-*   **Networking:** The network configuration is managed declaratively, with a focus on security. A firewall is configured to restrict access to services, and Cloudflare Tunnels are used to securely expose services to the internet.
-*   **Reverse Proxy:** Nginx is used as a reverse proxy to route traffic to the appropriate service based on the hostname.
-*   **Deployment:** Deployment to the Raspberry Pi is automated using GitHub Actions. Other hosts can be deployed to using `colmena`.
+Enter a specialized development environment:
+```bash
+nix develop .#<shell-name> # e.g., nix develop .#rust
+```
+
+## Key Technologies & Conventions
+
+*   **Nix Flakes:** Ensures reproducible builds and manages external dependencies.
+*   **Secret Management:** `agenix` (encrypted with `age`) is used to manage sensitive data securely within the git repository.
+*   **Containerization:** Services are primarily managed via Podman using the `virtualisation.oci-containers` NixOS option.
+*   **Networking:** Secure access is facilitated through Cloudflare Tunnels and Caddy/Nginx reverse proxies.
+*   **Theming:** The project uses Catppuccin for consistent styling across various applications and environments.
+*   **CI/CD:** Automated deployment to the Raspberry Pi is handled via GitHub Actions.
+
+## Self-Hosted Services
+
+The `modules/selfhost/` directory contains configurations for numerous services, including:
+- **Media & Photos:** Immich
+- **Cloud & Productivity:** Nextcloud, Paperless-ngx, Stirling-PDF, Vaultwarden
+- **Monitoring & Security:** Beszel, Gatus, Prometheus, Wazuh
+- **Utilities:** Atuin, MicroBin, Syncthing, Home Assistant
+- **Web:** Caddy, Nginx, Cloudflared
