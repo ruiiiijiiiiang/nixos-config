@@ -70,6 +70,7 @@ in
         enable = true;
         settings = {
           server = {
+            root_url = "https://${grafana-fqdn}";
             http_addr = addresses.any;
             http_port = ports.grafana;
             domain = addresses.localhost;

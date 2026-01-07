@@ -59,10 +59,15 @@ in
           PAPERLESS_DBHOST = addresses.localhost;
           PAPERLESS_URL = "https://${fqdn}";
           PAPERLESS_TIME_ZONE = timeZone;
+          PAPERLESS_FILENAME_FORMAT = "{{ created_year }}/{{ correspondent }}/{{ title }}";
+
           PAPERLESS_OCR_CLEAN = "clean";
           PAPERLESS_OCR_DESKEW = "true";
           PAPERLESS_OCR_LANGUAGE = "eng";
-          PAPERLESS_FILENAME_FORMAT = "{{ created_year }}/{{ correspondent }}/{{ title }}";
+
+          PAPERLESS_APPS = "allauth.socialaccount.providers.openid_connect";
+          PAPERLESS_SOCIALACCOUNT_ALLOW_SIGNUPS = "true";
+          PAPERLESS_SOCIAL_AUTO_SIGNUP = "true";
 
           USERMAP_UID = toString config.users.users.paperless.uid;
           USERMAP_GID = toString config.users.groups.paperless.gid;

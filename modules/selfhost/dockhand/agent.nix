@@ -10,6 +10,11 @@ let
 in
 {
   config = lib.mkIf cfg.enable {
+    age.secrets = {
+      dockhand-agent-crt.file = ../../../secrets/dockhand-agent-crt.age;
+      dockhand-agent-key.file = ../../../secrets/dockhand-agent-key.age;
+    };
+
     virtualisation.oci-containers.containers = {
       dockhand-agent = {
         image = "ghcr.io/finsys/hawser:latest";
@@ -18,7 +23,13 @@ in
         ];
         volumes = [
           "/var/run/docker.sock:/var/run/docker.sock"
+          "${config.age.secrets.dockhand-agent-crt.path}:/certs/server.crt:ro"
+          "${config.age.secrets.dockhand-agent-key.path}:/certs/server.key:ro"
         ];
+        environment = {
+          TLS_CERT = "/certs/server.crt";
+          TLS_KEY = "/certs/server.key";
+        };
         extraOptions = [ "--pull=always" ];
       };
     };

@@ -18,11 +18,23 @@ in
     publicKeys = ssh.vm-app;
     armor = true;
   };
+  "dockhand-agent-crt.age" = {
+    publicKeys = ssh.pi ++ ssh.vm-network ++ ssh.vm-app ++ ssh.vm-monitor;
+    armor = true;
+  };
+  "dockhand-agent-key.age" = {
+    publicKeys = ssh.pi ++ ssh.vm-network ++ ssh.vm-app ++ ssh.vm-monitor;
+    armor = true;
+  };
   "immich-env.age" = {
     publicKeys = ssh.vm-app;
     armor = true;
   };
   "karakeep-env.age" = {
+    publicKeys = ssh.vm-app;
+    armor = true;
+  };
+  "memos-env.age" = {
     publicKeys = ssh.vm-app;
     armor = true;
   };
@@ -48,6 +60,10 @@ in
   };
   "reitti-env.age" = {
     publicKeys = ssh.vm-app;
+    armor = true;
+  };
+  "scanopy-env.age" = {
+    publicKeys = ssh.vm-monitor;
     armor = true;
   };
   "vaultwarden-env.age" = {

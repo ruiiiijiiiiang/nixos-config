@@ -24,6 +24,7 @@
       immich = "immich";
       homepage = "home";
       karakeep = "karakeep";
+      memos = "memos";
       microbin = "bin";
       nextcloud = "nextcloud";
       onlyoffice = "office";
@@ -44,6 +45,7 @@
       gatus = "gatus";
       grafana = "grafana";
       prometheus = "prometheus";
+      scanopy = "scanopy";
       wazuh = "wazuh";
     };
   };
@@ -93,6 +95,7 @@
     homepage = 8089;
     karakeep = 8084;
     immich = 2283;
+    memos = 5230;
     microbin = 8088;
     monit = 2812;
     nginx = {
@@ -119,6 +122,10 @@
     proxmox = 8006;
     redis = 6379;
     reitti = 8085;
+    scanopy = {
+      server = 60072;
+      daemon = 60073;
+    };
     stirlingpdf = 8080;
     syncthing = 8384;
     unbound = 5335;

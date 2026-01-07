@@ -15,6 +15,7 @@
         podman.enable = true;
       };
     };
+    scanopy.enable = true;
     wazuh = {
       server.enable = true;
       agent.enable = true;

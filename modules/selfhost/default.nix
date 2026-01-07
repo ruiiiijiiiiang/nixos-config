@@ -14,6 +14,7 @@
     ./homepage
     ./immich
     ./karakeep
+    ./memos
     ./microbin
     ./monit
     ./nextcloud
@@ -24,6 +25,7 @@
     ./portainer
     ./prometheus
     ./reitti
+    ./scanopy
     ./stirlingpdf
     ./syncthing
     ./vaultwarden
@@ -68,6 +70,9 @@
     karakeep = {
       enable = mkEnableOption "Karakeep service";
     };
+    memos = {
+      enable = mkEnableOption "Memos service";
+    };
     homeassistant = {
       enable = mkEnableOption "Home Assistant with Z-Wave server";
     };
@@ -108,6 +113,9 @@
     };
     reitti = {
       enable = mkEnableOption "Reitti route planning service";
+    };
+    scanopy = {
+      enable = mkEnableOption "Scanopy network scanner";
     };
     stirlingpdf = {
       enable = mkEnableOption "Stirling-PDF document tools";

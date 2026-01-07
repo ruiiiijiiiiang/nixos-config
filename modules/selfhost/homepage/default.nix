@@ -113,6 +113,13 @@ in
                 };
               }
               {
+                "Memos" = {
+                  icon = "memos";
+                  href = "https://${subdomains.vm-app.memos}.${domains.home}";
+                  description = "Note Taking";
+                };
+              }
+              {
                 "Microbin" = {
                   icon = "microbin";
                   href = "https://${subdomains.vm-app.microbin}.${domains.home}";
@@ -128,7 +135,7 @@ in
               }
               {
                 "Reitti" = {
-                  icon = "https://raw.githubusercontent.com/dedicatedcode/reitti/refs/heads/main/src/main/resources/static/img/logo.png";
+                  icon = "https://cdn.jsdelivr.net/gh/selfhst/icons@main/png/reitti.png";
                   href = "https://${subdomains.vm-app.reitti}.${domains.home}";
                   description = "Location Tracking";
                 };
@@ -181,7 +188,7 @@ in
               }
               {
                 "Dockhand" = {
-                  icon = "https://raw.githubusercontent.com/Finsys/dockhand/refs/heads/main/src/images/logo.webp";
+                  icon = "https://cdn.jsdelivr.net/gh/selfhst/icons@main/png/dockhand.png";
                   href = "https://${subdomains.vm-monitor.dockhand}.${domains.home}";
                   description = "Container Management Dashboard";
                 };
@@ -191,6 +198,13 @@ in
                   icon = "beszel";
                   href = "https://${subdomains.vm-monitor.beszel}.${domains.home}";
                   description = "Server Monitoring";
+                };
+              }
+              {
+                "Scanopy" = {
+                  icon = "scanopy";
+                  href = "https://${subdomains.vm-monitor.scanopy}.${domains.home}";
+                  description = "Network Scanner";
                 };
               }
               {

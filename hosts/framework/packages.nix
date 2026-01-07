@@ -87,6 +87,7 @@
     obsidian
     neohtop
     vlc
+    opencloud-desktop
 
     # --- Audio & Multimedia ---
     easyeffects

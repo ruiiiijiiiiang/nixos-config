@@ -105,6 +105,8 @@ in
           RABBITMQ_HOST = addresses.localhost;
           REDIS_HOST = addresses.localhost;
           TILES_CACHE = "http://${addresses.localhost}";
+          OIDC_ENABLED = "true";
+          OIDC_ISSUER_URI = "https://id.${domains.home}";
         };
         environmentFiles = [ config.age.secrets.reitti-env.path ];
         volumes = [ "/var/lib/reitti/data:/data" ];

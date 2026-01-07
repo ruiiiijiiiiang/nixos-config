@@ -6,6 +6,7 @@
     immich.enable = true;
     homepage.enable = true;
     karakeep.enable = true;
+    memos.enable = true;
     microbin.enable = true;
     nginx.enable = true;
     opencloud.enable = true;
