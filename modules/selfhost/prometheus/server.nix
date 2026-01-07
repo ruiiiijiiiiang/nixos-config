@@ -75,6 +75,9 @@ in
             http_port = ports.grafana;
             domain = addresses.localhost;
           };
+          auth = {
+            oauth_allow_insecure_email_lookup = true;
+          };
         };
 
         provision = {

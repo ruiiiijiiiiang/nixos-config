@@ -5,15 +5,15 @@ let
 in
 {
   age.secrets = {
-    wg-privatekey.file = ../../secrets/wg-privatekey.age;
-    wg-presharedkey.file = ../../secrets/wg-presharedkey.age;
+    wireguard-private-key.file = ../../secrets/wireguard/private-key.age;
+    wireguard-preshared-key.file = ../../secrets/wireguard/preshared-key.age;
   };
 
   networking = {
     hostName = "framework";
 
     wg-quick.interfaces.wg-home = {
-      privateKeyFile = config.age.secrets.wg-privatekey.path;
+      privateKeyFile = config.age.secrets.wireguard-private-key.path;
       address = [ "${addresses.vpn.hosts.framework}/32" ];
       dns = [
         addresses.home.hosts.vm-network
@@ -23,7 +23,7 @@ in
       peers = [
         {
           inherit (wg.wg-home) publicKey;
-          presharedKeyFile = config.age.secrets.wg-presharedkey.path;
+          presharedKeyFile = config.age.secrets.wireguard-preshared-key.path;
           endpoint = "${domains.tplink}:${toString ports.wireguard}";
           allowedIPs = [ addresses.home.network ];
           persistentKeepalive = 25;

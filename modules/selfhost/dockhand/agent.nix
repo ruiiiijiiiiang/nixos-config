@@ -11,8 +11,8 @@ in
 {
   config = lib.mkIf cfg.enable {
     age.secrets = {
-      dockhand-agent-crt.file = ../../../secrets/dockhand-agent-crt.age;
-      dockhand-agent-key.file = ../../../secrets/dockhand-agent-key.age;
+      dockhand-agent-crt.file = ../../../secrets/dockhand/agent-crt.age;
+      dockhand-agent-key.file = ../../../secrets/dockhand/agent-key.age;
     };
 
     virtualisation.oci-containers.containers = {

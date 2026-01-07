@@ -18,11 +18,11 @@ in
     publicKeys = ssh.vm-app;
     armor = true;
   };
-  "dockhand-agent-crt.age" = {
+  "dockhand/agent-crt.age" = {
     publicKeys = ssh.pi ++ ssh.vm-network ++ ssh.vm-app ++ ssh.vm-monitor;
     armor = true;
   };
-  "dockhand-agent-key.age" = {
+  "dockhand/agent-key.age" = {
     publicKeys = ssh.pi ++ ssh.vm-network ++ ssh.vm-app ++ ssh.vm-monitor;
     armor = true;
   };
@@ -62,19 +62,23 @@ in
     publicKeys = ssh.vm-app;
     armor = true;
   };
-  "scanopy-env.age" = {
+  "scanopy/server-env.age" = {
     publicKeys = ssh.vm-monitor;
+    armor = true;
+  };
+  "scanopy/daemon-env.age" = {
+    publicKeys = ssh.pi ++ ssh.vm-network ++ ssh.vm-app ++ ssh.vm-monitor;
     armor = true;
   };
   "vaultwarden-env.age" = {
     publicKeys = ssh.vm-app;
     armor = true;
   };
-  "wg-privatekey.age" = {
+  "wireguard/private-key.age" = {
     publicKeys = ssh.framework;
     armor = true;
   };
-  "wg-presharedkey.age" = {
+  "wireguard/preshared-key.age" = {
     publicKeys = ssh.framework;
     armor = true;
   };

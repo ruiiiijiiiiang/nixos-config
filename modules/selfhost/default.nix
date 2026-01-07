@@ -115,7 +115,8 @@
       enable = mkEnableOption "Reitti route planning service";
     };
     scanopy = {
-      enable = mkEnableOption "Scanopy network scanner";
+      server.enable = mkEnableOption "Scanopy server";
+      daemon.enable = mkEnableOption "Scanopy daemon";
     };
     stirlingpdf = {
       enable = mkEnableOption "Stirling-PDF document tools";

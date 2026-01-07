@@ -11,5 +11,6 @@
       node.enable = true;
       podman.enable = true;
     };
+    scanopy.daemon.enable = true;
   };
 }

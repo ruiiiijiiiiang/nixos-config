@@ -10,6 +10,7 @@
       nginx.enable = true;
       node.enable = true;
     };
+    scanopy.daemon.enable = true;
     wazuh.agent.enable = true;
   };
 }
