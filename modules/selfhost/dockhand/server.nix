@@ -1,7 +1,7 @@
 {
   config,
-  lib,
   consts,
+  lib,
   utilFns,
   ...
 }:
@@ -13,7 +13,7 @@ let
     ports
     ;
   inherit (utilFns) mkVirtualHost;
-  cfg = config.selfhost.dockhand.server;
+  cfg = config.custom.selfhost.dockhand.server;
   fqdn = "${subdomains.${config.networking.hostName}.dockhand}.${domains.home}";
 in
 {

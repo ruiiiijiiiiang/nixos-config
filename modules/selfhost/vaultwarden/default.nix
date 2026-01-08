@@ -6,7 +6,7 @@ let
     subdomains
     ports
     ;
-  cfg = config.selfhost.vaultwarden;
+  cfg = config.custom.selfhost.vaultwarden;
   fqdn = "${subdomains.${config.networking.hostName}.vaultwarden}.${domains.home}";
 in
 {

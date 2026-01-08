@@ -1,15 +1,6 @@
 { pkgs, ... }:
 
 {
-  selfhost = {
-    syncthing.enable = true;
-  };
-
-  custom = {
-    catppuccin.enable = true;
-    flatpak.enable = true;
-  };
-
   services = {
     power-profiles-daemon.enable = true;
 
@@ -50,5 +41,4 @@
 
   virtualisation.vmware.host.enable = true;
 
-  selfhost.wazuh.agent.enable = true;
 }

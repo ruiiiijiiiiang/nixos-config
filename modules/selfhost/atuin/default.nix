@@ -1,19 +1,18 @@
 {
   config,
-  lib,
   consts,
+  lib,
   utilFns,
   ...
 }:
 let
-  inherit (lib) mkIf;
   inherit (consts) domains subdomains ports;
   inherit (utilFns) mkVirtualHost;
-  cfg = config.selfhost.atuin;
+  cfg = config.custom.selfhost.atuin;
   fqdn = "${subdomains.${config.networking.hostName}.atuin}.${domains.home}";
 in
 {
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     services = {
       atuin = {
         enable = true;

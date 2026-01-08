@@ -3,7 +3,7 @@ let
   inherit (lib) mkIf mkForce;
   inherit (import ../../../lib/consts.nix) domains;
   inherit (import ../../../lib/keys.nix) ssh;
-  cfg = config.selfhost.beszel.agent;
+  cfg = config.custom.selfhost.beszel.agent;
 in
 {
   config = mkIf cfg.enable {

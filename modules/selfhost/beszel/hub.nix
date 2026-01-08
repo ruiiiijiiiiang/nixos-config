@@ -1,14 +1,14 @@
 {
   config,
-  lib,
   consts,
+  lib,
   utilFns,
   ...
 }:
 let
   inherit (consts) domains subdomains ports;
   inherit (utilFns) mkVirtualHost;
-  cfg = config.selfhost.beszel.hub;
+  cfg = config.custom.selfhost.beszel.hub;
   fqdn = "${subdomains.${config.networking.hostName}.beszel}.${domains.home}";
 in
 {

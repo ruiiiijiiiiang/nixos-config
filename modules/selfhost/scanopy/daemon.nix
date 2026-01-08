@@ -1,16 +1,15 @@
 {
   config,
-  lib,
   consts,
+  lib,
   ...
 }:
 let
-  inherit (lib) mkIf;
   inherit (consts) addresses ports;
-  cfg = config.selfhost.scanopy.daemon;
+  cfg = config.custom.selfhost.scanopy.daemon;
 in
 {
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     age.secrets = {
       scanopy-daemon-env.file = ../../../secrets/scanopy/daemon-env.age;
     };

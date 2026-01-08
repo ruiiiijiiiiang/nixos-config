@@ -12,7 +12,7 @@ let
     ports
     ;
   inherit (utilFns) mkVirtualHost;
-  cfg = config.selfhost.karakeep;
+  cfg = config.custom.selfhost.karakeep;
   fqdn = "${subdomains.${config.networking.hostName}.karakeep}.${domains.home}";
 in
 {

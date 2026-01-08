@@ -5,15 +5,14 @@
   ...
 }:
 let
-  inherit (lib) mkIf;
-  cfg = config.custom.flatpak;
+  cfg = config.custom.desktop.flatpak;
 in
 {
   imports = [
     inputs.nix-flatpak.nixosModules.nix-flatpak
   ];
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     services.flatpak = {
       enable = true;
       remotes = [

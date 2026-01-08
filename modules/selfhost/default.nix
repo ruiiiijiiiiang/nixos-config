@@ -34,7 +34,7 @@
     ./yourls
   ];
 
-  options.selfhost = with lib; {
+  options.custom.selfhost = with lib; {
     atuin = {
       enable = mkEnableOption "Atuin shell history sync server";
     };

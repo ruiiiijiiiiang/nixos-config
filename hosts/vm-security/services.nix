@@ -1,8 +1,4 @@
 {
-  custom = {
-    catppuccin.enable = true;
-  };
-
   services = {
     xserver = {
       enable = true;

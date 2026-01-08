@@ -1,17 +1,16 @@
 { config, lib, ... }:
 let
-  inherit (lib) mkIf optionalString;
   inherit (import ../../../lib/consts.nix)
     addresses
     domains
     subdomains
     ports
     ;
-  cfg = config.selfhost.monit;
+  cfg = config.custom.selfhost.monit;
   fqdn = "${subdomains.${config.networking.hostName}.monit}.${domains.home}";
 in
 {
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     services = {
       monit = {
         enable = true;
@@ -29,95 +28,6 @@ in
 
           check process nginx matching "nginx"
             if does not exist then alert
-
-          ${optionalString config.selfhost.atuin.enable ''
-            check process atuin matching "atuin"
-              if does not exist then alert
-          ''}
-
-          ${optionalString config.selfhost.beszel.hub.enable ''
-            check process beszel matching "beszel"
-              if does not exist then alert
-          ''}
-
-          ${optionalString config.selfhost.cloudflared.enable ''
-            check process cloudflared matching "cloudflared"
-              if does not exist then alert
-          ''}
-
-          ${optionalString config.selfhost.dns.enable ''
-            check process pihole matching "pihole-FTL"
-              if does not exist then alert
-            check process unbound matching "bin/unbound"
-              if does not exist then alert
-          ''}
-
-          ${optionalString config.selfhost.homepage.enable ''
-            check process homepage matching "next-server"
-              if does not exist then alert
-          ''}
-
-          ${optionalString config.selfhost.immich.enable ''
-            check process immich matching "immich"
-              if does not exist then alert
-          ''}
-
-          ${optionalString config.selfhost.microbin.enable ''
-            check process microbin matching "microbin"
-              if does not exist then alert
-          ''}
-
-          ${optionalString config.selfhost.syncthing.enable ''
-            check process syncthing matching "syncthing"
-              if does not exist then alert
-          ''}
-
-          ${optionalString config.selfhost.vaultwarden.enable ''
-            check process vaultwarden matching "vaultwarden"
-              if does not exist then alert
-          ''}
-
-          ${optionalString config.selfhost.dyndns.enable ''
-            check program dyndns with path "/bin/sh -c 'if [ $(systemctl is-failed cloudflare-dyndns.service) = \"failed\" ]; then exit 1; else exit 0; fi'"
-              if status != 0 then alert
-          ''}
-
-          ${optionalString config.selfhost.homeassistant.enable ''
-            check host homeassistant address ${addresses.localhost}
-              if failed port ${toString ports.homeassistant} protocol http then alert
-            check host zwave address ${addresses.localhost}
-              if failed port ${toString ports.zwave} protocol http then alert
-          ''}
-
-          ${optionalString config.selfhost.bentopdf.enable ''
-            check host bentopdf address ${addresses.localhost}
-              if failed port ${toString ports.bentopdf} protocol http then alert
-          ''}
-
-          ${optionalString config.selfhost.dawarich.enable ''
-            check host dawarich address ${addresses.localhost}
-              if failed port ${toString ports.dawarich} protocol http then alert
-          ''}
-
-          ${optionalString config.selfhost.paperless.enable ''
-            check host paperless address ${addresses.localhost}
-              if failed port ${toString ports.paperless} protocol http then alert
-          ''}
-
-          ${optionalString config.selfhost.portainer.enable ''
-            check host portainer address ${addresses.localhost}
-              if failed port ${toString ports.portainer.server} protocol http then alert
-          ''}
-
-          ${optionalString config.selfhost.website.enable ''
-            check host website address ${addresses.localhost}
-              if failed port ${toString ports.website} protocol http then alert
-          ''}
-
-          # ${optionalString config.selfhost.yourls.enable ''
-            #   check host yourls address ${addresses.localhost}
-            #     if failed port ${toString ports.yourls} protocol http then alert
-            # ''}
         '';
       };
 

@@ -12,7 +12,7 @@ let
     subdomains
     ports
     ;
-  cfg = config.selfhost.nginx;
+  cfg = config.custom.selfhost.nginx;
   subdomainSet = subdomains.${config.networking.hostName} or null;
   subdomainList = if subdomainSet != null then attrValues subdomainSet else [ ];
 in
@@ -42,7 +42,7 @@ in
           allow ${addresses.vpn.network};
           deny all;
 
-          ${optionalString config.selfhost.prometheus.exporters.nginx.enable ''
+          ${optionalString config.custom.selfhost.prometheus.exporters.nginx.enable ''
             server {
               listen ${addresses.localhost}:${toString ports.nginx.stub};
               server_name localhost;
@@ -55,12 +55,12 @@ in
             }
           ''}
 
-          ${optionalString config.selfhost.microbin.enable ''
+          ${optionalString config.custom.selfhost.microbin.enable ''
             limit_req_zone $binary_remote_addr zone=microbin_req_limit:10m rate=1r/s;
             limit_conn_zone $binary_remote_addr zone=microbin_conn_limit:10m;
           ''}
 
-          ${optionalString config.selfhost.website.enable ''
+          ${optionalString config.custom.selfhost.website.enable ''
             limit_req_zone $binary_remote_addr zone=website_req_limit:10m rate=1r/s;
             limit_conn_zone $binary_remote_addr zone=website_conn_limit:10m;
           ''}

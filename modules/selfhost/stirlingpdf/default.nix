@@ -1,7 +1,7 @@
 {
   config,
-  lib,
   consts,
+  lib,
   utilFns,
   ...
 }:
@@ -13,7 +13,7 @@ let
     ports
     ;
   inherit (utilFns) mkVirtualHost;
-  cfg = config.selfhost.stirlingpdf;
+  cfg = config.custom.selfhost.stirlingpdf;
   fqdn = "${subdomains.${config.networking.hostName}.stirlingpdf}.${domains.home}";
 in
 {

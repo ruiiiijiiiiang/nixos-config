@@ -1,12 +1,12 @@
 {
   config,
-  lib,
   consts,
+  lib,
   ...
 }:
 let
   inherit (consts) ports;
-  cfg = config.selfhost.dockhand.agent;
+  cfg = config.custom.selfhost.dockhand.agent;
 in
 {
   config = lib.mkIf cfg.enable {

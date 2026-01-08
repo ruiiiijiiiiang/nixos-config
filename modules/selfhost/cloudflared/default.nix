@@ -1,11 +1,10 @@
-{ lib, config, ... }:
+{ config, lib, ... }:
 let
-  inherit (lib) mkIf;
   inherit (import ../../../lib/consts.nix) addresses domains;
-  cfg = config.selfhost.cloudflared;
+  cfg = config.custom.selfhost.cloudflared;
 in
 {
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     age.secrets = {
       cloudflare-tunnel-token.file = ../../../secrets/cloudflare-tunnel-token.age;
     };

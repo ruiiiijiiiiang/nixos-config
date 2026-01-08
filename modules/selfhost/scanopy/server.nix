@@ -1,19 +1,18 @@
 {
   config,
-  lib,
   consts,
+  lib,
   utilFns,
   ...
 }:
 let
-  inherit (lib) mkIf;
   inherit (consts) domains subdomains ports;
   inherit (utilFns) mkVirtualHost;
-  cfg = config.selfhost.scanopy.server;
+  cfg = config.custom.selfhost.scanopy.server;
   fqdn = "${subdomains.${config.networking.hostName}.scanopy}.${domains.home}";
 in
 {
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     age.secrets = {
       scanopy-server-env.file = ../../../secrets/scanopy/server-env.age;
     };

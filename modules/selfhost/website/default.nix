@@ -1,12 +1,11 @@
 {
   config,
-  lib,
   consts,
+  lib,
   utilFns,
   ...
 }:
 let
-  inherit (lib) mkIf;
   inherit (consts)
     addresses
     domains
@@ -14,11 +13,11 @@ let
     ports
     ;
   inherit (utilFns) mkVirtualHost;
-  cfg = config.selfhost.website;
+  cfg = config.custom.selfhost.website;
   fqdn = "${subdomains.${config.networking.hostName}.public}.${domains.home}";
 in
 {
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     virtualisation.oci-containers.containers.website = {
       image = "ghcr.io/ruiiiijiiiiang/website:latest";
       ports = [ "${addresses.localhost}:${toString ports.website}:${toString ports.website}" ];

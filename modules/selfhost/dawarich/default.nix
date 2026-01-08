@@ -1,11 +1,10 @@
 {
   config,
-  lib,
   consts,
+  lib,
   ...
 }:
 let
-  inherit (lib) mkIf;
   inherit (consts)
     timeZone
     addresses
@@ -13,11 +12,11 @@ let
     subdomains
     ports
     ;
-  cfg = config.selfhost.dawarich;
+  cfg = config.custom.selfhost.dawarich;
   fqdn = "${subdomains.${config.networking.hostName}.dawarich}.${domains.home}";
 in
 {
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     age.secrets = {
       dawarich-env.file = ../../../secrets/dawarich-env.age;
     };

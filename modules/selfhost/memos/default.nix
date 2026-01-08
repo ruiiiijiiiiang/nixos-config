@@ -1,12 +1,11 @@
 {
   config,
-  lib,
   consts,
+  lib,
   utilFns,
   ...
 }:
 let
-  inherit (lib) mkIf;
   inherit (consts)
     addresses
     domains
@@ -14,11 +13,11 @@ let
     ports
     ;
   inherit (utilFns) mkVirtualHost;
-  cfg = config.selfhost.memos;
+  cfg = config.custom.selfhost.memos;
   fqdn = "${subdomains.${config.networking.hostName}.memos}.${domains.home}";
 in
 {
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     age.secrets = {
       memos-env.file = ../../../secrets/memos-env.age;
     };

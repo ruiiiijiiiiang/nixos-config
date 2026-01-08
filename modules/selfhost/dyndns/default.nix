@@ -1,7 +1,7 @@
 { config, lib, ... }:
 let
   inherit (import ../../../lib/consts.nix) domains;
-  cfg = config.selfhost.dyndns;
+  cfg = config.custom.selfhost.dyndns;
 in
 {
   config = lib.mkIf cfg.enable {

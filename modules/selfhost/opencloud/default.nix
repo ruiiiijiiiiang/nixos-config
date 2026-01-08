@@ -1,13 +1,12 @@
 {
   config,
+  consts,
   lib,
   pkgs,
-  consts,
   utilFns,
   ...
 }:
 let
-  inherit (lib) mkIf;
   inherit (consts)
     addresses
     domains
@@ -15,7 +14,7 @@ let
     ports
     ;
   inherit (utilFns) mkVirtualHost;
-  cfg = config.selfhost.opencloud;
+  cfg = config.custom.selfhost.opencloud;
   opencloud-fqdn = "${subdomains.${config.networking.hostName}.opencloud}.${domains.home}";
   onlyoffice-fqdn = "${subdomains.${config.networking.hostName}.onlyoffice}.${domains.home}";
   id-fqdn = "id.${domains.home}";
@@ -27,7 +26,7 @@ let
   cspFile = "/var/lib/opencloud/opencloud-config/csp.yaml";
 in
 {
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     age.secrets = {
       opencloud-env.file = ../../../secrets/opencloud-env.age;
     };

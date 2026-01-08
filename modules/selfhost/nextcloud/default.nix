@@ -1,19 +1,18 @@
 {
   config,
-  lib,
   pkgs,
+  lib,
   consts,
   ...
 }:
 let
-  inherit (lib) mkIf;
   inherit (consts) domains subdomains ports;
-  cfg = config.selfhost.nextcloud;
+  cfg = config.custom.selfhost.nextcloud;
   nextcloud-fqdn = "${subdomains.${config.networking.hostName}.nextcloud}.${domains.home}";
   office-fqdn = "${subdomains.${config.networking.hostName}.onlyoffice}.${domains.home}";
 in
 {
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     age.secrets = {
       nextcloud-pass.file = ../../../secrets/nextcloud-pass.age;
       onlyoffice-secret = {

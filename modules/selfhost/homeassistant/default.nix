@@ -1,7 +1,7 @@
 {
   config,
-  lib,
   consts,
+  lib,
   utilFns,
   ...
 }:
@@ -14,7 +14,7 @@ let
     ports
     ;
   inherit (utilFns) mkVirtualHost;
-  cfg = config.selfhost.homeassistant;
+  cfg = config.custom.selfhost.homeassistant;
   ha-fqdn = "${subdomains.${config.networking.hostName}.homeassistant}.${domains.home}";
   zwave-fqdn = "${subdomains.${config.networking.hostName}.zwave}.${domains.home}";
 in

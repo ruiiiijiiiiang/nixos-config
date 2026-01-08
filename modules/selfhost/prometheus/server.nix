@@ -1,12 +1,11 @@
 {
   config,
-  lib,
   consts,
+  lib,
   utilFns,
   ...
 }:
 let
-  inherit (lib) mkIf;
   inherit (consts)
     addresses
     domains
@@ -14,12 +13,12 @@ let
     ports
     ;
   inherit (utilFns) mkVirtualHost;
-  cfg = config.selfhost.prometheus.server;
+  cfg = config.custom.selfhost.prometheus.server;
   prometheus-fqdn = "${subdomains.${config.networking.hostName}.prometheus}.${domains.home}";
   grafana-fqdn = "${subdomains.${config.networking.hostName}.grafana}.${domains.home}";
 in
 {
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     services = {
       prometheus = {
         enable = true;

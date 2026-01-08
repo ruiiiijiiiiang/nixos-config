@@ -1,14 +1,14 @@
 {
   config,
-  lib,
   consts,
+  lib,
   utilFns,
   ...
 }:
 let
   inherit (consts) domains subdomains ports;
   inherit (utilFns) mkVirtualHost;
-  cfg = config.selfhost.gatus;
+  cfg = config.custom.selfhost.gatus;
   fqdn = "${subdomains.${config.networking.hostName}.gatus}.${domains.home}";
 
   mkEndpoints =

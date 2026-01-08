@@ -12,7 +12,7 @@ let
     ports
     ;
   inherit (utilFns) mkVirtualHost;
-  cfg = config.selfhost.reitti;
+  cfg = config.custom.selfhost.reitti;
   fqdn = "${subdomains.${config.networking.hostName}.reitti}.${domains.home}";
 in
 {

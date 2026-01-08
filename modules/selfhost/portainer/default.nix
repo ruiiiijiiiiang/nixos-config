@@ -1,12 +1,11 @@
 {
   config,
-  lib,
   consts,
+  lib,
   utilFns,
   ...
 }:
 let
-  inherit (lib) mkIf;
   inherit (consts)
     addresses
     domains
@@ -14,11 +13,11 @@ let
     ports
     ;
   inherit (utilFns) mkVirtualHost;
-  cfg = config.selfhost.portainer;
+  cfg = config.custom.selfhost.portainer;
   fqdn = "${subdomains.${config.networking.hostName}.portainer}.${domains.home}";
 in
 {
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     virtualisation.oci-containers.containers = {
       portainer = {
         image = "portainer/portainer-ce";

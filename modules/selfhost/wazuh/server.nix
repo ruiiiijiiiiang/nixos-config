@@ -1,8 +1,8 @@
 {
   config,
+  consts,
   lib,
   pkgs,
-  consts,
   utilFns,
   ...
 }:
@@ -14,7 +14,7 @@ let
     ports
     ;
   inherit (utilFns) mkVirtualHost;
-  cfg = config.selfhost.wazuh.server;
+  cfg = config.custom.selfhost.wazuh.server;
   fqdn = "${subdomains.${config.networking.hostName}.wazuh}.${domains.home}";
   dashboardsContent = import ./opensearch_dashboards.yml.nix;
   initialFile = pkgs.writeText "opensearch_dashboards.yml" dashboardsContent;

@@ -1,12 +1,11 @@
 {
   config,
-  lib,
   consts,
+  lib,
   utilFns,
   ...
 }:
 let
-  inherit (lib) mkIf;
   inherit (consts)
     timeZone
     addresses
@@ -15,11 +14,11 @@ let
     ports
     ;
   inherit (utilFns) mkVirtualHost;
-  cfg = config.selfhost.paperless;
+  cfg = config.custom.selfhost.paperless;
   fqdn = "${subdomains.${config.networking.hostName}.paperless}.${domains.home}";
 in
 {
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     age.secrets = {
       paperless-env.file = ../../../secrets/paperless-env.age;
     };

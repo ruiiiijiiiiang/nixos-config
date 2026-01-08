@@ -1,12 +1,11 @@
 {
-  lib,
   config,
   consts,
+  lib,
   utilFns,
   ...
 }:
 let
-  inherit (lib) mkIf;
   inherit (consts)
     timeZone
     addresses
@@ -15,12 +14,12 @@ let
     ports
     ;
   inherit (utilFns) mkVirtualHost;
-  cfg = config.selfhost.immich;
+  cfg = config.custom.selfhost.immich;
   fqdn = "${subdomains.${config.networking.hostName}.immich}.${domains.home}";
   immich-version = "v2.4.1";
 in
 {
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     age.secrets = {
       immich-env.file = ../../../secrets/immich-env.age;
     };

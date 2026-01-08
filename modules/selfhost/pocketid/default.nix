@@ -1,14 +1,14 @@
 {
   config,
-  lib,
   consts,
+  lib,
   utilFns,
   ...
 }:
 let
   inherit (consts) domains subdomains ports;
   inherit (utilFns) mkVirtualHost;
-  cfg = config.selfhost.pocketid;
+  cfg = config.custom.selfhost.pocketid;
   fqdn = "${subdomains.${config.networking.hostName}.pocketid}.${domains.home}";
 in
 {

@@ -5,7 +5,7 @@
   ...
 }:
 let
-  cfg = config.custom.catppuccin;
+  cfg = config.custom.desktop.catppuccin;
 in
 {
   imports = [

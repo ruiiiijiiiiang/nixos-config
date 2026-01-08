@@ -6,7 +6,7 @@
 }:
 let
   inherit (import ../../../lib/consts.nix) addresses ports;
-  cfg = config.selfhost.wazuh.agent;
+  cfg = config.custom.selfhost.wazuh.agent;
   agentName = config.networking.hostName;
   ossecTemplate = import ./ossec.conf.nix;
   ossecContent =

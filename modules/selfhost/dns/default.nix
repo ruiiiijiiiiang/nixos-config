@@ -1,7 +1,7 @@
 {
-  lib,
   config,
   consts,
+  lib,
   utilFns,
   ...
 }:
@@ -13,7 +13,7 @@ let
     ports
     ;
   inherit (utilFns) mkVirtualHost;
-  cfg = config.selfhost.dns;
+  cfg = config.custom.selfhost.dns;
   fqdn = "${subdomains.${config.networking.hostName}.pihole}.${domains.home}";
 in
 {

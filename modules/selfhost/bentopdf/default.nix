@@ -6,7 +6,7 @@ let
     subdomains
     ports
     ;
-  cfg = config.selfhost.bentopdf;
+  cfg = config.custom.selfhost.bentopdf;
   fqdn = "${subdomains.${config.networking.hostName}.bentopdf}.${domains.home}";
 in
 {

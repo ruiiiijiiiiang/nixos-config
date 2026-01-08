@@ -1,8 +1,6 @@
 {
   imports = [
     ../../modules
-    ../common
-    ../common/gui
     ./hardware.nix
     ./nixos.nix
     ./network.nix
@@ -11,4 +9,17 @@
   ];
 
   system.stateVersion = "25.05";
+
+  custom = {
+    desktop = {
+      catppuccin.enable = true;
+      flatpak.enable = true;
+      packages.enable = true;
+    };
+
+    selfhost = {
+      syncthing.enable = true;
+      wazuh.agent.enable = true;
+    };
+  };
 }

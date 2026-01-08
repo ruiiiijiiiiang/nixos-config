@@ -21,8 +21,6 @@
     # Passwords & auth
     john
     hashcat
-    hydra
-    medusa
 
     # Exploitation
     metasploit

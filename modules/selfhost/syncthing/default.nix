@@ -1,19 +1,18 @@
 {
   config,
-  lib,
   consts,
+  lib,
   utilFns,
   ...
 }:
 let
-  inherit (lib) mkIf;
   inherit (consts) domains subdomains ports;
   inherit (utilFns) mkVirtualHost;
-  cfg = config.selfhost.syncthing;
+  cfg = config.custom.selfhost.syncthing;
   fqdn = "${subdomains.${config.networking.hostName}.syncthing}.${domains.home}";
 in
 {
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     services = {
       syncthing = {
         enable = true;
@@ -74,7 +73,7 @@ in
         };
       };
 
-      nginx.virtualHosts."${fqdn}" = mkIf cfg.proxied (mkVirtualHost {
+      nginx.virtualHosts."${fqdn}" = lib.mkIf cfg.proxied (mkVirtualHost {
         inherit fqdn;
         port = ports.syncthing;
       });
