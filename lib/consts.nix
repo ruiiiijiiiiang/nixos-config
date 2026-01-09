@@ -78,6 +78,7 @@ rec {
   };
 
   macs = {
+    arch = "28:0c:50:9c:03:2e";
     framework = "ac:f2:3c:63:d9:f3";
     vm-network = "bc:24:11:b0:9b:27";
     vm-app = "bc:24:11:71:f8:9b";

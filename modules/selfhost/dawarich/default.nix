@@ -61,7 +61,7 @@ in
           ALLOW_REGISTRATION = "true";
           DATABASE_HOST = addresses.localhost;
           REDIS_URL = "redis://${addresses.localhost}:${toString ports.redis}/0";
-          OIDC_ISSUER = "https:${id-fqdn}";
+          OIDC_ISSUER = "https://${id-fqdn}";
           OIDC_REDIRECT_URI = "https://${fqdn}/users/auth/openid_connect/callback";
           OIDC_PROVIDER_NAME = "PocketID";
         };

@@ -29,6 +29,7 @@ in
         "com.spotify.Client"
         "org.upscayl.Upscayl"
         "com.simplenote.Simplenote"
+        "eu.betterbird.Betterbird"
       ];
     };
   };

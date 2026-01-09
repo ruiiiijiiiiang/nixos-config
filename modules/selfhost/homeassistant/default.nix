@@ -37,7 +37,7 @@ in
 
       zwave-js-ui = {
         dependsOn = [ "homeassistant" ];
-        image = "zwavejs/zwave-js-ui:latest";
+        image = "docker.io/zwavejs/zwave-js-ui:latest";
         volumes = [ "/var/lib/zwave-js-ui:/usr/src/app/store" ];
         networks = [ "container:homeassistant" ];
         devices = [
