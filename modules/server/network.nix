@@ -18,6 +18,7 @@ in
         ];
         allowedUDPPorts = [ ];
         checkReversePath = "loose";
+        trustedInterfaces = [ "podman0" ];
       };
       nat = {
         enable = true;

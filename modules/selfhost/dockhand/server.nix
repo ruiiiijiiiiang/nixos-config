@@ -20,13 +20,18 @@ in
   config = lib.mkIf cfg.enable {
     virtualisation.oci-containers.containers = {
       dockhand-server = {
-        image = "fnsys/dockhand:latest";
+        image = "docker.io/fnsys/dockhand:latest";
         ports = [ "${addresses.localhost}:${toString ports.dockhand.server}:3000" ];
         volumes = [
           "/var/run/docker.sock:/var/run/docker.sock"
           "dockhand_data:/app/data"
         ];
-        extraOptions = [ "--pull=always" ];
+        environment = {
+          NODE_TLS_REJECT_UNAUTHORIZED = "0";
+        };
+        labels = {
+          "io.containers.autoupdate" = "registry";
+        };
       };
     };
 

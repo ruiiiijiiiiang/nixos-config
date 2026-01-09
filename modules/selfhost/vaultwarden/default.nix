@@ -13,6 +13,14 @@ in
   config = lib.mkIf cfg.enable {
     age.secrets = {
       vaultwarden-env.file = ../../../secrets/vaultwarden-env.age;
+      # ADMIN_TOKEN=FKVOLl/pFRQiaoImf0ubhxJwaKz13iCkza8ptZD5almg3EOL8eJkOUPzOtOWxWOF
+      # SMTP_HOST
+      # SMTP_PORT
+      # SMTP_SECURITY
+      # SMTP_USERNAME
+      # SMTP_PASSWORD
+      # SMTP_FROM
+      # SMTP_FROM_NAME
     };
 
     services = {

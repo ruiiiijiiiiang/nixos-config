@@ -11,6 +11,7 @@ let
     domains
     subdomains
     ports
+    id-fqdn
     ;
   cfg = config.custom.selfhost.dawarich;
   fqdn = "${subdomains.${config.networking.hostName}.dawarich}.${domains.home}";
@@ -19,6 +20,14 @@ in
   config = lib.mkIf cfg.enable {
     age.secrets = {
       dawarich-env.file = ../../../secrets/dawarich-env.age;
+      # POSTGRES_DB
+      # POSTGRES_USER
+      # POSTGRES_PASSWORD
+      # DATABASE_NAME
+      # DATABASE_USERNAME
+      # DATABASE_PASSWORD
+      # OIDC_CLIENT_ID
+      # OIDC_CLIENT_SECRET
     };
 
     virtualisation.oci-containers.containers = {
@@ -30,14 +39,17 @@ in
       };
 
       dawarich-redis = {
-        image = "redis:latest";
+        image = "docker.io/library/redis:latest";
         dependsOn = [ "dawarich-db" ];
         networks = [ "container:dawarich-db" ];
         volumes = [ "dawarich-redis-data:/data" ];
+        labels = {
+          "io.containers.autoupdate" = "registry";
+        };
       };
 
       dawarich-app = {
-        image = "freikin/dawarich:latest";
+        image = "docker.io/freikin/dawarich:latest";
         dependsOn = [
           "dawarich-db"
           "dawarich-redis"
@@ -49,6 +61,9 @@ in
           ALLOW_REGISTRATION = "true";
           DATABASE_HOST = addresses.localhost;
           REDIS_URL = "redis://${addresses.localhost}:${toString ports.redis}/0";
+          OIDC_ISSUER = "https:${id-fqdn}";
+          OIDC_REDIRECT_URI = "https://${fqdn}/users/auth/openid_connect/callback";
+          OIDC_PROVIDER_NAME = "PocketID";
         };
         environmentFiles = [ config.age.secrets.dawarich-env.path ];
         volumes = [
@@ -66,7 +81,7 @@ in
       };
 
       dawarich-sidekiq = {
-        image = "freikin/dawarich:latest";
+        image = "docker.io/freikin/dawarich:latest";
         dependsOn = [
           "dawarich-db"
           "dawarich-redis"
@@ -89,6 +104,9 @@ in
           "exec"
           "sidekiq"
         ];
+        labels = {
+          "io.containers.autoupdate" = "registry";
+        };
       };
     };
 

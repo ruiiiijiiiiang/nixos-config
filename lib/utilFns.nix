@@ -2,6 +2,7 @@
 let
   inherit (consts)
     addresses
+    macs
     domains
     subdomains
     ;
@@ -31,4 +32,14 @@ in
         inherit extraConfig;
       };
     };
+
+  mkReservations =
+    let
+      inherit (addresses.home) hosts;
+    in
+    builtins.map (hostname: {
+      hw-address = macs.${hostname};
+      ip-address = hosts.${hostname};
+      inherit hostname;
+    }) (builtins.filter (hostname: builtins.hasAttr hostname hosts) (builtins.attrNames macs));
 }

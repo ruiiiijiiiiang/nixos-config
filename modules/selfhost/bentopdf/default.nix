@@ -15,7 +15,9 @@ in
       bentopdf = {
         image = "bentopdf/bentopdf:latest";
         ports = [ "${addresses.localhost}:${toString ports.bentopdf}:${toString ports.bentopdf}" ];
-        extraOptions = [ "--pull=always" ];
+        labels = {
+          "io.containers.autoupdate" = "registry";
+        };
       };
     };
 

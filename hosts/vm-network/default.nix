@@ -1,6 +1,7 @@
 {
   imports = [
     ../../modules
+    ./router.nix
   ];
 
   system.stateVersion = "25.11";

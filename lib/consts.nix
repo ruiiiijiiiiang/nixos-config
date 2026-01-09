@@ -1,4 +1,4 @@
-{
+rec {
   timeZone = "America/Chicago";
   defaultLocale = "en_US.UTF-8";
 
@@ -55,17 +55,17 @@
     localhost = "127.0.0.1";
     localhost-v6 = "::1";
     home = {
-      network = "192.168.68.0/24";
+      network = "192.168.1.0/24";
       hosts = {
-        arch = "192.168.68.74";
-        pi = "192.168.68.80";
-        framework = "192.168.68.85";
-        proxmox = "192.168.68.100";
-        vm-network = "192.168.68.87";
-        vm-app = "192.168.68.89";
-        vm-monitor = "192.168.68.90";
-        vm-security = "192.168.68.86";
-        pi-legacy = "192.168.68.83";
+        proxmox = "192.168.1.2";
+        vm-network = "192.168.1.1";
+        vm-app = "192.168.1.20";
+        vm-monitor = "192.168.1.21";
+        vm-security = "192.168.1.22";
+        framework = "192.168.1.30";
+        arch = "192.168.1.31";
+        pi = "192.168.1.40";
+        pi-legacy = "192.168.1.41";
       };
     };
     vpn = {
@@ -75,6 +75,16 @@
         framework = "10.5.5.4";
       };
     };
+  };
+
+  macs = {
+    framework = "ac:f2:3c:63:d9:f3";
+    vm-network = "bc:24:11:b0:9b:27";
+    vm-app = "bc:24:11:71:f8:9b";
+    vm-monitor = "bc:24:11:93:b1:94";
+    vm-security = "bc:24:11:4b:5f:d4";
+    pi = "2c:cf:67:0e:c9:6b";
+    pi-legacy = "b8:27:eb:af:a2:33";
   };
 
   ports = {
@@ -148,4 +158,6 @@
     yourls = 8081;
     zwave = 8091;
   };
+
+  id-fqdn = "${subdomains.vm-app.pocketid}.${domains.home}";
 }

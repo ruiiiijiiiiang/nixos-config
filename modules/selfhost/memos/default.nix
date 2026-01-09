@@ -20,6 +20,10 @@ in
   config = lib.mkIf cfg.enable {
     age.secrets = {
       memos-env.file = ../../../secrets/memos-env.age;
+      # POSTGRES_DB
+      # POSTGRES_USER
+      # POSTGRES_PASSWORD
+      # MEMOS_DSN
     };
 
     virtualisation.oci-containers.containers = {
@@ -31,7 +35,7 @@ in
       };
 
       memos-app = {
-        image = "neosmemo/memos:stable";
+        image = "docker.io/neosmemo/memos:stable";
         dependsOn = [ "memos-db" ];
         networks = [ "container:memos-db" ];
         environment = {
@@ -39,7 +43,9 @@ in
         };
         environmentFiles = [ config.age.secrets.memos-env.path ];
         volumes = [ "memos-data:/var/opt/memos" ];
-        extraOptions = [ "--pull=always" ];
+        labels = {
+          "io.containers.autoupdate" = "registry";
+        };
       };
     };
 

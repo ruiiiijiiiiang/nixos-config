@@ -12,6 +12,8 @@ in
   config = lib.mkIf cfg.enable {
     age.secrets = {
       scanopy-daemon-env.file = ../../../secrets/scanopy/daemon-env.age;
+      # SCANOPY_DAEMON_API_KEY
+      # SCANOPY_NETWORK_ID
     };
 
     virtualisation.oci-containers.containers = {
@@ -29,7 +31,9 @@ in
         };
         networks = [ "host" ];
         privileged = true;
-        extraOptions = [ "--pull=always" ];
+        labels = {
+          "io.containers.autoupdate" = "registry";
+        };
       };
     };
   };

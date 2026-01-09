@@ -21,6 +21,15 @@ in
   config = lib.mkIf cfg.enable {
     age.secrets = {
       paperless-env.file = ../../../secrets/paperless-env.age;
+      # POSTGRES_DB
+      # POSTGRES_USER
+      # POSTGRES_PASSWORD
+      # PAPERLESS_DBNAME
+      # PAPERLESS_DBUSER
+      # PAPERLESS_DBPASS
+      # PAPERLESS_ADMIN_USER
+      # PAPERLESS_ADMIN_PASSWORD
+      # PAPERLESS_SOCIALACCOUNT_PROVIDERS
     };
 
     virtualisation.oci-containers.containers = {
@@ -32,10 +41,14 @@ in
       };
 
       paperless-redis = {
-        image = "redis:latest";
+        image = "docker.io/library/redis:latest";
         cmd = [ "redis-server" ];
         dependsOn = [ "paperless-db" ];
         networks = [ "container:paperless-db" ];
+        volumes = [ "paperless-redis-data:/data" ];
+        labels = {
+          "io.containers.autoupdate" = "registry";
+        };
       };
 
       paperless-app = {

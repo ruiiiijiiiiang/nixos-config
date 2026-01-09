@@ -22,6 +22,12 @@ in
   config = lib.mkIf cfg.enable {
     age.secrets = {
       immich-env.file = ../../../secrets/immich-env.age;
+      # POSTGRES_USER
+      # POSTGRES_DB
+      # POSTGRES_PASSWORD
+      # DB_USERNAME
+      # DB_DATABASE_NAME
+      # DB_PASSWORD
     };
 
     virtualisation.oci-containers.containers = {
@@ -50,11 +56,14 @@ in
       };
 
       immich-redis = {
-        image = "redis:latest";
+        image = "docker.io/library/redis:latest";
         dependsOn = [ "immich-postgres" ];
         networks = [ "container:immich-postgres" ];
         cmd = [ "redis-server" ];
         volumes = [ "immich-redis-data:/data" ];
+        labels = {
+          "io.containers.autoupdate" = "registry";
+        };
       };
 
       immich-server = {

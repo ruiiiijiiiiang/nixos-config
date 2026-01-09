@@ -24,6 +24,8 @@ in
   config = lib.mkIf cfg.enable {
     age.secrets = {
       wazuh-env.file = ../../../secrets/wazuh-env.age;
+      # INDEXER_USERNAME
+      # INDEXER_PASSWORD
     };
 
     virtualisation.oci-containers.containers = {

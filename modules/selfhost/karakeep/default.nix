@@ -10,6 +10,7 @@ let
     domains
     subdomains
     ports
+    id-fqdn
     ;
   inherit (utilFns) mkVirtualHost;
   cfg = config.custom.selfhost.karakeep;
@@ -19,6 +20,11 @@ in
   config = lib.mkIf cfg.enable {
     age.secrets = {
       karakeep-env.file = ../../../secrets/karakeep-env.age;
+      # OAUTH_CLIENT_ID
+      # OAUTH_CLIENT_SECRET
+      # OAUTH_WELLKNOWN_URL=https://id.ruijiang.me/.well-known/openid-configuration
+      # NEXTAUTH_SECRET=Z94Ztgwth0B7oHrLZqGfSdzWV3hBPqK3ZmKdfxxBnCBmq2Dp
+      # MEILI_MASTER_KEY=ZULoq5lU3ccYHM3JGCEdDuIX8xgPycc03PiFo3YPFCY94
     };
 
     virtualisation.oci-containers.containers = {
@@ -33,9 +39,12 @@ in
           DATA_DIR = "/data";
           OAUTH_PROVIDER_NAME = "Pocket ID";
           OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING = "true";
+          OAUTH_WELLKNOWN_URL = "https://${id-fqdn}/.well-known/openid-configuration";
         };
         environmentFiles = [ config.age.secrets.karakeep-env.path ];
-        extraOptions = [ "--pull=always" ];
+        labels = {
+          "io.containers.autoupdate" = "registry";
+        };
       };
 
       karakeep-chrome = {
@@ -53,7 +62,7 @@ in
       };
 
       karakeep-meilisearch = {
-        image = "getmeili/meilisearch:latest";
+        image = "docker.io/getmeili/meilisearch:latest";
         dependsOn = [ "karakeep-server" ];
         networks = [ "container:karakeep-server" ];
         volumes = [ "meilisearch-data:/meili_data" ];
@@ -61,7 +70,9 @@ in
           MEILI_NO_ANALYTICS = "true";
         };
         environmentFiles = [ config.age.secrets.karakeep-env.path ];
-        extraOptions = [ "--pull=always" ];
+        labels = {
+          "io.containers.autoupdate" = "registry";
+        };
       };
     };
 

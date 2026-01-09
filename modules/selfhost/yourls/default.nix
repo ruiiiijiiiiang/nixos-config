@@ -20,6 +20,15 @@ in
   config = lib.mkIf cfg.enable {
     age.secrets = {
       yourls-env.file = ../../../secrets/yourls-env.age;
+      # MYSQL_DATABASE
+      # MYSQL_USER
+      # MYSQL_ROOT_PASSWORD
+      # MYSQL_PASSWORD
+      # YOURLS_USER
+      # YOURLS_PASS
+      # YOURLS_DB_NAME
+      # YOURLS_DB_USER
+      # YOURLS_DB_PASS
     };
 
     virtualisation.oci-containers.containers = {
@@ -32,8 +41,8 @@ in
         ];
       };
 
-      yourls = {
-        image = "yourls:latest";
+      yourls-server = {
+        image = "docker.io/library/yourls:latest";
         dependsOn = [ "yourls-db" ];
         networks = [ "container:yourls-db" ];
         environment = {
@@ -44,9 +53,9 @@ in
         volumes = [
           "/var/lib/yourls/html:/var/www/html"
         ];
-        extraOptions = [
-          "--pull=always"
-        ];
+        labels = {
+          "io.containers.autoupdate" = "registry";
+        };
       };
     };
 

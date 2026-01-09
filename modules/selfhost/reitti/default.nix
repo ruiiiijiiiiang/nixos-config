@@ -19,6 +19,16 @@ in
   config = lib.mkIf cfg.enable {
     age.secrets = {
       reitti-env.file = ../../../secrets/reitti-env.age;
+      # POSTGRES_USER
+      # POSTGRES_DB
+      # POSTGRES_PASSWORD
+      # POSTGIS_USER
+      # POSTGIS_DB
+      # POSTGIS_PASSWORD
+      # RABBITMQ_DEFAULT_USER
+      # RABBITMQ_DEFAULT_PASS
+      # OIDC_CLIENT_ID
+      # OIDC_CLIENT_SECRET
     };
 
     virtualisation.oci-containers.containers = {
@@ -30,18 +40,24 @@ in
       };
 
       reitti-rabbitmq = {
-        image = "rabbitmq:3-management-alpine";
+        image = "docker.io/library/rabbitmq:latest";
         dependsOn = [ "reitti-postgis" ];
         networks = [ "container:reitti-postgis" ];
         environmentFiles = [ config.age.secrets.reitti-env.path ];
         volumes = [ "reitti-rabbitmq-data:/var/lib/rabbitmq" ];
+        labels = {
+          "io.containers.autoupdate" = "registry";
+        };
       };
 
       reitti-redis = {
-        image = "redis:7-alpine";
+        image = "docker.io/library/redis:latest";
         dependsOn = [ "reitti-postgis" ];
         networks = [ "container:reitti-postgis" ];
         volumes = [ "reitti-redis-data:/data" ];
+        labels = {
+          "io.containers.autoupdate" = "registry";
+        };
       };
 
       reitti-photon = {
@@ -56,7 +72,7 @@ in
       };
 
       reitti-tile-cache = {
-        image = "nginx:alpine";
+        image = "docker.io/library/nginx:alpine";
         dependsOn = [ "reitti-postgis" ];
         networks = [ "container:reitti-postgis" ];
         cmd = [
@@ -75,7 +91,7 @@ in
                 location / {
                   proxy_pass https://tile.openstreetmap.org/;
                   proxy_set_header Host tile.openstreetmap.org;
-                  proxy_set_header User-Agent "Reitti/1.0 (+https://github.com/dedicatedcode/reitti; contact: reitti@dedicatedcode.com)";
+                  proxy_set_header User-Agent "Reitti/1.0";
                   proxy_cache tiles;
                   proxy_cache_valid 200 30d;
                   proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
@@ -86,10 +102,13 @@ in
             nginx -g 'daemon off;'
           ''
         ];
+        labels = {
+          "io.containers.autoupdate" = "registry";
+        };
       };
 
       reitti-server = {
-        image = "dedicatedcode/reitti:latest";
+        image = "docker.io/dedicatedcode/reitti:latest";
         dependsOn = [
           "reitti-postgis"
           "reitti-rabbitmq"
@@ -110,7 +129,9 @@ in
         };
         environmentFiles = [ config.age.secrets.reitti-env.path ];
         volumes = [ "/var/lib/reitti/data:/data" ];
-        extraOptions = [ "--pull=always" ];
+        labels = {
+          "io.containers.autoupdate" = "registry";
+        };
       };
     };
 

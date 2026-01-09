@@ -29,7 +29,9 @@ in
           "/var/run/docker.sock:/var/run/docker.sock:ro"
           "portainer_data:/data"
         ];
-        extraOptions = [ "--pull=always" ];
+        labels = {
+          "io.containers.autoupdate" = "registry";
+        };
       };
     };
 

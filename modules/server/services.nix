@@ -1,4 +1,10 @@
-{ config, inputs, lib, pkgs, ... }:
+{
+  config,
+  inputs,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.custom.server.services;
 in
@@ -22,6 +28,11 @@ in
           flags = [ "--all" ];
         };
       };
+    };
+
+    systemd.timers.podman-auto-update = {
+      wantedBy = [ "timers.target" ];
+      enable = true;
     };
 
     systemd.tmpfiles.rules = [

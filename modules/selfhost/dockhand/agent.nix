@@ -30,7 +30,9 @@ in
           TLS_CERT = "/certs/server.crt";
           TLS_KEY = "/certs/server.key";
         };
-        extraOptions = [ "--pull=always" ];
+        labels = {
+          "io.containers.autoupdate" = "registry";
+        };
       };
     };
 

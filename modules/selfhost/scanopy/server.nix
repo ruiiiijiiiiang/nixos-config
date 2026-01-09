@@ -15,6 +15,11 @@ in
   config = lib.mkIf cfg.enable {
     age.secrets = {
       scanopy-server-env.file = ../../../secrets/scanopy/server-env.age;
+      # POSTGRES_DB
+      # POSTGRES_USER
+      # POSTGRES_PASSWORD
+      # SCANOPY_DATABASE_URL
+      # SCANOPY_OIDC_PROVIDERS
     };
 
     virtualisation.oci-containers.containers = {
@@ -37,7 +42,9 @@ in
         environmentFiles = [ config.age.secrets.scanopy-server-env.path ];
         dependsOn = [ "scanopy-postgres" ];
         networks = [ "container:scanopy-postgres" ];
-        extraOptions = [ "--pull=always" ];
+        labels = {
+          "io.containers.autoupdate" = "registry";
+        };
       };
     };
 

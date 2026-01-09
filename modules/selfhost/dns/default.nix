@@ -60,7 +60,7 @@ in
 
       pihole-ftl = {
         enable = true;
-        openFirewallDNS = true;
+        openFirewallDNS = false;
         settings = {
           dns = {
             upstreams = [ "${addresses.localhost}#${toString ports.unbound}" ];

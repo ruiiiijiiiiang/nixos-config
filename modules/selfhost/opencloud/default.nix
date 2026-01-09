@@ -12,12 +12,12 @@ let
     domains
     subdomains
     ports
+    id-fqdn
     ;
   inherit (utilFns) mkVirtualHost;
   cfg = config.custom.selfhost.opencloud;
   opencloud-fqdn = "${subdomains.${config.networking.hostName}.opencloud}.${domains.home}";
   onlyoffice-fqdn = "${subdomains.${config.networking.hostName}.onlyoffice}.${domains.home}";
-  id-fqdn = "id.${domains.home}";
   cspTemplate = import ./csp.yaml.nix;
   cspContent =
     builtins.replaceStrings [ "@OFFICE_FQDN@" "@ID_FQDN@" ] [ onlyoffice-fqdn id-fqdn ]
@@ -29,11 +29,14 @@ in
   config = lib.mkIf cfg.enable {
     age.secrets = {
       opencloud-env.file = ../../../secrets/opencloud-env.age;
+      # WEB_OIDC_CLIENT_ID
+      # OC_JWT_SECRET
+      # JWT_SECRET
     };
 
     virtualisation.oci-containers.containers = {
       opencloud = {
-        image = "opencloudeu/opencloud-rolling:latest";
+        image = "docker.io/opencloudeu/opencloud-rolling:latest";
         ports = [
           "${addresses.localhost}:${toString ports.opencloud}:9200"
           "${addresses.localhost}:${toString ports.onlyoffice}:80"
@@ -71,7 +74,7 @@ in
       };
 
       onlyoffice = {
-        image = "onlyoffice/documentserver:latest";
+        image = "docker.io/onlyoffice/documentserver:latest";
         dependsOn = [ "opencloud" ];
         networks = [ "container:opencloud" ];
         volumes = [

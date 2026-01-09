@@ -74,16 +74,30 @@ This virtual machine is dedicated to running various self-hosted applications.
 
 ### `vm-network`
 
-This virtual machine is responsible for network-level services and serves as the primary DNS server for the home network.
+This virtual machine acts as the central router and gateway for the home network, sitting between the modem (WAN) and the access point (LAN). It is responsible for routing, DHCP, firewalling, and serves as the primary DNS server.
+
+#### Network Architecture
+
+The host is configured with two network interfaces to function as a router:
+- **WAN (`ens18`):** Connects to the upstream modem/ISP and acquires an IP via DHCP.
+- **LAN (`ens19`):** Connects to the internal network with a static gateway IP.
+
+Core networking features include:
+- **NAT & IP Forwarding:** Masquerades internal traffic to the WAN interface.
+- **Firewall:** Trusted LAN traffic; restricted WAN ingress.
+- **Kea DHCP:** Provides IPv4 address management with static reservations and dynamic pools.
 
 #### Services
 
 - **Beszel Agent:** A messaging service (agent).
 - **DNS:** Pi-hole with Unbound for DNS filtering and resolution (primary DNS server).
+- **Dockhand Agent:** Container monitoring agent.
 - **DynDNS:** A dynamic DNS service.
+- **Kea DHCP:** High-performance DHCPv4 server.
 - **Monit:** A utility for managing and monitoring Unix systems.
 - **Nginx:** A reverse proxy.
 - **Prometheus Exporters:** Exporters for Nginx and Node.
+- **Scanopy Daemon:** Document scanning daemon.
 - **Wazuh Agent:** A security monitoring agent.
 
 ### `vm-monitor`
@@ -106,7 +120,7 @@ This virtual machine is set up as a security-focused desktop environment, with a
 
 - **Recon & Networking:** `nmap`, `masscan`, `netcat`, `socat`, `tcpdump`, `tshark`
 - **Web Security:** `burpsuite`, `sqlmap`, `nikto`, `gobuster`, `dirb`, `whatweb`
-- **Passwords & Auth:** `john`, `hashcat`, `hydra`, `medusa`
+- **Passwords & Auth:** `john`, `hashcat`
 - **Exploitation:** `metasploit`, `exploitdb`
 - **Forensics:** `binwalk`, `file`, `xxd`, `jq`, `steghide`, `exiftool`, `binsider`, `zsteg`
 - **Utilities:** `unzip`, `unrar`, `ouch`, `lazynmap`
