@@ -28,8 +28,14 @@
   };
 
   wg = {
-    wg-home = {
-      publicKey = "WTLUHiI8rWYnE4eXEZwYzMNmrarNKnZU9v9+CmgBCXA=";
+    vm-network = {
+      publicKey = "lYqj/6T1JzNicJzX0ftU5L9ffOf72WH0tBgEkthGLm8=";
+    };
+    framework = {
+      publicKey = "SF5kt0KNGdReMPbXltYmgim/0jkbho7ZtBSWVkSUR3c=";
+    };
+    iphone = {
+      publicKey = "yTCNogaqx+CA+w6RlCgzjs+jNfRiNINNDalSY8Cpflo=";
     };
   };
 }

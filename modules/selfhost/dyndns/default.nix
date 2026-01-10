@@ -15,10 +15,10 @@ in
       enable = true;
       apiTokenFile = config.age.secrets.cloudflare-dns-token.path;
       domains = [
-        domains.home
-        "*.${domains.home}"
+        "vpn.${domains.home}"
       ];
-      proxied = true;
+      proxied = false;
     };
+
   };
 }

@@ -14,7 +14,7 @@ let
     ports
     id-fqdn
     ;
-  inherit (utilFns) mkVirtualHost;
+  inherit (utilFns) mkVirtualHost syncFile;
   cfg = config.custom.selfhost.opencloud;
   opencloud-fqdn = "${subdomains.${config.networking.hostName}.opencloud}.${domains.home}";
   onlyoffice-fqdn = "${subdomains.${config.networking.hostName}.onlyoffice}.${domains.home}";
@@ -112,14 +112,11 @@ in
     };
 
     system.activationScripts.opencloud-init = ''
-      mkdir -p $(dirname ${cspFile})
-      if [ ! -f ${cspFile} ]; then
-        echo "Initializing ${cspFile} ..."
-        cat ${initialFile} > ${cspFile}
-        chmod 644 ${cspFile}
-      else
-        echo "${cspFile} already exists. Skipping initialization."
-      fi
+      ${syncFile {
+        source = initialFile;
+        destination = cspFile;
+        mode = "644";
+      }}
     '';
   };
 }

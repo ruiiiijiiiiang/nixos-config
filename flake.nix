@@ -48,6 +48,7 @@
       utilFns = import ./lib/utilFns.nix {
         inherit (nixpkgs) lib;
         inherit consts;
+        inherit pkgs;
       };
       inherit (nixpkgs.lib) nixosSystem;
       inherit (home-manager.lib) homeManagerConfiguration;

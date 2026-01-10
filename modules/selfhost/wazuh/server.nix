@@ -13,7 +13,7 @@ let
     subdomains
     ports
     ;
-  inherit (utilFns) mkVirtualHost;
+  inherit (utilFns) mkVirtualHost syncFile;
   cfg = config.custom.selfhost.wazuh.server;
   fqdn = "${subdomains.${config.networking.hostName}.wazuh}.${domains.home}";
   dashboardsContent = import ./opensearch_dashboards.yml.nix;
@@ -119,14 +119,10 @@ in
     ];
 
     system.activationScripts.wazuh-dashboard-init = ''
-      mkdir -p $(dirname ${dashboardsFile})
-      if [ ! -f ${dashboardsFile} ]; then
-        echo "Initializing ${dashboardsFile} ..."
-        cat ${initialFile} > ${dashboardsFile}
-        chmod 640 ${dashboardsFile}
-      else
-        echo "${dashboardsFile} already exists. Skipping initialization."
-      fi
+      ${syncFile {
+        source = initialFile;
+        destination = dashboardsFile;
+      }}
     '';
     # sudo podman exec -u 0 -it wazuh-indexer env JAVA_HOME=/usr/share/wazuh-indexer/jdk bash /usr/share/wazuh-indexer/plugins/opensearch-security/tools/securityadmin.sh   -cd /usr/share/wazuh-indexer/config/opensearch-security   -icl   -nhnv   -cacert /usr/share/wazuh-indexer/config/certs/root-ca.pem   -cert /usr/share/wazuh-indexer/config/certs/admin.pem   -key /usr/share/wazuh-indexer/config/certs/admin-key.pem
   };

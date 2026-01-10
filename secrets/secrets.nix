@@ -74,11 +74,19 @@ in
     publicKeys = ssh.vm-app;
     armor = true;
   };
-  "wireguard/private-key.age" = {
-    publicKeys = ssh.framework;
+  "wireguard/server-private-key.age" = {
+    publicKeys = ssh.vm-network;
     armor = true;
   };
-  "wireguard/preshared-key.age" = {
+  "wireguard/iphone-preshared-key.age" = {
+    publicKeys = ssh.vm-network;
+    armor = true;
+  };
+  "wireguard/framework-preshared-key.age" = {
+    publicKeys = ssh.vm-network ++ ssh.framework;
+    armor = true;
+  };
+  "wireguard/framework-private-key.age" = {
     publicKeys = ssh.framework;
     armor = true;
   };

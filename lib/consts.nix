@@ -5,7 +5,6 @@ rec {
   # please don't DDOS :)
   domains = {
     home = "ruijiang.me";
-    tplink = "ruijiang.tplinkdns.com";
   };
 
   subdomains = {
@@ -69,8 +68,9 @@ rec {
       };
     };
     vpn = {
-      network = "10.0.0.0/8";
+      network = "10.5.5.0/24";
       hosts = {
+        vm-network = "10.5.5.1";
         iphone = "10.5.5.2";
         framework = "10.5.5.4";
       };

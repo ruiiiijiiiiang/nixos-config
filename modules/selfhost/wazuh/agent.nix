@@ -2,10 +2,12 @@
   config,
   lib,
   pkgs,
+  utilFns,
   ...
 }:
 let
   inherit (import ../../../lib/consts.nix) addresses ports;
+  inherit (utilFns) syncFile;
   cfg = config.custom.selfhost.wazuh.agent;
   agentName = config.networking.hostName;
   ossecTemplate = import ./ossec.conf.nix;
@@ -45,14 +47,10 @@ in
     ];
 
     system.activationScripts.wazuh-agent-init = ''
-      mkdir -p $(dirname ${ossecFile})
-      if [ ! -f ${ossecFile} ]; then
-        echo "Initializing ${ossecFile} ..."
-        cat ${initialFile} > ${ossecFile}
-        chmod 640 ${ossecFile}
-      else
-        echo "${ossecFile} already exists. Skipping initialization."
-      fi
+      ${syncFile {
+        source = initialFile;
+        destination = ossecFile;
+      }}
       if [ ! -f ${keysFile} ]; then
         echo "Initializing empty ${keysFile} ..."
         touch ${keysFile}

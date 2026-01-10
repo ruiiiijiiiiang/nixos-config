@@ -1,4 +1,4 @@
-{ lib, consts, ... }:
+{ lib, consts, pkgs, ... }:
 let
   inherit (consts)
     addresses
@@ -42,4 +42,18 @@ in
       ip-address = hosts.${hostname};
       inherit hostname;
     }) (builtins.filter (hostname: builtins.hasAttr hostname hosts) (builtins.attrNames macs));
+
+  syncFile = { source, destination, user ? "root", group ? "root", mode ? "640" }: ''
+    mkdir -p "$(dirname "${destination}")"
+
+    if [ ! -f "${destination}" ] || ! ${pkgs.diffutils}/bin/cmp -s "${source}" "${destination}"; then
+      echo "Updating content for ${destination}..."
+      cat "${source}" > "${destination}"
+    else
+      echo "${destination} already exists. Skipping initialization."
+    fi
+
+    chown ${user}:${group} "${destination}"
+    chmod ${mode} "${destination}"
+  '';
 }
