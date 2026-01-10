@@ -34,6 +34,13 @@
         node.enable = true;
       };
       scanopy.daemon.enable = true;
+      suricata = {
+        enable = true;
+        interfaces = [
+          "ens18"
+          "ens19"
+        ];
+      };
       wazuh.agent.enable = true;
     };
   };

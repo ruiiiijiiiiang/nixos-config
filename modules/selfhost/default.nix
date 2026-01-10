@@ -27,6 +27,7 @@
     ./reitti
     ./scanopy
     ./stirlingpdf
+    ./suricata
     ./syncthing
     ./vaultwarden
     ./wazuh
@@ -120,6 +121,14 @@
     };
     stirlingpdf = {
       enable = mkEnableOption "Stirling-PDF document tools";
+    };
+    suricata = {
+      enable = mkEnableOption "Suricata IDS/IPS";
+      interfaces = mkOption {
+        type = types.listOf types.str;
+        default = [ ];
+        description = "Interfaces to monitor";
+      };
     };
     syncthing = {
       enable = mkEnableOption "Syncthing file synchronization";
