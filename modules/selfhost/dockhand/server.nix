@@ -2,7 +2,7 @@
   config,
   consts,
   lib,
-  utilFns,
+  helpers,
   ...
 }:
 let
@@ -12,7 +12,7 @@ let
     subdomains
     ports
     ;
-  inherit (utilFns) mkVirtualHost;
+  inherit (helpers) mkVirtualHost;
   cfg = config.custom.selfhost.dockhand.server;
   fqdn = "${subdomains.${config.networking.hostName}.dockhand}.${domains.home}";
 in
@@ -38,7 +38,6 @@ in
     services.nginx.virtualHosts."${fqdn}" = mkVirtualHost {
       inherit fqdn;
       port = ports.dockhand.server;
-      proxyWebsockets = true;
     };
   };
 }

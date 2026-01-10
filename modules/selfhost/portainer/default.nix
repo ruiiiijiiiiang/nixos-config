@@ -2,7 +2,7 @@
   config,
   consts,
   lib,
-  utilFns,
+  helpers,
   ...
 }:
 let
@@ -12,7 +12,7 @@ let
     subdomains
     ports
     ;
-  inherit (utilFns) mkVirtualHost;
+  inherit (helpers) mkVirtualHost;
   cfg = config.custom.selfhost.portainer;
   fqdn = "${subdomains.${config.networking.hostName}.portainer}.${domains.home}";
 in
@@ -42,7 +42,6 @@ in
     services.nginx.virtualHosts."${fqdn}" = mkVirtualHost {
       inherit fqdn;
       port = ports.portainer.server;
-      proxyWebsockets = true;
     };
   };
 }

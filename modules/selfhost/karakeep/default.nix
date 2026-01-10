@@ -1,7 +1,7 @@
 {
   config,
   lib,
-  utilFns,
+  helpers,
   ...
 }:
 let
@@ -12,7 +12,7 @@ let
     ports
     id-fqdn
     ;
-  inherit (utilFns) mkVirtualHost;
+  inherit (helpers) mkVirtualHost;
   cfg = config.custom.selfhost.karakeep;
   fqdn = "${subdomains.${config.networking.hostName}.karakeep}.${domains.home}";
 in
@@ -90,7 +90,6 @@ in
       nginx.virtualHosts."${fqdn}" = mkVirtualHost {
         inherit fqdn;
         port = ports.karakeep;
-        proxyWebsockets = true;
       };
     };
   };

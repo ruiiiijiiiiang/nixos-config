@@ -3,7 +3,7 @@
   consts,
   lib,
   pkgs,
-  utilFns,
+  helpers,
   ...
 }:
 let
@@ -14,7 +14,7 @@ let
     ports
     id-fqdn
     ;
-  inherit (utilFns) mkVirtualHost syncFile;
+  inherit (helpers) mkVirtualHost ensureFile;
   cfg = config.custom.selfhost.opencloud;
   opencloud-fqdn = "${subdomains.${config.networking.hostName}.opencloud}.${domains.home}";
   onlyoffice-fqdn = "${subdomains.${config.networking.hostName}.onlyoffice}.${domains.home}";
@@ -102,17 +102,15 @@ in
       "${opencloud-fqdn}" = mkVirtualHost {
         fqdn = opencloud-fqdn;
         port = ports.opencloud;
-        proxyWebsockets = true;
       };
       "${onlyoffice-fqdn}" = mkVirtualHost {
         fqdn = onlyoffice-fqdn;
         port = ports.onlyoffice;
-        proxyWebsockets = true;
       };
     };
 
     system.activationScripts.opencloud-init = ''
-      ${syncFile {
+      ${ensureFile {
         source = initialFile;
         destination = cspFile;
         mode = "644";

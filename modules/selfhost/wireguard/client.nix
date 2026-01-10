@@ -1,19 +1,25 @@
-{ config, consts, ... }:
+{
+  config,
+  consts,
+  lib,
+  ...
+}:
 let
   inherit (import ../../lib/keys.nix) wg;
   inherit (consts) addresses domains ports;
+  cfg = config.custom.selfhost.wireguard;
 in
 {
-  age.secrets = {
-    wireguard-framework-private-key.file = ../../secrets/wireguard/framework-private-key.age;
-    wireguard-framework-preshared-key.file = ../../secrets/wireguard/framework-preshared-key.age;
-  };
+  config = lib.mkIf cfg.client.enable {
+    assertions = [
+      {
+        assertion = cfg.client.privateKeyFile != null && cfg.client.presharedKeyFile != null;
+        message = "WireGuard client is enabled but required keys are missing.";
+      }
+    ];
 
-  networking = {
-    hostName = "framework";
-
-    wg-quick.interfaces.wg-home = {
-      privateKeyFile = config.age.secrets.wireguard-framework-private-key.path;
+    networking.wg-quick.interfaces.wg-home = {
+      inherit (cfg.client) privateKeyFile;
       address = [ "${addresses.vpn.hosts.framework}/32" ];
       dns = [
         addresses.home.hosts.vm-network
@@ -23,7 +29,7 @@ in
       peers = [
         {
           inherit (wg.vm-network) publicKey;
-          presharedKeyFile = config.age.secrets.wireguard-framework-preshared-key.path;
+          inherit (cfg.client) presharedKeyFile;
           endpoint = "vpn.${domains.home}:${toString ports.wireguard}";
           allowedIPs = [
             addresses.home.network

@@ -2,7 +2,7 @@
   config,
   consts,
   lib,
-  utilFns,
+  helpers,
   ...
 }:
 let
@@ -13,7 +13,7 @@ let
     subdomains
     ports
     ;
-  inherit (utilFns) mkVirtualHost;
+  inherit (helpers) mkVirtualHost;
   cfg = config.custom.selfhost.immich;
   fqdn = "${subdomains.${config.networking.hostName}.immich}.${domains.home}";
   immich-version = "v2.4.1";
@@ -121,7 +121,6 @@ in
       nginx.virtualHosts."${fqdn}" = mkVirtualHost {
         inherit fqdn;
         port = ports.immich;
-        proxyWebsockets = true;
         extraConfig = ''
           client_max_body_size 50000M;
           proxy_read_timeout 600s;

@@ -118,7 +118,6 @@ in
       };
       locations."/cable" = {
         proxyPass = "http://${addresses.localhost}:${toString ports.dawarich}";
-        proxyWebsockets = true;
       };
     };
   };

@@ -1,0 +1,98 @@
+{
+  config,
+  consts,
+  lib,
+  helpers,
+  ...
+}:
+let
+  inherit (consts) addresses ports;
+  inherit (helpers) getReservations getIp;
+  cfg = config.custom.selfhost.router;
+in
+{
+  config = lib.mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = cfg.wanInterface != null && cfg.lanInterface != null;
+        message = "Router is enabled but required interfaces are missing.";
+      }
+    ];
+
+    boot.kernel.sysctl = {
+      "net.ipv4.ip_forward" = 1;
+      "net.ipv4.conf.all.forwarding" = 1;
+      "net.ipv6.ip_forward" = 1;
+      "net.ipv6.conf.all.forwarding" = 1;
+    };
+
+    networking = {
+      interfaces.${cfg.wanInterface}.useDHCP = true;
+
+      interfaces.${cfg.lanInterface} = {
+        useDHCP = false;
+        ipv4.addresses = [
+          {
+            address = getIp { inherit (config.networking) hostName; };
+            prefixLength = 24;
+          }
+        ];
+      };
+
+      nat = {
+        enable = true;
+        externalInterface = cfg.wanInterface;
+        internalInterfaces = [
+          cfg.lanInterface
+        ];
+      };
+
+      firewall = {
+        enable = true;
+        trustedInterfaces = [
+          cfg.lanInterface
+        ];
+
+        allowedTCPPorts = lib.mkForce [ ];
+        allowedUDPPorts = lib.mkForce (
+          lib.optional config.custom.selfhost.wireguard.server.enable ports.wireguard
+        );
+
+        interfaces.${cfg.wanInterface} = {
+          allowedTCPPorts = [ ];
+          allowedUDPPorts = lib.mkForce (
+            lib.optional config.custom.selfhost.wireguard.server.enable ports.wireguard
+          );
+        };
+      };
+    };
+
+    services.kea.dhcp4 = {
+      enable = true;
+      settings = {
+        interfaces-config = {
+          interfaces = [ cfg.lanInterface ];
+        };
+        valid-lifetime = 86400;
+        subnet4 = [
+          {
+            id = 1;
+            reservations = getReservations;
+            subnet = addresses.home.network;
+            pools = [ { pool = "${addresses.home.dhcp-min} - ${addresses.home.dhcp-max}"; } ];
+            option-data = [
+              {
+                name = "routers";
+                data = addresses.home.hosts.vm-network;
+              }
+              {
+                name = "domain-name-servers";
+                data = "${addresses.home.hosts.vm-network}, ${addresses.home.hosts.pi}, ${addresses.home.hosts.pi-legacy}";
+              }
+            ];
+          }
+        ];
+      };
+    };
+  };
+}

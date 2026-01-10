@@ -2,12 +2,12 @@
   config,
   consts,
   lib,
-  utilFns,
+  helpers,
   ...
 }:
 let
   inherit (consts) domains subdomains ports;
-  inherit (utilFns) mkVirtualHost;
+  inherit (helpers) mkVirtualHost;
   cfg = config.custom.selfhost.scanopy.server;
   fqdn = "${subdomains.${config.networking.hostName}.scanopy}.${domains.home}";
 in
@@ -51,7 +51,6 @@ in
     services.nginx.virtualHosts."${fqdn}" = mkVirtualHost {
       inherit fqdn;
       port = ports.scanopy.server;
-      proxyWebsockets = true;
     };
 
     networking.firewall.allowedTCPPorts = [ ports.scanopy.server ];

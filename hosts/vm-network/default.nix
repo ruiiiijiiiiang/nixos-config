@@ -1,11 +1,20 @@
+{ config, ... }:
+let
+  wanInterface = "ens18";
+  lanInterface = "ens19";
+  wireguardInterface = "wg0";
+in
 {
   imports = [
     ../../modules
-    ./router.nix
   ];
 
   system.stateVersion = "25.11";
   networking.hostName = "vm-network";
+
+  age.secrets = {
+    wireguard-server-private-key.file = ../../secrets/wireguard/server-private-key.age;
+  };
 
   custom = {
     server = {
@@ -23,6 +32,22 @@
     };
 
     selfhost = {
+      router = {
+        enable = true;
+        inherit wanInterface;
+        inherit lanInterface;
+      };
+      suricata = {
+        enable = true;
+        inherit wanInterface;
+        inherit lanInterface;
+      };
+      wireguard.server = {
+        enable = true;
+        privateKeyFile = config.age.secrets.wireguard-server-private-key.file;
+        interface = wireguardInterface;
+      };
+
       dns.enable = true;
       dyndns.enable = true;
       nginx.enable = true;
@@ -34,13 +59,6 @@
         node.enable = true;
       };
       scanopy.daemon.enable = true;
-      suricata = {
-        enable = true;
-        interfaces = [
-          "ens18"
-          "ens19"
-        ];
-      };
       wazuh.agent.enable = true;
     };
   };

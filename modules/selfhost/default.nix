@@ -25,6 +25,7 @@
     ./portainer
     ./prometheus
     ./reitti
+    ./router
     ./scanopy
     ./stirlingpdf
     ./suricata
@@ -115,6 +116,19 @@
     reitti = {
       enable = mkEnableOption "Reitti route planning service";
     };
+    router = {
+      enable = mkEnableOption "Network router";
+      wanInterface = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        description = "Interface connecting to the WAN";
+      };
+      lanInterface = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        description = "Interface connecting to the LAN";
+      };
+    };
     scanopy = {
       server.enable = mkEnableOption "Scanopy server";
       daemon.enable = mkEnableOption "Scanopy daemon";
@@ -124,10 +138,15 @@
     };
     suricata = {
       enable = mkEnableOption "Suricata IDS/IPS";
-      interfaces = mkOption {
-        type = types.listOf types.str;
-        default = [ ];
-        description = "Interfaces to monitor";
+      wanInterface = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        description = "Interface connecting to the WAN";
+      };
+      lanInterface = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        description = "Interface connecting to the LAN";
       };
     };
     syncthing = {
@@ -143,6 +162,34 @@
     };
     website = {
       enable = mkEnableOption "Personal website hosting";
+    };
+    wireguard = {
+      server = {
+        enable = mkEnableOption "WireGuard VPN server";
+        privateKeyFile = mkOption {
+          type = types.nullOr types.path;
+          default = null;
+          description = "Path to WireGuard server private key";
+        };
+        interface = mkOption {
+          type = types.str;
+          description = "Interface to use for WireGuard server";
+          default = "wg0";
+        };
+      };
+      client = {
+        enable = mkEnableOption "WireGuard VPN client";
+        privateKeyFile = mkOption {
+          type = types.nullOr types.path;
+          default = null;
+          description = "Path to WireGuard client private key";
+        };
+        presharedKeyFile = mkOption {
+          type = types.nullOr types.path;
+          default = null;
+          description = "Path to WireGuard client preshared key";
+        };
+      };
     };
     yourls = {
       enable = mkEnableOption "YOURLS URL shortener";

@@ -36,7 +36,6 @@ in
         forceSSL = true;
         locations."/" = {
           proxyPass = "http://${addresses.localhost}:${toString ports.monit}";
-          proxyWebsockets = true;
         };
       };
     };

@@ -45,7 +45,7 @@
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; };
       consts = import ./lib/consts.nix;
-      utilFns = import ./lib/utilFns.nix {
+      helpers = import ./lib/helpers.nix {
         inherit (nixpkgs) lib;
         inherit consts;
         inherit pkgs;
@@ -60,6 +60,7 @@
           specialArgs = {
             inherit inputs;
             inherit consts;
+            inherit helpers;
           };
           modules = [ ./hosts/framework ];
         };
@@ -69,7 +70,7 @@
           specialArgs = {
             inherit inputs;
             inherit consts;
-            inherit utilFns;
+            inherit helpers;
           };
           modules = [ ./hosts/pi ];
         };
@@ -79,7 +80,7 @@
           specialArgs = {
             inherit inputs;
             inherit consts;
-            inherit utilFns;
+            inherit helpers;
           };
           modules = [ ./hosts/vm-network ];
         };
@@ -89,7 +90,7 @@
           specialArgs = {
             inherit inputs;
             inherit consts;
-            inherit utilFns;
+            inherit helpers;
           };
           modules = [ ./hosts/vm-app ];
         };
@@ -99,7 +100,7 @@
           specialArgs = {
             inherit inputs;
             inherit consts;
-            inherit utilFns;
+            inherit helpers;
           };
           modules = [ ./hosts/vm-monitor ];
         };
@@ -123,7 +124,7 @@
           specialArgs = {
             inherit inputs;
             inherit consts;
-            inherit utilFns;
+            inherit helpers;
           };
         };
 

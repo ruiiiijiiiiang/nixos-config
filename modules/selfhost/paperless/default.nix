@@ -2,7 +2,7 @@
   config,
   consts,
   lib,
-  utilFns,
+  helpers,
   ...
 }:
 let
@@ -13,7 +13,7 @@ let
     subdomains
     ports
     ;
-  inherit (utilFns) mkVirtualHost;
+  inherit (helpers) mkVirtualHost;
   cfg = config.custom.selfhost.paperless;
   fqdn = "${subdomains.${config.networking.hostName}.paperless}.${domains.home}";
 in
@@ -108,7 +108,6 @@ in
     services.nginx.virtualHosts."${fqdn}" = mkVirtualHost {
       inherit fqdn;
       port = ports.paperless;
-      proxyWebsockets = true;
       extraConfig = ''
         client_max_body_size 500M;
       '';

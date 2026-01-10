@@ -2,12 +2,12 @@
   config,
   consts,
   lib,
-  utilFns,
+  helpers,
   ...
 }:
 let
   inherit (consts) domains subdomains ports;
-  inherit (utilFns) mkVirtualHost;
+  inherit (helpers) mkVirtualHost;
   cfg = config.custom.selfhost.gatus;
   fqdn = "${subdomains.${config.networking.hostName}.gatus}.${domains.home}";
 
@@ -69,7 +69,6 @@ in
       nginx.virtualHosts."${fqdn}" = mkVirtualHost {
         inherit fqdn;
         port = ports.gatus;
-        proxyWebsockets = true;
       };
     };
   };

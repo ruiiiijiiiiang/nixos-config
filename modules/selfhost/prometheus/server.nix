@@ -2,7 +2,7 @@
   config,
   consts,
   lib,
-  utilFns,
+  helpers,
   ...
 }:
 let
@@ -12,7 +12,7 @@ let
     subdomains
     ports
     ;
-  inherit (utilFns) mkVirtualHost;
+  inherit (helpers) mkVirtualHost;
   cfg = config.custom.selfhost.prometheus.server;
   prometheus-fqdn = "${subdomains.${config.networking.hostName}.prometheus}.${domains.home}";
   grafana-fqdn = "${subdomains.${config.networking.hostName}.grafana}.${domains.home}";
@@ -101,7 +101,6 @@ in
         "${grafana-fqdn}" = mkVirtualHost {
           fqdn = grafana-fqdn;
           port = ports.grafana;
-          proxyWebsockets = true;
         };
       };
     };

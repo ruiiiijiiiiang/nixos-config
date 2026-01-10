@@ -3,7 +3,7 @@
   consts,
   lib,
   pkgs,
-  utilFns,
+  helpers,
   ...
 }:
 let
@@ -13,7 +13,7 @@ let
     subdomains
     ports
     ;
-  inherit (utilFns) mkVirtualHost syncFile;
+  inherit (helpers) mkVirtualHost ensureFile;
   cfg = config.custom.selfhost.wazuh.server;
   fqdn = "${subdomains.${config.networking.hostName}.wazuh}.${domains.home}";
   dashboardsContent = import ./opensearch_dashboards.yml.nix;
@@ -106,7 +106,6 @@ in
     services.nginx.virtualHosts."${fqdn}" = mkVirtualHost {
       inherit fqdn;
       port = ports.wazuh.dashboard;
-      proxyWebsockets = true;
       extraConfig = ''
         auth_request_set $email  $upstream_http_x_email;
         proxy_set_header X-Email $email;
@@ -119,7 +118,7 @@ in
     ];
 
     system.activationScripts.wazuh-dashboard-init = ''
-      ${syncFile {
+      ${ensureFile {
         source = initialFile;
         destination = dashboardsFile;
       }}

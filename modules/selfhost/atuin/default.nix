@@ -2,12 +2,12 @@
   config,
   consts,
   lib,
-  utilFns,
+  helpers,
   ...
 }:
 let
   inherit (consts) domains subdomains ports;
-  inherit (utilFns) mkVirtualHost;
+  inherit (helpers) mkVirtualHost;
   cfg = config.custom.selfhost.atuin;
   fqdn = "${subdomains.${config.networking.hostName}.atuin}.${domains.home}";
 in

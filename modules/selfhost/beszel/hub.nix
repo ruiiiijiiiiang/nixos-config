@@ -2,12 +2,12 @@
   config,
   consts,
   lib,
-  utilFns,
+  helpers,
   ...
 }:
 let
   inherit (consts) domains subdomains ports;
-  inherit (utilFns) mkVirtualHost;
+  inherit (helpers) mkVirtualHost;
   cfg = config.custom.selfhost.beszel.hub;
   fqdn = "${subdomains.${config.networking.hostName}.beszel}.${domains.home}";
 in
@@ -22,7 +22,6 @@ in
       nginx.virtualHosts."${fqdn}" = mkVirtualHost {
         inherit fqdn;
         port = ports.beszel.hub;
-        proxyWebsockets = true;
       };
     };
   };

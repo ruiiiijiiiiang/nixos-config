@@ -1,7 +1,7 @@
 {
   config,
   lib,
-  utilFns,
+  helpers,
   ...
 }:
 let
@@ -11,7 +11,7 @@ let
     subdomains
     ports
     ;
-  inherit (utilFns) mkVirtualHost;
+  inherit (helpers) mkVirtualHost;
   cfg = config.custom.selfhost.reitti;
   fqdn = "${subdomains.${config.networking.hostName}.reitti}.${domains.home}";
 in
@@ -148,7 +148,6 @@ in
     services.nginx.virtualHosts."${fqdn}" = mkVirtualHost {
       inherit fqdn;
       port = ports.reitti;
-      proxyWebsockets = true;
     };
   };
 }

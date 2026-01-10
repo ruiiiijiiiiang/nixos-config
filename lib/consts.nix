@@ -14,6 +14,7 @@ rec {
       zwave = "zwave";
     };
     vm-network = {
+      evebox = "evebox";
       pihole = "pihole";
     };
     vm-app = {
@@ -55,6 +56,8 @@ rec {
     localhost-v6 = "::1";
     home = {
       network = "192.168.1.0/24";
+      dhcp-min = "192.168.1.50";
+      dhcp-max = "192.168.1.200";
       hosts = {
         proxmox = "192.168.1.2";
         vm-network = "192.168.1.1";
@@ -100,6 +103,7 @@ rec {
       server = 3003;
       agent = 2376;
     };
+    evebox = 5636;
     gatus = 8083;
     grafana = 3001;
     homeassistant = 8123;

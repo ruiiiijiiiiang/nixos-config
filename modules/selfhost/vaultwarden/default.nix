@@ -50,7 +50,6 @@ in
         };
         locations."/notifications/hub" = {
           proxyPass = "http://${addresses.localhost}:${toString ports.vaultwarden.websocket}";
-          proxyWebsockets = true;
         };
       };
     };

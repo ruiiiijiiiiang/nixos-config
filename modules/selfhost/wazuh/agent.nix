@@ -2,12 +2,12 @@
   config,
   lib,
   pkgs,
-  utilFns,
+  helpers,
   ...
 }:
 let
   inherit (import ../../../lib/consts.nix) addresses ports;
-  inherit (utilFns) syncFile;
+  inherit (helpers) ensureFile;
   cfg = config.custom.selfhost.wazuh.agent;
   agentName = config.networking.hostName;
   ossecTemplate = import ./ossec.conf.nix;
@@ -47,7 +47,7 @@ in
     ];
 
     system.activationScripts.wazuh-agent-init = ''
-      ${syncFile {
+      ${ensureFile {
         source = initialFile;
         destination = ossecFile;
       }}

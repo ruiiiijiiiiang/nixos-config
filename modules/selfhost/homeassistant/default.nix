@@ -2,7 +2,7 @@
   config,
   consts,
   lib,
-  utilFns,
+  helpers,
   ...
 }:
 let
@@ -13,7 +13,7 @@ let
     subdomains
     ports
     ;
-  inherit (utilFns) mkVirtualHost;
+  inherit (helpers) mkVirtualHost;
   cfg = config.custom.selfhost.homeassistant;
   ha-fqdn = "${subdomains.${config.networking.hostName}.homeassistant}.${domains.home}";
   zwave-fqdn = "${subdomains.${config.networking.hostName}.zwave}.${domains.home}";
@@ -58,13 +58,11 @@ in
       nginx.virtualHosts."${ha-fqdn}" = mkVirtualHost {
         fqdn = ha-fqdn;
         port = ports.homeassistant;
-        proxyWebsockets = true;
       };
 
       nginx.virtualHosts."${zwave-fqdn}" = mkVirtualHost {
         fqdn = zwave-fqdn;
         port = ports.zwave;
-        proxyWebsockets = true;
       };
     };
   };
