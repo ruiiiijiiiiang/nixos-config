@@ -33,6 +33,7 @@
     ./vaultwarden
     ./wazuh
     ./website
+    ./wireguard
     ./yourls
   ];
 

@@ -5,7 +5,7 @@
   ...
 }:
 let
-  inherit (import ../../lib/keys.nix) wg;
+  inherit (import ../../../lib/keys.nix) wg;
   inherit (consts) addresses domains ports;
   cfg = config.custom.selfhost.wireguard;
 in

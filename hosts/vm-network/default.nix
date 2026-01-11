@@ -44,7 +44,7 @@ in
       };
       wireguard.server = {
         enable = true;
-        privateKeyFile = config.age.secrets.wireguard-server-private-key.file;
+        privateKeyFile = config.age.secrets.wireguard-server-private-key.path;
         interface = wireguardInterface;
       };
 

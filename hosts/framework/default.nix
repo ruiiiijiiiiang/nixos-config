@@ -30,8 +30,8 @@
 
       wireguard.client = {
         enable = true;
-        inherit (config.age.secrets) privateKeyFile;
-        inherit (config.age.secrets) presharedKeyFile;
+        privateKeyFile = config.age.secrets.wireguard-framework-private-key.path;
+        presharedKeyFile = config.age.secrets.wireguard-framework-preshared-key.path;
       };
     };
   };

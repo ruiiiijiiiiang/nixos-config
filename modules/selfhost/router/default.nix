@@ -6,7 +6,7 @@
   ...
 }:
 let
-  inherit (consts) addresses ports;
+  inherit (consts) addresses;
   inherit (helpers) getReservations getIp;
   cfg = config.custom.selfhost.router;
 in
@@ -42,27 +42,16 @@ in
       nat = {
         enable = true;
         externalInterface = cfg.wanInterface;
-        internalInterfaces = [
-          cfg.lanInterface
-        ];
+        internalInterfaces = [ cfg.lanInterface ];
       };
 
       firewall = {
         enable = true;
-        trustedInterfaces = [
-          cfg.lanInterface
-        ];
-
-        allowedTCPPorts = lib.mkForce [ ];
-        allowedUDPPorts = lib.mkForce (
-          lib.optional config.custom.selfhost.wireguard.server.enable ports.wireguard
-        );
+        trustedInterfaces = [ cfg.lanInterface ];
 
         interfaces.${cfg.wanInterface} = {
           allowedTCPPorts = [ ];
-          allowedUDPPorts = lib.mkForce (
-            lib.optional config.custom.selfhost.wireguard.server.enable ports.wireguard
-          );
+          allowedUDPPorts = [ ];
         };
       };
     };

@@ -200,13 +200,6 @@ in
                 };
               }
               {
-                "Scanopy" = {
-                  icon = "scanopy";
-                  href = "https://${subdomains.vm-monitor.scanopy}.${domains.home}";
-                  description = "Network Scanner";
-                };
-              }
-              {
                 "Prometheus" = {
                   icon = "prometheus";
                   href = "https://${subdomains.vm-monitor.prometheus}.${domains.home}";
@@ -225,6 +218,20 @@ in
                   icon = "wazuh";
                   href = "https://${subdomains.vm-monitor.wazuh}.${domains.home}";
                   description = "Security Monitoring";
+                };
+              }
+              {
+                "Evebox" = {
+                  icon = "evebox";
+                  href = "https://${subdomains.vm-network.evebox}.${domains.home}";
+                  description = "IDS Event Viewer";
+                };
+              }
+              {
+                "Scanopy" = {
+                  icon = "scanopy";
+                  href = "https://${subdomains.vm-monitor.scanopy}.${domains.home}";
+                  description = "Network Scanner";
                 };
               }
               {

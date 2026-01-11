@@ -16,7 +16,6 @@ in
           80
           443
         ];
-        allowedUDPPorts = [ ];
         checkReversePath = "loose";
         trustedInterfaces = [ "podman0" ];
       };

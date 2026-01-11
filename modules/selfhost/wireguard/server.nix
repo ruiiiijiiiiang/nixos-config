@@ -5,7 +5,7 @@
   ...
 }:
 let
-  inherit (import ../../lib/keys.nix) wg;
+  inherit (import ../../../lib/keys.nix) wg;
   inherit (consts) addresses ports;
   cfg = config.custom.selfhost.wireguard;
 in
@@ -19,13 +19,13 @@ in
     ];
 
     age.secrets = {
-      wireguard-framework-preshared-key.file = ../../secrets/wireguard/framework-preshared-key.age;
-      wireguard-iphone-preshared-key.file = ../../secrets/wireguard/iphone-preshared-key.age;
+      wireguard-framework-preshared-key.file = ../../../secrets/wireguard/framework-preshared-key.age;
+      wireguard-iphone-preshared-key.file = ../../../secrets/wireguard/iphone-preshared-key.age;
     };
 
     networking = {
       wireguard.interfaces.${cfg.server.interface} = {
-        ips = [ "${addresses.vpn.network}/24" ];
+        ips = [ addresses.vpn.network ];
         listenPort = ports.wireguard;
         inherit (cfg.server) privateKeyFile;
 
@@ -49,6 +49,7 @@ in
 
       firewall = {
         trustedInterfaces = [ cfg.server.interface ];
+        allowedUDPPorts = [ ports.wireguard ];
       };
     };
   };

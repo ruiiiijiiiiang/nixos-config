@@ -45,11 +45,13 @@ in
                 # Priority 0 puts it alongside standard filter rules.
                 type filter hook forward priority 0; policy accept;
 
-                # 1. Forward traffic FROM WAN to LAN -> Queue 0
-                iifname "${cfg.wanInterface}" oifname "${cfg.lanInterface}" counter queue num 0 bypass
+                ${lib.optionalString config.custom.selfhost.wireguard.server.enable ''
+                  iifname ${config.custom.selfhost.wireguard.server.interface} counter return # Traffic coming from VPN
+                  oifname ${config.custom.selfhost.wireguard.server.interface} counter return # Traffic going to VPN
+                ''}
 
-                # 2. Forward traffic FROM LAN to WAN -> Queue 0
-                iifname "${cfg.lanInterface}" oifname "${cfg.wanInterface}" counter queue num 0 bypass
+                iifname "${cfg.wanInterface}" oifname "${cfg.lanInterface}" counter queue num 0 bypass # Forward traffic from WAN to LAN -> Queue 0
+                iifname "${cfg.lanInterface}" oifname "${cfg.wanInterface}" counter queue num 0 bypass # Forward traffic from LAN to WAN -> Queue 0
               }
             '';
           };
@@ -78,22 +80,16 @@ in
             }
           ];
 
+          # Dummy listener just to make nix happy
           af-packet = [
             {
-              interface = cfg.wanInterface;
-              cluster-id = 98;
-              cluster-type = "cluster_flow";
-              defrag = "yes";
-              use-mmap = "yes";
-              tpacket-v3 = "yes";
-            }
-            {
-              interface = cfg.lanInterface;
+              interface = "lo";
               cluster-id = 99;
               cluster-type = "cluster_flow";
               defrag = "yes";
               use-mmap = "yes";
               tpacket-v3 = "yes";
+              bpf-filter = "not host 127.0.0.1";
             }
           ];
 
@@ -106,13 +102,6 @@ in
 
           outputs = [
             {
-              fast = {
-                enabled = true;
-                filename = "fast.log";
-                append = true;
-              };
-            }
-            {
               eve-log = {
                 enabled = true;
                 filetype = "regular";
@@ -121,10 +110,6 @@ in
                 types = [
                   "alert"
                   "drop"
-                  "dns"
-                  "http"
-                  "tls"
-                  "flow"
                 ];
               };
             }
@@ -143,25 +128,29 @@ in
       };
     };
 
-    virtualisation.oci-containers.containers.evebox = {
-      image = "jasonish/evebox:latest";
-      ports = [ "${addresses.localhost}:${toString ports.evebox}:${toString ports.evebox}" ];
-      volumes = [
-        "${eveJsonPath}:/var/log/suricata/eve.json:ro"
-        "/var/lib/evebox:/var/lib/evebox"
-      ];
-
-      cmd = [
-        "evebox"
-        "server"
-        "--datastore"
-        "sqlite"
-        "--input"
-        eveJsonPath
-        "--host"
-        "${addresses.any}"
-        "--no-tls"
-      ];
+    virtualisation.oci-containers.containers = {
+      evebox = {
+        image = "docker.io/jasonish/evebox:latest";
+        ports = [ "${addresses.localhost}:${toString ports.evebox}:${toString ports.evebox}" ];
+        volumes = [
+          "${eveJsonPath}:${eveJsonPath}.json:ro"
+          "/var/lib/evebox:/var/lib/evebox"
+        ];
+        labels = {
+          "io.containers.autoupdate" = "registry";
+        };
+        cmd = [
+          "evebox"
+          "server"
+          "--datastore"
+          "sqlite"
+          "--input"
+          eveJsonPath
+          "--no-tls"
+        ];
+        # Run `nix-shell -p sqlite --run "sqlite3 /var/lib/evebox/events.sqlite 'PRAGMA journal_mode=WAL;'"` once to enable WAL
+        # Write-Ahead Logging significantly reduces I/O load
+      };
     };
 
     systemd.tmpfiles.rules = [

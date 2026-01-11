@@ -121,6 +121,7 @@ in
       ${ensureFile {
         source = initialFile;
         destination = dashboardsFile;
+        mode = "644";
       }}
     '';
     # sudo podman exec -u 0 -it wazuh-indexer env JAVA_HOME=/usr/share/wazuh-indexer/jdk bash /usr/share/wazuh-indexer/plugins/opensearch-security/tools/securityadmin.sh   -cd /usr/share/wazuh-indexer/config/opensearch-security   -icl   -nhnv   -cacert /usr/share/wazuh-indexer/config/certs/root-ca.pem   -cert /usr/share/wazuh-indexer/config/certs/admin.pem   -key /usr/share/wazuh-indexer/config/certs/admin-key.pem

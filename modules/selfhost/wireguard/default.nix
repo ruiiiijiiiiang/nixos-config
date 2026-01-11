@@ -1,5 +1,5 @@
 {
-  import = [
+  imports = [
     ./server.nix
     ./client.nix
   ];
