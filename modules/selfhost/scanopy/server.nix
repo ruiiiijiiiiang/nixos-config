@@ -12,6 +12,10 @@ let
   fqdn = "${subdomains.${config.networking.hostName}.scanopy}.${domains.home}";
 in
 {
+  options.custom.selfhost.scanopy.server = with lib; {
+    enable = mkEnableOption "Scanopy server";
+  };
+
   config = lib.mkIf cfg.enable {
     age.secrets = {
       scanopy-server-env.file = ../../../secrets/scanopy/server-env.age;

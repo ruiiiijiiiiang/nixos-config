@@ -4,6 +4,10 @@ let
   cfg = config.custom.selfhost.cloudflared;
 in
 {
+  options.custom.selfhost.cloudflared = with lib; {
+    enable = mkEnableOption "Cloudflare access tunnel";
+  };
+
   config = lib.mkIf cfg.enable {
     age.secrets = {
       cloudflare-tunnel-token.file = ../../../secrets/cloudflare-tunnel-token.age;
@@ -18,13 +22,13 @@ in
           credentialsFile = config.age.secrets.cloudflare-tunnel-token.path;
           ingress = {
             "public.${domains.home}" = {
-              service = "https://${addresses.localhost}:443";
+              service = "https://${addresses.home.hosts.vm-app}:443";
               originRequest = {
                 originServerName = "public.${domains.home}";
               };
             };
             "bin.${domains.home}" = {
-              service = "https://${addresses.localhost}:443";
+              service = "https://${addresses.home.hosts.vm-app}:443";
               originRequest = {
                 originServerName = "bin.${domains.home}";
               };

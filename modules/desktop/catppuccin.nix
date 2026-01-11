@@ -12,6 +12,10 @@ in
     inputs.catppuccin.nixosModules.catppuccin
   ];
 
+  options.custom.desktop.catppuccin = with lib; {
+    enable = mkEnableOption "Custom catppuccin theme setup";
+  };
+
   config = lib.mkIf cfg.enable {
     catppuccin = {
       enable = true;

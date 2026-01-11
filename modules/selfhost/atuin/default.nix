@@ -12,6 +12,10 @@ let
   fqdn = "${subdomains.${config.networking.hostName}.atuin}.${domains.home}";
 in
 {
+  options.custom.selfhost.atuin = with lib; {
+    enable = mkEnableOption "Atuin shell history sync server";
+  };
+
   config = lib.mkIf cfg.enable {
     services = {
       atuin = {

@@ -17,6 +17,10 @@ let
   fqdn = "${subdomains.${config.networking.hostName}.stirlingpdf}.${domains.home}";
 in
 {
+  options.custom.selfhost.stirlingpdf = with lib; {
+    enable = mkEnableOption "Stirling-PDF document tools";
+  };
+
   config = lib.mkIf cfg.enable {
     virtualisation.oci-containers.containers = {
       stirling-pdf = {

@@ -21,6 +21,10 @@ let
   keysFile = "/var/wazuh/client.keys";
 in
 {
+  options.custom.selfhost.wazuh.agent = with lib; {
+    enable = mkEnableOption "Wazuh security monitoring agent";
+  };
+
   config = lib.mkIf cfg.enable {
     virtualisation.oci-containers.containers = {
       wazuh-agent = {

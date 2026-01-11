@@ -4,6 +4,10 @@ let
   cfg = config.custom.server.security;
 in
 {
+  options.custom.server.security = with lib; {
+    enable = mkEnableOption "Custom security setup for servers";
+  };
+
   config = lib.mkIf cfg.enable {
     boot.kernel.sysctl = {
       # Network: Prevent IP Spoofing

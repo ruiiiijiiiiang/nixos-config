@@ -12,6 +12,11 @@ let
   fqdn = "${subdomains.${config.networking.hostName}.syncthing}.${domains.home}";
 in
 {
+  options.custom.selfhost.syncthing = with lib; {
+    enable = mkEnableOption "Syncthing file synchronization";
+    proxied = mkEnableOption "Syncthing behind reverse proxy";
+  };
+
   config = lib.mkIf cfg.enable {
     services = {
       syncthing = {

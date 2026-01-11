@@ -4,6 +4,10 @@ let
   cfg = config.custom.selfhost.dyndns;
 in
 {
+  options.custom.selfhost.dyndns = with lib; {
+    enable = mkEnableOption "dynamic DNS service";
+  };
+
   config = lib.mkIf cfg.enable {
     age.secrets = {
       cloudflare-dns-token = {

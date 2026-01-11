@@ -31,6 +31,12 @@ in
     inputs.disko.nixosModules.disko
   ];
 
+  options.custom.vm.disks = with lib; {
+    enableMain = mkEnableOption "Enable main drive (scsi0)";
+    enableStorage = mkEnableOption "Enable storage drive (scsi1)";
+    enableScratch = mkEnableOption "Enable scratch drive (scsi2)";
+  };
+
   config = {
     disko.devices.disk = {
       main = mkIf cfg.enableMain {

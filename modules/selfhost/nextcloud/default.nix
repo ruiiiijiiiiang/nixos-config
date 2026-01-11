@@ -12,6 +12,10 @@ let
   office-fqdn = "${subdomains.${config.networking.hostName}.onlyoffice}.${domains.home}";
 in
 {
+  options.custom.selfhost.nextcloud = with lib; {
+    enable = mkEnableOption "Nextcloud file sync and collaboration";
+  };
+
   config = lib.mkIf cfg.enable {
     age.secrets = {
       nextcloud-pass.file = ../../../secrets/nextcloud-pass.age;

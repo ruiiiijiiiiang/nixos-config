@@ -17,6 +17,10 @@ let
   fqdn = "${subdomains.${config.networking.hostName}.dockhand}.${domains.home}";
 in
 {
+  options.custom.selfhost.dockhand.server = with lib; {
+    enable = mkEnableOption "Dockhand container management";
+  };
+
   config = lib.mkIf cfg.enable {
     virtualisation.oci-containers.containers = {
       dockhand-server = {

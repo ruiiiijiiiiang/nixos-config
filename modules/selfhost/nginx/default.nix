@@ -17,6 +17,10 @@ let
   subdomainList = if subdomainSet != null then attrValues subdomainSet else [ ];
 in
 {
+  options.custom.selfhost.nginx = with lib; {
+    enable = mkEnableOption "Nginx reverse proxy";
+  };
+
   config = mkIf cfg.enable {
     age.secrets = {
       cloudflare-token = {

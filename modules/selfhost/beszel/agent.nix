@@ -6,6 +6,10 @@ let
   cfg = config.custom.selfhost.beszel.agent;
 in
 {
+  options.custom.selfhost.beszel.agent = with lib; {
+    enable = mkEnableOption "Beszel monitoring agent";
+  };
+
   config = mkIf cfg.enable {
     services = {
       beszel.agent = {

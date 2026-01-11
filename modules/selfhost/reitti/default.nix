@@ -16,6 +16,10 @@ let
   fqdn = "${subdomains.${config.networking.hostName}.reitti}.${domains.home}";
 in
 {
+  options.custom.selfhost.reitti = with lib; {
+    enable = mkEnableOption "Reitti route planning service";
+  };
+
   config = lib.mkIf cfg.enable {
     age.secrets = {
       reitti-env.file = ../../../secrets/reitti-env.age;

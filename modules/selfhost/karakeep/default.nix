@@ -17,6 +17,10 @@ let
   fqdn = "${subdomains.${config.networking.hostName}.karakeep}.${domains.home}";
 in
 {
+  options.custom.selfhost.karakeep = with lib; {
+    enable = mkEnableOption "Karakeep service";
+  };
+
   config = lib.mkIf cfg.enable {
     age.secrets = {
       karakeep-env.file = ../../../secrets/karakeep-env.age;

@@ -10,6 +10,10 @@ let
   fqdn = "${subdomains.${config.networking.hostName}.vaultwarden}.${domains.home}";
 in
 {
+  options.custom.selfhost.vaultwarden = with lib; {
+    enable = mkEnableOption "Vaultwarden password manager";
+  };
+
   config = lib.mkIf cfg.enable {
     age.secrets = {
       vaultwarden-env.file = ../../../secrets/vaultwarden-env.age;

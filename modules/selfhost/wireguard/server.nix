@@ -10,6 +10,20 @@ let
   cfg = config.custom.selfhost.wireguard;
 in
 {
+  options.custom.selfhost.wireguard.server = with lib; {
+    enable = mkEnableOption "WireGuard VPN server";
+    privateKeyFile = mkOption {
+      type = types.nullOr types.path;
+      default = null;
+      description = "Path to WireGuard server private key";
+    };
+    interface = mkOption {
+      type = types.str;
+      description = "Interface to use for WireGuard server";
+      default = "wg0";
+    };
+  };
+
   config = lib.mkIf cfg.server.enable {
     assertions = [
       {

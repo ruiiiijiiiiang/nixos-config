@@ -7,6 +7,10 @@ let
   cfg = config.custom.vm.hardware;
 in
 {
+  options.custom.vm.hardware = with lib; {
+    enable = mkEnableOption "Custom hardware config for vm";
+  };
+
   config = lib.mkIf cfg.enable {
     boot = {
       tmp.useTmpfs = true;

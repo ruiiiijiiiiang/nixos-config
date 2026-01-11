@@ -50,6 +50,7 @@ in
 
       dns.enable = true;
       dyndns.enable = true;
+      cloudflared.enable = true;
       nginx.enable = true;
 
       beszel.agent.enable = true;

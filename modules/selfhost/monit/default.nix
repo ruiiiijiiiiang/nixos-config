@@ -10,6 +10,10 @@ let
   fqdn = "${subdomains.${config.networking.hostName}.monit}.${domains.home}";
 in
 {
+  options.custom.selfhost.monit = with lib; {
+    enable = mkEnableOption "Monit monitoring dashboard";
+  };
+
   config = lib.mkIf cfg.enable {
     services = {
       monit = {

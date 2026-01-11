@@ -18,6 +18,10 @@ let
   fqdn = "${subdomains.${config.networking.hostName}.paperless}.${domains.home}";
 in
 {
+  options.custom.selfhost.paperless = with lib; {
+    enable = mkEnableOption "Paperless-ngx document management";
+  };
+
   config = lib.mkIf cfg.enable {
     age.secrets = {
       paperless-env.file = ../../../secrets/paperless-env.age;

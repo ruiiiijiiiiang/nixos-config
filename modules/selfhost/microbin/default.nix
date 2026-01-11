@@ -17,6 +17,10 @@ let
   fqdn = "${subdomains.${config.networking.hostName}.microbin}.${domains.home}";
 in
 {
+  options.custom.selfhost.microbin = with lib; {
+    enable = mkEnableOption "MicroBin pastebin service";
+  };
+
   config = lib.mkIf cfg.enable {
     services = {
       microbin = {

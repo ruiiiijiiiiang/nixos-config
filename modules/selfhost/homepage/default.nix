@@ -17,6 +17,10 @@ let
   fqdn = "${subdomains.${config.networking.hostName}.homepage}.${domains.home}";
 in
 {
+  options.custom.selfhost.homepage = with lib; {
+    enable = mkEnableOption "Homepage dashboard";
+  };
+
   config = lib.mkIf cfg.enable {
     services = {
       homepage-dashboard = {

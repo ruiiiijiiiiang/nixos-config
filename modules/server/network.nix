@@ -4,6 +4,10 @@ let
   cfg = config.custom.server.network;
 in
 {
+  options.custom.server.network = with lib; {
+    enable = mkEnableOption "Custom network setup for servers";
+  };
+
   config = lib.mkIf cfg.enable {
     networking = {
       networkmanager = {

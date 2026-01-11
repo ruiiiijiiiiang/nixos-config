@@ -19,6 +19,10 @@ let
   zwave-fqdn = "${subdomains.${config.networking.hostName}.zwave}.${domains.home}";
 in
 {
+  options.custom.selfhost.homeassistant = with lib; {
+    enable = mkEnableOption "Home Assistant with Z-Wave server";
+  };
+
   config = lib.mkIf cfg.enable {
     virtualisation.oci-containers.containers = {
       homeassistant = {

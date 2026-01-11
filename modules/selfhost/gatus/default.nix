@@ -56,6 +56,10 @@ let
     };
 in
 {
+  options.custom.selfhost.gatus = with lib; {
+    enable = mkEnableOption "Gatus monitoring dashboard";
+  };
+
   config = lib.mkIf cfg.enable {
     services = {
       gatus = {

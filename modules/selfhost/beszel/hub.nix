@@ -12,6 +12,10 @@ let
   fqdn = "${subdomains.${config.networking.hostName}.beszel}.${domains.home}";
 in
 {
+  options.custom.selfhost.beszel.hub = with lib; {
+    enable = mkEnableOption "Beszel monitoring hub";
+  };
+
   config = lib.mkIf cfg.enable {
     services = {
       beszel.hub = {

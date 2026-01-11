@@ -3,6 +3,10 @@ let
   cfg = config.custom.desktop.packages;
 in
 {
+  options.custom.desktop.packages = with lib; {
+    enable = mkEnableOption "Custom gui packages";
+  };
+
   config = lib.mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
       wezterm

@@ -23,7 +23,7 @@
 
     selfhost = {
       atuin.enable = true;
-      cloudflared.enable = true;
+      cloudflared.enable = false;
       dawarich.enable = true;
       immich.enable = true;
       homepage.enable = true;

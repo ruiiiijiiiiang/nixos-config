@@ -11,7 +11,7 @@ in
     armor = true;
   };
   "cloudflare-tunnel-token.age" = {
-    publicKeys = ssh.vm-app;
+    publicKeys = ssh.vm-network;
     armor = true;
   };
   "dawarich-env.age" = {

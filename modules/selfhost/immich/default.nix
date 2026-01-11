@@ -19,6 +19,10 @@ let
   immich-version = "v2.4.1";
 in
 {
+  options.custom.selfhost.immich = with lib; {
+    enable = mkEnableOption "Immich photo and video storage";
+  };
+
   config = lib.mkIf cfg.enable {
     age.secrets = {
       immich-env.file = ../../../secrets/immich-env.age;

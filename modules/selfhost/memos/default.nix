@@ -17,6 +17,10 @@ let
   fqdn = "${subdomains.${config.networking.hostName}.memos}.${domains.home}";
 in
 {
+  options.custom.selfhost.memos = with lib; {
+    enable = mkEnableOption "Memos service";
+  };
+
   config = lib.mkIf cfg.enable {
     age.secrets = {
       memos-env.file = ../../../secrets/memos-env.age;

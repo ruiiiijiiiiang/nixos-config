@@ -10,6 +10,10 @@ let
   fqdn = "${subdomains.${config.networking.hostName}.bentopdf}.${domains.home}";
 in
 {
+  options.custom.selfhost.bentopdf = with lib; {
+    enable = mkEnableOption "BentoPDF PDF service";
+  };
+
   config = lib.mkIf cfg.enable {
     virtualisation.oci-containers.containers = {
       bentopdf = {

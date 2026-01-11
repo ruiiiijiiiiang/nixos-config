@@ -12,6 +12,10 @@ in
     inputs.nix-flatpak.nixosModules.nix-flatpak
   ];
 
+  options.custom.desktop.flatpak = with lib; {
+    enable = mkEnableOption "Custom flatpak service and packages";
+  };
+
   config = lib.mkIf cfg.enable {
     services.flatpak = {
       enable = true;

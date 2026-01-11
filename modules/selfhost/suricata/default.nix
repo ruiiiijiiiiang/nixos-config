@@ -18,6 +18,20 @@ let
   eveJsonPath = "/var/log/suricata/eve.json";
 in
 {
+  options.custom.selfhost.suricata = with lib; {
+    enable = mkEnableOption "Suricata IDS/IPS";
+    wanInterface = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = "Interface connecting to the WAN";
+    };
+    lanInterface = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = "Interface connecting to the LAN";
+    };
+  };
+
   config = lib.mkIf cfg.enable {
     assertions = [
       {

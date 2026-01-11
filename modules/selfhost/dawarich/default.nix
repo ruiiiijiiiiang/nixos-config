@@ -17,6 +17,10 @@ let
   fqdn = "${subdomains.${config.networking.hostName}.dawarich}.${domains.home}";
 in
 {
+  options.custom.selfhost.dawarich = with lib; {
+    enable = mkEnableOption "Dawarich GPS tracking service";
+  };
+
   config = lib.mkIf cfg.enable {
     age.secrets = {
       dawarich-env.file = ../../../secrets/dawarich-env.age;

@@ -1,14 +1,34 @@
 # NixOS Configuration
 
-This repository contains the NixOS configurations for several hosts, managed using Nix Flakes.
+**Welcome to the future of homelabbing.**
+
+This repository isn't just a collection of config files; it is a **fully declarative, reproducible, and fortified infrastructure** definition for my personal homelab. Built on the bedrock of **NixOS** and **Nix Flakes**, this project represents a complete paradigm shift from fragile, imperative sysadmin tasks to a robust, code-driven ecosystem.
+
+Every single aspect of this infrastructure—from the kernel hardening flags and firewall rules to the complex web of containerized microservices and their secret management—is defined in code. It emphasizes **stability** through atomic rollbacks, **observability** via a comprehensive monitoring stack, and **security** with hardened kernels and isolated networking.
+
+Forget "it works on my machine." Here, the entire state of the machine _is_ the code.
 
 ## Architecture
 
-The configurations are organized by host, with a `common` configuration that is shared across all hosts. Each host has its own directory in the `hosts/` directory, which contains the specific configuration for that host. The `flake.nix` file ties everything together, defining the NixOS configurations for each host, as well as `home-manager` configurations and development shells.
+This infrastructure is engineered for **modularity and scale**. A shared `common` core ensures consistency across the fleet, while host-specific configurations in `hosts/` define unique personalities. The `flake.nix` acts as the conductor, orchestrating the entire symphony of NixOS systems, home-manager environments, and development shells.
 
-Services are managed through a combination of NixOS options and custom modules. Many services are containerized using Podman, and Nginx is used as a reverse proxy to provide access to them. Secrets are managed using `agenix`, and deployments are handled by `colmena` and GitHub Actions.
+Services aren't just "installed"; they are defined as composable modules. A **hybrid deployment strategy** is employed to balance performance with stability:
+
+- **Native Infrastructure:** Core components like **Nginx**, **Kea DHCP**, and **WireGuard** run natively via NixOS modules. This maximizes performance, minimizes overhead, and leverages deep system integration for unmatched reliability.
+- **Containerized Applications:** User-facing applications are encapsulated in **OCI containers** (managed by Podman). This isolates complex dependencies, allows for precise version pinning independent of the host system, and eliminates build failures, ensuring that the "application layer" remains distinct from the "OS layer."
 
 ## Hosts
+
+### Shared Services
+
+Running on all server hosts (`pi`, `vm-app`, `vm-network`, `vm-monitor`).
+
+- **Beszel Agent:** System monitoring agent.
+- **Dockhand Agent:** Container monitoring agent.
+- **Nginx:** A reverse proxy.
+- **Prometheus Exporters:** Exporters for Nginx, Node, and Podman.
+- **Scanopy Daemon:** Network discovery scanning daemon.
+- **Wazuh Agent:** A security monitoring agent.
 
 ### `framework`
 
@@ -20,17 +40,12 @@ This configuration manages a Raspberry Pi 4 setup for self-hosting various servi
 
 #### Services
 
-- **Beszel Agent:** System monitoring agent.
 - **DNS:** Pi-hole with Unbound for ad-blocking and DNS resolution (backup DNS server).
-- **Dockhand Agent:** Container monitoring agent.
 - **Home Assistant:** A home automation platform.
-- **Nginx:** A reverse proxy.
-- **Prometheus Exporters:** Exporters for Nginx, Node, and Podman.
-- **Scanopy Daemon:** Document scanning daemon.
 
 ### Virtual Machines (Proxmox)
 
-All virtual machines (`vm-app`, `vm-network`, `vm-monitor`, `vm-security`) are hosted on a Proxmox server. Each VM uses a dual-disk configuration managed by Disko:
+The virtualization layer is powered by **Proxmox**, but the VM structures are strictly defined in code using **Disko**. Each VM leverages a high-performance dual-disk strategy:
 
 - **Internal SSD** (`/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi0`): Hosts the root filesystem (`/`) for optimal system performance
 - **External Hard Drive** (`/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi1`): Mounted at `/data` and provides storage for `/home` and `/var` via bind mounts
@@ -44,61 +59,48 @@ This virtual machine is dedicated to running various self-hosted applications.
 #### Services
 
 - **Atuin:** A tool for syncing, searching, and managing shell history.
-- **BentoPDF:** A PDF service.
-- **Beszel:** A messaging service (agent).
-- **Cloudflared:** A daemon for Cloudflare Tunnel.
 - **Dawarich:** A GPS tracking and location history service.
 - **Dockhand:** A lightweight container management UI.
-- **Gatus:** A health check and status monitoring service.
-- **Home Assistant:** A home automation platform.
 - **Homepage:** A dashboard for self-hosted services.
 - **Immich:** A photo and video backup solution.
-- **KaraKeep:** A karaoke management system.
+- **KaraKeep:** A bookmark management system.
 - **Memos:** A lightweight, self-hosted note-taking service.
 - **Microbin:** A small, simple, and secure pastebin service.
-- **Monit:** A utility for managing and monitoring Unix systems.
-- **Nextcloud:** A file-hosting service.
-- **Nginx:** A reverse proxy.
+- **Opencloud:** A file sharing and editing service.
 - **Paperless:** A document management system.
-- **PocketID:** An authentication service.
-- **Portainer:** A container management UI.
-- **Prometheus Exporters:** Exporters for Nginx, Node, and Podman.
+- **PocketID:** An oauth2 authentication service.
 - **Reitti:** A self-hosted routing and navigation service with OpenStreetMap integration.
-- **Scanopy:** A document scanning and OCR service.
 - **Stirling PDF:** A web-based PDF manipulation tool.
 - **Syncthing:** A continuous file synchronization program.
 - **Vaultwarden:** An unofficial Bitwarden password manager server.
-- **Wazuh Agent:** A security monitoring agent.
-- **Website:** A personal website.
+- **Website:** A personal blog website.
 - **Yourls:** A URL shortener.
 
 ### `vm-network`
 
-This virtual machine acts as the central router and gateway for the home network, sitting between the modem (WAN) and the access point (LAN). It is responsible for routing, DHCP, firewalling, and serves as the primary DNS server.
+**The Digital Gatekeeper.** This VM is the nerve center of the home network, routing every packet, enforcing firewall rules, and inspecting traffic. It replaces consumer router firmware with a fully software-defined, hardened networking appliance.
 
 #### Network Architecture
 
-The host is configured with two network interfaces to function as a router:
-- **WAN (`ens18`):** Connects to the upstream modem/ISP and acquires an IP via DHCP.
-- **LAN (`ens19`):** Connects to the internal network with a static gateway IP.
+The host is configured with two network interfaces to function as a software router:
+
+- **WAN (`ens18`):** Connected to the ISP modem. Acquires an IP via DHCP from the ISP.
+- **LAN (`ens19`):** Connected to the Deco access points. Serves as the gateway for the internal network.
 
 Core networking features include:
+
 - **NAT & IP Forwarding:** Masquerades internal traffic to the WAN interface.
 - **Firewall:** Trusted LAN traffic; restricted WAN ingress.
 - **Kea DHCP:** Provides IPv4 address management with static reservations and dynamic pools.
 
 #### Services
 
-- **Beszel Agent:** A messaging service (agent).
+- **Cloudflared:** A daemon for Cloudflare Tunnel (centralized ingress).
 - **DNS:** Pi-hole with Unbound for DNS filtering and resolution (primary DNS server).
-- **Dockhand Agent:** Container monitoring agent.
 - **DynDNS:** A dynamic DNS service.
 - **Kea DHCP:** High-performance DHCPv4 server.
-- **Monit:** A utility for managing and monitoring Unix systems.
-- **Nginx:** A reverse proxy.
-- **Prometheus Exporters:** Exporters for Nginx and Node.
-- **Scanopy Daemon:** Document scanning daemon.
-- **Wazuh Agent:** A security monitoring agent.
+- **Suricata:** A high-performance Network IDS, IPS and Network Security Monitoring engine.
+- **WireGuard:** A communication protocol and free and open-source software that implements encrypted virtual private networks.
 
 ### `vm-monitor`
 
@@ -106,11 +108,12 @@ This virtual machine is dedicated to monitoring the other hosts and services.
 
 #### Services
 
-- **Beszel:** A messaging service (hub and agent).
-- **Monit:** A utility for managing and monitoring Unix systems.
-- **Nginx:** A reverse proxy.
-- **Prometheus:** A monitoring and alerting toolkit (server and exporters).
-- **Wazuh:** A security monitoring platform (server and agent).
+- **Beszel Hub:** Central hub for Beszel monitoring.
+- **Dockhand Server:** Container management UI.
+- **Gatus:** A health check and status monitoring service.
+- **Scanopy:** A network discovery service (Server).
+- **Prometheus Server:** A monitoring and alerting toolkit.
+- **Wazuh Server:** A security monitoring platform.
 
 ### `vm-security`
 
@@ -135,7 +138,7 @@ Both `vm-network` and `pi` run Pi-hole with Unbound for network-wide ad-blocking
 
 ## Security Configuration
 
-All server hosts (Raspberry Pi and virtual machines) implement multiple layers of security hardening:
+**Paranoid by Design.** Security isn't an afterthought; it's baked into the kernel. Every server in this fleet is hardened against modern threat vectors, featuring:
 
 ### Kernel Hardening
 
@@ -161,7 +164,7 @@ All server hosts (Raspberry Pi and virtual machines) implement multiple layers o
 
 ## Secret Management (agenix)
 
-Secrets are managed declaratively and securely using `agenix`.
+**Secrets, Kept Secret.** No more `.env` files floating around. Sensitive data is encrypted at rest using `age` and `agenix`, decrypted only at runtime by the specific host identity that needs it. It's GitOps-friendly and cryptographically secure.
 
 - **Encryption:** Secrets are encrypted using `age` and stored as `.age` files in the `secrets/` directory.
 - **Decryption:** Each host is configured to decrypt secrets at build time. The `age.identityPaths` option in each host's configuration points to the host's SSH private key, which is used for decryption.
@@ -170,7 +173,7 @@ Secrets are managed declaratively and securely using `agenix`.
 
 ## Build & Deployment
 
-The configurations can be built and deployed using `nixos-rebuild` or `colmena`.
+**Deploy Anywhere, Anytime.** Whether it's a local switch or a remote fleet update, deployment is atomic and consistent.
 
 ### `nixos-rebuild`
 

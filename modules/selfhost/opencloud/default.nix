@@ -26,6 +26,10 @@ let
   cspFile = "/var/lib/opencloud/opencloud-config/csp.yaml";
 in
 {
+  options.custom.selfhost.opencloud = with lib; {
+    enable = mkEnableOption "OpenCloud file server";
+  };
+
   config = lib.mkIf cfg.enable {
     age.secrets = {
       opencloud-env.file = ../../../secrets/opencloud-env.age;

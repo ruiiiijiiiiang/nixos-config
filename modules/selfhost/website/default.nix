@@ -17,6 +17,10 @@ let
   fqdn = "${subdomains.${config.networking.hostName}.public}.${domains.home}";
 in
 {
+  options.custom.selfhost.website = with lib; {
+    enable = mkEnableOption "Personal website hosting";
+  };
+
   config = lib.mkIf cfg.enable {
     virtualisation.oci-containers.containers.website = {
       image = "ghcr.io/ruiiiijiiiiang/website:latest";

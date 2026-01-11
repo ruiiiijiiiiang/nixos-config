@@ -17,6 +17,10 @@ let
   fqdn = "${subdomains.${config.networking.hostName}.yourls}.${domains.home}";
 in
 {
+  options.custom.selfhost.yourls = with lib; {
+    enable = mkEnableOption "YOURLS URL shortener";
+  };
+
   config = lib.mkIf cfg.enable {
     age.secrets = {
       yourls-env.file = ../../../secrets/yourls-env.age;

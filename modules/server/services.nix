@@ -9,6 +9,10 @@ let
   cfg = config.custom.server.services;
 in
 {
+  options.custom.server.services = with lib; {
+    enable = mkEnableOption "Custom services setup for servers";
+  };
+
   config = lib.mkIf cfg.enable {
     environment.variables = {
       EDITOR = lib.mkForce "vim";

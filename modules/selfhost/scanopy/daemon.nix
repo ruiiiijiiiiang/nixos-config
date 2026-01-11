@@ -9,6 +9,10 @@ let
   cfg = config.custom.selfhost.scanopy.daemon;
 in
 {
+  options.custom.selfhost.scanopy.daemon = with lib; {
+    enable = mkEnableOption "Scanopy daemon";
+  };
+
   config = lib.mkIf cfg.enable {
     age.secrets = {
       scanopy-daemon-env.file = ../../../secrets/scanopy/daemon-env.age;

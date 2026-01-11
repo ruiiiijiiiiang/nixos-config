@@ -21,6 +21,10 @@ let
   dashboardsFile = "/var/wazuh/opensearch_dashboards.yml";
 in
 {
+  options.custom.selfhost.wazuh.server = with lib; {
+    enable = mkEnableOption "Wazuh security monitoring server";
+  };
+
   config = lib.mkIf cfg.enable {
     age.secrets = {
       wazuh-env.file = ../../../secrets/wazuh-env.age;

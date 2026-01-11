@@ -9,6 +9,10 @@ let
   cfg = config.custom.selfhost.dockhand.agent;
 in
 {
+  options.custom.selfhost.dockhand.agent = with lib; {
+    enable = mkEnableOption "Hawser container agent";
+  };
+
   config = lib.mkIf cfg.enable {
     age.secrets = {
       dockhand-agent-crt.file = ../../../secrets/dockhand/agent-crt.age;

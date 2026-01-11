@@ -11,6 +11,20 @@ let
   cfg = config.custom.selfhost.router;
 in
 {
+  options.custom.selfhost.router = with lib; {
+    enable = mkEnableOption "Network router";
+    wanInterface = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = "Interface connecting to the WAN";
+    };
+    lanInterface = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = "Interface connecting to the LAN";
+    };
+  };
+
   config = lib.mkIf cfg.enable {
     assertions = [
       {

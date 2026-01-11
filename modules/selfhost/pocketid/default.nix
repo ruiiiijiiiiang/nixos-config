@@ -12,6 +12,10 @@ let
   fqdn = "${subdomains.${config.networking.hostName}.pocketid}.${domains.home}";
 in
 {
+  options.custom.selfhost.pocketid = with lib; {
+    enable = mkEnableOption "PocketID authentication service";
+  };
+
   config = lib.mkIf cfg.enable {
     age.secrets = {
       oauth2-env.file = ../../../secrets/oauth2-env.age;

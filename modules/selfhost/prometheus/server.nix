@@ -18,6 +18,10 @@ let
   grafana-fqdn = "${subdomains.${config.networking.hostName}.grafana}.${domains.home}";
 in
 {
+  options.custom.selfhost.prometheus.server = with lib; {
+    enable = mkEnableOption "Prometheus metrics server";
+  };
+
   config = lib.mkIf cfg.enable {
     services = {
       prometheus = {

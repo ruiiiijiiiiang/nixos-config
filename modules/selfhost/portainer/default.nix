@@ -17,6 +17,10 @@ let
   fqdn = "${subdomains.${config.networking.hostName}.portainer}.${domains.home}";
 in
 {
+  options.custom.selfhost.portainer = with lib; {
+    enable = mkEnableOption "Portainer container management";
+  };
+
   config = lib.mkIf cfg.enable {
     virtualisation.oci-containers.containers = {
       portainer = {

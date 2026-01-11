@@ -17,6 +17,10 @@ let
   fqdn = "${subdomains.${config.networking.hostName}.pihole}.${domains.home}";
 in
 {
+  options.custom.selfhost.dns = with lib; {
+    enable = mkEnableOption "Unbound + Pi-hole DNS filtering";
+  };
+
   config = lib.mkIf cfg.enable {
     networking = {
       nameservers = [ addresses.localhost ];
