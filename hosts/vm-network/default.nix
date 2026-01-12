@@ -47,10 +47,18 @@ in
         privateKeyFile = config.age.secrets.wireguard-server-private-key.path;
         interface = wireguardInterface;
       };
+      dns = {
+        enable = true;
+        vrrp = {
+          interface = lanInterface;
+          state = "MASTER";
+          priority = 100;
+        };
+      };
 
-      dns.enable = true;
       dyndns.enable = true;
       cloudflared.enable = true;
+      geoipupdate.enable = true;
       nginx.enable = true;
 
       beszel.agent.enable = true;

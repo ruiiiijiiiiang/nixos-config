@@ -9,6 +9,7 @@
     ./dockhand
     ./dyndns
     ./gatus
+    ./geoipupdate
     ./homeassistant
     ./homepage
     ./immich
@@ -36,3 +37,4 @@
     ./yourls
   ];
 }
+

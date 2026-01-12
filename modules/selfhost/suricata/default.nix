@@ -36,7 +36,7 @@ in
     assertions = [
       {
         assertion = cfg.wanInterface != null && cfg.lanInterface != null;
-        message = "Router is enabled but required interfaces are missing.";
+        message = "Suricata is enabled but required interfaces are missing.";
       }
     ];
 
@@ -147,9 +147,10 @@ in
         image = "docker.io/jasonish/evebox:latest";
         ports = [ "${addresses.localhost}:${toString ports.evebox}:${toString ports.evebox}" ];
         volumes = [
-          "${eveJsonPath}:${eveJsonPath}.json:ro"
+          "${eveJsonPath}:${eveJsonPath}:ro"
           "/var/lib/evebox:/var/lib/evebox"
-        ];
+        ]
+        ++ lib.optional config.custom.selfhost.geoipupdate.enable "/var/lib/GeoIP:/etc/evebox/:ro";
         labels = {
           "io.containers.autoupdate" = "registry";
         };

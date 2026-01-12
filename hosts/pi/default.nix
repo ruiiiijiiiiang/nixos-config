@@ -1,3 +1,6 @@
+let
+  interface = "end0";
+in
 {
   imports = [
     ../../modules
@@ -16,7 +19,14 @@
     };
 
     selfhost = {
-      dns.enable = true;
+      dns = {
+        enable = true;
+        vrrp = {
+          inherit interface;
+          state = "BACKUP";
+          priority = 90;
+        };
+      };
       homeassistant.enable = true;
       nginx.enable = true;
 

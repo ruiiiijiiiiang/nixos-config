@@ -3,6 +3,7 @@
   consts,
   lib,
   helpers,
+  pkgs,
   ...
 }:
 let
@@ -19,12 +20,44 @@ in
 {
   options.custom.selfhost.dns = with lib; {
     enable = mkEnableOption "Unbound + Pi-hole DNS filtering";
+    vrrp = {
+      interface = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        description = "The network interface to bind the VIP to.";
+      };
+      state = mkOption {
+        type = types.enum [
+          "MASTER"
+          "BACKUP"
+        ];
+        default = "BACKUP";
+        description = "The initial VRRP state for this node. Must be MASTER or BACKUP.";
+      };
+      priority = mkOption {
+        type = types.int;
+        default = 90;
+        description = "VRRP Priority (Higher wins). Recommended: Master=100, Backup=90/80.";
+      };
+    };
   };
 
   config = lib.mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = cfg.vrrp.interface != null;
+        message = "Interface for High Availability is missing.";
+      }
+    ];
+
     networking = {
       nameservers = [ addresses.localhost ];
+      firewall.extraInputRules = ''
+        ip protocol vrrp accept
+      '';
     };
+
+    environment.systemPackages = with pkgs; [ dnsutils ];
 
     services = {
       unbound = {
@@ -113,6 +146,34 @@ in
       nginx.virtualHosts."${fqdn}" = mkVirtualHost {
         inherit fqdn;
         port = ports.pihole;
+      };
+
+      keepalived = {
+        enable = true;
+
+        vrrpScripts.check_dns_health = {
+          script = toString (
+            pkgs.writeShellScript "check_dns_health" ''
+              if ${pkgs.dnsutils}/bin/dig @127.0.0.1 . ns +short +time=1 +tries=1 | grep -q "."; then
+                 exit 0
+              fi
+              exit 1
+            ''
+          );
+          interval = 10;
+          weight = -20;
+          fall = 2;
+          rise = 2;
+        };
+
+        vrrpInstances.dns_ha = {
+          inherit (cfg.vrrp) interface state priority;
+          virtualRouterId = 53;
+          virtualIps = [
+            { addr = addresses.home.vip.dns; }
+          ];
+          trackScripts = [ "check_dns_health" ];
+        };
       };
     };
   };

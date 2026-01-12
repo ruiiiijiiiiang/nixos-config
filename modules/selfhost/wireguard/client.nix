@@ -35,11 +35,7 @@ in
     networking.wg-quick.interfaces.wg-home = {
       inherit (cfg.client) privateKeyFile;
       address = [ "${addresses.vpn.hosts.framework}/32" ];
-      dns = [
-        addresses.home.hosts.vm-network
-        addresses.home.hosts.pi
-        addresses.home.hosts.pi-legacy
-      ];
+      dns = [ addresses.home.vip.dns ];
       peers = [
         {
           inherit (wg.vm-network) publicKey;
