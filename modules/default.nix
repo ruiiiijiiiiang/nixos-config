@@ -1,9 +1,8 @@
 {
   imports = [
-    ./common
-    ./desktop
-    ./selfhost
-    ./server
-    ./vm
+    ./core
+    ./platform
+    ./roles
+    ./services
   ];
 }

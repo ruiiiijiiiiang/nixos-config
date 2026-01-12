@@ -1,0 +1,36 @@
+{
+  config,
+  lib,
+  ...
+}:
+let
+  cfg = config.custom.platform.vm.hardware;
+in
+{
+  options.custom.platform.vm.hardware = with lib; {
+    enable = mkEnableOption "Custom hardware config for vm";
+  };
+
+  config = lib.mkIf cfg.enable {
+    boot = {
+      tmp.useTmpfs = true;
+      loader = {
+        systemd-boot.enable = true;
+        efi.canTouchEfiVariables = true;
+      };
+
+      initrd.availableKernelModules = [
+        "ata_piix"
+        "uhci_hcd"
+        "virtio_pci"
+        "virtio_scsi"
+        "sd_mod"
+        "sr_mod"
+      ];
+      kernelModules = [ "kvm-amd" ];
+      kernelParams = [ "rootdelay=5" ];
+    };
+
+    services.qemuGuest.enable = true;
+  };
+}

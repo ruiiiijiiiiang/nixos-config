@@ -5,10 +5,6 @@ let
   wireguardInterface = "wg0";
 in
 {
-  imports = [
-    ../../modules
-  ];
-
   system.stateVersion = "25.11";
   networking.hostName = "vm-network";
 
@@ -17,13 +13,13 @@ in
   };
 
   custom = {
-    server = {
+    roles.headless = {
       network.enable = true;
       security.enable = true;
       services.enable = true;
     };
 
-    vm = {
+    platform.vm = {
       hardware.enable = true;
       disks = {
         enableMain = true;
@@ -31,44 +27,47 @@ in
       };
     };
 
-    selfhost = {
-      router = {
-        enable = true;
-        inherit wanInterface;
-        inherit lanInterface;
-      };
-      suricata = {
-        enable = true;
-        inherit wanInterface;
-        inherit lanInterface;
-      };
-      wireguard.server = {
-        enable = true;
-        privateKeyFile = config.age.secrets.wireguard-server-private-key.path;
-        interface = wireguardInterface;
-      };
-      dns = {
-        enable = true;
-        vrrp = {
-          interface = lanInterface;
-          state = "MASTER";
-          priority = 100;
+    services = {
+      networking = {
+        router = {
+          enable = true;
+          inherit wanInterface;
+          inherit lanInterface;
         };
-      };
-
-      dyndns.enable = true;
-      cloudflared.enable = true;
-      geoipupdate.enable = true;
-      nginx.enable = true;
-
-      beszel.agent.enable = true;
-      dockhand.agent.enable = true;
-      prometheus.exporters = {
+        suricata = {
+          enable = true;
+          inherit wanInterface;
+          inherit lanInterface;
+        };
+        wireguard.server = {
+          enable = true;
+          privateKeyFile = config.age.secrets.wireguard-server-private-key.path;
+          interface = wireguardInterface;
+        };
+        dns = {
+          enable = true;
+          vrrp = {
+            interface = lanInterface;
+            state = "MASTER";
+            priority = 100;
+          };
+        };
+        dyndns.enable = true;
+        cloudflared.enable = true;
+        geoipupdate.enable = true;
         nginx.enable = true;
-        node.enable = true;
       };
-      scanopy.daemon.enable = true;
-      wazuh.agent.enable = true;
+
+      observability = {
+        beszel.agent.enable = true;
+        dockhand.agent.enable = true;
+        prometheus.exporters = {
+          nginx.enable = true;
+          node.enable = true;
+        };
+        scanopy.daemon.enable = true;
+        wazuh.agent.enable = true;
+      };
     };
   };
 }

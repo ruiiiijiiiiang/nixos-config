@@ -1,19 +1,15 @@
 {
-  imports = [
-    ../../modules
-  ];
-
   system.stateVersion = "25.11";
   networking.hostName = "vm-app";
 
   custom = {
-    server = {
+    roles.headless = {
       network.enable = true;
       security.enable = true;
       services.enable = true;
     };
 
-    vm = {
+    platform.vm = {
       hardware.enable = true;
       disks = {
         enableMain = true;
@@ -21,38 +17,51 @@
       };
     };
 
-    selfhost = {
-      atuin.enable = true;
-      cloudflared.enable = false;
-      dawarich.enable = true;
-      immich.enable = true;
-      homepage.enable = true;
-      karakeep.enable = true;
-      memos.enable = true;
-      microbin.enable = true;
-      nginx.enable = true;
-      opencloud.enable = true;
-      paperless.enable = true;
-      pocketid.enable = true;
-      reitti.enable = true;
-      stirlingpdf.enable = true;
-      syncthing = {
-        enable = true;
-        proxied = true;
+    services = {
+      apps = {
+        tools = {
+          atuin.enable = true;
+          dawarich.enable = true;
+          karakeep.enable = true;
+          microbin.enable = true;
+          reitti.enable = true;
+          syncthing = {
+            enable = true;
+            proxied = true;
+          };
+          yourls.enable = true;
+        };
+        media.immich.enable = true;
+        web.homepage.enable = true;
+        web.website.enable = true;
+        office = {
+          memos.enable = true;
+          opencloud.enable = true;
+          paperless.enable = true;
+          stirlingpdf.enable = true;
+        };
+        security = {
+          pocketid.enable = true;
+          vaultwarden.enable = true;
+        };
       };
-      vaultwarden.enable = true;
-      website.enable = true;
-      yourls.enable = true;
 
-      beszel.agent.enable = true;
-      dockhand.agent.enable = true;
-      prometheus.exporters = {
+      networking = {
+        cloudflared.enable = false;
         nginx.enable = true;
-        node.enable = true;
-        podman.enable = true;
       };
-      scanopy.daemon.enable = true;
-      wazuh.agent.enable = true;
+
+      observability = {
+        beszel.agent.enable = true;
+        dockhand.agent.enable = true;
+        prometheus.exporters = {
+          nginx.enable = true;
+          node.enable = true;
+          podman.enable = true;
+        };
+        scanopy.daemon.enable = true;
+        wazuh.agent.enable = true;
+      };
     };
   };
 }

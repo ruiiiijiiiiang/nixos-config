@@ -1,22 +1,23 @@
 {
-  imports = [
-    ../../modules
-    ./network.nix
-    ./packages.nix
-    ./services.nix
-  ];
-
   system.stateVersion = "25.11";
 
   custom = {
-    vm = {
+    platform.vm = {
       hardware.enable = true;
       disks.enableMain = true;
     };
 
-    desktop = {
-      catppuccin.enable = true;
-      packages.enable = true;
+    roles = {
+      workstation = {
+        catppuccin.enable = true;
+        packages.enable = true;
+      };
+
+      security = {
+        network.enable = true;
+        packages.enable = true;
+        services.enable = true;
+      };
     };
   };
 }

@@ -10,194 +10,128 @@ Forget "it works on my machine." Here, the entire state of the machine _is_ the 
 
 ## Architecture
 
-This infrastructure is engineered for **modularity and scale**. A shared `common` core ensures consistency across the fleet, while host-specific configurations in `hosts/` define unique personalities. The `flake.nix` acts as the conductor, orchestrating the entire symphony of NixOS systems, home-manager environments, and development shells.
+**Modular by Design. Scalable by Default.**
 
-Services aren't just "installed"; they are defined as composable modules. A **hybrid deployment strategy** is employed to balance performance with stability:
+This infrastructure is engineered following a rigorous **Domain-Driven Design** philosophy. The codebase is organized into four distinct, composable layers:
 
-- **Native Infrastructure:** Core components like **Nginx**, **Kea DHCP**, and **WireGuard** run natively via NixOS modules. This maximizes performance, minimizes overhead, and leverages deep system integration for unmatched reliability.
-- **Containerized Applications:** User-facing applications are encapsulated in **OCI containers** (managed by Podman). This isolates complex dependencies, allows for precise version pinning independent of the host system, and eliminates build failures, ensuring that the "application layer" remains distinct from the "OS layer."
+1.  **Core (`modules/core`):** The foundational DNA. Universal baselines shared across all systems, defining the essential "NixOS-ness" of the fleet.
+2.  **Platform (`modules/platform`):** The hardware abstraction layer. Whether it's a Raspberry Pi ARM chip or a virtualized x86 hypervisor, this layer handles the metal.
+3.  **Roles (`modules/roles`):** The personality injection. A host is defined by its mission: a hardened **Headless Server** guarding the network, or a feature-rich **Workstation** designed for development.
+4.  **Services (`modules/services`):** The functional payload. Granular, plug-and-play applications categorized by domain:
+    - **Networking:** The mesh that connects it all (DNS, Routing, VPNs).
+    - **Observability:** The eyes and ears (Monitoring, Logging, Security Agents).
+    - **Apps:** The user experience, grouped by function (Office, Tools, Media, Security, Web).
 
-## Hosts
+The `flake.nix` acts as the grand conductor, orchestrating these modules to synthesize specific host configurations. We employ a **hybrid deployment strategy** to balance raw performance with operational stability:
+
+- **Native Infrastructure:** Core network services like **Nginx**, **Kea DHCP**, and **WireGuard** run close to the metal via native NixOS modules for maximum throughput and reliability.
+- **Containerized Applications:** User-facing apps are encapsulated in **OCI containers** (managed by Podman). This ensures strict isolation, precise version pinning, and a clean separation between the "Application Layer" and the "OS Layer."
+
+## Network Architecture
+
+**The Digital Gatekeeper.**
+
+The `vm-network` VM serves as the nerve center of the home network. It replaces consumer-grade router firmware with a fully software-defined, hardened networking appliance that routes every packet, enforces strict firewall rules, and inspects traffic for threats.
+
+### The Routing Core
+
+Two network interfaces define the boundary between the wild internet and the trusted sanctuary:
+
+- **WAN (`ens18`):** The shield against the public internet.
+- **LAN (`ens19`):** The gateway to the internal network.
+
+Powered by **NAT & IP Forwarding**, a strict **Firewall**, and **Kea DHCP**, this core ensures seamless connectivity without compromising security.
+
+### High-Availability DNS
+
+Resolution is redundancy. The network relies on a high-availability DNS cluster spanning `vm-network`, `pi`, and `pi-legacy` to ensure that ad-blocking and name resolution never sleep.
+
+- **The Stack:** **Pi-hole** for network-wide ad-blocking + **Unbound** for recursive, privacy-respecting DNS-over-TLS resolution.
+- **The Redundancy:** **Keepalived** manages a Virtual IP (VIP) that floats across the cluster. If the master node blinks, the VIP instantly migrates to a backup, keeping the network online without a hiccup.
+
+## The Fleet
 
 ### Shared Services
 
-Running on all server hosts (`pi`, `vm-app`, `vm-network`, `vm-monitor`).
+Every server host (`pi`, `vm-app`, `vm-network`, `vm-monitor`) comes equipped with a standard observability and security sidecar:
 
-- **Beszel Agent:** System monitoring agent.
-- **Dockhand Agent:** Container monitoring agent.
-- **Nginx:** A reverse proxy.
-- **Prometheus Exporters:** Exporters for Nginx, Node, and Podman.
-- **Scanopy Daemon:** Network discovery scanning daemon.
-- **Wazuh Agent:** A security monitoring agent.
+- **Beszel & Dockhand Agents:** Real-time system and container metrics.
+- **Prometheus Exporters:** Granular telemetry for Nginx, Node, and Podman.
+- **Wazuh Agent:** Enterprise-grade security monitoring and intrusion detection.
 
 ### `framework`
 
-This is the main development machine, a Framework laptop.
+**The Command Center.** The primary development workstation, tailored for code, creativity, and control.
 
 ### `pi`
 
-This configuration manages a Raspberry Pi 4 setup for self-hosting various services.
-
-#### Services
-
-- **DNS:** Pi-hole with Unbound for ad-blocking and DNS resolution (backup DNS server).
-- **Home Assistant:** A home automation platform.
+**The Physical Bridge.** A Raspberry Pi 4 that bridges the digital and physical worlds. Armed with **Z-Wave and Zigbee** radios, it acts as the central brain for the smart home while standing watch as a backup DNS node.
 
 ### Virtual Machines (Proxmox)
 
-The virtualization layer is powered by **Proxmox**, but the VM structures are strictly defined in code using **Disko**. Each VM leverages a high-performance dual-disk strategy:
+**Virtualized Power.** Powered by **Proxmox** but defined by **Disko**, each VM utilizes a high-performance dual-disk strategy:
 
-- **Internal SSD** (`/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi0`): Hosts the root filesystem (`/`) for optimal system performance
-- **External Hard Drive** (`/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi1`): Mounted at `/data` and provides storage for `/home` and `/var` via bind mounts
+- **System Drive (NVMe):** Blazing fast root filesystem (`/`) for instant boot and responsive services.
+- **Data Drive (HDD):** Massive storage mounted at `/data` for `/home` and `/var`, ensuring user data survives even total system rebuilds.
 
-This configuration ensures that system files benefit from SSD speed while user data and service states are stored on the larger external drive with automatic failover support (`nofail` mount option).
+#### `vm-app`
 
-### `vm-app`
+**The Application Hub.** The workhorse running the self-hosted suite:
 
-This virtual machine is dedicated to running various self-hosted applications.
+- **Productivity:** Paperless-ngx, Memos, OpenCloud, Stirling PDF.
+- **Media & Sync:** Immich, Syncthing.
+- **Tools:** Atuin, Dockhand, PocketID, Vaultwarden, and more.
 
-#### Services
+#### `vm-network`
 
-- **Atuin:** A tool for syncing, searching, and managing shell history.
-- **Dawarich:** A GPS tracking and location history service.
-- **Dockhand:** A lightweight container management UI.
-- **Homepage:** A dashboard for self-hosted services.
-- **Immich:** A photo and video backup solution.
-- **KaraKeep:** A bookmark management system.
-- **Memos:** A lightweight, self-hosted note-taking service.
-- **Microbin:** A small, simple, and secure pastebin service.
-- **Opencloud:** A file sharing and editing service.
-- **Paperless:** A document management system.
-- **PocketID:** An oauth2 authentication service.
-- **Reitti:** A self-hosted routing and navigation service with OpenStreetMap integration.
-- **Stirling PDF:** A web-based PDF manipulation tool.
-- **Syncthing:** A continuous file synchronization program.
-- **Vaultwarden:** An unofficial Bitwarden password manager server.
-- **Website:** A personal blog website.
-- **Yourls:** A URL shortener.
+**The Sentinel.** The primary router, firewall, and DNS authority. It manages the Cloudflare Tunnels, WireGuard VPNs, and Suricata IDS/IPS.
 
-### `vm-network`
+#### `vm-monitor`
 
-**The Digital Gatekeeper.** This VM is the nerve center of the home network, routing every packet, enforcing firewall rules, and inspecting traffic. It replaces consumer router firmware with a fully software-defined, hardened networking appliance.
+**The Watchtower.** Dedicated to keeping the lights on. It hosts the **Beszel Hub**, **Prometheus**, **Wazuh Server**, and **Gatus** to visualize the health and security of the entire infrastructure.
 
-#### Network Architecture
+#### `vm-security`
 
-The host is configured with two network interfaces to function as a software router:
-
-- **WAN (`ens18`):** Connected to the ISP modem. Acquires an IP via DHCP from the ISP.
-- **LAN (`ens19`):** Connected to the Deco access points. Serves as the gateway for the internal network.
-
-Core networking features include:
-
-- **NAT & IP Forwarding:** Masquerades internal traffic to the WAN interface.
-- **Firewall:** Trusted LAN traffic; restricted WAN ingress.
-- **Kea DHCP:** Provides IPv4 address management with static reservations and dynamic pools.
-
-#### Services
-
-- **Cloudflared:** A daemon for Cloudflare Tunnel (centralized ingress).
-- **DNS:** Pi-hole with Unbound for DNS filtering and resolution (primary DNS server).
-- **DynDNS:** A dynamic DNS service.
-- **Kea DHCP:** High-performance DHCPv4 server.
-- **Suricata:** A high-performance Network IDS, IPS and Network Security Monitoring engine.
-- **WireGuard:** A communication protocol and free and open-source software that implements encrypted virtual private networks.
-
-### `vm-monitor`
-
-This virtual machine is dedicated to monitoring the other hosts and services.
-
-#### Services
-
-- **Beszel Hub:** Central hub for Beszel monitoring.
-- **Dockhand Server:** Container management UI.
-- **Gatus:** A health check and status monitoring service.
-- **Scanopy:** A network discovery service (Server).
-- **Prometheus Server:** A monitoring and alerting toolkit.
-- **Wazuh Server:** A security monitoring platform.
-
-### `vm-security`
-
-This virtual machine is set up as a security-focused desktop environment, with a variety of tools for penetration testing, forensics, and reverse engineering.
-
-#### Security Tools
-
-- **Recon & Networking:** `nmap`, `masscan`, `netcat`, `socat`, `tcpdump`, `tshark`
-- **Web Security:** `burpsuite`, `sqlmap`, `nikto`, `gobuster`, `dirb`, `whatweb`
-- **Passwords & Auth:** `john`, `hashcat`
-- **Exploitation:** `metasploit`, `exploitdb`
-- **Forensics:** `binwalk`, `file`, `xxd`, `jq`, `steghide`, `exiftool`, `binsider`, `zsteg`
-- **Utilities:** `unzip`, `unrar`, `ouch`, `lazynmap`
-
-## DNS Architecture
-
-Both `vm-network` and `pi` run Pi-hole with Unbound for network-wide ad-blocking and secure DNS resolution:
-
-- **Pi-hole:** Provides DNS-based ad-blocking using multiple curated blocklists (HaGeZi, Steven Black, AdGuard DNS, etc.)
-- **Unbound:** Acts as a recursive DNS resolver with DNS-over-TLS, forwarding queries to Quad9 (9.9.9.9) for enhanced privacy
-- **Redundancy:** The home router is configured to use `vm-network` as the primary DNS server and `pi` as backup, ensuring continuous DNS service even if one host goes down
+**The Armory.** A specialized, security-focused desktop environment loaded with tools for penetration testing, forensics, and reverse engineering.
 
 ## Security Configuration
 
-**Paranoid by Design.** Security isn't an afterthought; it's baked into the kernel. Every server in this fleet is hardened against modern threat vectors, featuring:
+**Paranoid by Design.**
 
-### Kernel Hardening
+Security isn't a feature; it's the foundation. Every server is hardened against modern threat vectors at the kernel level:
 
-- **IP Spoofing Prevention:** Reverse path filtering enabled on all interfaces
-- **ICMP Redirect Protection:** Disabled to prevent MITM attacks
-- **Kernel Log Restriction:** Access to kernel ring buffer (`dmesg`) restricted to root only
-- **Kernel Pointer Hiding:** Kernel memory addresses hidden from unprivileged users (KASLR protection)
-- **BPF JIT Hardening:** eBPF JIT compiler hardened against spraying attacks
+- **Hardened Kernel:** IP Spoofing protection, hidden kernel pointers, and BPF JIT hardening.
+- **Memory Defense:** Disabled core dumps, Scudo hardened allocator, and strict PAM limits.
+- **Active Defense:** **Fail2Ban** actively bans intruders, while **Wazuh** provides continuous security auditing.
 
-### Memory Protection
+## Secret Management
 
-- **Core Dumps Disabled:** System-wide core dump generation disabled to prevent sensitive data leakage
-- **Scudo Allocator:** Memory allocator hardened with zero-content initialization to prevent information leaks
-- **PAM Limits:** Hard limit on core file size set to 0 for all users
+**Secrets, Kept Secret.**
 
-### Network Security
-
-- **Fail2Ban:** Automated intrusion prevention system with:
-  - 1-hour ban time for initial offenses
-  - Maximum 5 retry attempts within 10 minutes
-  - Aggressive SSH monitoring mode
-  - Recidive jail: Repeat offenders banned for 1 week after 5 violations within 1 day
-
-## Secret Management (agenix)
-
-**Secrets, Kept Secret.** No more `.env` files floating around. Sensitive data is encrypted at rest using `age` and `agenix`, decrypted only at runtime by the specific host identity that needs it. It's GitOps-friendly and cryptographically secure.
-
-- **Encryption:** Secrets are encrypted using `age` and stored as `.age` files in the `secrets/` directory.
-- **Decryption:** Each host is configured to decrypt secrets at build time. The `age.identityPaths` option in each host's configuration points to the host's SSH private key, which is used for decryption.
-- **Declaration:** The `secrets/secrets.nix` file maps each secret file to the public key(s) that can encrypt it.
-- **Usage:** Modules that require secrets reference the decrypted path via `config.age.secrets.<secret-name>.path`.
+No more `.env` files leaking in git history. Sensitive data is encrypted at rest using **age** and **agenix**. Secrets are decrypted only at runtime, in-memory, and only by the specific host identity that requires them. It is GitOps-friendly, cryptographically secure, and zero-trust by default.
 
 ## Build & Deployment
 
-**Deploy Anywhere, Anytime.** Whether it's a local switch or a remote fleet update, deployment is atomic and consistent.
+**Deploy Anywhere, Anytime.**
+
+Deployment is atomic, consistent, and flexible.
 
 ### `nixos-rebuild`
 
-To build and switch to a new generation for a host, you would run the following command on the target machine:
+**The Surgical Strike.** For precise, single-host updates initiated directly from the dev machine:
 
 ```bash
-nixos-rebuild switch --flake .#<hostname>
+nixos-rebuild switch --flake .#<hostname> --target-host <hostname> --use-remote-sudo
 ```
 
 ### `colmena`
 
-`colmena` is used for remote deployment. To deploy to a specific host, you would run:
+**The Fleet Commander.** For orchestrating complex, multi-host deployments or targeting specific groups (e.g., all servers) using tags:
 
 ```bash
-colmena apply -v --on <hostname>
+colmena apply -v --on @server
 ```
 
 ### GitHub Actions
 
-Deployment to various hosts (pi, vm-app, vm-network) is automated via a GitHub Actions workflow, which can be triggered manually. The workflow performs the following steps:
-
-1.  **Checkout repository:** Clones the repository.
-2.  **Set Host IP Address:** Determines the IP address of the target host based on the selected input.
-3.  **Install Nix:** Sets up Nix with experimental features.
-4.  **Install and Connect WireGuard:** Installs WireGuard and connects to the home network using a VPN configuration stored in GitHub secrets.
-5.  **Setup SSH:** Configures SSH with a private key stored in GitHub secrets for authentication with the target host.
-6.  **NixOS Rebuild & Switch:** Builds the NixOS configuration for the selected host and deploys it over SSH.
+**The Automated Pipeline.** A CI/CD workflow that can rebuild and deploy the fleet automatically, ensuring the infrastructure is always in sync with the repository.

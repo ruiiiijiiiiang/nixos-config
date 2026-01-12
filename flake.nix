@@ -62,7 +62,10 @@
             inherit consts;
             inherit helpers;
           };
-          modules = [ ./hosts/framework ];
+          modules = [
+            ./modules
+            ./hosts/framework
+          ];
         };
 
         pi = nixosSystem {
@@ -72,7 +75,10 @@
             inherit consts;
             inherit helpers;
           };
-          modules = [ ./hosts/pi ];
+          modules = [
+            ./modules
+            ./hosts/pi
+          ];
         };
 
         vm-network = nixosSystem {
@@ -82,7 +88,10 @@
             inherit consts;
             inherit helpers;
           };
-          modules = [ ./hosts/vm-network ];
+          modules = [
+            ./modules
+            ./hosts/vm-network
+          ];
         };
 
         vm-app = nixosSystem {
@@ -92,7 +101,10 @@
             inherit consts;
             inherit helpers;
           };
-          modules = [ ./hosts/vm-app ];
+          modules = [
+            ./modules
+            ./hosts/vm-app
+          ];
         };
 
         vm-monitor = nixosSystem {
@@ -102,7 +114,10 @@
             inherit consts;
             inherit helpers;
           };
-          modules = [ ./hosts/vm-monitor ];
+          modules = [
+            ./modules
+            ./hosts/vm-monitor
+          ];
         };
 
         vm-security = nixosSystem {
@@ -111,7 +126,10 @@
             inherit inputs;
             inherit consts;
           };
-          modules = [ ./hosts/vm-security ];
+          modules = [
+            ./modules
+            ./hosts/vm-security
+          ];
         };
       };
 
@@ -137,7 +155,10 @@
               "gui"
             ];
           };
-          imports = [ ./hosts/framework ];
+          imports = [
+            ./modules
+            ./hosts/framework
+          ];
         };
 
         pi = {
@@ -149,7 +170,10 @@
               "server"
             ];
           };
-          imports = [ ./hosts/pi ];
+          imports = [
+            ./modules
+            ./hosts/pi
+          ];
         };
 
         vm-network = {
@@ -160,7 +184,10 @@
               "server"
             ];
           };
-          imports = [ ./hosts/vm-network ];
+          imports = [
+            ./modules
+            ./hosts/vm-network
+          ];
         };
 
         vm-app = {
@@ -171,7 +198,10 @@
               "server"
             ];
           };
-          imports = [ ./hosts/vm-app ];
+          imports = [
+            ./modules
+            ./hosts/vm-app
+          ];
         };
 
         vm-monitor = {
@@ -182,7 +212,10 @@
               "server"
             ];
           };
-          imports = [ ./hosts/vm-monitor ];
+          imports = [
+            ./modules
+            ./hosts/vm-monitor
+          ];
         };
 
         vm-security = {
@@ -193,7 +226,10 @@
               "gui"
             ];
           };
-          imports = [ ./hosts/vm-security ];
+          imports = [
+            ./modules
+            ./hosts/vm-security
+          ];
         };
       };
 

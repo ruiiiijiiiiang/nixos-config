@@ -1,14 +1,6 @@
 { config, ... }:
 
 {
-  imports = [
-    ../../modules
-    ./hardware.nix
-    ./nixos.nix
-    ./packages.nix
-    ./services.nix
-  ];
-
   system.stateVersion = "25.05";
   networking.hostName = "framework";
 
@@ -18,17 +10,24 @@
   };
 
   custom = {
-    desktop = {
+    platform.framework = {
+      hardware.enable = true;
+      nixos.enable = true;
+      packages.enable = true;
+      services.enable = true;
+    };
+
+    roles.workstation = {
       catppuccin.enable = true;
       flatpak.enable = true;
       packages.enable = true;
     };
 
-    selfhost = {
-      syncthing.enable = true;
-      wazuh.agent.enable = true;
+    services = {
+      apps.tools.syncthing.enable = true;
+      observability.wazuh.agent.enable = true;
 
-      wireguard.client = {
+      networking.wireguard.client = {
         enable = true;
         privateKeyFile = config.age.secrets.wireguard-framework-private-key.path;
         presharedKeyFile = config.age.secrets.wireguard-framework-preshared-key.path;

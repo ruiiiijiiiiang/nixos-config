@@ -1,0 +1,7 @@
+{
+  imports = [
+    ./headless
+    ./security
+    ./workstation
+  ];
+}

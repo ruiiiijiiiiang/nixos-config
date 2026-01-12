@@ -2,24 +2,23 @@ let
   interface = "end0";
 in
 {
-  imports = [
-    ../../modules
-    ./hardware.nix
-    ./packages.nix
-  ];
-
   system.stateVersion = "25.05";
   networking.hostName = "pi";
 
   custom = {
-    server = {
+    platform.pi = {
+      hardware.enable = true;
+      packages.enable = true;
+    };
+
+    roles.headless = {
       network.enable = true;
       security.enable = true;
       services.enable = true;
     };
 
-    selfhost = {
-      dns = {
+    services = {
+      networking.dns = {
         enable = true;
         vrrp = {
           inherit interface;
@@ -27,17 +26,19 @@ in
           priority = 90;
         };
       };
-      homeassistant.enable = true;
-      nginx.enable = true;
+      apps.tools.homeassistant.enable = true;
+      networking.nginx.enable = true;
 
-      beszel.agent.enable = true;
-      dockhand.agent.enable = true;
-      prometheus.exporters = {
-        nginx.enable = true;
-        node.enable = true;
-        podman.enable = true;
+      observability = {
+        beszel.agent.enable = true;
+        dockhand.agent.enable = true;
+        prometheus.exporters = {
+          nginx.enable = true;
+          node.enable = true;
+          podman.enable = true;
+        };
+        scanopy.daemon.enable = true;
       };
-      scanopy.daemon.enable = true;
     };
   };
 }
