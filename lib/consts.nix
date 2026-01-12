@@ -74,9 +74,13 @@ rec {
       network = "10.5.5.0/24";
       hosts = {
         vm-network = "10.5.5.1";
-        iphone = "10.5.5.2";
+        iphone-16 = "10.5.5.2";
+        iphone-17 = "10.5.5.3";
         framework = "10.5.5.4";
       };
+    };
+    podman = {
+      network = "10.88.0.0/16";
     };
   };
 

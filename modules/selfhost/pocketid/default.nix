@@ -18,7 +18,7 @@ in
 
   config = lib.mkIf cfg.enable {
     age.secrets = {
-      oauth2-env.file = ../../../secrets/oauth2-env.age;
+      pocketid-encryption-key.file = ../../../secrets/pocketid-encryption-key.age;
     };
 
     services = {
@@ -28,6 +28,10 @@ in
           APP_URL = "https://${fqdn}";
           PORT = ports.pocketid;
           TRUST_PROXY = true;
+          ANALYTICS_DISABLED = true;
+        };
+        credentials = {
+          ENCRYPTION_KEY = config.age.secrets.pocketid-encryption-key.path;
         };
       };
 

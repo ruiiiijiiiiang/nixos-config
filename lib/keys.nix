@@ -34,8 +34,11 @@
     framework = {
       publicKey = "SF5kt0KNGdReMPbXltYmgim/0jkbho7ZtBSWVkSUR3c=";
     };
-    iphone = {
+    iphone-16 = {
       publicKey = "yTCNogaqx+CA+w6RlCgzjs+jNfRiNINNDalSY8Cpflo=";
+    };
+    iphone-17 = {
+      publicKey = "uTDDqrstDacXAfoUWhk1s5QKcm0H2ev5NFJDqf6iYjA=";
     };
   };
 }

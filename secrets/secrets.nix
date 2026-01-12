@@ -42,10 +42,6 @@ in
     publicKeys = ssh.vm-app;
     armor = true;
   };
-  "oauth2-env.age" = {
-    publicKeys = ssh.vm-app;
-    armor = true;
-  };
   "onlyoffice-secret.age" = {
     publicKeys = ssh.vm-app;
     armor = true;
@@ -55,6 +51,10 @@ in
     armor = true;
   };
   "paperless-env.age" = {
+    publicKeys = ssh.vm-app;
+    armor = true;
+  };
+  "pocketid-encryption-key.age" = {
     publicKeys = ssh.vm-app;
     armor = true;
   };
@@ -78,7 +78,11 @@ in
     publicKeys = ssh.vm-network;
     armor = true;
   };
-  "wireguard/iphone-preshared-key.age" = {
+  "wireguard/iphone-16-preshared-key.age" = {
+    publicKeys = ssh.vm-network;
+    armor = true;
+  };
+  "wireguard/iphone-17-preshared-key.age" = {
     publicKeys = ssh.vm-network;
     armor = true;
   };

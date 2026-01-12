@@ -44,6 +44,7 @@ in
           allow ${addresses.localhost-v6};
           allow ${addresses.home.network};
           allow ${addresses.vpn.network};
+          allow ${addresses.podman.network};
           deny all;
 
           ${optionalString config.custom.selfhost.prometheus.exporters.nginx.enable ''

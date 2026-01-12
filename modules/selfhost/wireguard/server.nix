@@ -34,7 +34,8 @@ in
 
     age.secrets = {
       wireguard-framework-preshared-key.file = ../../../secrets/wireguard/framework-preshared-key.age;
-      wireguard-iphone-preshared-key.file = ../../../secrets/wireguard/iphone-preshared-key.age;
+      wireguard-iphone-16-preshared-key.file = ../../../secrets/wireguard/iphone-16-preshared-key.age;
+      wireguard-iphone-17-preshared-key.file = ../../../secrets/wireguard/iphone-17-preshared-key.age;
     };
 
     networking = {
@@ -50,9 +51,14 @@ in
             allowedIPs = [ "${addresses.vpn.hosts.framework}/32" ];
           }
           {
-            inherit (wg.iphone) publicKey;
-            presharedKeyFile = config.age.secrets.wireguard-iphone-preshared-key.path;
-            allowedIPs = [ "${addresses.vpn.hosts.iphone}/32" ];
+            inherit (wg.iphone-16) publicKey;
+            presharedKeyFile = config.age.secrets.wireguard-iphone-16-preshared-key.path;
+            allowedIPs = [ "${addresses.vpn.hosts.iphone-16}/32" ];
+          }
+          {
+            inherit (wg.iphone-17) publicKey;
+            presharedKeyFile = config.age.secrets.wireguard-iphone-17-preshared-key.path;
+            allowedIPs = [ "${addresses.vpn.hosts.iphone-17}/32" ];
           }
         ];
       };
