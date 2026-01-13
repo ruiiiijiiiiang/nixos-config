@@ -55,31 +55,31 @@ rec {
     localhost = "127.0.0.1";
     localhost-v6 = "::1";
     home = {
-      network = "192.168.1.0/24";
-      dhcp-min = "192.168.1.50";
-      dhcp-max = "192.168.1.200";
+      network = "192.168.2.0/24";
+      dhcp-min = "192.168.2.100";
+      dhcp-max = "192.168.2.250";
       hosts = {
-        proxmox = "192.168.1.2";
-        vm-network = "192.168.1.1";
-        vm-app = "192.168.1.20";
-        vm-monitor = "192.168.1.21";
-        vm-security = "192.168.1.22";
-        framework = "192.168.1.30";
-        arch = "192.168.1.31";
-        pi = "192.168.1.40";
-        pi-legacy = "192.168.1.41";
+        vm-network = "192.168.2.1";
+        vm-app = "192.168.2.2";
+        vm-monitor = "192.168.2.3";
+        vm-security = "192.168.2.4";
+        framework = "192.168.2.10";
+        arch = "192.168.2.11";
+        pi = "192.168.2.51";
+        pi-legacy = "192.168.2.52";
+        proxmox = "192.168.2.254";
       };
       vip = {
-        dns = "192.168.1.49";
+        dns = "192.168.2.53";
       };
     };
     vpn = {
       network = "10.5.5.0/24";
       hosts = {
         vm-network = "10.5.5.1";
-        iphone-16 = "10.5.5.2";
-        iphone-17 = "10.5.5.3";
-        framework = "10.5.5.4";
+        framework = "10.5.5.2";
+        iphone-16 = "10.5.5.3";
+        iphone-17 = "10.5.5.4";
       };
     };
     podman = {
@@ -90,6 +90,7 @@ rec {
   macs = {
     arch = "28:0c:50:9c:03:2e";
     framework = "ac:f2:3c:63:d9:f3";
+    proxmox = "d0:c0:bf:2a:49:5f";
     vm-network = "bc:24:11:b0:9b:27";
     vm-app = "bc:24:11:71:f8:9b";
     vm-monitor = "bc:24:11:93:b1:94";
@@ -171,5 +172,5 @@ rec {
     zwave = 8091;
   };
 
-  id-fqdn = "${subdomains.vm-app.pocketid}.${domains.home}";
+  oidc_issuer = "${subdomains.vm-app.pocketid}.${domains.home}";
 }

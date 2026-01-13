@@ -88,7 +88,7 @@ in
               }
               {
                 name = "domain-name-servers";
-                data = "${addresses.home.hosts.vm-network}, ${addresses.home.hosts.pi}, ${addresses.home.hosts.pi-legacy}";
+                data = addresses.home.vip.dns;
               }
             ];
           }

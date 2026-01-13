@@ -11,7 +11,7 @@ let
     domains
     subdomains
     ports
-    id-fqdn
+    oidc_issuer
     ;
   cfg = config.custom.services.apps.tools.dawarich;
   fqdn = "${subdomains.${config.networking.hostName}.dawarich}.${domains.home}";
@@ -65,7 +65,7 @@ in
           ALLOW_REGISTRATION = "true";
           DATABASE_HOST = addresses.localhost;
           REDIS_URL = "redis://${addresses.localhost}:${toString ports.redis}/0";
-          OIDC_ISSUER = "https://${id-fqdn}";
+          OIDC_ISSUER = "https://${oidc_issuer}";
           OIDC_REDIRECT_URI = "https://${fqdn}/users/auth/openid_connect/callback";
           OIDC_PROVIDER_NAME = "PocketID";
         };

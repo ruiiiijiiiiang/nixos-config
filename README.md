@@ -8,7 +8,7 @@ Every single aspect of this infrastructure—from the kernel hardening flags and
 
 Forget "it works on my machine." Here, the entire state of the machine _is_ the code.
 
-## Architecture
+## Project Structure
 
 **Modular by Design. Scalable by Default.**
 
@@ -22,7 +22,7 @@ This infrastructure is engineered following a rigorous **Domain-Driven Design** 
     - **Observability:** The eyes and ears (Monitoring, Logging, Security Agents).
     - **Apps:** The user experience, grouped by function (Office, Tools, Media, Security, Web).
 
-The `flake.nix` acts as the grand conductor, orchestrating these modules to synthesize specific host configurations. We employ a **hybrid deployment strategy** to balance raw performance with operational stability:
+The `flake.nix` acts as the grand conductor, orchestrating these modules to synthesize specific host configurations. A **hybrid deployment strategy** is employed to balance raw performance with operational stability:
 
 - **Native Infrastructure:** Core network services like **Nginx**, **Kea DHCP**, and **WireGuard** run close to the metal via native NixOS modules for maximum throughput and reliability.
 - **Containerized Applications:** User-facing apps are encapsulated in **OCI containers** (managed by Podman). This ensures strict isolation, precise version pinning, and a clean separation between the "Application Layer" and the "OS Layer."
@@ -35,7 +35,7 @@ The `vm-network` VM serves as the nerve center of the home network. It replaces 
 
 ### The Routing Core
 
-Two network interfaces define the boundary between the wild internet and the trusted sanctuary:
+Two network interfaces define the boundary between the wild internet and the safe intranet:
 
 - **WAN (`ens18`):** The shield against the public internet.
 - **LAN (`ens19`):** The gateway to the internal network.
@@ -65,7 +65,7 @@ Every server host (`pi`, `vm-app`, `vm-network`, `vm-monitor`) comes equipped wi
 
 ### `pi`
 
-**The Physical Bridge.** A Raspberry Pi 4 that bridges the digital and physical worlds. Armed with **Z-Wave and Zigbee** radios, it acts as the central brain for the smart home while standing watch as a backup DNS node.
+**The Physical Bridge.** A Raspberry Pi 4 that bridges the digital and physical worlds. Armed with **Z-Wave and Zigbee** radios, it acts as the central brain for Home Asssistant while standing watch as a backup DNS node.
 
 ### Virtual Machines (Proxmox)
 

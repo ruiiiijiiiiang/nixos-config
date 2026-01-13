@@ -10,7 +10,7 @@ let
     domains
     subdomains
     ports
-    id-fqdn
+    oidc_issuer
     ;
   inherit (helpers) mkVirtualHost;
   cfg = config.custom.services.apps.tools.karakeep;
@@ -26,9 +26,9 @@ in
       karakeep-env.file = ../../../../../secrets/karakeep-env.age;
       # OAUTH_CLIENT_ID
       # OAUTH_CLIENT_SECRET
-      # OAUTH_WELLKNOWN_URL=https://id.ruijiang.me/.well-known/openid-configuration
-      # NEXTAUTH_SECRET=Z94Ztgwth0B7oHrLZqGfSdzWV3hBPqK3ZmKdfxxBnCBmq2Dp
-      # MEILI_MASTER_KEY=ZULoq5lU3ccYHM3JGCEdDuIX8xgPycc03PiFo3YPFCY94
+      # OAUTH_WELLKNOWN_URL
+      # NEXTAUTH_SECRET
+      # MEILI_MASTER_KEY
     };
 
     virtualisation.oci-containers.containers = {
@@ -43,7 +43,7 @@ in
           DATA_DIR = "/data";
           OAUTH_PROVIDER_NAME = "Pocket ID";
           OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING = "true";
-          OAUTH_WELLKNOWN_URL = "https://${id-fqdn}/.well-known/openid-configuration";
+          OAUTH_WELLKNOWN_URL = "https://${oidc_issuer}/.well-known/openid-configuration";
         };
         environmentFiles = [ config.age.secrets.karakeep-env.path ];
         labels = {

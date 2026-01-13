@@ -12,7 +12,7 @@ let
     domains
     subdomains
     ports
-    id-fqdn
+    oidc_issuer
     ;
   inherit (helpers) mkVirtualHost ensureFile;
   cfg = config.custom.services.apps.office.opencloud;
@@ -20,7 +20,7 @@ let
   onlyoffice-fqdn = "${subdomains.${config.networking.hostName}.onlyoffice}.${domains.home}";
   cspTemplate = import ./csp.yaml.nix;
   cspContent =
-    builtins.replaceStrings [ "@OFFICE_FQDN@" "@ID_FQDN@" ] [ onlyoffice-fqdn id-fqdn ]
+    builtins.replaceStrings [ "@OFFICE_FQDN@" "@ID_FQDN@" ] [ onlyoffice-fqdn oidc_issuer ]
       cspTemplate;
   initialFile = pkgs.writeText "csp.yaml" cspContent;
   cspFile = "/var/lib/opencloud/opencloud-config/csp.yaml";
@@ -63,7 +63,7 @@ in
           COLLABORATION_APP_PRODUCT = "OnlyOffice";
           COLLABORATION_APP_INSECURE = "true";
 
-          OC_OIDC_ISSUER = "https://${id-fqdn}";
+          OC_OIDC_ISSUER = "https://${oidc_issuer}";
           OC_EXCLUDE_RUN_SERVICES = "idp";
           PROXY_OIDC_REWRITE_WELLKNOWN = "true";
           PROXY_USER_OIDC_CLAIM = "preferred_username";
@@ -72,7 +72,7 @@ in
           PROXY_OIDC_ACCESS_TOKEN_VERIFY_METHOD = "none";
           PROXY_ROLE_ASSIGNMENT_DRIVER = "default";
           GRAPH_ASSIGN_DEFAULT_USER_ROLE = "false";
-          WEB_OIDC_METADATA_URL = "https://${id-fqdn}/.well-known/openid-configuration";
+          WEB_OIDC_METADATA_URL = "https://${oidc_issuer}/.well-known/openid-configuration";
         };
         environmentFiles = [ config.age.secrets.opencloud-env.path ];
       };

@@ -1,6 +1,5 @@
 {
   config,
-  inputs,
   lib,
   pkgs,
   ...
@@ -12,10 +11,6 @@ in
   options.custom.platform.pi.hardware = with lib; {
     enable = mkEnableOption "Raspberry Pi 4 hardware config";
   };
-
-  imports = [
-    inputs.nixos-hardware.nixosModules.raspberry-pi-4
-  ];
 
   config = lib.mkIf cfg.enable {
     boot = {

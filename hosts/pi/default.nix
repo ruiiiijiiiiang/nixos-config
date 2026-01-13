@@ -1,7 +1,12 @@
+{ inputs, ... }:
 let
   interface = "end0";
 in
 {
+  imports = [
+    inputs.nixos-hardware.nixosModules.raspberry-pi-4
+  ];
+
   system.stateVersion = "25.05";
   networking.hostName = "pi";
 

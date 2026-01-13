@@ -26,7 +26,7 @@ in
     publicKeys = ssh.pi ++ ssh.vm-network ++ ssh.vm-app ++ ssh.vm-monitor;
     armor = true;
   };
-  "geoip-env.age" = {
+  "geoip-key.age" = {
     publicKeys = ssh.vm-network ++ ssh.vm-app ++ ssh.vm-monitor;
     armor = true;
   };
