@@ -90,7 +90,7 @@ rec {
   macs = {
     arch = "28:0c:50:9c:03:2e";
     framework = "ac:f2:3c:63:d9:f3";
-    proxmox = "d0:c0:bf:2a:49:5f";
+    proxmox = "c8:a3:62:bf:0b:b3";
     vm-network = "bc:24:11:b0:9b:27";
     vm-app = "bc:24:11:71:f8:9b";
     vm-monitor = "bc:24:11:93:b1:94";

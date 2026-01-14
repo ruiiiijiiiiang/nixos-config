@@ -26,7 +26,7 @@ in
       homepage-dashboard = {
         enable = true;
         listenPort = ports.homepage;
-        allowedHosts = "home.${domains.home}, ${addresses.localhost}, localhost";
+        allowedHosts = "${fqdn}, ${addresses.localhost}, localhost";
 
         settings = {
           title = "Homepage";
@@ -229,13 +229,6 @@ in
                   icon = "evebox";
                   href = "https://${subdomains.vm-network.evebox}.${domains.home}";
                   description = "IDS Event Viewer";
-                };
-              }
-              {
-                "Scanopy" = {
-                  icon = "scanopy";
-                  href = "https://${subdomains.vm-monitor.scanopy}.${domains.home}";
-                  description = "Network Scanner";
                 };
               }
               {

@@ -13,7 +13,7 @@ let
     subdomains
     ports
     ;
-  inherit (helpers) mkVirtualHost;
+  inherit (helpers) mkVirtualHost getIp;
   cfg = config.custom.services.networking.dns;
   fqdn = "${subdomains.${config.networking.hostName}.pihole}.${domains.home}";
 in
@@ -154,10 +154,12 @@ in
         vrrpScripts.check_dns_health = {
           script = toString (
             pkgs.writeShellScript "check_dns_health" ''
-              if ${pkgs.dnsutils}/bin/dig @127.0.0.1 . ns +short +time=1 +tries=1 | grep -q "."; then
-                 exit 0
+              RESULT=$(${pkgs.dnsutils}/bin/dig @127.0.0.1 . ns +short +time=1 +tries=1 2>/dev/null)
+              if echo "$RESULT" | grep -q "root-servers.net"; then
+                exit 0
+              else
+                exit 1
               fi
-              exit 1
             ''
           );
           interval = 10;
@@ -173,8 +175,26 @@ in
             { addr = addresses.home.vip.dns; }
           ];
           trackScripts = [ "check_dns_health" ];
+          unicastSrcIp = getIp { inherit (config.networking) hostName; };
+          unicastPeers =
+            let
+              allNodes = [
+                addresses.home.hosts.vm-network
+                addresses.home.hosts.pi
+                addresses.home.hosts.pi-legacy
+              ];
+            in
+            builtins.filter (ip: ip != config.services.keepalived.vrrpInstances.dns_ha.unicastSrcIp) allNodes;
         };
       };
     };
+
+    users.users.keepalived_script = {
+      isSystemUser = true;
+      group = "keepalived_script";
+      description = "User for Keepalived health checks";
+    };
+
+    users.groups.keepalived_script = { };
   };
 }

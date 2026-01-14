@@ -23,6 +23,16 @@ in
     extraHosts = concatStringsSep "\n" (mapAttrsToList makeHostEntry addresses.home.hosts);
     useDHCP = mkDefault true;
     networkmanager.enable = mkDefault true;
+
+    timeServers = [
+      "162.159.200.1"
+      "162.159.200.123"
+      "8.8.8.8"
+      "0.nixos.pool.ntp.org"
+      "1.nixos.pool.ntp.org"
+      "2.nixos.pool.ntp.org"
+      "3.nixos.pool.ntp.org"
+    ];
   };
 
   services.resolved.enable = mkDefault true;

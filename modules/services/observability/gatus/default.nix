@@ -53,6 +53,9 @@ let
     ++ mkEndpoints {
       host = "vm-monitor";
       services = subdomains.vm-monitor;
+      disabledServices = [
+        "scanopy"
+      ];
     };
 in
 {

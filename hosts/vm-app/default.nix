@@ -59,7 +59,6 @@
           node.enable = true;
           podman.enable = true;
         };
-        scanopy.daemon.enable = true;
         wazuh.agent.enable = true;
       };
     };

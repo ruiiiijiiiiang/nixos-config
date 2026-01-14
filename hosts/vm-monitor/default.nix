@@ -33,10 +33,6 @@
             podman.enable = true;
           };
         };
-        scanopy = {
-          server.enable = true;
-          daemon.enable = true;
-        };
         wazuh = {
           server.enable = true;
           agent.enable = true;
