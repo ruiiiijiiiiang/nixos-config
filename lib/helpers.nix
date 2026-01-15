@@ -61,16 +61,6 @@ rec {
       chmod ${mode} "${destination}"
     '';
 
-  getIp =
-    let
-      inherit (addresses.home) hosts;
-    in
-    { hostName }:
-    assert lib.assertMsg (
-      hosts ? "${hostName}"
-    ) "Host '${hostName}' is not defined in the hosts attribute set";
-    hosts.${hostName};
-
   mkHostFqdns =
     hostName:
     let
@@ -93,9 +83,8 @@ rec {
         hostName: ip:
         let
           fqdns = mkHostFqdns hostName;
-          allNames = [ hostName ] ++ fqdns;
         in
-        "${ip} ${concatStringsSep " " allNames}";
+        "${ip} ${concatStringsSep " " fqdns}";
     in
     concatStringsSep "\n" (mapAttrsToList makeFullHostEntry addresses.home.hosts);
 
@@ -147,7 +136,11 @@ rec {
     let
       inherit (lib) unique attrValues;
     in
-    unique (attrValues (getEnabledServices { inherit config; }));
+    unique (
+      attrValues (getEnabledServices {
+        inherit config;
+      })
+    );
 
   mkGatusEndpoints =
     { inputs, hostName }:

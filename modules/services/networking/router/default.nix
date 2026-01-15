@@ -7,7 +7,7 @@
 }:
 let
   inherit (consts) addresses;
-  inherit (helpers) getReservations getIp;
+  inherit (helpers) getReservations;
   cfg = config.custom.services.networking.router;
 in
 {
@@ -45,7 +45,7 @@ in
         useDHCP = false;
         ipv4.addresses = [
           {
-            address = getIp { inherit (config.networking) hostName; };
+            address = addresses.home.hosts.${config.networking.hostName};
             prefixLength = 24;
           }
         ];

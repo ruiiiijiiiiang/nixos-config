@@ -13,7 +13,7 @@ let
     subdomains
     ports
     ;
-  inherit (helpers) mkVirtualHost getIp;
+  inherit (helpers) mkFullExtraHosts mkVirtualHost;
   cfg = config.custom.services.networking.dns;
   fqdn = "${subdomains.${config.networking.hostName}.pihole}.${domains.home}";
 in
@@ -53,7 +53,7 @@ in
 
     networking = {
       nameservers = [ addresses.localhost ];
-      extraHosts = helpers.mkFullExtraHosts;
+      extraHosts = mkFullExtraHosts;
 
       firewall.extraInputRules = lib.mkIf cfg.vrrp.enable ''
         ip protocol vrrp accept
@@ -80,7 +80,6 @@ in
 
             private-domain = [ domains.home ];
             domain-insecure = [ domains.home ];
-            local-zone = [ "${domains.home}. always_nxdomain" ];
           };
 
           forward-zone = [
@@ -178,7 +177,7 @@ in
             { addr = addresses.home.vip.dns; }
           ];
           trackScripts = [ "check_dns_health" ];
-          unicastSrcIp = getIp { inherit (config.networking) hostName; };
+          unicastSrcIp = addresses.home.hosts.${config.networking.hostName};
           unicastPeers =
             let
               allNodes = [

@@ -40,7 +40,9 @@ in
 
     networking = {
       wireguard.interfaces.${cfg.server.interface} = {
-        ips = [ addresses.vpn.network ];
+        ips = [
+          addresses.vpn.hosts.${config.networking.hostName}
+        ];
         listenPort = ports.wireguard;
         inherit (cfg.server) privateKeyFile;
 

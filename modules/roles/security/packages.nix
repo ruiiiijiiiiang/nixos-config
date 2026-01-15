@@ -54,6 +54,8 @@ in
       unrar
       ouch
       inputs.lazynmap.packages.${stdenv.system}.default
+
+      networkmanagerapplet
     ];
 
     programs.wireshark.enable = true;
