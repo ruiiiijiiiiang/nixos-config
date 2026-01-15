@@ -14,8 +14,24 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    environment.variables = {
-      EDITOR = lib.mkForce "vim";
+    environment = {
+      variables = {
+        EDITOR = lib.mkForce "vim";
+      };
+
+      interactiveShellInit = ''
+        stats() {
+          systemctl status "$1" | tspin
+        }
+
+        log() {
+          if [ -z "$2" ]; then
+            journalctl -u "$1" -f | tspin
+          else
+            journalctl -u "$1" -n "$2" | tspin
+          fi
+        }
+      '';
     };
 
     virtualisation = {

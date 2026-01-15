@@ -1,20 +1,23 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  helpers,
+  ...
+}:
 let
   inherit (lib)
     mkIf
-    attrValues
     optionalString
     genAttrs
     ;
   inherit (import ../../../../lib/consts.nix)
     addresses
     domains
-    subdomains
     ports
     ;
+  inherit (helpers) getEnabledSubdomains;
   cfg = config.custom.services.networking.nginx;
-  subdomainSet = subdomains.${config.networking.hostName} or null;
-  subdomainList = if subdomainSet != null then attrValues subdomainSet else [ ];
+  subdomainList = getEnabledSubdomains { inherit config; };
 in
 {
   options.custom.services.networking.nginx = with lib; {

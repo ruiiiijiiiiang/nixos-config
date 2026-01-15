@@ -26,6 +26,7 @@ in
       networking.dns = {
         enable = true;
         vrrp = {
+          enable = true;
           inherit interface;
           state = "BACKUP";
           priority = 90;

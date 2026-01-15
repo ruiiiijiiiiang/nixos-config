@@ -21,6 +21,7 @@ in
   options.custom.services.networking.dns = with lib; {
     enable = mkEnableOption "Unbound + Pi-hole DNS filtering";
     vrrp = {
+      enable = mkEnableOption "VRRP High Availability";
       interface = mkOption {
         type = types.nullOr types.str;
         default = null;
@@ -45,14 +46,16 @@ in
   config = lib.mkIf cfg.enable {
     assertions = [
       {
-        assertion = cfg.vrrp.interface != null;
+        assertion = cfg.vrrp.enable -> cfg.vrrp.interface != null;
         message = "Interface for High Availability is missing.";
       }
     ];
 
     networking = {
       nameservers = [ addresses.localhost ];
-      firewall.extraInputRules = ''
+      extraHosts = helpers.mkFullExtraHosts;
+
+      firewall.extraInputRules = lib.mkIf cfg.vrrp.enable ''
         ip protocol vrrp accept
       '';
     };
@@ -148,7 +151,7 @@ in
         port = ports.pihole;
       };
 
-      keepalived = {
+      keepalived = lib.mkIf cfg.vrrp.enable {
         enable = true;
 
         vrrpScripts.check_dns_health = {
@@ -162,7 +165,7 @@ in
               fi
             ''
           );
-          interval = 10;
+          interval = 5;
           weight = -20;
           fall = 2;
           rise = 2;
@@ -189,12 +192,12 @@ in
       };
     };
 
-    users.users.keepalived_script = {
+    users.users.keepalived_script = lib.mkIf cfg.vrrp.enable {
       isSystemUser = true;
       group = "keepalived_script";
       description = "User for Keepalived health checks";
     };
 
-    users.groups.keepalived_script = { };
+    users.groups.keepalived_script = lib.mkIf cfg.vrrp.enable { };
   };
 }

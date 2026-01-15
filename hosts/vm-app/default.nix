@@ -29,7 +29,6 @@
             enable = true;
             proxied = true;
           };
-          yourls.enable = true;
         };
         media.immich.enable = true;
         web.homepage.enable = true;

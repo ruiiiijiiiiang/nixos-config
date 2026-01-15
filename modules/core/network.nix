@@ -1,26 +1,12 @@
-{ consts, lib, ... }:
+{ lib, helpers, ... }:
 let
-  inherit (lib)
-    attrValues
-    concatStringsSep
-    mkDefault
-    mapAttrsToList
-    ;
-  inherit (consts) addresses domains subdomains;
-  makeHostEntry =
-    hostName: ip:
-    let
-      hostSubdomainsSet = subdomains.${hostName} or { };
-      hostSubdomainList = attrValues hostSubdomainsSet;
-      fqdns = map (sub: "${sub}.${domains.home}") hostSubdomainList;
-      allNames = [ hostName ] ++ fqdns;
-    in
-    "${ip} ${concatStringsSep " " allNames}";
+  inherit (lib) mkDefault;
+  inherit (helpers) mkExtraHosts;
 in
 {
   networking = {
     nftables.enable = mkDefault true;
-    extraHosts = concatStringsSep "\n" (mapAttrsToList makeHostEntry addresses.home.hosts);
+    extraHosts = mkExtraHosts;
     useDHCP = mkDefault true;
     networkmanager.enable = mkDefault true;
 

@@ -47,6 +47,7 @@ in
         dns = {
           enable = true;
           vrrp = {
+            enable = true;
             interface = lanInterface;
             state = "MASTER";
             priority = 100;

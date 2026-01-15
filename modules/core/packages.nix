@@ -7,6 +7,8 @@
     linux-firmware
     cachix
     systemctl-tui
+    lazydocker
+    tailspin
     glances
     iotop
     lsof

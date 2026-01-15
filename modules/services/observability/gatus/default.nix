@@ -3,6 +3,7 @@
   consts,
   lib,
   helpers,
+  inputs,
   ...
 }:
 let
@@ -11,51 +12,22 @@ let
   cfg = config.custom.services.observability.gatus;
   fqdn = "${subdomains.${config.networking.hostName}.gatus}.${domains.home}";
 
-  mkEndpoints =
-    {
-      host,
-      services,
-      disabledServices ? [ ],
-    }:
-    let
-      pathOverrides = {
-        stirlingpdf = "/login";
-        yourls = "/admin";
-      };
-      activeServices = lib.filterAttrs (name: _: !(builtins.elem name disabledServices)) services;
-    in
-    lib.mapAttrsToList (service: subdomain: {
-      name = service;
-      url = "https://${subdomain}.${domains.home}${pathOverrides.${service} or ""}";
-      group = host;
-      interval = "1m";
-      conditions = [ "[STATUS] == 200" ];
-    }) activeServices;
-
   endpoints =
-    mkEndpoints {
-      host = "pi";
-      services = subdomains.pi;
+    helpers.mkGatusEndpoints {
+      inherit inputs;
+      hostName = "pi";
     }
-    ++ mkEndpoints {
-      host = "vm-network";
-      services = subdomains.vm-network;
+    ++ helpers.mkGatusEndpoints {
+      inherit inputs;
+      hostName = "vm-network";
     }
-    ++ mkEndpoints {
-      host = "vm-app";
-      services = subdomains.vm-app;
-      disabledServices = [
-        "bentopdf"
-        "nextcloud"
-        "portainer"
-      ];
+    ++ helpers.mkGatusEndpoints {
+      inherit inputs;
+      hostName = "vm-app";
     }
-    ++ mkEndpoints {
-      host = "vm-monitor";
-      services = subdomains.vm-monitor;
-      disabledServices = [
-        "scanopy"
-      ];
+    ++ helpers.mkGatusEndpoints {
+      inherit inputs;
+      hostName = "vm-monitor";
     };
 in
 {

@@ -144,13 +144,6 @@ in
                 };
               }
               {
-                "Yourls" = {
-                  icon = "yourls";
-                  href = "https://${subdomains.vm-app.yourls}.${domains.home}/admin";
-                  description = "URL Shortener";
-                };
-              }
-              {
                 "Stirling PDF" = {
                   icon = "stirling-pdf";
                   href = "https://${subdomains.vm-app.stirlingpdf}.${domains.home}";
