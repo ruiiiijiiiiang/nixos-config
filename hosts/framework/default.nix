@@ -1,5 +1,7 @@
-{ config, ... }:
-
+{ config, consts, ... }:
+let
+  inherit (consts) addresses;
+in
 {
   system.stateVersion = "25.05";
   networking.hostName = "framework";
@@ -29,6 +31,7 @@
 
       networking.wireguard.client = {
         enable = true;
+        address = addresses.vpn.hosts.framework;
         privateKeyFile = config.age.secrets.wireguard-framework-private-key.path;
         presharedKeyFile = config.age.secrets.wireguard-framework-preshared-key.path;
       };

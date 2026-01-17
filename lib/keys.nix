@@ -35,10 +35,10 @@
       publicKey = "SF5kt0KNGdReMPbXltYmgim/0jkbho7ZtBSWVkSUR3c=";
     };
     iphone-16 = {
-      publicKey = "EJqjHOvVmjmnjT1g9+MQixZ4AmAtqZUKLiK/b8daQmQ=";
+      publicKey = "irSOyEPaup0nVlHvPIQlrsbx4drvc7+gjj0rc7Hhgzs=";
     };
     iphone-17 = {
-      publicKey = "i8j4dWbsWLizCNiOZvfQHE5rz38D6gFAF/rOS51DAH0=";
+      publicKey = "5sRnWVrwknQAwiCLSAX8tWlt7gEbi03j14GUgKm44lY=";
     };
   };
 }

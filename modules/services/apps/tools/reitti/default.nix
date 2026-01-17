@@ -65,7 +65,7 @@ in
       };
 
       reitti-photon = {
-        image = "rtuszik/photon-docker:1.2.1";
+        image = "ghcr.io/rtuszik/photon-docker:latest";
         dependsOn = [ "reitti-postgis" ];
         networks = [ "container:reitti-postgis" ];
         environment = {
@@ -73,6 +73,9 @@ in
           REGION = "us";
         };
         volumes = [ "reitti-photon-data:/photon/data" ];
+        labels = {
+          "io.containers.autoupdate" = "registry";
+        };
       };
 
       reitti-tile-cache = {

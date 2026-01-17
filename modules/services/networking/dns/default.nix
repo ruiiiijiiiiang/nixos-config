@@ -156,12 +156,16 @@ in
         vrrpScripts.check_dns_health = {
           script = toString (
             pkgs.writeShellScript "check_dns_health" ''
-              RESULT=$(${pkgs.dnsutils}/bin/dig @127.0.0.1 . ns +short +time=1 +tries=1 2>/dev/null)
-              if echo "$RESULT" | grep -q "root-servers.net"; then
-                exit 0
-              else
-                exit 1
-              fi
+              export PATH="${pkgs.coreutils}/bin:${pkgs.gnugrep}/bin:${pkgs.dnsutils}/bin"
+              DOMAINS=("google.com" "cloudflare.com" "microsoft.com" "amazon.com")
+              for DOMAIN in "''${DOMAINS[@]}"; do
+                RESULT=$(dig @127.0.0.1 "$DOMAIN" A +short +time=1 +tries=1 2>/dev/null)
+                FIRST_LINE=$(echo "$RESULT" | head -n 1)
+                if [[ -n "$FIRST_LINE" ]] && [[ "$FIRST_LINE" =~ ^[0-9.]+$ ]]; then
+                  exit 0
+                fi
+              done
+              exit 1
             ''
           );
           interval = 5;

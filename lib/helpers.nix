@@ -78,15 +78,15 @@ rec {
 
   mkFullExtraHosts =
     let
-      inherit (lib) concatStringsSep mapAttrsToList;
+      inherit (lib) concatStringsSep mapAttrsToList filter;
       makeFullHostEntry =
         hostName: ip:
         let
           fqdns = mkHostFqdns hostName;
         in
-        "${ip} ${concatStringsSep " " fqdns}";
+        if fqdns == [ ] then "" else "${ip} ${concatStringsSep " " fqdns}";
     in
-    concatStringsSep "\n" (mapAttrsToList makeFullHostEntry addresses.home.hosts);
+    concatStringsSep "\n" (filter (s: s != "") (mapAttrsToList makeFullHostEntry addresses.home.hosts));
 
   getEnabledServices =
     { config }:
@@ -159,4 +159,8 @@ rec {
       interval = "1m";
       conditions = [ "[STATUS] == 200" ];
     }) enabledServices;
+
+  mkOpenPortRule = port: ''
+    ip saddr ${addresses.home.network} tcp dport ${toString port} accept
+  '';
 }

@@ -22,6 +22,25 @@ in
       description = "Interface to use for WireGuard server";
       default = "wg0";
     };
+
+    peers = mkOption {
+      type = types.listOf (
+        types.submodule {
+          options = {
+            hostName = mkOption {
+              type = types.str;
+              description = "Hostname of the peer";
+            };
+            presharedKeyFile = mkOption {
+              type = types.path;
+              description = "Path to the preshared key file";
+            };
+          };
+        }
+      );
+      default = [ ];
+      description = "List of WireGuard peers";
+    };
   };
 
   config = lib.mkIf cfg.server.enable {
@@ -32,37 +51,19 @@ in
       }
     ];
 
-    age.secrets = {
-      wireguard-framework-preshared-key.file = ../../../../secrets/wireguard/framework-preshared-key.age;
-      wireguard-iphone-16-preshared-key.file = ../../../../secrets/wireguard/iphone-16-preshared-key.age;
-      wireguard-iphone-17-preshared-key.file = ../../../../secrets/wireguard/iphone-17-preshared-key.age;
-    };
-
     networking = {
       wireguard.interfaces.${cfg.server.interface} = {
         ips = [
-          addresses.vpn.hosts.${config.networking.hostName}
+          "${addresses.vpn.hosts.${config.networking.hostName}}/32"
         ];
         listenPort = ports.wireguard;
         inherit (cfg.server) privateKeyFile;
 
-        peers = [
-          {
-            inherit (wg.framework) publicKey;
-            presharedKeyFile = config.age.secrets.wireguard-framework-preshared-key.path;
-            allowedIPs = [ "${addresses.vpn.hosts.framework}/32" ];
-          }
-          {
-            inherit (wg.iphone-16) publicKey;
-            presharedKeyFile = config.age.secrets.wireguard-iphone-16-preshared-key.path;
-            allowedIPs = [ "${addresses.vpn.hosts.iphone-16}/32" ];
-          }
-          {
-            inherit (wg.iphone-17) publicKey;
-            presharedKeyFile = config.age.secrets.wireguard-iphone-17-preshared-key.path;
-            allowedIPs = [ "${addresses.vpn.hosts.iphone-17}/32" ];
-          }
-        ];
+        peers = map (peer: {
+          inherit (wg.${peer.hostName}) publicKey;
+          inherit (peer) presharedKeyFile;
+          allowedIPs = [ "${addresses.vpn.hosts.${peer.hostName}}/32" ];
+        }) cfg.server.peers;
       };
 
       nat = {

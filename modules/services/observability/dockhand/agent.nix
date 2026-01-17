@@ -5,7 +5,7 @@
   ...
 }:
 let
-  inherit (consts) ports;
+  inherit (consts) addresses ports;
   cfg = config.custom.services.observability.dockhand.agent;
 in
 {
@@ -23,7 +23,9 @@ in
       dockhand-agent = {
         image = "ghcr.io/finsys/hawser:latest";
         ports = [
-          "${toString ports.dockhand.agent}:${toString ports.dockhand.agent}"
+          "${
+            addresses.home.hosts.${config.networking.hostName}
+          }:${toString ports.dockhand.agent}:${toString ports.dockhand.agent}"
         ];
         volumes = [
           "/var/run/docker.sock:/var/run/docker.sock"
@@ -37,9 +39,10 @@ in
         labels = {
           "io.containers.autoupdate" = "registry";
         };
+        extraOptions = [
+          "--health-cmd=wget -q --spider --no-check-certificate https://localhost:${toString ports.dockhand.agent}/_hawser/health || exit 1"
+        ];
       };
     };
-
-    networking.firewall.allowedTCPPorts = [ ports.dockhand.agent ];
   };
 }

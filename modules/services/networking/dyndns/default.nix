@@ -1,6 +1,11 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  consts,
+  ...
+}:
 let
-  inherit (import ../../../../lib/consts.nix) domains;
+  inherit (consts) vpn-endpoint;
   cfg = config.custom.services.networking.dyndns;
 in
 {
@@ -18,9 +23,7 @@ in
     services.cloudflare-dyndns = {
       enable = true;
       apiTokenFile = config.age.secrets.cloudflare-dns-token.path;
-      domains = [
-        "vpn.${domains.home}"
-      ];
+      domains = [ vpn-endpoint ];
       proxied = false;
     };
 

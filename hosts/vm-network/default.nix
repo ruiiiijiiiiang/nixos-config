@@ -10,6 +10,9 @@ in
 
   age.secrets = {
     wireguard-server-private-key.file = ../../secrets/wireguard/server-private-key.age;
+    wireguard-framework-preshared-key.file = ../../secrets/wireguard/framework-preshared-key.age;
+    wireguard-iphone-16-preshared-key.file = ../../secrets/wireguard/iphone-16-preshared-key.age;
+    wireguard-iphone-17-preshared-key.file = ../../secrets/wireguard/iphone-17-preshared-key.age;
   };
 
   custom = {
@@ -43,6 +46,20 @@ in
           enable = true;
           privateKeyFile = config.age.secrets.wireguard-server-private-key.path;
           interface = wireguardInterface;
+          peers = [
+            {
+              hostName = "framework";
+              presharedKeyFile = config.age.secrets.wireguard-framework-preshared-key.path;
+            }
+            {
+              hostName = "iphone-16";
+              presharedKeyFile = config.age.secrets.wireguard-iphone-16-preshared-key.path;
+            }
+            {
+              hostName = "iphone-17";
+              presharedKeyFile = config.age.secrets.wireguard-iphone-17-preshared-key.path;
+            }
+          ];
         };
         dns = {
           enable = true;

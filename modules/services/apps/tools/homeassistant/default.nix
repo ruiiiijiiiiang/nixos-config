@@ -28,7 +28,10 @@ in
       homeassistant = {
         image = "ghcr.io/home-assistant/home-assistant:stable";
         ports = [
-          "${toString ports.homeassistant}:${toString ports.homeassistant}"
+          "${
+            addresses.home.hosts.${config.networking.hostName}
+          }:${toString ports.homeassistant}:${toString ports.homeassistant}"
+          "${addresses.localhost}:${toString ports.homeassistant}:${toString ports.homeassistant}"
           "${addresses.localhost}:${toString ports.zwave}:${toString ports.zwave}"
         ];
         volumes = [ "/var/lib/home-assistant:/config" ];

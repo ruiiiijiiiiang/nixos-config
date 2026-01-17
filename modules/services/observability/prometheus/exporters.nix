@@ -34,7 +34,9 @@ in
     virtualisation.oci-containers.containers.podman-exporter = lib.mkIf cfg.podman.enable {
       image = "quay.io/navidys/prometheus-podman-exporter:latest";
       ports = [
-        "${toString ports.prometheus.exporters.podman}:${toString ports.prometheus.exporters.podman}"
+        "${
+          addresses.home.hosts.${config.networking.hostName}
+        }:${toString ports.prometheus.exporters.podman}:${toString ports.prometheus.exporters.podman}"
       ];
       volumes = [
         "/run/podman/podman.sock:/run/podman/podman.sock"

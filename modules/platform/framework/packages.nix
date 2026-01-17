@@ -179,6 +179,7 @@ in
       # --- Nix-Specific Tools ---
       nix-search-cli
       nix-tree
+      nix-inspect
       inputs.colmena.packages.${stdenv.system}.colmena
     ];
 

@@ -173,4 +173,5 @@ rec {
   };
 
   oidc_issuer = "${subdomains.vm-app.pocketid}.${domains.home}";
+  vpn-endpoint = "vpn.${domains.home}";
 }
