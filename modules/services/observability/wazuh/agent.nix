@@ -23,6 +23,11 @@ in
 {
   options.custom.services.observability.wazuh.agent = with lib; {
     enable = mkEnableOption "Wazuh security monitoring agent";
+    interface = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = "Interface to open ports";
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -45,10 +50,21 @@ in
       };
     };
 
-    networking.firewall.allowedTCPPorts = [
-      ports.wazuh.agent.connection
-      ports.wazuh.agent.enrollment
-    ];
+    networking.firewall =
+      if cfg.interface != null then
+        {
+          interfaces."${cfg.interface}".allowedTCPPorts = [
+            ports.wazuh.agent.connection
+            ports.wazuh.agent.enrollment
+          ];
+        }
+      else
+        {
+          allowedTCPPorts = [
+            ports.wazuh.agent.connection
+            ports.wazuh.agent.enrollment
+          ];
+        };
 
     system.activationScripts.wazuh-agent-init = ''
       ${ensureFile {

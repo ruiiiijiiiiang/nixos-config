@@ -1,4 +1,9 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  helpers,
+  ...
+}:
 let
   inherit (import ../../../../../lib/consts.nix)
     addresses
@@ -6,6 +11,7 @@ let
     subdomains
     ports
     ;
+  inherit (helpers) mkVirtualHost;
   cfg = config.custom.services.apps.office.bentopdf;
   fqdn = "${subdomains.${config.networking.hostName}.bentopdf}.${domains.home}";
 in
@@ -26,12 +32,9 @@ in
     };
 
     services = {
-      nginx.virtualHosts."${fqdn}" = {
-        useACMEHost = fqdn;
-        forceSSL = true;
-        locations."/" = {
-          proxyPass = "http://${addresses.localhost}:${toString ports.bentopdf}";
-        };
+      nginx.virtualHosts."${fqdn}" = mkVirtualHost {
+        inherit fqdn;
+        port = ports.bentopdf;
       };
     };
   };

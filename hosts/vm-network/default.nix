@@ -77,13 +77,20 @@ in
       };
 
       observability = {
-        beszel.agent.enable = true;
+        beszel.agent = {
+          enable = true;
+          interface = lanInterface;
+        };
         dockhand.agent.enable = true;
         prometheus.exporters = {
           nginx.enable = true;
           node.enable = true;
+          interface = lanInterface;
         };
-        wazuh.agent.enable = true;
+        wazuh.agent = {
+          enable = true;
+          interface = lanInterface;
+        };
       };
     };
   };

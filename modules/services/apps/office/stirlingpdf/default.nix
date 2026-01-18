@@ -26,6 +26,9 @@ in
       stirling-pdf = {
         image = "docker.io/stirlingtools/stirling-pdf:latest";
         ports = [ "${addresses.localhost}:${toString ports.stirlingpdf}:${toString ports.stirlingpdf}" ];
+        environment = {
+          SECURITY_ENABLELOGIN = "false";
+        };
         labels = {
           "io.containers.autoupdate" = "registry";
         };
