@@ -107,6 +107,8 @@ rec {
       agent = 45876;
     };
     dawarich = 3000;
+    dhcp = 67;
+    dns = 53;
     dockhand = {
       server = 3003;
       agent = 2376;

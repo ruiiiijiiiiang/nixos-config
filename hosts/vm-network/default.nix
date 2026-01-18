@@ -63,9 +63,9 @@ in
         };
         dns = {
           enable = true;
+          interface = lanInterface;
           vrrp = {
             enable = true;
-            interface = lanInterface;
             state = "MASTER";
             priority = 100;
           };

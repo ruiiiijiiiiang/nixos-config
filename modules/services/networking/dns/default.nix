@@ -20,13 +20,14 @@ in
 {
   options.custom.services.networking.dns = with lib; {
     enable = mkEnableOption "Unbound + Pi-hole DNS filtering";
+    interface = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = "The network interface for DNS and VIP.";
+    };
+
     vrrp = {
       enable = mkEnableOption "VRRP High Availability";
-      interface = mkOption {
-        type = types.nullOr types.str;
-        default = null;
-        description = "The network interface to bind the VIP to.";
-      };
       state = mkOption {
         type = types.enum [
           "MASTER"
@@ -46,8 +47,8 @@ in
   config = lib.mkIf cfg.enable {
     assertions = [
       {
-        assertion = cfg.vrrp.enable -> cfg.vrrp.interface != null;
-        message = "Interface for High Availability is missing.";
+        assertion = cfg.interface != null;
+        message = "Interface for DNS is missing.";
       }
     ];
 
@@ -55,9 +56,15 @@ in
       nameservers = [ addresses.localhost ];
       extraHosts = mkFullExtraHosts;
 
-      firewall.extraInputRules = lib.mkIf cfg.vrrp.enable ''
-        ip protocol vrrp accept
-      '';
+      firewall = {
+        extraInputRules = lib.mkIf cfg.vrrp.enable ''
+          ip protocol vrrp accept
+        '';
+        interfaces."${cfg.interface}" = {
+          allowedTCPPorts = [ ports.dns ];
+          allowedUDPPorts = [ ports.dns ];
+        };
+      };
     };
 
     environment.systemPackages = with pkgs; [ dnsutils ];
@@ -175,7 +182,8 @@ in
         };
 
         vrrpInstances.dns_ha = {
-          inherit (cfg.vrrp) interface state priority;
+          inherit (cfg) interface;
+          inherit (cfg.vrrp) state priority;
           virtualRouterId = 53;
           virtualIps = [
             { addr = addresses.home.vip.dns; }

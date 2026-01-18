@@ -6,7 +6,7 @@
   ...
 }:
 let
-  inherit (consts) addresses;
+  inherit (consts) addresses ports;
   inherit (helpers) getReservations;
   cfg = config.custom.services.networking.router;
 in
@@ -58,9 +58,9 @@ in
       };
 
       firewall = {
-        enable = true;
-        trustedInterfaces = [ cfg.lanInterface ];
-
+        interfaces.${cfg.lanInterface} = {
+          allowedUDPPorts = [ ports.dhcp ];
+        };
         interfaces.${cfg.wanInterface} = {
           allowedTCPPorts = [ ];
           allowedUDPPorts = [ ];

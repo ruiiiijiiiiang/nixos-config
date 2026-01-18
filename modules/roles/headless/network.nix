@@ -22,6 +22,7 @@ in
         ];
         checkReversePath = "loose";
         trustedInterfaces = [ "podman0" ];
+        logRefusedConnections = true;
       };
       nat = {
         enable = true;

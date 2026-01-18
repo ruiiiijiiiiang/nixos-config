@@ -25,9 +25,9 @@ in
     services = {
       networking.dns = {
         enable = true;
+        inherit interface;
         vrrp = {
           enable = true;
-          inherit interface;
           state = "BACKUP";
           priority = 90;
         };

@@ -74,6 +74,18 @@ in
         trustedInterfaces = [ cfg.server.interface ];
         allowedUDPPorts = [ ports.wireguard ];
       };
+
+      nftables.tables = {
+        "vpn-nat" = {
+          family = "ip";
+          content = ''
+            chain postrouting {
+              type nat hook postrouting priority 100; policy accept;
+              ip saddr ${addresses.vpn.network} oifname "${cfg.server.interface}" masquerade
+            }
+          '';
+        };
+      };
     };
   };
 }

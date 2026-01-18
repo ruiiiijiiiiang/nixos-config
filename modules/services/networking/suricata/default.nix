@@ -48,27 +48,24 @@ in
         ${pkgs.ethtool}/bin/ethtool -K ${cfg.lanInterface} gro off lro off || true
       '';
 
-      nftables = {
-        enable = true;
-        tables = {
-          "suricata-ips" = {
-            family = "inet";
-            content = ''
-              chain forward {
-                # Hook into the FORWARD path (traffic passing through the router)
-                # Priority 0 puts it alongside standard filter rules.
-                type filter hook forward priority 0; policy accept;
+      nftables.tables = {
+        "suricata-ips" = {
+          family = "inet";
+          content = ''
+            chain forward {
+              # Hook into the FORWARD path (traffic passing through the router)
+              # Priority 0 puts it alongside standard filter rules.
+              type filter hook forward priority 0; policy accept;
 
-                ${lib.optionalString config.custom.services.networking.wireguard.server.enable ''
-                  iifname ${config.custom.services.networking.wireguard.server.interface} counter return # Traffic coming from VPN
-                  oifname ${config.custom.services.networking.wireguard.server.interface} counter return # Traffic going to VPN
-                ''}
+              ${lib.optionalString config.custom.services.networking.wireguard.server.enable ''
+                iifname ${config.custom.services.networking.wireguard.server.interface} counter return # Traffic coming from VPN
+                oifname ${config.custom.services.networking.wireguard.server.interface} counter return # Traffic going to VPN
+              ''}
 
-                iifname "${cfg.wanInterface}" oifname "${cfg.lanInterface}" counter queue num 0 bypass # Forward traffic from WAN to LAN -> Queue 0
-                iifname "${cfg.lanInterface}" oifname "${cfg.wanInterface}" counter queue num 0 bypass # Forward traffic from LAN to WAN -> Queue 0
-              }
-            '';
-          };
+              iifname "${cfg.wanInterface}" oifname "${cfg.lanInterface}" counter queue num 0 bypass # Forward traffic from WAN to LAN -> Queue 0
+              iifname "${cfg.lanInterface}" oifname "${cfg.wanInterface}" counter queue num 0 bypass # Forward traffic from LAN to WAN -> Queue 0
+            }
+          '';
         };
       };
 
