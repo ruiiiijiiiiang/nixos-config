@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 let
@@ -9,6 +10,7 @@ in
 {
   options.custom.platform.vm.hardware = with lib; {
     enable = mkEnableOption "Custom hardware config for vm";
+    gpuPassthrough = mkEnableOption "Allow PIC GPU passthrough";
   };
 
   config = lib.mkIf cfg.enable {
@@ -19,18 +21,36 @@ in
         efi.canTouchEfiVariables = true;
       };
 
-      initrd.availableKernelModules = [
-        "ata_piix"
-        "uhci_hcd"
-        "virtio_pci"
-        "virtio_scsi"
-        "sd_mod"
-        "sr_mod"
-      ];
+      initrd = {
+        availableKernelModules = [
+          "ata_piix"
+          "uhci_hcd"
+          "virtio_pci"
+          "virtio_scsi"
+          "sd_mod"
+          "sr_mod"
+        ];
+
+        kernelModules = lib.mkIf cfg.gpuPassthrough [ "amdgpu" ];
+      };
       kernelModules = [ "kvm-amd" ];
       kernelParams = [ "rootdelay=5" ];
     };
 
-    services.qemuGuest.enable = true;
+    services = {
+      qemuGuest.enable = true;
+      xserver.videoDrivers = lib.mkIf cfg.gpuPassthrough [ "amdgpu" ];
+    };
+
+    hardware = lib.mkIf cfg.gpuPassthrough {
+      enableRedistributableFirmware = true;
+      graphics = {
+        enable = true;
+        extraPackages = with pkgs; [
+          libva-utils
+          rocmPackages.clr.icd
+        ];
+      };
+    };
   };
 }

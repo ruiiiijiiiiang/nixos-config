@@ -31,17 +31,33 @@ in
         settings = {
           title = "Homepage";
           background = {
-            image = "https://i.imgur.com/oYFsq5y.jpeg";
+            image = "https://i.imgur.com/heDeGHH.jpeg";
           };
           cardBlur = "xl";
           layout = {
-            "Apps" = {
+            "Media" = {
               style = "row";
-              columns = 4;
+              columns = 6;
+            };
+            "Downloads" = {
+              style = "row";
+              columns = 6;
+            };
+            "Office" = {
+              style = "row";
+              columns = 6;
+            };
+            "Security" = {
+              style = "row";
+              columns = 6;
+            };
+            "Tools" = {
+              style = "row";
+              columns = 6;
             };
             "System" = {
               style = "row";
-              columns = 4;
+              columns = 6;
             };
           };
         };
@@ -65,33 +81,69 @@ in
 
         services = [
           {
-            "Apps" = [
-              {
-                "Pocket ID" = {
-                  icon = "pocket-id";
-                  href = "https://${subdomains.vm-app.pocketid}.${domains.home}";
-                  description = "Identity Provider";
-                };
-              }
-              {
-                "Home Assistant" = {
-                  icon = "home-assistant";
-                  href = "https://${subdomains.pi.homeassistant}.${domains.home}";
-                  description = "Home Automation System";
-                };
-              }
-              {
-                "Opencloud" = {
-                  icon = "open-cloud";
-                  href = "https://${subdomains.vm-app.opencloud}.${domains.home}";
-                  description = "Cloud Storage";
-                };
-              }
+            "Media" = [
               {
                 "Immich" = {
                   icon = "immich";
                   href = "https://${subdomains.vm-app.immich}.${domains.home}";
                   description = "Photos & Video";
+                };
+              }
+              {
+                "Jellyfin" = {
+                  icon = "jellyfin";
+                  href = "https://${subdomains.vm-app.jellyfin}.${domains.home}";
+                  description = "Media Server";
+                };
+              }
+            ];
+          }
+          {
+            "Downloads" = [
+              {
+                "Sonarr" = {
+                  icon = "sonarr";
+                  href = "https://${subdomains.vm-app.sonarr}.${domains.home}";
+                  description = "TV Series Management";
+                };
+              }
+              {
+                "Radarr" = {
+                  icon = "radarr";
+                  href = "https://${subdomains.vm-app.radarr}.${domains.home}";
+                  description = "Movie Management";
+                };
+              }
+              {
+                "Lidarr" = {
+                  icon = "lidarr";
+                  href = "https://${subdomains.vm-app.lidarr}.${domains.home}";
+                  description = "Music Management";
+                };
+              }
+              {
+                "Prowlarr" = {
+                  icon = "prowlarr";
+                  href = "https://${subdomains.vm-app.prowlarr}.${domains.home}";
+                  description = "Indexer Management";
+                };
+              }
+              {
+                "qBittorrent" = {
+                  icon = "qbittorrent";
+                  href = "https://${subdomains.vm-app.qbittorrent}.${domains.home}";
+                  description = "Torrent Client";
+                };
+              }
+            ];
+          }
+          {
+            "Office" = [
+              {
+                "Opencloud" = {
+                  icon = "open-cloud";
+                  href = "https://${subdomains.vm-app.opencloud}.${domains.home}";
+                  description = "Cloud Storage";
                 };
               }
               {
@@ -102,20 +154,6 @@ in
                 };
               }
               {
-                "Vaultwarden" = {
-                  icon = "vaultwarden";
-                  href = "https://${subdomains.vm-app.vaultwarden}.${domains.home}";
-                  description = "Password Manager";
-                };
-              }
-              {
-                "Karakeep" = {
-                  icon = "karakeep";
-                  href = "https://${subdomains.vm-app.karakeep}.${domains.home}";
-                  description = "Bookmark";
-                };
-              }
-              {
                 "Memos" = {
                   icon = "memos";
                   href = "https://${subdomains.vm-app.memos}.${domains.home}";
@@ -123,10 +161,53 @@ in
                 };
               }
               {
-                "Microbin" = {
-                  icon = "microbin";
-                  href = "https://${subdomains.vm-app.microbin}.${domains.home}";
-                  description = "Pastebin";
+                "Stirling PDF" = {
+                  icon = "stirling-pdf";
+                  href = "https://${subdomains.vm-app.stirlingpdf}.${domains.home}";
+                  description = "PDF Editor";
+                };
+              }
+              {
+                "Calendar Parser" = {
+                  icon = "p-cal";
+                  href = "https://calendar-parse.ruiiiijiiiiang.deno.net";
+                  description = "Parse CSV Calendar from Pam's Boss";
+                };
+              }
+            ];
+          }
+          {
+            "Security" = [
+              {
+                "Pocket ID" = {
+                  icon = "pocket-id";
+                  href = "https://${subdomains.vm-app.pocketid}.${domains.home}";
+                  description = "Identity Provider";
+                };
+              }
+              {
+                "Vaultwarden" = {
+                  icon = "vaultwarden";
+                  href = "https://${subdomains.vm-app.vaultwarden}.${domains.home}";
+                  description = "Password Manager";
+                };
+              }
+            ];
+          }
+          {
+            "Tools" = [
+              {
+                "Home Assistant" = {
+                  icon = "home-assistant";
+                  href = "https://${subdomains.pi.homeassistant}.${domains.home}";
+                  description = "Home Automation System";
+                };
+              }
+              {
+                "Karakeep" = {
+                  icon = "karakeep";
+                  href = "https://${subdomains.vm-app.karakeep}.${domains.home}";
+                  description = "Bookmark";
                 };
               }
               {
@@ -144,24 +225,17 @@ in
                 };
               }
               {
-                "Stirling PDF" = {
-                  icon = "stirling-pdf";
-                  href = "https://${subdomains.vm-app.stirlingpdf}.${domains.home}";
-                  description = "PDF Editor";
+                "Microbin" = {
+                  icon = "microbin";
+                  href = "https://${subdomains.vm-app.microbin}.${domains.home}";
+                  description = "Pastebin";
                 };
               }
               {
-                "Calendar Parser" = {
-                  icon = "p-cal";
-                  href = "https://calendar-parse.ruiiiijiiiiang.deno.net";
-                  description = "Parse CSV Calendar from Pam's Boss";
-                };
-              }
-              {
-                "Blog" = {
-                  icon = "booklogr";
-                  href = "https://public.ruijiang.me/blog/0";
-                  description = "Rui's Blog";
+                "Syncthing" = {
+                  icon = "syncthing";
+                  href = "https://${subdomains.vm-app.syncthing}.${domains.home}";
+                  description = "File Sync Tool";
                 };
               }
             ];
@@ -222,13 +296,6 @@ in
                   icon = "evebox";
                   href = "https://${subdomains.vm-network.evebox}.${domains.home}";
                   description = "IDS Event Viewer";
-                };
-              }
-              {
-                "Syncthing" = {
-                  icon = "syncthing";
-                  href = "https://${subdomains.vm-app.syncthing}.${domains.home}";
-                  description = "File Sync Tool";
                 };
               }
               {

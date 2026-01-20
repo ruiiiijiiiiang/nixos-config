@@ -36,6 +36,7 @@ in
 
     virtualisation.oci-containers.containers.podman-exporter = lib.mkIf cfg.podman.enable {
       image = "quay.io/navidys/prometheus-podman-exporter:latest";
+      autoStart = true;
       ports = [
         "${
           addresses.home.hosts.${config.networking.hostName}

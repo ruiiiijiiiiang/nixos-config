@@ -10,16 +10,27 @@
     };
 
     platform.vm = {
-      hardware.enable = true;
+      hardware = {
+        enable = true;
+        gpuPassthrough = true;
+      };
       disks = {
         enableMain = true;
         enableStorage = true;
+        enableScratch = true;
       };
     };
 
     services = {
       apps = {
+        office = {
+          memos.enable = true;
+          opencloud.enable = true;
+          paperless.enable = true;
+          stirlingpdf.enable = true;
+        };
         tools = {
+          arr.enable = true;
           atuin.enable = true;
           dawarich.enable = true;
           karakeep.enable = true;
@@ -30,24 +41,24 @@
             proxied = true;
           };
         };
-        media.immich.enable = true;
-        web.homepage.enable = true;
-        web.website.enable = true;
-        office = {
-          memos.enable = true;
-          opencloud.enable = true;
-          paperless.enable = true;
-          stirlingpdf.enable = true;
+        media = {
+          immich.enable = true;
+          jellyfin.enable = true;
         };
         security = {
           pocketid.enable = true;
           vaultwarden.enable = true;
+        };
+        web = {
+          homepage.enable = true;
+          website.enable = true;
         };
       };
 
       networking = {
         cloudflared.enable = false;
         nginx.enable = true;
+        torrent.enable = true;
       };
 
       observability = {

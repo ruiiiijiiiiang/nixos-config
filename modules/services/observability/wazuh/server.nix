@@ -35,6 +35,7 @@ in
     virtualisation.oci-containers.containers = {
       wazuh-indexer = {
         image = "wazuh/wazuh-indexer:4.14.1";
+        autoStart = true;
         environment = {
           OPENSEARCH_JAVA_OPTS = "-Xms512m -Xmx512m";
         };
@@ -59,6 +60,7 @@ in
 
       wazuh-manager = {
         image = "wazuh/wazuh-manager:4.14.1";
+        autoStart = true;
         environment = {
           INDEXER_URL = "https://${addresses.localhost}";
           FILEBEAT_SSL_VERIFICATION_MODE = "certificate";
@@ -85,6 +87,7 @@ in
 
       wazuh-dashboard = {
         image = "wazuh/wazuh-dashboard:4.14.1";
+        autoStart = true;
         environment = {
           INDEXER_URL = "https://${addresses.localhost}";
           WAZUH_API_URL = "https://${addresses.localhost}";
@@ -128,6 +131,20 @@ in
         mode = "644";
       }}
     '';
-    # sudo podman exec -u 0 -it wazuh-indexer env JAVA_HOME=/usr/share/wazuh-indexer/jdk bash /usr/share/wazuh-indexer/plugins/opensearch-security/tools/securityadmin.sh   -cd /usr/share/wazuh-indexer/config/opensearch-security   -icl   -nhnv   -cacert /usr/share/wazuh-indexer/config/certs/root-ca.pem   -cert /usr/share/wazuh-indexer/config/certs/admin.pem   -key /usr/share/wazuh-indexer/config/certs/admin-key.pem
   };
 }
+
+# Refer to https://documentation.wazuh.com/current/user-manual/wazuh-server-cluster/certificates-deployment.html#using-the-wazuh-certs-tool-sh-script-default-method
+# for instructions on how to generate certificates for the server. For a single node setup, use this as config.yml:
+# nodes:
+#   indexer:
+#     - name: wazuh-indexer
+#       ip: 127.0.0.1
+#   server:
+#     - name: wazuh-manager
+#       ip: 127.0.0.1
+#   dashboard:
+#     - name: wazuh-dashboard
+#       ip: 127.0.0.1
+# Once the certificates are copied to /var/wazuh/certs/, run the following command once:
+# sudo podman exec -u 0 -it wazuh-indexer env JAVA_HOME=/usr/share/wazuh-indexer/jdk bash /usr/share/wazuh-indexer/plugins/opensearch-security/tools/securityadmin.sh   -cd /usr/share/wazuh-indexer/config/opensearch-security   -icl   -nhnv   -cacert /usr/share/wazuh-indexer/config/certs/root-ca.pem   -cert /usr/share/wazuh-indexer/config/certs/admin.pem   -key /usr/share/wazuh-indexer/config/certs/admin-key.pem

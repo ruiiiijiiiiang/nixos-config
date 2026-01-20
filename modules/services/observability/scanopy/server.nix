@@ -29,6 +29,7 @@ in
     virtualisation.oci-containers.containers = {
       scanopy-postgres = {
         image = "postgres:17-alpine";
+        autoStart = true;
         ports = [
           "${toString ports.scanopy.server}:${toString ports.scanopy.server}"
         ];
@@ -38,6 +39,7 @@ in
 
       scanopy-server = {
         image = "ghcr.io/scanopy/scanopy/server:latest";
+        autoStart = true;
         volumes = [ "scanopy-data:/data" ];
         environment = {
           SCANOPY_WEB_EXTERNAL_PATH = "/app/static";

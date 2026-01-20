@@ -22,6 +22,7 @@ in
     virtualisation.oci-containers.containers = {
       dockhand-agent = {
         image = "ghcr.io/finsys/hawser:latest";
+        autoStart = true;
         ports = [
           "${
             addresses.home.hosts.${config.networking.hostName}

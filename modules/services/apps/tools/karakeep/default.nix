@@ -34,6 +34,7 @@ in
     virtualisation.oci-containers.containers = {
       karakeep-server = {
         image = "ghcr.io/karakeep-app/karakeep:release";
+        autoStart = true;
         ports = [ "${addresses.localhost}:${toString ports.karakeep}:3000" ];
         volumes = [ "/var/lib/karakeep:/data" ];
         environment = {
@@ -53,6 +54,7 @@ in
 
       karakeep-chrome = {
         image = "gcr.io/zenika-hub/alpine-chrome:124";
+        autoStart = true;
         dependsOn = [ "karakeep-server" ];
         networks = [ "container:karakeep-server" ];
         cmd = [
@@ -67,6 +69,7 @@ in
 
       karakeep-meilisearch = {
         image = "docker.io/getmeili/meilisearch:latest";
+        autoStart = true;
         dependsOn = [ "karakeep-server" ];
         networks = [ "container:karakeep-server" ];
         volumes = [ "meilisearch-data:/meili_data" ];

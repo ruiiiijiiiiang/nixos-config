@@ -24,6 +24,7 @@ in
   config = lib.mkIf cfg.enable {
     virtualisation.oci-containers.containers.website = {
       image = "ghcr.io/ruiiiijiiiiang/website:latest";
+      autoStart = true;
       ports = [ "${addresses.localhost}:${toString ports.website}:${toString ports.website}" ];
       volumes = [ "/var/lib/blog:/app/blog:ro" ];
       labels = {

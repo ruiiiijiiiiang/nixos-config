@@ -37,6 +37,7 @@ in
     virtualisation.oci-containers.containers = {
       dawarich-db = {
         image = "postgis/postgis:16-3.4-alpine";
+        autoStart = true;
         ports = [ "${addresses.localhost}:${toString ports.dawarich}:${toString ports.dawarich}" ];
         environmentFiles = [ config.age.secrets.dawarich-env.path ];
         volumes = [ "dawarich-db-data:/var/lib/postgresql/data" ];
@@ -44,6 +45,7 @@ in
 
       dawarich-redis = {
         image = "docker.io/library/redis:latest";
+        autoStart = true;
         dependsOn = [ "dawarich-db" ];
         networks = [ "container:dawarich-db" ];
         volumes = [ "dawarich-redis-data:/data" ];
@@ -54,6 +56,7 @@ in
 
       dawarich-app = {
         image = "docker.io/freikin/dawarich:latest";
+        autoStart = true;
         dependsOn = [
           "dawarich-db"
           "dawarich-redis"
@@ -86,6 +89,7 @@ in
 
       dawarich-sidekiq = {
         image = "docker.io/freikin/dawarich:latest";
+        autoStart = true;
         dependsOn = [
           "dawarich-db"
           "dawarich-redis"

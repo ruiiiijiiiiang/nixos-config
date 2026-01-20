@@ -25,6 +25,7 @@ in
     virtualisation.oci-containers.containers = {
       stirling-pdf = {
         image = "docker.io/stirlingtools/stirling-pdf:latest";
+        autoStart = true;
         ports = [ "${addresses.localhost}:${toString ports.stirlingpdf}:${toString ports.stirlingpdf}" ];
         environment = {
           SECURITY_ENABLELOGIN = "false";

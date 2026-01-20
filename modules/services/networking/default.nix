@@ -7,6 +7,7 @@
     ./nginx
     ./router
     ./suricata
+    ./torrent
     ./wireguard
   ];
 }

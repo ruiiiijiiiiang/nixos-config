@@ -25,6 +25,7 @@ in
     virtualisation.oci-containers.containers = {
       dockhand-server = {
         image = "docker.io/fnsys/dockhand:latest";
+        autoStart = true;
         ports = [ "${addresses.localhost}:${toString ports.dockhand.server}:3000" ];
         volumes = [
           "/var/run/docker.sock:/var/run/docker.sock"

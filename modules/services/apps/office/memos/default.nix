@@ -33,6 +33,7 @@ in
     virtualisation.oci-containers.containers = {
       memos-db = {
         image = "postgres:15";
+        autoStart = true;
         ports = [ "${addresses.localhost}:${toString ports.memos}:${toString ports.memos}" ];
         environmentFiles = [ config.age.secrets.memos-env.path ];
         volumes = [ "memos-db-data:/var/lib/postgresql/data" ];
@@ -40,6 +41,7 @@ in
 
       memos-app = {
         image = "docker.io/neosmemo/memos:stable";
+        autoStart = true;
         dependsOn = [ "memos-db" ];
         networks = [ "container:memos-db" ];
         environment = {

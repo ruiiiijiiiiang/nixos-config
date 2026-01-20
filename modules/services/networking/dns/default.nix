@@ -203,6 +203,10 @@ in
       };
     };
 
+    systemd.services.pihole-ftl.restartTriggers = [
+      config.networking.extraHosts
+    ];
+
     users.users.keepalived_script = lib.mkIf cfg.vrrp.enable {
       isSystemUser = true;
       group = "keepalived_script";

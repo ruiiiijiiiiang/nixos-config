@@ -93,6 +93,11 @@ rec {
     let
       inherit (lib) filterAttrs;
       serviceEnabled = {
+        lidarr = config.custom.services.apps.tools.arr.enable;
+        radarr = config.custom.services.apps.tools.arr.enable;
+        sonarr = config.custom.services.apps.tools.arr.enable;
+        prowlarr = config.custom.services.apps.tools.arr.enable;
+        bazarr = config.custom.services.apps.tools.arr.enable;
         atuin = config.custom.services.apps.tools.atuin.enable;
         beszel = config.custom.services.observability.beszel.hub.enable;
         bentopdf = config.custom.services.apps.office.bentopdf.enable;
@@ -104,13 +109,12 @@ rec {
         homeassistant = config.custom.services.apps.tools.homeassistant.enable;
         homepage = config.custom.services.apps.web.homepage.enable;
         immich = config.custom.services.apps.media.immich.enable;
+        jellyfin = config.custom.services.apps.media.jellyfin.enable;
         karakeep = config.custom.services.apps.tools.karakeep.enable;
         memos = config.custom.services.apps.office.memos.enable;
         microbin = config.custom.services.apps.tools.microbin.enable;
         nextcloud = config.custom.services.apps.office.nextcloud.enable;
-        onlyoffice =
-          config.custom.services.apps.office.nextcloud.enable
-          || config.custom.services.apps.office.opencloud.enable;
+        onlyoffice = config.custom.services.apps.office.opencloud.enable;
         opencloud = config.custom.services.apps.office.opencloud.enable;
         paperless = config.custom.services.apps.office.paperless.enable;
         pihole = config.custom.services.networking.dns.enable;
@@ -118,6 +122,7 @@ rec {
         portainer = config.custom.services.apps.tools.portainer.enable;
         prometheus = config.custom.services.observability.prometheus.server.enable;
         public = config.custom.services.apps.web.website.enable;
+        qbittorrent = config.custom.services.networking.torrent.enable;
         reitti = config.custom.services.apps.tools.reitti.enable;
         scanopy = config.custom.services.observability.scanopy.server.enable;
         stirlingpdf = config.custom.services.apps.office.stirlingpdf.enable;
@@ -147,14 +152,10 @@ rec {
     let
       inherit (inputs.self.nixosConfigurations.${hostName}) config;
       enabledServices = getEnabledServices { inherit config; };
-      pathOverrides = {
-        stirlingpdf = "/login";
-        yourls = "/admin";
-      };
     in
     lib.mapAttrsToList (service: subdomain: {
       name = service;
-      url = "https://${subdomain}.${domains.home}${pathOverrides.${service} or ""}";
+      url = "https://${subdomain}.${domains.home}";
       group = hostName;
       interval = "1m";
       conditions = [ "[STATUS] == 200" ];

@@ -2,7 +2,6 @@ rec {
   timeZone = "America/Chicago";
   defaultLocale = "en_US.UTF-8";
 
-  # please don't DDOS :)
   domains = {
     home = "ruijiang.me";
   };
@@ -18,11 +17,17 @@ rec {
       pihole = "pihole";
     };
     vm-app = {
+      lidarr = "lidarr";
+      radarr = "radarr";
+      sonarr = "sonarr";
+      prowlarr = "prowlarr";
+      bazarr = "bazarr";
       atuin = "atuin";
       dawarich = "dawarich";
       bentopdf = "pdf";
-      immich = "immich";
       homepage = "home";
+      immich = "immich";
+      jellyfin = "jellyfin";
       karakeep = "karakeep";
       memos = "memos";
       microbin = "bin";
@@ -33,6 +38,7 @@ rec {
       pocketid = "id";
       portainer = "portainer";
       public = "public";
+      qbittorrent = "qbittorrent";
       reitti = "reitti";
       stirlingpdf = "pdf";
       syncthing = "syncthing";
@@ -100,6 +106,12 @@ rec {
   };
 
   ports = {
+    lidarr = 8686;
+    radarr = 7878;
+    sonarr = 8989;
+    prowlarr = 9696;
+    bazarr = 6767;
+    flaresolverr = 8191;
     atuin = 8888;
     bentopdf = 8080;
     beszel = {
@@ -120,6 +132,7 @@ rec {
     homepage = 8089;
     karakeep = 8084;
     immich = 2283;
+    jellyfin = 8096;
     memos = 5230;
     microbin = 8088;
     monit = 2812;
@@ -145,6 +158,7 @@ rec {
       };
     };
     proxmox = 8006;
+    qbittorrent = 8086;
     redis = 6379;
     reitti = 8085;
     scanopy = {

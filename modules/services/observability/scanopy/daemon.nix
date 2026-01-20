@@ -23,6 +23,7 @@ in
     virtualisation.oci-containers.containers = {
       scanopy-daemon = {
         image = "ghcr.io/scanopy/scanopy/daemon:latest";
+        autoStart = true;
         volumes = [
           "scanopy-daemon-config:/root/.config/daemon"
           "/var/run/docker.sock:/var/run/docker.sock:ro"

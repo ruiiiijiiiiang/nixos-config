@@ -24,6 +24,7 @@ in
     virtualisation.oci-containers.containers = {
       bentopdf = {
         image = "bentopdf/bentopdf:latest";
+        autoStart = true;
         ports = [ "${addresses.localhost}:${toString ports.bentopdf}:${toString ports.bentopdf}" ];
         labels = {
           "io.containers.autoupdate" = "registry";

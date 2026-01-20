@@ -39,6 +39,7 @@ in
     virtualisation.oci-containers.containers = {
       paperless-db = {
         image = "postgres:16";
+        autoStart = true;
         ports = [ "${addresses.localhost}:${toString ports.paperless}:8000" ];
         environmentFiles = [ config.age.secrets.paperless-env.path ];
         volumes = [ "/var/storage/paperless/data/postgres:/var/lib/postgresql/data" ];
@@ -46,6 +47,7 @@ in
 
       paperless-redis = {
         image = "docker.io/library/redis:latest";
+        autoStart = true;
         cmd = [ "redis-server" ];
         dependsOn = [ "paperless-db" ];
         networks = [ "container:paperless-db" ];
@@ -57,6 +59,7 @@ in
 
       paperless-app = {
         image = "ghcr.io/paperless-ngx/paperless-ngx:latest";
+        autoStart = true;
         dependsOn = [
           "paperless-db"
           "paperless-redis"
@@ -93,19 +96,22 @@ in
     };
 
     systemd.tmpfiles.rules = [
-      "d /var/storage/paperless               0750 paperless paperless -"
-      "d /var/storage/paperless/log           0750 paperless paperless -"
-      "d /var/storage/paperless/media         0750 paperless paperless -"
-      "d /var/storage/paperless/consume       0750 paperless paperless -"
-      "d /var/storage/paperless/data          0750 paperless paperless -"
-      "d /var/storage/paperless/data/data     0750 paperless paperless -"
+      "d /var/storage/paperless 0750 paperless paperless -"
+      "d /var/storage/paperless/log 0750 paperless paperless -"
+      "d /var/storage/paperless/media 0750 paperless paperless -"
+      "d /var/storage/paperless/consume 0750 paperless paperless -"
+      "d /var/storage/paperless/data 0750 paperless paperless -"
+      "d /var/storage/paperless/data/data 0750 paperless paperless -"
       "d /var/storage/paperless/data/postgres 0700 999 999 -"
     ];
 
-    users.groups.paperless = { };
+    users.groups.paperless = {
+      gid = 315;
+    };
     users.users.paperless = {
       isSystemUser = true;
       group = "paperless";
+      uid = 315;
       description = "Paperless-ngx OCI user";
     };
 

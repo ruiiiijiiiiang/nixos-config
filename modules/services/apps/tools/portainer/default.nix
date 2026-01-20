@@ -25,6 +25,7 @@ in
     virtualisation.oci-containers.containers = {
       portainer = {
         image = "portainer/portainer-ce";
+        autoStart = true;
         ports = [
           "${addresses.localhost}:${toString ports.portainer.server}:${toString ports.portainer.server}"
           "${addresses.localhost}:${toString ports.portainer.edge}:${toString ports.portainer.edge}"

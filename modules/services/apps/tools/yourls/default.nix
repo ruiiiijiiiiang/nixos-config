@@ -38,6 +38,7 @@ in
     virtualisation.oci-containers.containers = {
       yourls-db = {
         image = "mariadb:12";
+        autoStart = true;
         ports = [ "${addresses.localhost}:${toString ports.yourls}:8080" ];
         environmentFiles = [ config.age.secrets.yourls-env.path ];
         volumes = [
@@ -47,6 +48,7 @@ in
 
       yourls-server = {
         image = "docker.io/library/yourls:latest";
+        autoStart = true;
         dependsOn = [ "yourls-db" ];
         networks = [ "container:yourls-db" ];
         environment = {

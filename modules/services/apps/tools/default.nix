@@ -1,5 +1,6 @@
 {
   imports = [
+    ./arr
     ./atuin
     ./dawarich
     ./homeassistant

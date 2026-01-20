@@ -58,6 +58,7 @@ in
       };
 
       firewall = {
+        enable = true;
         interfaces.${cfg.lanInterface} = {
           allowedUDPPorts = [ ports.dhcp ];
         };

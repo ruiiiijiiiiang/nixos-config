@@ -23,7 +23,7 @@ let
     builtins.replaceStrings [ "@OFFICE_FQDN@" "@ID_FQDN@" ] [ onlyoffice-fqdn oidc_issuer ]
       cspTemplate;
   initialFile = pkgs.writeText "csp.yaml" cspContent;
-  cspFile = "/var/lib/opencloud/opencloud-config/csp.yaml";
+  cspFile = "/var/lib/opencloud/config/csp.yaml";
 in
 {
   options.custom.services.apps.office.opencloud = with lib; {
@@ -41,13 +41,14 @@ in
     virtualisation.oci-containers.containers = {
       opencloud = {
         image = "docker.io/opencloudeu/opencloud-rolling:latest";
+        autoStart = true;
         ports = [
           "${addresses.localhost}:${toString ports.opencloud}:9200"
           "${addresses.localhost}:${toString ports.onlyoffice}:80"
         ];
         volumes = [
-          "/var/lib/opencloud/opencloud-config:/etc/opencloud"
-          "/var/lib/opencloud/opencloud-data:/var/lib/opencloud"
+          "/var/lib/opencloud/config:/etc/opencloud"
+          "/var/storage/opencloud:/var/lib/opencloud"
         ];
         environment = {
           PROXY_TLS = "false";
@@ -79,6 +80,7 @@ in
 
       onlyoffice = {
         image = "docker.io/onlyoffice/documentserver:latest";
+        autoStart = true;
         dependsOn = [ "opencloud" ];
         networks = [ "container:opencloud" ];
         volumes = [
@@ -98,8 +100,8 @@ in
     };
 
     systemd.tmpfiles.rules = [
-      "d /var/lib/opencloud/opencloud-data 0700 1000 1000 -"
-      "d /var/lib/opencloud/opencloud-config 0700 1000 1000 -"
+      "d /var/lib/opencloud/config 0700 1000 1000 -"
+      "d /var/storage/opencloud 0700 1000 1000 -"
     ];
 
     services.nginx.virtualHosts = {
