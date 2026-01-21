@@ -12,7 +12,7 @@ let
     ports
     oci-uids
     ;
-  inherit (helpers) mkVirtualHost;
+  inherit (helpers) mkOciUser mkVirtualHost;
   cfg = config.custom.services.apps.tools.reitti;
   fqdn = "${subdomains.${config.networking.hostName}.reitti}.${domains.home}";
 in
@@ -154,14 +154,7 @@ in
       "d /var/lib/reitti/data 0700 ${toString oci-uids.reitti} ${toString oci-uids.reitti} - -"
     ];
 
-    users.groups.reitti = {
-      gid = oci-uids.reitti;
-    };
-    users.users.reitti = {
-      uid = oci-uids.reitti;
-      group = "reitti";
-      isSystemUser = true;
-    };
+    users = mkOciUser "reitti";
 
     services.nginx.virtualHosts."${fqdn}" = mkVirtualHost {
       inherit fqdn;

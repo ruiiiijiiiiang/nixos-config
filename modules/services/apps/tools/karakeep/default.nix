@@ -13,7 +13,7 @@ let
     oidc-issuer
     oci-uids
     ;
-  inherit (helpers) mkVirtualHost;
+  inherit (helpers) mkOciUser mkVirtualHost;
   cfg = config.custom.services.apps.tools.karakeep;
   fqdn = "${subdomains.${config.networking.hostName}.karakeep}.${domains.home}";
 in
@@ -85,14 +85,7 @@ in
       };
     };
 
-    users.groups.karakeep = {
-      gid = oci-uids.karakeep;
-    };
-    users.users.karakeep = {
-      uid = oci-uids.karakeep;
-      group = "karakeep";
-      isSystemUser = true;
-    };
+    users = mkOciUser "karakeep";
 
     systemd.tmpfiles.rules = [
       "d /var/lib/karakeep 0700 karakeep karakeep -"

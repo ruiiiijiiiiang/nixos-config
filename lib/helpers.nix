@@ -10,6 +10,7 @@ let
     macs
     domains
     subdomains
+    oci-uids
     ;
 in
 rec {
@@ -113,6 +114,7 @@ rec {
         karakeep = config.custom.services.apps.tools.karakeep.enable;
         memos = config.custom.services.apps.office.memos.enable;
         microbin = config.custom.services.apps.tools.microbin.enable;
+        myspeed = config.custom.services.observability.myspeed.enable;
         nextcloud = config.custom.services.apps.office.nextcloud.enable;
         onlyoffice = config.custom.services.apps.office.opencloud.enable;
         opencloud = config.custom.services.apps.office.opencloud.enable;
@@ -164,4 +166,15 @@ rec {
   mkOpenPortRule = port: ''
     ip saddr ${addresses.home.network} tcp dport ${toString port} accept
   '';
+
+  mkOciUser = app: {
+    groups.${app} = {
+      gid = oci-uids.${app};
+    };
+    users.${app} = {
+      uid = oci-uids.${app};
+      group = "${app}";
+      isSystemUser = true;
+    };
+  };
 }

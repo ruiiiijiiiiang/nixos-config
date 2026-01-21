@@ -14,7 +14,7 @@ let
     ports
     oci-uids
     ;
-  inherit (helpers) mkVirtualHost;
+  inherit (helpers) mkOciUser mkVirtualHost;
   cfg = config.custom.services.apps.office.paperless;
   fqdn = "${subdomains.${config.networking.hostName}.paperless}.${domains.home}";
 in
@@ -97,23 +97,16 @@ in
     };
 
     systemd.tmpfiles.rules = [
-      "d /var/storage/paperless 0750 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
-      "d /var/storage/paperless/log 0750 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
-      "d /var/storage/paperless/media 0750 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
-      "d /var/storage/paperless/consume 0750 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
-      "d /var/storage/paperless/data 0750 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
-      "d /var/storage/paperless/data/data 0750 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
+      "d /var/storage/paperless 0700 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
+      "d /var/storage/paperless/log 0700 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
+      "d /var/storage/paperless/media 0700 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
+      "d /var/storage/paperless/consume 0700 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
+      "d /var/storage/paperless/data 0700 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
+      "d /var/storage/paperless/data/data 0700 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
       "d /var/lib/paperless/postgres 0700 ${toString oci-uids.postgres} ${toString oci-uids.postgres} - -"
     ];
 
-    users.groups.paperless = {
-      gid = oci-uids.paperless;
-    };
-    users.users.paperless = {
-      uid = oci-uids.paperless;
-      group = "paperless";
-      isSystemUser = true;
-    };
+    users = mkOciUser "paperless";
 
     services.nginx.virtualHosts."${fqdn}" = mkVirtualHost {
       inherit fqdn;

@@ -13,7 +13,7 @@ let
     ports
     oci-uids
     ;
-  inherit (helpers) mkVirtualHost;
+  inherit (helpers) mkOciUser mkVirtualHost;
   cfg = config.custom.services.apps.office.memos;
   fqdn = "${subdomains.${config.networking.hostName}.memos}.${domains.home}";
 in
@@ -57,18 +57,11 @@ in
       };
     };
 
-    users.groups.memos = {
-      gid = oci-uids.memos;
-    };
-    users.users.memos = {
-      uid = oci-uids.memos;
-      group = "memos";
-      isSystemUser = true;
-    };
+    users = mkOciUser "memos";
 
     systemd.tmpfiles.rules = [
       "d /var/lib/memos/postgres 0700 ${toString oci-uids.postgres} ${toString oci-uids.postgres} - -"
-      "d /var/lib/memos/app 0755 memos memos - -"
+      "d /var/lib/memos/app 0700 memos memos - -"
     ];
 
     services.nginx.virtualHosts."${fqdn}" = mkVirtualHost {

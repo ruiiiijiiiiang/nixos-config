@@ -292,6 +292,13 @@ in
                 };
               }
               {
+                "Myspeed" = {
+                  icon = "myspeed";
+                  href = "https://${subdomains.vm-monitor.myspeed}.${domains.home}";
+                  description = "Speed Test Analysis";
+                };
+              }
+              {
                 "Wazuh" = {
                   icon = "wazuh";
                   href = "https://${subdomains.vm-monitor.wazuh}.${domains.home}";

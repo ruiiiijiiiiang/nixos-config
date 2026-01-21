@@ -14,7 +14,7 @@ let
     ports
     oci-uids
     ;
-  inherit (helpers) mkVirtualHost;
+  inherit (helpers) mkOciUser mkVirtualHost;
   cfg = config.custom.services.apps.media.immich;
   fqdn = "${subdomains.${config.networking.hostName}.immich}.${domains.home}";
   immich-version = "v2.4.1";
@@ -107,14 +107,7 @@ in
       };
     };
 
-    users.groups.immich = {
-      gid = oci-uids.immich;
-    };
-    users.users.immich = {
-      uid = oci-uids.immich;
-      group = "immich";
-      isSystemUser = true;
-    };
+    users = mkOciUser "immich";
 
     systemd.tmpfiles.rules = [
       "d /var/lib/immich/postgres 0700 ${toString oci-uids.postgres} ${toString oci-uids.postgres} - -"

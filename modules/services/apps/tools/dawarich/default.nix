@@ -2,6 +2,7 @@
   config,
   consts,
   lib,
+  helpers,
   ...
 }:
 let
@@ -14,6 +15,7 @@ let
     oci-uids
     oidc-issuer
     ;
+  inherit (helpers) mkOciUser mkVirtualHost;
   cfg = config.custom.services.apps.tools.dawarich;
   fqdn = "${subdomains.${config.networking.hostName}.dawarich}.${domains.home}";
 in
@@ -119,14 +121,7 @@ in
       };
     };
 
-    users.groups.dawarich = {
-      gid = oci-uids.dawarich;
-    };
-    users.users.dawarich = {
-      uid = oci-uids.dawarich;
-      group = "dawarich";
-      isSystemUser = true;
-    };
+    users = mkOciUser "dawarich";
 
     systemd.tmpfiles.rules = [
       "d /var/lib/dawarich/postgis 0700 ${toString oci-uids.postgis} ${toString oci-uids.postgis} - -"
@@ -134,12 +129,9 @@ in
       "d /var/lib/dawarich/data/public 0700 ${toString oci-uids.dawarich} ${toString oci-uids.dawarich} - -"
     ];
 
-    services.nginx.virtualHosts."${fqdn}" = {
-      useACMEHost = fqdn;
-      forceSSL = true;
-      locations."/" = {
-        proxyPass = "http://${addresses.localhost}:${toString ports.dawarich}";
-      };
+    services.nginx.virtualHosts."${fqdn}" = mkVirtualHost {
+      inherit fqdn;
+      port = ports.dawarich;
     };
   };
 }

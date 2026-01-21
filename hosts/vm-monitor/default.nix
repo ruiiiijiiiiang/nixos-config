@@ -18,6 +18,8 @@
     };
 
     services = {
+      networking.nginx.enable = true;
+
       observability = {
         beszel = {
           hub.enable = true;
@@ -25,6 +27,7 @@
         };
         dockhand.server.enable = true;
         gatus.enable = true;
+        myspeed.enable = true;
         prometheus = {
           server.enable = true;
           exporters = {
@@ -38,7 +41,6 @@
           agent.enable = true;
         };
       };
-      networking.nginx.enable = true;
     };
   };
 }

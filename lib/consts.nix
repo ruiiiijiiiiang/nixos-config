@@ -50,6 +50,7 @@ rec {
       dockhand = "dockhand";
       gatus = "gatus";
       grafana = "grafana";
+      myspeed = "myspeed";
       prometheus = "prometheus";
       scanopy = "scanopy";
       wazuh = "wazuh";
@@ -136,6 +137,7 @@ rec {
     memos = 5230;
     microbin = 8088;
     monit = 2812;
+    myspeed = 5216;
     nginx = {
       stub = 8082;
     };

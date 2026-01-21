@@ -15,7 +15,7 @@ let
     oidc-issuer
     oci-uids
     ;
-  inherit (helpers) mkVirtualHost ensureFile;
+  inherit (helpers) mkOciUser mkVirtualHost ensureFile;
   cfg = config.custom.services.apps.office.opencloud;
   opencloud-fqdn = "${subdomains.${config.networking.hostName}.opencloud}.${domains.home}";
   onlyoffice-fqdn = "${subdomains.${config.networking.hostName}.onlyoffice}.${domains.home}";
@@ -102,14 +102,7 @@ in
       };
     };
 
-    users.groups.opencloud = {
-      gid = oci-uids.opencloud;
-    };
-    users.users.opencloud = {
-      uid = oci-uids.opencloud;
-      group = "opencloud";
-      isSystemUser = true;
-    };
+    users = mkOciUser "opencloud";
 
     systemd.tmpfiles.rules = [
       "d /var/lib/opencloud/config 0700 ${toString oci-uids.opencloud} ${toString oci-uids.opencloud} - -"

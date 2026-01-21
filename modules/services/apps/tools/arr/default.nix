@@ -14,7 +14,7 @@ let
     timeZone
     oci-uids
     ;
-  inherit (helpers) mkVirtualHost;
+  inherit (helpers) mkOciUser mkVirtualHost;
   cfg = config.custom.services.apps.tools.arr;
   lidarr-fqdn = "${subdomains.${config.networking.hostName}.lidarr}.${domains.home}";
   radarr-fqdn = "${subdomains.${config.networking.hostName}.radarr}.${domains.home}";
@@ -158,14 +158,7 @@ in
       };
     };
 
-    users.groups.arr = {
-      gid = oci-uids.arr;
-    };
-    users.users.arr = {
-      uid = oci-uids.arr;
-      group = "arr";
-      isSystemUser = true;
-    };
+    users = mkOciUser "arr";
 
     systemd.tmpfiles.rules = [
       "d /var/lib/lidarr/config 0755 ${toString oci-uids.arr} ${toString oci-uids.arr} - -"

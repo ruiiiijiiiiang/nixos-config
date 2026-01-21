@@ -4,6 +4,7 @@
     ./dockhand
     ./gatus
     ./monit
+    ./myspeed
     ./prometheus
     ./scanopy
     ./wazuh
