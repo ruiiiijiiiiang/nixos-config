@@ -17,10 +17,15 @@ in
       default = null;
       description = "Path to WireGuard server private key";
     };
-    interface = mkOption {
+    wgInterface = mkOption {
       type = types.str;
       description = "Interface to use for WireGuard server";
       default = "wg0";
+    };
+    lanInterface = mkOption {
+      type = types.str;
+      description = "Interface to use for masquerading LAN traffic";
+      default = "eth0";
     };
 
     peers = mkOption {
@@ -52,7 +57,7 @@ in
     ];
 
     networking = {
-      wireguard.interfaces.${cfg.server.interface} = {
+      wireguard.interfaces.${cfg.server.wgInterface} = {
         ips = [
           "${addresses.vpn.hosts.${config.networking.hostName}}/32"
         ];
@@ -67,11 +72,11 @@ in
       };
 
       nat = {
-        internalInterfaces = [ cfg.server.interface ];
+        internalInterfaces = [ cfg.server.wgInterface ];
       };
 
       firewall = {
-        trustedInterfaces = [ cfg.server.interface ];
+        trustedInterfaces = [ cfg.server.wgInterface ];
         allowedUDPPorts = [ ports.wireguard ];
       };
 
@@ -81,7 +86,7 @@ in
           content = ''
             chain postrouting {
               type nat hook postrouting priority 100; policy accept;
-              ip saddr ${addresses.vpn.network} oifname "${cfg.server.interface}" masquerade
+              ip saddr ${addresses.vpn.network} oifname "${cfg.server.lanInterface}" masquerade
             }
           '';
         };

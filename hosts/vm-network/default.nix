@@ -2,7 +2,7 @@
 let
   wanInterface = "ens18";
   lanInterface = "ens19";
-  wireguardInterface = "wg0";
+  wgInterface = "wg0";
 in
 {
   system.stateVersion = "25.11";
@@ -44,8 +44,8 @@ in
         };
         wireguard.server = {
           enable = true;
+          inherit wgInterface lanInterface;
           privateKeyFile = config.age.secrets.wireguard-server-private-key.path;
-          interface = wireguardInterface;
           peers = [
             {
               hostName = "framework";

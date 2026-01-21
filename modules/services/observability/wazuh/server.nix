@@ -19,6 +19,7 @@ let
   dashboardsContent = import ./opensearch_dashboards.yml.nix;
   initialFile = pkgs.writeText "opensearch_dashboards.yml" dashboardsContent;
   dashboardsFile = "/var/wazuh/opensearch_dashboards.yml";
+  wazuh-version = "4.14.1";
 in
 {
   options.custom.services.observability.wazuh.server = with lib; {
@@ -34,7 +35,7 @@ in
 
     virtualisation.oci-containers.containers = {
       wazuh-indexer = {
-        image = "wazuh/wazuh-indexer:4.14.1";
+        image = "wazuh/wazuh-indexer:${wazuh-version}";
         autoStart = true;
         environment = {
           OPENSEARCH_JAVA_OPTS = "-Xms512m -Xmx512m";
@@ -59,7 +60,7 @@ in
       };
 
       wazuh-manager = {
-        image = "wazuh/wazuh-manager:4.14.1";
+        image = "wazuh/wazuh-manager:${wazuh-version}";
         autoStart = true;
         environment = {
           INDEXER_URL = "https://${addresses.localhost}";
@@ -86,7 +87,7 @@ in
       };
 
       wazuh-dashboard = {
-        image = "wazuh/wazuh-dashboard:4.14.1";
+        image = "wazuh/wazuh-dashboard:${wazuh-version}";
         autoStart = true;
         environment = {
           INDEXER_URL = "https://${addresses.localhost}";

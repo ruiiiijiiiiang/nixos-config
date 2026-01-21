@@ -58,8 +58,8 @@ in
               type filter hook forward priority 0; policy accept;
 
               ${lib.optionalString config.custom.services.networking.wireguard.server.enable ''
-                iifname ${config.custom.services.networking.wireguard.server.interface} counter return # Traffic coming from VPN
-                oifname ${config.custom.services.networking.wireguard.server.interface} counter return # Traffic going to VPN
+                iifname ${config.custom.services.networking.wireguard.server.wgInterface} counter return # Traffic coming from VPN
+                oifname ${config.custom.services.networking.wireguard.server.wgInterface} counter return # Traffic going to VPN
               ''}
 
               iifname "${cfg.wanInterface}" oifname "${cfg.lanInterface}" counter queue num 0 bypass # Forward traffic from WAN to LAN -> Queue 0

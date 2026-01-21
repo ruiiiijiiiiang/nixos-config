@@ -36,7 +36,6 @@ in
       karakeep-server = {
         image = "ghcr.io/karakeep-app/karakeep:release";
         autoStart = true;
-        user = "${toString oci-uids.karakeep}:${toString oci-uids.karakeep}";
         ports = [ "${addresses.localhost}:${toString ports.karakeep}:3000" ];
         volumes = [ "/var/lib/karakeep:/data" ];
         environment = {
@@ -88,7 +87,7 @@ in
     users = mkOciUser "karakeep";
 
     systemd.tmpfiles.rules = [
-      "d /var/lib/karakeep 0700 karakeep karakeep -"
+      "d /var/lib/karakeep 0700 ${toString oci-uids.karakeep} ${toString oci-uids.karakeep} - -"
     ];
 
     services = {
