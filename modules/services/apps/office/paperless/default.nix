@@ -12,6 +12,7 @@ let
     domains
     subdomains
     ports
+    oci-uids
     ;
   inherit (helpers) mkVirtualHost;
   cfg = config.custom.services.apps.office.paperless;
@@ -37,21 +38,21 @@ in
     };
 
     virtualisation.oci-containers.containers = {
-      paperless-db = {
+      paperless-postgres = {
         image = "postgres:16";
         autoStart = true;
         ports = [ "${addresses.localhost}:${toString ports.paperless}:8000" ];
         environmentFiles = [ config.age.secrets.paperless-env.path ];
-        volumes = [ "/var/storage/paperless/data/postgres:/var/lib/postgresql/data" ];
+        volumes = [ "/var/lib/paperless/postgres:/var/lib/postgresql/data" ];
       };
 
       paperless-redis = {
         image = "docker.io/library/redis:latest";
         autoStart = true;
         cmd = [ "redis-server" ];
-        dependsOn = [ "paperless-db" ];
-        networks = [ "container:paperless-db" ];
-        volumes = [ "paperless-redis-data:/data" ];
+        dependsOn = [ "paperless-postgres" ];
+        networks = [ "container:paperless-postgres" ];
+        extraOptions = [ "--tmpfs=/data" ];
         labels = {
           "io.containers.autoupdate" = "registry";
         };
@@ -61,10 +62,10 @@ in
         image = "ghcr.io/paperless-ngx/paperless-ngx:latest";
         autoStart = true;
         dependsOn = [
-          "paperless-db"
+          "paperless-postgres"
           "paperless-redis"
         ];
-        networks = [ "container:paperless-db" ];
+        networks = [ "container:paperless-postgres" ];
 
         volumes = [
           "/var/storage/paperless/log:/usr/src/paperless/log"
@@ -88,31 +89,30 @@ in
           PAPERLESS_SOCIALACCOUNT_ALLOW_SIGNUPS = "true";
           PAPERLESS_SOCIAL_AUTO_SIGNUP = "true";
 
-          USERMAP_UID = toString config.users.users.paperless.uid;
-          USERMAP_GID = toString config.users.groups.paperless.gid;
+          USERMAP_UID = toString oci-uids.paperless;
+          USERMAP_GID = toString oci-uids.paperless;
         };
         environmentFiles = [ config.age.secrets.paperless-env.path ];
       };
     };
 
     systemd.tmpfiles.rules = [
-      "d /var/storage/paperless 0750 paperless paperless -"
-      "d /var/storage/paperless/log 0750 paperless paperless -"
-      "d /var/storage/paperless/media 0750 paperless paperless -"
-      "d /var/storage/paperless/consume 0750 paperless paperless -"
-      "d /var/storage/paperless/data 0750 paperless paperless -"
-      "d /var/storage/paperless/data/data 0750 paperless paperless -"
-      "d /var/storage/paperless/data/postgres 0700 999 999 -"
+      "d /var/storage/paperless 0750 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
+      "d /var/storage/paperless/log 0750 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
+      "d /var/storage/paperless/media 0750 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
+      "d /var/storage/paperless/consume 0750 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
+      "d /var/storage/paperless/data 0750 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
+      "d /var/storage/paperless/data/data 0750 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
+      "d /var/lib/paperless/postgres 0700 ${toString oci-uids.postgres} ${toString oci-uids.postgres} - -"
     ];
 
     users.groups.paperless = {
-      gid = 315;
+      gid = oci-uids.paperless;
     };
     users.users.paperless = {
-      isSystemUser = true;
+      uid = oci-uids.paperless;
       group = "paperless";
-      uid = 315;
-      description = "Paperless-ngx OCI user";
+      isSystemUser = true;
     };
 
     services.nginx.virtualHosts."${fqdn}" = mkVirtualHost {

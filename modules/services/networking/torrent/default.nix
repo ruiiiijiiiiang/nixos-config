@@ -12,6 +12,7 @@ let
     subdomains
     ports
     timeZone
+    oci-uids
     ;
   inherit (helpers) mkVirtualHost;
   cfg = config.custom.services.networking.torrent;
@@ -42,10 +43,6 @@ in
           SERVER_COUNTRIES = "United States";
           WIREGUARD_PRIVATE_KEY_SECRETFILE = "/wg_key";
           WIREGUARD_ADDRESSES = "10.2.0.2/32";
-          DOT = "on";
-          BLOCK_MALICIOUS = "off";
-          BLOCK_ADS = "off";
-          BLOCK_SURVEILLANCE = "off";
         };
         ports = [
           "${toString ports.qbittorrent}:${toString ports.qbittorrent}"
@@ -65,9 +62,10 @@ in
         dependsOn = [ "gluetun" ];
         networks = [ "container:gluetun" ];
         environment = {
-          PUID = "1000";
-          PGID = "1000";
           TZ = timeZone;
+          PUID = toString oci-uids.qbittorrent;
+          PGID = toString oci-uids.arr;
+          UMASK_SET = "002";
           WEBUI_PORT = "${toString ports.qbittorrent}";
         };
         volumes = [
@@ -80,9 +78,15 @@ in
       };
     };
 
+    users.users.qbittorrent = {
+      uid = oci-uids.qbittorrent;
+      group = "arr";
+      isSystemUser = true;
+    };
+
     systemd.tmpfiles.rules = [
-      "d /media/downloads 0775 1000 1000 - -"
-      "d /var/lib/qbittorrent/config 0755 1000 1000 - -"
+      "d /media/downloads 0775 ${toString oci-uids.arr} ${toString oci-uids.arr} - -"
+      "d /var/lib/qbittorrent/config 0755 ${toString oci-uids.qbittorrent} ${toString oci-uids.arr} - -"
     ];
 
     services.nginx.virtualHosts."${fqdn}" = mkVirtualHost {

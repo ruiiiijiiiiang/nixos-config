@@ -12,6 +12,7 @@ let
     domains
     subdomains
     ports
+    oci-uids
     ;
   inherit (helpers) mkVirtualHost;
   cfg = config.custom.services.apps.media.immich;
@@ -66,7 +67,7 @@ in
         dependsOn = [ "immich-postgres" ];
         networks = [ "container:immich-postgres" ];
         cmd = [ "redis-server" ];
-        volumes = [ "immich-redis-data:/data" ];
+        extraOptions = [ "--tmpfs=/data" ];
         labels = {
           "io.containers.autoupdate" = "registry";
         };
@@ -75,6 +76,7 @@ in
       immich-server = {
         image = "ghcr.io/immich-app/immich-server:${immich-version}";
         autoStart = true;
+        user = "${toString oci-uids.immich}:${toString oci-uids.immich}";
         dependsOn = [
           "immich-redis"
           "immich-postgres"
@@ -91,38 +93,33 @@ in
           "/var/storage/immich:/usr/src/app/upload"
           "/etc/localtime:/etc/localtime:ro"
         ];
-        user = "1001:1001";
       };
 
       immich-machine-learning = {
         image = "ghcr.io/immich-app/immich-machine-learning:${immich-version}";
         autoStart = true;
+        user = "${toString oci-uids.immich}:${toString oci-uids.immich}";
         dependsOn = [ "immich-postgres" ];
         networks = [ "container:immich-postgres" ];
         volumes = [
           "/var/lib/immich/model-cache:/cache"
         ];
-        user = "1001:1001";
       };
     };
 
     users.groups.immich = {
-      gid = 1001;
+      gid = oci-uids.immich;
     };
     users.users.immich = {
-      isSystemUser = true;
+      uid = oci-uids.immich;
       group = "immich";
-      uid = 1001;
-      createHome = false;
+      isSystemUser = true;
     };
 
     systemd.tmpfiles.rules = [
-      "d /var/storage/immich 0755 1001 1001 - -"
-      "d /var/storage/immich/thumbs 0755 1001 1001 - -"
-      "d /var/storage/immich/encoded-video 0755 1001 1001 - -"
-      "d /var/storage/immich/profile 0755 1001 1001 - -"
-      "d /var/lib/immich/model-cache 0755 1001 1001 - -"
-      "d /var/lib/immich/postgres 0700 999 999 - -"
+      "d /var/lib/immich/postgres 0700 ${toString oci-uids.postgres} ${toString oci-uids.postgres} - -"
+      "d /var/lib/immich/model-cache 0755 ${toString oci-uids.immich} ${toString oci-uids.immich} - -"
+      "d /var/storage/immich 0755 ${toString oci-uids.immich} ${toString oci-uids.immich} - -"
     ];
 
     services = {

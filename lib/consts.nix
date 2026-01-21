@@ -188,6 +188,21 @@ rec {
     zwave = 8091;
   };
 
-  oidc_issuer = "${subdomains.vm-app.pocketid}.${domains.home}";
+  oci-uids = {
+    immich = 900;
+    paperless = 901;
+    opencloud = 902;
+    karakeep = 903;
+    memos = 904;
+    reitti = 905;
+    dawarich = 906;
+    arr = 907;
+    qbittorrent = 908;
+    jellyfin = 909;
+    postgis = 70;
+    postgres = 999;
+  };
+
+  oidc-issuer = "${subdomains.vm-app.pocketid}.${domains.home}";
   vpn-endpoint = "vpn.${domains.home}";
 }

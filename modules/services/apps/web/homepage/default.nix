@@ -129,6 +129,13 @@ in
                 };
               }
               {
+                "Bazarr" = {
+                  icon = "bazarr";
+                  href = "https://${subdomains.vm-app.bazarr}.${domains.home}";
+                  description = "Subtitle Management";
+                };
+              }
+              {
                 "qBittorrent" = {
                   icon = "qbittorrent";
                   href = "https://${subdomains.vm-app.qbittorrent}.${domains.home}";
@@ -171,7 +178,7 @@ in
                 "Calendar Parser" = {
                   icon = "p-cal";
                   href = "https://calendar-parse.ruiiiijiiiiang.deno.net";
-                  description = "Parse CSV Calendar from Pam's Boss";
+                  description = "Parse CSV Calendar";
                 };
               }
             ];

@@ -10,7 +10,8 @@ let
     domains
     subdomains
     ports
-    oidc_issuer
+    oidc-issuer
+    oci-uids
     ;
   inherit (helpers) mkVirtualHost;
   cfg = config.custom.services.apps.tools.karakeep;
@@ -35,6 +36,7 @@ in
       karakeep-server = {
         image = "ghcr.io/karakeep-app/karakeep:release";
         autoStart = true;
+        user = "${toString oci-uids.karakeep}:${toString oci-uids.karakeep}";
         ports = [ "${addresses.localhost}:${toString ports.karakeep}:3000" ];
         volumes = [ "/var/lib/karakeep:/data" ];
         environment = {
@@ -44,7 +46,7 @@ in
           DATA_DIR = "/data";
           OAUTH_PROVIDER_NAME = "Pocket ID";
           OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING = "true";
-          OAUTH_WELLKNOWN_URL = "https://${oidc_issuer}/.well-known/openid-configuration";
+          OAUTH_WELLKNOWN_URL = "https://${oidc-issuer}/.well-known/openid-configuration";
         };
         environmentFiles = [ config.age.secrets.karakeep-env.path ];
         labels = {
@@ -83,15 +85,18 @@ in
       };
     };
 
-    systemd.tmpfiles.rules = [
-      "d /var/lib/karakeep 0750 karakeep karakeep -"
-    ];
-
-    users.groups.karakeep = { };
-    users.users.karakeep = {
-      isSystemUser = true;
-      group = "karakeep";
+    users.groups.karakeep = {
+      gid = oci-uids.karakeep;
     };
+    users.users.karakeep = {
+      uid = oci-uids.karakeep;
+      group = "karakeep";
+      isSystemUser = true;
+    };
+
+    systemd.tmpfiles.rules = [
+      "d /var/lib/karakeep 0700 karakeep karakeep -"
+    ];
 
     services = {
       nginx.virtualHosts."${fqdn}" = mkVirtualHost {

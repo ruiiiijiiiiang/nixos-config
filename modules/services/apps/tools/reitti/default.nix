@@ -10,6 +10,7 @@ let
     domains
     subdomains
     ports
+    oci-uids
     ;
   inherit (helpers) mkVirtualHost;
   cfg = config.custom.services.apps.tools.reitti;
@@ -41,7 +42,7 @@ in
         autoStart = true;
         ports = [ "${addresses.localhost}:${toString ports.reitti}:${toString ports.reitti}" ];
         environmentFiles = [ config.age.secrets.reitti-env.path ];
-        volumes = [ "reitti-postgis-data:/var/lib/postgresql/data" ];
+        volumes = [ "/var/lib/reitti/postgis:/var/lib/postgresql/data" ];
       };
 
       reitti-rabbitmq = {
@@ -61,7 +62,7 @@ in
         autoStart = true;
         dependsOn = [ "reitti-postgis" ];
         networks = [ "container:reitti-postgis" ];
-        volumes = [ "reitti-redis-data:/data" ];
+        extraOptions = [ "--tmpfs=/data" ];
         labels = {
           "io.containers.autoupdate" = "registry";
         };
@@ -149,13 +150,17 @@ in
     };
 
     systemd.tmpfiles.rules = [
-      "d /var/lib/reitti/data 0750 reitti reitti -"
+      "d /var/lib/reitti/postgis 0700 ${toString oci-uids.postgis} ${toString oci-uids.postgis} - -"
+      "d /var/lib/reitti/data 0700 ${toString oci-uids.reitti} ${toString oci-uids.reitti} - -"
     ];
 
-    users.groups.reitti = { };
+    users.groups.reitti = {
+      gid = oci-uids.reitti;
+    };
     users.users.reitti = {
-      isSystemUser = true;
+      uid = oci-uids.reitti;
       group = "reitti";
+      isSystemUser = true;
     };
 
     services.nginx.virtualHosts."${fqdn}" = mkVirtualHost {

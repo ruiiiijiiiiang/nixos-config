@@ -12,7 +12,8 @@ let
     domains
     subdomains
     ports
-    oidc_issuer
+    oidc-issuer
+    oci-uids
     ;
   inherit (helpers) mkVirtualHost ensureFile;
   cfg = config.custom.services.apps.office.opencloud;
@@ -20,10 +21,11 @@ let
   onlyoffice-fqdn = "${subdomains.${config.networking.hostName}.onlyoffice}.${domains.home}";
   cspTemplate = import ./csp.yaml.nix;
   cspContent =
-    builtins.replaceStrings [ "@OFFICE_FQDN@" "@ID_FQDN@" ] [ onlyoffice-fqdn oidc_issuer ]
+    builtins.replaceStrings [ "@OFFICE_FQDN@" "@ID_FQDN@" ] [ onlyoffice-fqdn oidc-issuer ]
       cspTemplate;
   initialFile = pkgs.writeText "csp.yaml" cspContent;
   cspFile = "/var/lib/opencloud/config/csp.yaml";
+  opencloud-port = "9200";
 in
 {
   options.custom.services.apps.office.opencloud = with lib; {
@@ -42,8 +44,9 @@ in
       opencloud = {
         image = "docker.io/opencloudeu/opencloud-rolling:latest";
         autoStart = true;
+        user = "${toString oci-uids.opencloud}:${toString oci-uids.opencloud}";
         ports = [
-          "${addresses.localhost}:${toString ports.opencloud}:9200"
+          "${addresses.localhost}:${toString ports.opencloud}:${opencloud-port}"
           "${addresses.localhost}:${toString ports.onlyoffice}:80"
         ];
         volumes = [
@@ -52,19 +55,19 @@ in
         ];
         environment = {
           PROXY_TLS = "false";
-          PROXY_HTTP_ADDR = "${addresses.any}:9200";
+          PROXY_HTTP_ADDR = "${addresses.any}:${opencloud-port}";
           PROXY_CSP_CONFIG_FILE_LOCATION = "/etc/opencloud/csp.yaml";
           OC_URL = "https://${opencloud-fqdn}";
           OC_INSECURE = "true";
 
           OC_ADD_RUN_SERVICES = "collaboration";
           COLLABORATION_APP_ADDR = "https://${onlyoffice-fqdn}";
-          COLLABORATION_WOPI_SRC = "http://localhost:9200";
+          COLLABORATION_WOPI_SRC = "http://localhost:${opencloud-port}";
           COLLABORATION_APP_NAME = "OnlyOffice";
           COLLABORATION_APP_PRODUCT = "OnlyOffice";
           COLLABORATION_APP_INSECURE = "true";
 
-          OC_OIDC_ISSUER = "https://${oidc_issuer}";
+          OC_OIDC_ISSUER = "https://${oidc-issuer}";
           OC_EXCLUDE_RUN_SERVICES = "idp";
           PROXY_OIDC_REWRITE_WELLKNOWN = "true";
           PROXY_USER_OIDC_CLAIM = "preferred_username";
@@ -73,7 +76,7 @@ in
           PROXY_OIDC_ACCESS_TOKEN_VERIFY_METHOD = "none";
           PROXY_ROLE_ASSIGNMENT_DRIVER = "default";
           GRAPH_ASSIGN_DEFAULT_USER_ROLE = "false";
-          WEB_OIDC_METADATA_URL = "https://${oidc_issuer}/.well-known/openid-configuration";
+          WEB_OIDC_METADATA_URL = "https://${oidc-issuer}/.well-known/openid-configuration";
         };
         environmentFiles = [ config.age.secrets.opencloud-env.path ];
       };
@@ -99,9 +102,18 @@ in
       };
     };
 
+    users.groups.opencloud = {
+      gid = oci-uids.opencloud;
+    };
+    users.users.opencloud = {
+      uid = oci-uids.opencloud;
+      group = "opencloud";
+      isSystemUser = true;
+    };
+
     systemd.tmpfiles.rules = [
-      "d /var/lib/opencloud/config 0700 1000 1000 -"
-      "d /var/storage/opencloud 0700 1000 1000 -"
+      "d /var/lib/opencloud/config 0700 ${toString oci-uids.opencloud} ${toString oci-uids.opencloud} - -"
+      "d /var/storage/opencloud 0700 ${toString oci-uids.opencloud} ${toString oci-uids.opencloud} - -"
     ];
 
     services.nginx.virtualHosts = {

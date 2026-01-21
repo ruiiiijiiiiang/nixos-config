@@ -11,7 +11,8 @@ let
     domains
     subdomains
     ports
-    oidc_issuer
+    oci-uids
+    oidc-issuer
     ;
   cfg = config.custom.services.apps.tools.dawarich;
   fqdn = "${subdomains.${config.networking.hostName}.dawarich}.${domains.home}";
@@ -35,20 +36,20 @@ in
     };
 
     virtualisation.oci-containers.containers = {
-      dawarich-db = {
+      dawarich-postgis = {
         image = "postgis/postgis:16-3.4-alpine";
         autoStart = true;
         ports = [ "${addresses.localhost}:${toString ports.dawarich}:${toString ports.dawarich}" ];
         environmentFiles = [ config.age.secrets.dawarich-env.path ];
-        volumes = [ "dawarich-db-data:/var/lib/postgresql/data" ];
+        volumes = [ "/var/lib/dawarich/postgis:/var/lib/postgresql/data" ];
       };
 
       dawarich-redis = {
         image = "docker.io/library/redis:latest";
         autoStart = true;
-        dependsOn = [ "dawarich-db" ];
-        networks = [ "container:dawarich-db" ];
-        volumes = [ "dawarich-redis-data:/data" ];
+        dependsOn = [ "dawarich-postgis" ];
+        networks = [ "container:dawarich-postgis" ];
+        extraOptions = [ "--tmpfs=/data" ];
         labels = {
           "io.containers.autoupdate" = "registry";
         };
@@ -58,24 +59,24 @@ in
         image = "docker.io/freikin/dawarich:latest";
         autoStart = true;
         dependsOn = [
-          "dawarich-db"
+          "dawarich-postgis"
           "dawarich-redis"
         ];
-        networks = [ "container:dawarich-db" ];
+        networks = [ "container:dawarich-postgis" ];
         environment = {
           APPLICATION_HOSTS = fqdn;
           TIME_ZONE = timeZone;
           ALLOW_REGISTRATION = "true";
           DATABASE_HOST = addresses.localhost;
           REDIS_URL = "redis://${addresses.localhost}:${toString ports.redis}/0";
-          OIDC_ISSUER = "https://${oidc_issuer}";
+          OIDC_ISSUER = "https://${oidc-issuer}";
           OIDC_REDIRECT_URI = "https://${fqdn}/users/auth/openid_connect/callback";
           OIDC_PROVIDER_NAME = "PocketID";
         };
         environmentFiles = [ config.age.secrets.dawarich-env.path ];
         volumes = [
-          "dawarich-storage:/var/app/storage"
-          "dawarich-public:/var/app/public"
+          "/var/lib/dawarich/data/storage:/var/app/storage"
+          "/var/lib/dawarich/data/public:/var/app/public"
         ];
         cmd = [
           "bin/rails"
@@ -91,11 +92,11 @@ in
         image = "docker.io/freikin/dawarich:latest";
         autoStart = true;
         dependsOn = [
-          "dawarich-db"
+          "dawarich-postgis"
           "dawarich-redis"
           "dawarich-app"
         ];
-        networks = [ "container:dawarich-db" ];
+        networks = [ "container:dawarich-postgis" ];
         environment = {
           APPLICATION_HOSTS = fqdn;
           TIME_ZONE = timeZone;
@@ -104,8 +105,8 @@ in
         };
         environmentFiles = [ config.age.secrets.dawarich-env.path ];
         volumes = [
-          "dawarich-storage:/var/app/storage"
-          "dawarich-public:/var/app/public"
+          "/var/lib/dawarich/data/storage:/var/app/storage"
+          "/var/lib/dawarich/data/public:/var/app/public"
         ];
         cmd = [
           "bundle"
@@ -118,13 +119,25 @@ in
       };
     };
 
+    users.groups.dawarich = {
+      gid = oci-uids.dawarich;
+    };
+    users.users.dawarich = {
+      uid = oci-uids.dawarich;
+      group = "dawarich";
+      isSystemUser = true;
+    };
+
+    systemd.tmpfiles.rules = [
+      "d /var/lib/dawarich/postgis 0700 ${toString oci-uids.postgis} ${toString oci-uids.postgis} - -"
+      "d /var/lib/dawarich/data/storage 0700 ${toString oci-uids.dawarich} ${toString oci-uids.dawarich} - -"
+      "d /var/lib/dawarich/data/public 0700 ${toString oci-uids.dawarich} ${toString oci-uids.dawarich} - -"
+    ];
+
     services.nginx.virtualHosts."${fqdn}" = {
       useACMEHost = fqdn;
       forceSSL = true;
       locations."/" = {
-        proxyPass = "http://${addresses.localhost}:${toString ports.dawarich}";
-      };
-      locations."/cable" = {
         proxyPass = "http://${addresses.localhost}:${toString ports.dawarich}";
       };
     };
