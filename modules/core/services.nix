@@ -1,4 +1,9 @@
-{ inputs, pkgs, ... }:
+{
+  inputs,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   imports = [
@@ -11,7 +16,7 @@
   security = {
     protectKernelImage = true;
     apparmor = {
-      enable = true;
+      enable = lib.mkDefault true;
       packages = with pkgs; [ apparmor-profiles ];
     };
   };

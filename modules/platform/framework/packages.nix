@@ -101,6 +101,7 @@ in
       neohtop
       vlc
       opencloud-desktop
+      virt-viewer
 
       # --- Audio & Multimedia ---
       easyeffects

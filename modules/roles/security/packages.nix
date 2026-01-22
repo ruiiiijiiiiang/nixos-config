@@ -20,8 +20,8 @@ in
       masscan
       netcat
       socat
-      tcpdump
       tshark
+      openvas-scanner
 
       # Web security
       burpsuite
@@ -58,6 +58,7 @@ in
       networkmanagerapplet
     ];
 
+    programs.tcpdump.enable = true;
     programs.wireshark.enable = true;
   };
 }
