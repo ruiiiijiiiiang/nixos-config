@@ -60,6 +60,7 @@ in
       dawarich-app = {
         image = "docker.io/freikin/dawarich:latest";
         autoStart = true;
+        user = "${toString oci-uids.dawarich}:${toString oci-uids.dawarich}";
         dependsOn = [
           "dawarich-postgis"
           "dawarich-redis"
@@ -79,6 +80,7 @@ in
         volumes = [
           "/var/lib/dawarich/data/storage:/var/app/storage"
           "/var/lib/dawarich/data/public:/var/app/public"
+          "/var/lib/dawarich/data/tmp:/var/app/tmp"
         ];
         cmd = [
           "bin/rails"
@@ -88,11 +90,15 @@ in
           "-b"
           "::"
         ];
+        labels = {
+          "io.containers.autoupdate" = "registry";
+        };
       };
 
       dawarich-sidekiq = {
         image = "docker.io/freikin/dawarich:latest";
         autoStart = true;
+        user = "${toString oci-uids.dawarich}:${toString oci-uids.dawarich}";
         dependsOn = [
           "dawarich-postgis"
           "dawarich-redis"
@@ -109,6 +115,7 @@ in
         volumes = [
           "/var/lib/dawarich/data/storage:/var/app/storage"
           "/var/lib/dawarich/data/public:/var/app/public"
+          "/var/lib/dawarich/data/tmp:/var/app/tmp"
         ];
         cmd = [
           "bundle"
@@ -127,6 +134,7 @@ in
       "d /var/lib/dawarich/postgis 0700 ${toString oci-uids.postgis} ${toString oci-uids.postgis} - -"
       "d /var/lib/dawarich/data/storage 0700 ${toString oci-uids.dawarich} ${toString oci-uids.dawarich} - -"
       "d /var/lib/dawarich/data/public 0700 ${toString oci-uids.dawarich} ${toString oci-uids.dawarich} - -"
+      "d /var/lib/dawarich/data/tmp 0700 ${toString oci-uids.dawarich} ${toString oci-uids.dawarich} - -"
     ];
 
     services.nginx.virtualHosts."${fqdn}" = mkVirtualHost {

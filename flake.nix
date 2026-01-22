@@ -125,6 +125,7 @@
           specialArgs = {
             inherit inputs;
             inherit consts;
+            inherit helpers;
           };
           modules = [
             ./modules

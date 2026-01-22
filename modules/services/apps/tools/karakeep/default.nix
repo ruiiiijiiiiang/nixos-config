@@ -36,6 +36,7 @@ in
       karakeep-server = {
         image = "ghcr.io/karakeep-app/karakeep:release";
         autoStart = true;
+        user = "${toString oci-uids.karakeep}:${toString oci-uids.karakeep}";
         ports = [ "${addresses.localhost}:${toString ports.karakeep}:3000" ];
         volumes = [ "/var/lib/karakeep:/data" ];
         environment = {
@@ -56,6 +57,7 @@ in
       karakeep-chrome = {
         image = "gcr.io/zenika-hub/alpine-chrome:124";
         autoStart = true;
+        user = "${toString oci-uids.karakeep}:${toString oci-uids.karakeep}";
         dependsOn = [ "karakeep-server" ];
         networks = [ "container:karakeep-server" ];
         cmd = [
@@ -71,9 +73,10 @@ in
       karakeep-meilisearch = {
         image = "docker.io/getmeili/meilisearch:latest";
         autoStart = true;
+        user = "${toString oci-uids.karakeep}:${toString oci-uids.karakeep}";
         dependsOn = [ "karakeep-server" ];
         networks = [ "container:karakeep-server" ];
-        volumes = [ "meilisearch-data:/meili_data" ];
+        volumes = [ "/var/lib/karakeep/meilisearch:/meili_data" ];
         environment = {
           MEILI_NO_ANALYTICS = "true";
         };
@@ -88,6 +91,7 @@ in
 
     systemd.tmpfiles.rules = [
       "d /var/lib/karakeep 0700 ${toString oci-uids.karakeep} ${toString oci-uids.karakeep} - -"
+      "d /var/lib/karakeep/meilisearch 0700 ${toString oci-uids.karakeep} ${toString oci-uids.karakeep} - -"
     ];
 
     services = {

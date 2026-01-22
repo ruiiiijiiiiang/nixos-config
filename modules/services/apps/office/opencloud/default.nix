@@ -79,6 +79,9 @@ in
           WEB_OIDC_METADATA_URL = "https://${oidc-issuer}/.well-known/openid-configuration";
         };
         environmentFiles = [ config.age.secrets.opencloud-env.path ];
+        labels = {
+          "io.containers.autoupdate" = "registry";
+        };
       };
 
       onlyoffice = {
@@ -99,6 +102,9 @@ in
           USE_UNAUTHORIZED_STORAGE = "true";
         };
         environmentFiles = [ config.age.secrets.opencloud-env.path ];
+        labels = {
+          "io.containers.autoupdate" = "registry";
+        };
       };
     };
 

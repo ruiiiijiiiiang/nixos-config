@@ -132,7 +132,7 @@ in
         ];
         networks = [ "container:reitti-postgis" ];
         environment = {
-          SERVER_PORT = "${toString ports.reitti}";
+          SERVER_PORT = toString ports.reitti;
           PHOTON_BASE_URL = "http://${addresses.localhost}:2322";
           POSTGIS_HOST = addresses.localhost;
           RABBITMQ_HOST = addresses.localhost;
@@ -140,6 +140,8 @@ in
           TILES_CACHE = "http://${addresses.localhost}";
           OIDC_ENABLED = "true";
           OIDC_ISSUER_URI = "https://id.${domains.home}";
+          APP_UID = toString oci-uids.reitti;
+          APP_GID = toString oci-uids.reitti;
         };
         environmentFiles = [ config.age.secrets.reitti-env.path ];
         volumes = [ "/var/lib/reitti/data:/data" ];
