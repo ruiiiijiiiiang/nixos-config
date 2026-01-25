@@ -2,13 +2,22 @@
   config,
   consts,
   lib,
-  helpers,
   ...
 }:
 let
-  inherit (consts) addresses ports;
-  inherit (helpers) getReservations;
+  inherit (consts) addresses ports macs;
   cfg = config.custom.services.networking.router;
+
+  getReservations =
+    network:
+    let
+      inherit (addresses.${network}) hosts;
+    in
+    builtins.map (hostname: {
+      hw-address = macs.${hostname};
+      ip-address = hosts.${hostname};
+      inherit hostname;
+    }) (builtins.filter (hostname: builtins.hasAttr hostname hosts) (builtins.attrNames macs));
 in
 {
   options.custom.services.networking.router = with lib; {
@@ -139,49 +148,69 @@ in
       };
     };
 
-    services.kea.dhcp4 = {
-      enable = true;
-      settings = {
-        interfaces-config = {
-          interfaces = [ cfg.lanInterface ] ++ (lib.optional cfg.dmz.enable cfg.dmz.interface);
+    services.kea = {
+      dhcp4 = {
+        enable = true;
+        settings = {
+          interfaces-config = {
+            interfaces = [ cfg.lanInterface ] ++ (lib.optional cfg.dmz.enable cfg.dmz.interface);
+          };
+          valid-lifetime = 86400;
+          subnet4 = [
+            {
+              id = 1;
+              reservations = getReservations "home";
+              subnet = addresses.home.network;
+              pools = [ { pool = "${addresses.home.dhcp-min} - ${addresses.home.dhcp-max}"; } ];
+              option-data = [
+                {
+                  name = "routers";
+                  data = addresses.home.hosts.vm-network;
+                }
+                {
+                  name = "domain-name-servers";
+                  data = addresses.home.vip.dns;
+                }
+              ];
+            }
+          ]
+          ++ (lib.optionals cfg.dmz.enable [
+            {
+              id = cfg.dmz.vlanId;
+              subnet = addresses.dmz.network;
+              pools = [ { pool = "${addresses.dmz.dhcp-min} - ${addresses.dmz.dhcp-max}"; } ];
+              reservations = getReservations "dmz";
+              option-data = [
+                {
+                  name = "routers";
+                  data = addresses.dmz.hosts.${config.networking.hostName};
+                }
+                {
+                  name = "domain-name-servers";
+                  data = addresses.home.vip.dns;
+                }
+              ];
+            }
+          ]);
+          control-socket = {
+            socket-type = "unix";
+            socket-name = "/run/kea/kea-dhcp4.socket";
+          };
         };
-        valid-lifetime = 86400;
-        subnet4 = [
-          {
-            id = 1;
-            reservations = getReservations "home";
-            subnet = addresses.home.network;
-            pools = [ { pool = "${addresses.home.dhcp-min} - ${addresses.home.dhcp-max}"; } ];
-            option-data = [
-              {
-                name = "routers";
-                data = addresses.home.hosts.vm-network;
-              }
-              {
-                name = "domain-name-servers";
-                data = addresses.home.vip.dns;
-              }
-            ];
-          }
-        ]
-        ++ (lib.optionals cfg.dmz.enable [
-          {
-            id = cfg.dmz.vlanId;
-            subnet = addresses.dmz.network;
-            pools = [ { pool = "${addresses.dmz.dhcp-min} - ${addresses.dmz.dhcp-max}"; } ];
-            reservations = getReservations "dmz";
-            option-data = [
-              {
-                name = "routers";
-                data = addresses.dmz.hosts.${config.networking.hostName};
-              }
-              {
-                name = "domain-name-servers";
-                data = addresses.home.vip.dns;
-              }
-            ];
-          }
-        ]);
+      };
+
+      ctrl-agent = lib.mkIf config.custom.services.observability.prometheus.exporters.kea.enable {
+        enable = true;
+        settings = {
+          http-host = addresses.localhost;
+          http-port = ports.kea.ctrl-agent;
+          control-sockets = {
+            dhcp4 = {
+              socket-type = "unix";
+              socket-name = "/run/kea/kea-dhcp4.socket";
+            };
+          };
+        };
       };
     };
   };

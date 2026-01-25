@@ -142,6 +142,9 @@ rec {
     homeassistant = 8123;
     homepage = 8089;
     karakeep = 8084;
+    kea = {
+      ctrl-agent = 8002;
+    };
     immich = 2283;
     jellyfin = 8096;
     memos = 5230;
@@ -164,6 +167,7 @@ rec {
     prometheus = {
       server = 9090;
       exporters = {
+        kea = 9547;
         nginx = 9113;
         node = 9100;
         podman = 9882;

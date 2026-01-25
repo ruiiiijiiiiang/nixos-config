@@ -8,27 +8,30 @@
 }:
 let
   inherit (consts) domains subdomains ports;
-  inherit (helpers) mkVirtualHost;
+  inherit (helpers) mkVirtualHost getEnabledServices;
   cfg = config.custom.services.observability.gatus;
   fqdn = "${subdomains.${config.networking.hostName}.gatus}.${domains.home}";
 
-  endpoints =
-    helpers.mkGatusEndpoints {
-      inherit inputs;
-      hostName = "pi";
+  mkGatusEndpoints =
+    { inputs, hostName }:
+    let
+      inherit (inputs.self.nixosConfigurations.${hostName}) config;
+      enabledServices = getEnabledServices { inherit config; };
+    in
+    lib.mapAttrsToList (service: subdomain: {
+      name = service;
+      url = "https://${subdomain}.${domains.home}";
+      group = hostName;
+      interval = "1m";
+      conditions = [ "[STATUS] == 200" ];
+    }) enabledServices;
+
+  endpoints = lib.concatMap (
+    hostName:
+    mkGatusEndpoints {
+      inherit inputs hostName;
     }
-    ++ helpers.mkGatusEndpoints {
-      inherit inputs;
-      hostName = "vm-network";
-    }
-    ++ helpers.mkGatusEndpoints {
-      inherit inputs;
-      hostName = "vm-app";
-    }
-    ++ helpers.mkGatusEndpoints {
-      inherit inputs;
-      hostName = "vm-monitor";
-    };
+  ) (builtins.attrNames inputs.self.nixosConfigurations);
 in
 {
   options.custom.services.observability.gatus = with lib; {

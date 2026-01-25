@@ -88,6 +88,7 @@ in
         };
         dockhand.agent.enable = true;
         prometheus.exporters = {
+          kea.enable = true;
           nginx.enable = true;
           node.enable = true;
           interface = lanInterface;

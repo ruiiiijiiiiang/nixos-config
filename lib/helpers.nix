@@ -1,13 +1,12 @@
 {
-  lib,
   consts,
+  lib,
   pkgs,
   ...
 }:
 let
   inherit (consts)
     addresses
-    macs
     domains
     subdomains
     oci-uids
@@ -30,16 +29,12 @@ rec {
       };
     };
 
-  getReservations =
-    network:
-    let
-      inherit (addresses.${network}) hosts;
-    in
-    builtins.map (hostname: {
-      hw-address = macs.${hostname};
-      ip-address = hosts.${hostname};
-      inherit hostname;
-    }) (builtins.filter (hostname: builtins.hasAttr hostname hosts) (builtins.attrNames macs));
+  getHostAddress =
+    { config, hostname }:
+    if hostname == config.networking.hostName then
+      addresses.localhost
+    else
+      addresses.home.hosts.${hostname};
 
   ensureFile =
     {
@@ -149,20 +144,6 @@ rec {
         inherit config;
       })
     );
-
-  mkGatusEndpoints =
-    { inputs, hostName }:
-    let
-      inherit (inputs.self.nixosConfigurations.${hostName}) config;
-      enabledServices = getEnabledServices { inherit config; };
-    in
-    lib.mapAttrsToList (service: subdomain: {
-      name = service;
-      url = "https://${subdomain}.${domains.home}";
-      group = hostName;
-      interval = "1m";
-      conditions = [ "[STATUS] == 200" ];
-    }) enabledServices;
 
   mkOciUser = app: {
     groups.${app} = {

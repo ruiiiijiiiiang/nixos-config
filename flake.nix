@@ -153,7 +153,7 @@
             allowLocalDeployment = true;
             tags = [
               "physical"
-              "gui"
+              "workstation"
             ];
           };
           imports = [
@@ -221,10 +221,10 @@
 
         vm-security = {
           deployment = {
-            targetHost = addresses.home.hosts.vm-security;
+            targetHost = addresses.dmz.hosts.vm-security;
             tags = [
               "vm"
-              "gui"
+              "workstation"
             ];
           };
           imports = [

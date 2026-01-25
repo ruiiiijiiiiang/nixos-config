@@ -1,6 +1,7 @@
 {
   config,
   consts,
+  inputs,
   lib,
   helpers,
   ...
@@ -12,10 +13,36 @@ let
     subdomains
     ports
     ;
-  inherit (helpers) mkVirtualHost;
+  inherit (helpers) mkVirtualHost getHostAddress;
+  inherit (inputs.self) nixosConfigurations;
   cfg = config.custom.services.observability.prometheus.server;
   prometheus-fqdn = "${subdomains.${config.networking.hostName}.prometheus}.${domains.home}";
   grafana-fqdn = "${subdomains.${config.networking.hostName}.grafana}.${domains.home}";
+  monitoredExporters = {
+    inherit (ports.prometheus.exporters)
+      kea
+      nginx
+      node
+      podman
+      ;
+  };
+
+  mkScrapeJob = exporterName: port: {
+    job_name = "${exporterName}-exporter";
+    static_configs = [
+      {
+        targets = lib.pipe nixosConfigurations [
+          (lib.filterAttrs (
+            _: hostConfig:
+            hostConfig.config.custom.services.observability.prometheus.exporters.${exporterName}.enable or false
+          ))
+          (lib.mapAttrsToList (
+            hostname: _: "${getHostAddress { inherit config hostname; }}:${toString port}"
+          ))
+        ];
+      }
+    ];
+  };
 in
 {
   options.custom.services.observability.prometheus.server = with lib; {
@@ -27,46 +54,7 @@ in
       prometheus = {
         enable = true;
         port = ports.prometheus.server;
-        scrapeConfigs = [
-          {
-            job_name = "node-exporter";
-            static_configs = [
-              {
-                targets = [
-                  "${addresses.localhost}:${toString ports.prometheus.exporters.node}"
-                  "${addresses.home.hosts.pi}:${toString ports.prometheus.exporters.node}"
-                  "${addresses.home.hosts.vm-network}:${toString ports.prometheus.exporters.node}"
-                  "${addresses.home.hosts.vm-app}:${toString ports.prometheus.exporters.node}"
-                ];
-              }
-            ];
-          }
-          {
-            job_name = "nginx-exporter";
-            static_configs = [
-              {
-                targets = [
-                  "${addresses.localhost}:${toString ports.prometheus.exporters.nginx}"
-                  "${addresses.home.hosts.pi}:${toString ports.prometheus.exporters.nginx}"
-                  "${addresses.home.hosts.vm-network}:${toString ports.prometheus.exporters.nginx}"
-                  "${addresses.home.hosts.vm-app}:${toString ports.prometheus.exporters.nginx}"
-                ];
-              }
-            ];
-          }
-          {
-            job_name = "podman-exporter";
-            static_configs = [
-              {
-                targets = [
-                  "${addresses.home.hosts.pi}:${toString ports.prometheus.exporters.podman}"
-                  "${addresses.home.hosts.vm-app}:${toString ports.prometheus.exporters.podman}"
-                  "${addresses.home.hosts.vm-monitor}:${toString ports.prometheus.exporters.podman}"
-                ];
-              }
-            ];
-          }
-        ];
+        scrapeConfigs = lib.mapAttrsToList mkScrapeJob monitoredExporters;
       };
 
       grafana = {

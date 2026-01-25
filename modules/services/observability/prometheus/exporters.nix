@@ -1,10 +1,16 @@
-{ config, consts, lib, ... }:
+{
+  config,
+  consts,
+  lib,
+  ...
+}:
 let
   inherit (consts) addresses ports oci-uids;
   cfg = config.custom.services.observability.prometheus.exporters;
 in
 {
   options.custom.services.observability.prometheus.exporters = with lib; {
+    kea.enable = mkEnableOption "Prometheus Kea exporter";
     nginx.enable = mkEnableOption "Prometheus Nginx exporter";
     node.enable = mkEnableOption "Prometheus Node exporter";
     podman.enable = mkEnableOption "Prometheus Podman exporter";
@@ -17,6 +23,13 @@ in
 
   config = {
     services.prometheus.exporters = {
+      kea = lib.mkIf cfg.kea.enable {
+        enable = true;
+        listenAddress = addresses.any;
+        port = ports.prometheus.exporters.kea;
+        targets = [ "http://${addresses.localhost}:${toString ports.kea.ctrl-agent}" ];
+      };
+
       nginx = lib.mkIf cfg.nginx.enable {
         enable = true;
         port = ports.prometheus.exporters.nginx;
@@ -57,7 +70,8 @@ in
     networking.firewall =
       let
         exporterPorts =
-          (lib.optional cfg.nginx.enable ports.prometheus.exporters.nginx)
+          (lib.optional cfg.kea.enable ports.prometheus.exporters.kea)
+          ++ (lib.optional cfg.nginx.enable ports.prometheus.exporters.nginx)
           ++ (lib.optional cfg.node.enable ports.prometheus.exporters.node)
           ++ (lib.optional cfg.podman.enable ports.prometheus.exporters.podman);
       in
