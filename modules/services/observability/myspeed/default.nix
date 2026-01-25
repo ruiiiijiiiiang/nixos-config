@@ -19,7 +19,6 @@ in
   config = lib.mkIf cfg.enable {
     virtualisation.oci-containers.containers.myspeed = {
       image = "docker.io/germannewsmaker/myspeed:latest";
-      autoStart = true;
       ports = [ "${toString ports.myspeed}:${toString ports.myspeed}" ];
       volumes = [ "myspeed:/myspeed/data" ];
       labels = {

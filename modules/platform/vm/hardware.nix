@@ -34,7 +34,11 @@ in
         kernelModules = lib.mkIf cfg.gpuPassthrough [ "amdgpu" ];
       };
       kernelModules = [ "kvm-amd" ];
-      kernelParams = [ "rootdelay=5" ];
+      kernelParams = [
+        "rootdelay=5"
+        "console=tty1"
+        "console=ttyS0"
+      ];
     };
 
     services = {

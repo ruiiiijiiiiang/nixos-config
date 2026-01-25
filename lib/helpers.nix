@@ -31,8 +31,9 @@ rec {
     };
 
   getReservations =
+    network:
     let
-      inherit (addresses.home) hosts;
+      inherit (addresses.${network}) hosts;
     in
     builtins.map (hostname: {
       hw-address = macs.${hostname};
@@ -162,10 +163,6 @@ rec {
       interval = "1m";
       conditions = [ "[STATUS] == 200" ];
     }) enabledServices;
-
-  mkOpenPortRule = port: ''
-    ip saddr ${addresses.home.network} tcp dport ${toString port} accept
-  '';
 
   mkOciUser = app: {
     groups.${app} = {

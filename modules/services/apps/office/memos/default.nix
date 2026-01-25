@@ -34,7 +34,6 @@ in
     virtualisation.oci-containers.containers = {
       memos-postgres = {
         image = "postgres:15";
-        autoStart = true;
         ports = [ "${addresses.localhost}:${toString ports.memos}:${toString ports.memos}" ];
         environmentFiles = [ config.age.secrets.memos-env.path ];
         volumes = [ "/var/lib/memos/postgres:/var/lib/postgresql/data" ];
@@ -42,7 +41,6 @@ in
 
       memos-app = {
         image = "docker.io/neosmemo/memos:stable";
-        autoStart = true;
         user = "${toString oci-uids.memos}:${toString oci-uids.memos}";
         dependsOn = [ "memos-postgres" ];
         networks = [ "container:memos-postgres" ];
@@ -61,7 +59,7 @@ in
 
     systemd.tmpfiles.rules = [
       "d /var/lib/memos/postgres 0700 ${toString oci-uids.postgres} ${toString oci-uids.postgres} - -"
-      "d /var/lib/memos/app 0700 memos memos - -"
+      "d /var/lib/memos/app 0700 ${toString oci-uids.memos} ${toString oci-uids.memos} - -"
     ];
 
     services.nginx.virtualHosts."${fqdn}" = mkVirtualHost {

@@ -11,6 +11,7 @@ let
     domains
     subdomains
     ports
+    oci-uids
     ;
   inherit (helpers) mkVirtualHost;
   cfg = config.custom.services.apps.web.website;
@@ -24,7 +25,7 @@ in
   config = lib.mkIf cfg.enable {
     virtualisation.oci-containers.containers.website = {
       image = "ghcr.io/ruiiiijiiiiang/website:latest";
-      autoStart = true;
+      user = "${toString oci-uids.nobody}:${toString oci-uids.nobody}";
       ports = [ "${addresses.localhost}:${toString ports.website}:${toString ports.website}" ];
       volumes = [ "/var/lib/blog:/app/blog:ro" ];
       labels = {

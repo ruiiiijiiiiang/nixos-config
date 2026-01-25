@@ -69,7 +69,6 @@ rec {
         vm-network = "192.168.2.1";
         vm-app = "192.168.2.2";
         vm-monitor = "192.168.2.3";
-        vm-security = "192.168.2.4";
         framework = "192.168.2.10";
         arch = "192.168.2.11";
         pi = "192.168.2.51";
@@ -78,6 +77,15 @@ rec {
       };
       vip = {
         dns = "192.168.2.53";
+      };
+    };
+    dmz = {
+      network = "192.168.88.0/24";
+      dhcp-min = "192.168.88.100";
+      dhcp-max = "192.168.88.250";
+      hosts = {
+        vm-network = "192.168.88.1";
+        vm-security = "192.168.88.10";
       };
     };
     vpn = {
@@ -107,12 +115,14 @@ rec {
   };
 
   ports = {
-    lidarr = 8686;
-    radarr = 7878;
-    sonarr = 8989;
-    prowlarr = 9696;
-    bazarr = 6767;
-    flaresolverr = 8191;
+    arr = {
+      lidarr = 8686;
+      radarr = 7878;
+      sonarr = 8989;
+      prowlarr = 9696;
+      bazarr = 6767;
+      flaresolverr = 8191;
+    };
     atuin = 8888;
     bentopdf = 8080;
     beszel = {
@@ -191,6 +201,7 @@ rec {
   };
 
   oci-uids = {
+    podman = 899;
     immich = 900;
     paperless = 901;
     opencloud = 902;
@@ -201,8 +212,11 @@ rec {
     arr = 907;
     qbittorrent = 908;
     jellyfin = 909;
+    dockhand = 910;
     postgis = 70;
     postgres = 999;
+    user = 1000;
+    nobody = 65534;
   };
 
   oidc-issuer = "${subdomains.vm-app.pocketid}.${domains.home}";

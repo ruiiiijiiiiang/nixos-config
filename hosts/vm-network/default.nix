@@ -36,6 +36,11 @@ in
           enable = true;
           inherit wanInterface;
           inherit lanInterface;
+          dmz = {
+            enable = true;
+            vlanId = 88;
+            interface = "dmz0";
+          };
         };
         suricata = {
           enable = true;

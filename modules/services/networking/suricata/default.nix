@@ -142,7 +142,6 @@ in
     virtualisation.oci-containers.containers = {
       evebox = {
         image = "docker.io/jasonish/evebox:latest";
-        autoStart = true;
         ports = [ "${addresses.localhost}:${toString ports.evebox}:${toString ports.evebox}" ];
         volumes = [
           "${eveJsonPath}:${eveJsonPath}:ro"

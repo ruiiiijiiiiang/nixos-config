@@ -40,7 +40,6 @@ in
     virtualisation.oci-containers.containers = {
       paperless-postgres = {
         image = "postgres:16";
-        autoStart = true;
         ports = [ "${addresses.localhost}:${toString ports.paperless}:8000" ];
         environmentFiles = [ config.age.secrets.paperless-env.path ];
         volumes = [ "/var/lib/paperless/postgres:/var/lib/postgresql/data" ];
@@ -48,7 +47,6 @@ in
 
       paperless-redis = {
         image = "docker.io/library/redis:latest";
-        autoStart = true;
         cmd = [ "redis-server" ];
         dependsOn = [ "paperless-postgres" ];
         networks = [ "container:paperless-postgres" ];
@@ -60,7 +58,6 @@ in
 
       paperless-app = {
         image = "ghcr.io/paperless-ngx/paperless-ngx:latest";
-        autoStart = true;
         dependsOn = [
           "paperless-postgres"
           "paperless-redis"

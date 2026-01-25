@@ -1,6 +1,6 @@
-{ config, lib, ... }:
+{ config, consts, lib, ... }:
 let
-  inherit (import ../../../../lib/consts.nix) addresses ports;
+  inherit (consts) addresses ports oci-uids;
   cfg = config.custom.services.observability.prometheus.exporters;
 in
 {
@@ -36,20 +36,22 @@ in
 
     virtualisation.oci-containers.containers.podman-exporter = lib.mkIf cfg.podman.enable {
       image = "quay.io/navidys/prometheus-podman-exporter:latest";
-      autoStart = true;
+      user = "${toString oci-uids.nobody}:${toString oci-uids.podman}";
       ports = [
         "${
           addresses.home.hosts.${config.networking.hostName}
         }:${toString ports.prometheus.exporters.podman}:${toString ports.prometheus.exporters.podman}"
       ];
       volumes = [
-        "/run/podman/podman.sock:/run/podman/podman.sock"
+        "/run/podman/podman.sock:/run/podman/podman.sock:ro"
       ];
       environment = {
         CONTAINER_HOST = "unix:///run/podman/podman.sock";
       };
-      user = "root";
       extraOptions = [ "--security-opt=label=disable" ];
+      labels = {
+        "io.containers.autoupdate" = "registry";
+      };
     };
 
     networking.firewall =

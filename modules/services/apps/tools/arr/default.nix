@@ -31,12 +31,11 @@ in
     virtualisation.oci-containers.containers = {
       lidarr = {
         image = "lscr.io/linuxserver/lidarr:latest";
-        autoStart = true;
         ports = [
-          "${addresses.localhost}:${toString ports.lidarr}:${toString ports.lidarr}"
+          "${addresses.localhost}:${toString ports.arr.lidarr}:${toString ports.arr.lidarr}"
           "${
             addresses.home.hosts.${config.networking.hostName}
-          }:${toString ports.lidarr}:${toString ports.lidarr}"
+          }:${toString ports.arr.lidarr}:${toString ports.arr.lidarr}"
         ];
         environment = {
           TZ = timeZone;
@@ -55,12 +54,11 @@ in
 
       radarr = {
         image = "lscr.io/linuxserver/radarr:latest";
-        autoStart = true;
         ports = [
-          "${addresses.localhost}:${toString ports.radarr}:${toString ports.radarr}"
+          "${addresses.localhost}:${toString ports.arr.radarr}:${toString ports.arr.radarr}"
           "${
             addresses.home.hosts.${config.networking.hostName}
-          }:${toString ports.radarr}:${toString ports.radarr}"
+          }:${toString ports.arr.radarr}:${toString ports.arr.radarr}"
         ];
         environment = {
           TZ = timeZone;
@@ -79,12 +77,11 @@ in
 
       sonarr = {
         image = "lscr.io/linuxserver/sonarr:latest";
-        autoStart = true;
         ports = [
-          "${addresses.localhost}:${toString ports.sonarr}:${toString ports.sonarr}"
+          "${addresses.localhost}:${toString ports.arr.sonarr}:${toString ports.arr.sonarr}"
           "${
             addresses.home.hosts.${config.networking.hostName}
-          }:${toString ports.sonarr}:${toString ports.sonarr}"
+          }:${toString ports.arr.sonarr}:${toString ports.arr.sonarr}"
         ];
         environment = {
           TZ = timeZone;
@@ -103,12 +100,11 @@ in
 
       prowlarr = {
         image = "lscr.io/linuxserver/prowlarr:latest";
-        autoStart = true;
         ports = [
-          "${addresses.localhost}:${toString ports.prowlarr}:${toString ports.prowlarr}"
+          "${addresses.localhost}:${toString ports.arr.prowlarr}:${toString ports.arr.prowlarr}"
           "${
             addresses.home.hosts.${config.networking.hostName}
-          }:${toString ports.prowlarr}:${toString ports.prowlarr}"
+          }:${toString ports.arr.prowlarr}:${toString ports.arr.prowlarr}"
         ];
         environment = {
           TZ = timeZone;
@@ -126,8 +122,7 @@ in
 
       bazarr = {
         image = "lscr.io/linuxserver/bazarr:latest";
-        autoStart = true;
-        ports = [ "${toString ports.bazarr}:${toString ports.bazarr}" ];
+        ports = [ "${toString ports.arr.bazarr}:${toString ports.arr.bazarr}" ];
         environment = {
           TZ = timeZone;
           PUID = toString oci-uids.arr;
@@ -145,9 +140,7 @@ in
 
       flaresolverr = {
         image = "docker.io/flaresolverr/flaresolverr:latest";
-        autoStart = true;
-        dependsOn = [ "prowlarr" ];
-        ports = [ "${toString ports.flaresolverr}:${toString ports.flaresolverr}" ];
+        ports = [ "${toString ports.arr.flaresolverr}:${toString ports.arr.flaresolverr}" ];
         environment = {
           TZ = timeZone;
           LOG_LEVEL = "info";
@@ -178,23 +171,23 @@ in
     services.nginx.virtualHosts = {
       "${lidarr-fqdn}" = mkVirtualHost {
         fqdn = lidarr-fqdn;
-        port = ports.lidarr;
+        port = ports.arr.lidarr;
       };
       "${radarr-fqdn}" = mkVirtualHost {
         fqdn = radarr-fqdn;
-        port = ports.radarr;
+        port = ports.arr.radarr;
       };
       "${sonarr-fqdn}" = mkVirtualHost {
         fqdn = sonarr-fqdn;
-        port = ports.sonarr;
+        port = ports.arr.sonarr;
       };
       "${prowlarr-fqdn}" = mkVirtualHost {
         fqdn = prowlarr-fqdn;
-        port = ports.prowlarr;
+        port = ports.arr.prowlarr;
       };
       "${bazarr-fqdn}" = mkVirtualHost {
         fqdn = bazarr-fqdn;
-        port = ports.bazarr;
+        port = ports.arr.bazarr;
       };
     };
   };

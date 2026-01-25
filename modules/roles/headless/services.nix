@@ -1,11 +1,13 @@
 {
   config,
+  consts,
   inputs,
   lib,
   pkgs,
   ...
 }:
 let
+  inherit (consts) oci-uids;
   cfg = config.custom.roles.headless.services;
 in
 {
@@ -49,6 +51,8 @@ in
         };
       };
     };
+
+    users.groups.podman.gid = oci-uids.podman;
 
     systemd.timers.podman-auto-update = {
       wantedBy = [ "timers.target" ];

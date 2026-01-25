@@ -35,11 +35,11 @@ in
     virtualisation.oci-containers.containers = {
       karakeep-server = {
         image = "ghcr.io/karakeep-app/karakeep:release";
-        autoStart = true;
-        user = "${toString oci-uids.karakeep}:${toString oci-uids.karakeep}";
         ports = [ "${addresses.localhost}:${toString ports.karakeep}:3000" ];
         volumes = [ "/var/lib/karakeep:/data" ];
         environment = {
+          PUID = toString oci-uids.karakeep;
+          GUID = toString oci-uids.karakeep;
           NEXTAUTH_URL = "https://${fqdn}";
           MEILI_ADDR = "http://${addresses.localhost}:7700";
           BROWSER_WEB_URL = "http://${addresses.localhost}:9222";
@@ -56,7 +56,6 @@ in
 
       karakeep-chrome = {
         image = "gcr.io/zenika-hub/alpine-chrome:124";
-        autoStart = true;
         user = "${toString oci-uids.karakeep}:${toString oci-uids.karakeep}";
         dependsOn = [ "karakeep-server" ];
         networks = [ "container:karakeep-server" ];
@@ -72,7 +71,6 @@ in
 
       karakeep-meilisearch = {
         image = "docker.io/getmeili/meilisearch:latest";
-        autoStart = true;
         user = "${toString oci-uids.karakeep}:${toString oci-uids.karakeep}";
         dependsOn = [ "karakeep-server" ];
         networks = [ "container:karakeep-server" ];

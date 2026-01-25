@@ -23,6 +23,20 @@ in
       default = null;
       description = "Interface connecting to the LAN";
     };
+
+    dmz = {
+      enable = mkEnableOption "DMZ VLAN";
+      vlanId = mkOption {
+        type = types.int;
+        default = 88;
+        description = "VLAN tag ID for the DMZ";
+      };
+      interface = mkOption {
+        type = types.str;
+        default = "dmz0";
+        description = "Virtual interface name for the DMZ";
+      };
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -39,32 +53,88 @@ in
     };
 
     networking = {
-      interfaces.${cfg.wanInterface}.useDHCP = true;
+      interfaces = {
+        ${cfg.wanInterface}.useDHCP = true;
 
-      interfaces.${cfg.lanInterface} = {
-        useDHCP = false;
-        ipv4.addresses = [
-          {
-            address = addresses.home.hosts.${config.networking.hostName};
-            prefixLength = 24;
-          }
-        ];
+        ${cfg.lanInterface} = {
+          useDHCP = false;
+          ipv4.addresses = [
+            {
+              address = addresses.home.hosts.${config.networking.hostName};
+              prefixLength = 24;
+            }
+          ];
+        };
+
+        ${cfg.dmz.interface} = lib.mkIf cfg.dmz.enable {
+          useDHCP = false;
+          ipv4.addresses = [
+            {
+              address = addresses.dmz.hosts.${config.networking.hostName};
+              prefixLength = 24;
+            }
+          ];
+        };
       };
 
       nat = {
         enable = true;
         externalInterface = cfg.wanInterface;
-        internalInterfaces = [ cfg.lanInterface ];
+        internalInterfaces = [ cfg.lanInterface ] ++ (lib.optional cfg.dmz.enable cfg.dmz.interface);
       };
 
       firewall = {
         enable = true;
-        interfaces.${cfg.lanInterface} = {
-          allowedUDPPorts = [ ports.dhcp ];
+        interfaces = {
+          ${cfg.wanInterface} = {
+            allowedTCPPorts = [ ];
+            allowedUDPPorts = [ ];
+          };
+
+          ${cfg.lanInterface} = {
+            allowedUDPPorts = [ ports.dhcp ];
+          };
+
+          ${cfg.dmz.interface} = lib.mkIf cfg.dmz.enable {
+            allowedUDPPorts = [
+              ports.dhcp
+              ports.dns
+            ];
+            allowedTCPPorts = [ ports.dns ];
+          };
         };
-        interfaces.${cfg.wanInterface} = {
-          allowedTCPPorts = [ ];
-          allowedUDPPorts = [ ];
+      };
+
+      vlans.${cfg.dmz.interface} = lib.mkIf cfg.dmz.enable {
+        id = cfg.dmz.vlanId;
+        interface = cfg.lanInterface;
+      };
+
+      nftables = {
+        enable = true;
+        tables.router-flow = {
+          family = "ip";
+          content = ''
+            chain forward {
+              type filter hook forward priority 0; policy accept;
+
+              # Allow return traffic
+              ct state established,related accept
+
+              # Conditional DMZ Rules inserted via string interpolation
+              ${lib.optionalString cfg.dmz.enable ''
+                # Allow LAN -> DMZ
+                iifname "${cfg.lanInterface}" oifname "${cfg.dmz.interface}" accept
+
+                # Allow DMZ -> LAN (DNS Only)
+                iifname "${cfg.dmz.interface}" oifname "${cfg.lanInterface}" ip daddr ${addresses.home.vip.dns} udp dport ${toString ports.dns} accept
+                iifname "${cfg.dmz.interface}" oifname "${cfg.lanInterface}" ip daddr ${addresses.home.vip.dns} tcp dport ${toString ports.dns} accept
+
+                # Drop other DMZ -> LAN
+                iifname "${cfg.dmz.interface}" oifname "${cfg.lanInterface}" drop
+              ''}
+            }
+          '';
         };
       };
     };
@@ -73,13 +143,13 @@ in
       enable = true;
       settings = {
         interfaces-config = {
-          interfaces = [ cfg.lanInterface ];
+          interfaces = [ cfg.lanInterface ] ++ (lib.optional cfg.dmz.enable cfg.dmz.interface);
         };
         valid-lifetime = 86400;
         subnet4 = [
           {
             id = 1;
-            reservations = getReservations;
+            reservations = getReservations "home";
             subnet = addresses.home.network;
             pools = [ { pool = "${addresses.home.dhcp-min} - ${addresses.home.dhcp-max}"; } ];
             option-data = [
@@ -93,7 +163,25 @@ in
               }
             ];
           }
-        ];
+        ]
+        ++ (lib.optionals cfg.dmz.enable [
+          {
+            id = cfg.dmz.vlanId;
+            subnet = addresses.dmz.network;
+            pools = [ { pool = "${addresses.dmz.dhcp-min} - ${addresses.dmz.dhcp-max}"; } ];
+            reservations = getReservations "dmz";
+            option-data = [
+              {
+                name = "routers";
+                data = addresses.dmz.hosts.${config.networking.hostName};
+              }
+              {
+                name = "domain-name-servers";
+                data = addresses.home.vip.dns;
+              }
+            ];
+          }
+        ]);
       };
     };
   };

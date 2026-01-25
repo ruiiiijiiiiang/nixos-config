@@ -34,6 +34,7 @@ in
       # Passwords & auth
       john
       hashcat
+      thc-hydra
 
       # Exploitation
       metasploit

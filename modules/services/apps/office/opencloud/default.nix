@@ -43,7 +43,6 @@ in
     virtualisation.oci-containers.containers = {
       opencloud = {
         image = "docker.io/opencloudeu/opencloud-rolling:latest";
-        autoStart = true;
         user = "${toString oci-uids.opencloud}:${toString oci-uids.opencloud}";
         ports = [
           "${addresses.localhost}:${toString ports.opencloud}:${opencloud-port}"
@@ -86,7 +85,6 @@ in
 
       onlyoffice = {
         image = "docker.io/onlyoffice/documentserver:latest";
-        autoStart = true;
         dependsOn = [ "opencloud" ];
         networks = [ "container:opencloud" ];
         volumes = [
@@ -111,8 +109,8 @@ in
     users = mkOciUser "opencloud";
 
     systemd.tmpfiles.rules = [
-      "d /var/lib/opencloud/config 0700 ${toString oci-uids.opencloud} ${toString oci-uids.opencloud} - -"
-      "d /var/storage/opencloud 0700 ${toString oci-uids.opencloud} ${toString oci-uids.opencloud} - -"
+      "d /var/lib/opencloud/config 0755 ${toString oci-uids.opencloud} ${toString oci-uids.opencloud} - -"
+      "d /var/storage/opencloud 0755 ${toString oci-uids.opencloud} ${toString oci-uids.opencloud} - -"
     ];
 
     services.nginx.virtualHosts = {

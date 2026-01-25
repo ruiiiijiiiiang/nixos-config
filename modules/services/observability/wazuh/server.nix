@@ -35,7 +35,6 @@ in
     virtualisation.oci-containers.containers = {
       wazuh-indexer = {
         image = "wazuh/wazuh-indexer:${config.custom.services.observability.wazuh.version}";
-        autoStart = true;
         environment = {
           OPENSEARCH_JAVA_OPTS = "-Xms512m -Xmx512m";
         };
@@ -60,7 +59,8 @@ in
 
       wazuh-manager = {
         image = "wazuh/wazuh-manager:${config.custom.services.observability.wazuh.version}";
-        autoStart = true;
+        dependsOn = [ "wazuh-indexer" ];
+        networks = [ "container:wazuh-indexer" ];
         environment = {
           INDEXER_URL = "https://${addresses.localhost}";
           FILEBEAT_SSL_VERIFICATION_MODE = "certificate";
@@ -74,20 +74,21 @@ in
           "wazuh-etc:/var/ossec/etc"
           "wazuh-logs:/var/ossec/logs"
           "wazuh-queue:/var/ossec/queue"
-          "wazuh_var_multigroups:/var/ossec/var/multigroups"
-          "wazuh_active_response:/var/ossec/active-response/bin"
-          "wazuh_wodles:/var/ossec/wodles"
+          "wazuh-var-multigroups:/var/ossec/var/multigroups"
+          "wazuh-active-response:/var/ossec/active-response/bin"
+          "wazuh-wodles:/var/ossec/wodles"
           "/var/wazuh/certs/root-ca.pem:/etc/ssl/wazuh_certs/root-ca.pem"
           "/var/wazuh/certs/wazuh-manager.pem:/etc/ssl/wazuh_certs/wazuh-manager.pem"
           "/var/wazuh/certs/wazuh-manager-key.pem:/etc/ssl/wazuh_certs/wazuh-manager-key.pem"
         ];
-        dependsOn = [ "wazuh-indexer" ];
-        networks = [ "container:wazuh-indexer" ];
       };
 
       wazuh-dashboard = {
         image = "wazuh/wazuh-dashboard:${config.custom.services.observability.wazuh.version}";
-        autoStart = true;
+        dependsOn = [
+          "wazuh-indexer"
+          "wazuh-manager"
+        ];
         environment = {
           INDEXER_URL = "https://${addresses.localhost}";
           WAZUH_API_URL = "https://${addresses.localhost}";
@@ -101,10 +102,6 @@ in
           "/var/wazuh/certs/wazuh-dashboard.pem:/usr/share/wazuh-dashboard/config/certs/dashboard.pem"
           "/var/wazuh/certs/wazuh-dashboard-key.pem:/usr/share/wazuh-dashboard/config/certs/dashboard-key.pem"
           "/var/wazuh/opensearch_dashboards.yml:/usr/share/wazuh-dashboard/config/opensearch_dashboards.yml"
-        ];
-        dependsOn = [
-          "wazuh-indexer"
-          "wazuh-manager"
         ];
         networks = [ "container:wazuh-indexer" ];
       };

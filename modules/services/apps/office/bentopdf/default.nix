@@ -10,6 +10,7 @@ let
     domains
     subdomains
     ports
+    oci-uids
     ;
   inherit (helpers) mkVirtualHost;
   cfg = config.custom.services.apps.office.bentopdf;
@@ -24,7 +25,7 @@ in
     virtualisation.oci-containers.containers = {
       bentopdf = {
         image = "bentopdf/bentopdf:latest";
-        autoStart = true;
+        user = "${toString oci-uids.nobody}:${toString oci-uids.nobody}";
         ports = [ "${addresses.localhost}:${toString ports.bentopdf}:${toString ports.bentopdf}" ];
         labels = {
           "io.containers.autoupdate" = "registry";

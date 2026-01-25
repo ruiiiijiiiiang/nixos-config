@@ -27,7 +27,6 @@ in
     virtualisation.oci-containers.containers = {
       homeassistant = {
         image = "ghcr.io/home-assistant/home-assistant:stable";
-        autoStart = true;
         ports = [
           "${
             addresses.home.hosts.${config.networking.hostName}
@@ -45,7 +44,6 @@ in
 
       zwave-js-ui = {
         image = "docker.io/zwavejs/zwave-js-ui:latest";
-        autoStart = true;
         dependsOn = [ "homeassistant" ];
         volumes = [ "/var/lib/zwave-js-ui:/usr/src/app/store" ];
         networks = [ "container:homeassistant" ];

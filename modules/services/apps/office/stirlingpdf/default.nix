@@ -11,6 +11,7 @@ let
     domains
     subdomains
     ports
+    oci-uids
     ;
   inherit (helpers) mkVirtualHost;
   cfg = config.custom.services.apps.office.stirlingpdf;
@@ -25,9 +26,10 @@ in
     virtualisation.oci-containers.containers = {
       stirling-pdf = {
         image = "docker.io/stirlingtools/stirling-pdf:latest";
-        autoStart = true;
         ports = [ "${addresses.localhost}:${toString ports.stirlingpdf}:${toString ports.stirlingpdf}" ];
         environment = {
+          PUID = toString oci-uids.nobody;
+          GUID = toString oci-uids.nobody;
           SECURITY_ENABLELOGIN = "false";
         };
         labels = {

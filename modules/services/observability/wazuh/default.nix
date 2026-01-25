@@ -8,7 +8,7 @@
 
   options.custom.services.observability.wazuh.version = lib.mkOption {
     type = lib.types.str;
-    default = "4.14.1";
+    default = "4.14.2";
     description = "Wazuh version used by both server and agent.";
   };
 }

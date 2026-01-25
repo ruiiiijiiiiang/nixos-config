@@ -31,7 +31,6 @@ in
     virtualisation.oci-containers.containers = {
       gluetun = {
         image = "ghcr.io/qdm12/gluetun:latest";
-        autoStart = true;
         extraOptions = [
           "--cap-add=NET_ADMIN"
         ];
@@ -58,7 +57,6 @@ in
 
       qbittorrent = {
         image = "lscr.io/linuxserver/qbittorrent:latest";
-        autoStart = true;
         dependsOn = [ "gluetun" ];
         networks = [ "container:gluetun" ];
         environment = {

@@ -5,7 +5,7 @@
   ...
 }:
 let
-  inherit (consts) addresses ports;
+  inherit (consts) addresses ports oci-uids;
   cfg = config.custom.services.observability.dockhand.agent;
 in
 {
@@ -15,14 +15,24 @@ in
 
   config = lib.mkIf cfg.enable {
     age.secrets = {
-      dockhand-agent-crt.file = ../../../../secrets/dockhand/agent-crt.age;
-      dockhand-agent-key.file = ../../../../secrets/dockhand/agent-key.age;
+      dockhand-agent-crt = {
+        file = ../../../../secrets/dockhand/agent-crt.age;
+        owner = toString oci-uids.dockhand;
+        group = toString oci-uids.dockhand;
+        mode = "400";
+      };
+      dockhand-agent-key = {
+        file = ../../../../secrets/dockhand/agent-key.age;
+        owner = toString oci-uids.dockhand;
+        group = toString oci-uids.dockhand;
+        mode = "400";
+      };
     };
 
     virtualisation.oci-containers.containers = {
       dockhand-agent = {
         image = "ghcr.io/finsys/hawser:latest";
-        autoStart = true;
+        user = "${toString oci-uids.dockhand}:${toString oci-uids.podman}";
         ports = [
           "${
             addresses.home.hosts.${config.networking.hostName}

@@ -39,7 +39,6 @@ in
     virtualisation.oci-containers.containers = {
       reitti-postgis = {
         image = "postgis/postgis:17-3.5-alpine";
-        autoStart = true;
         ports = [ "${addresses.localhost}:${toString ports.reitti}:${toString ports.reitti}" ];
         environmentFiles = [ config.age.secrets.reitti-env.path ];
         volumes = [ "/var/lib/reitti/postgis:/var/lib/postgresql/data" ];
@@ -47,7 +46,6 @@ in
 
       reitti-rabbitmq = {
         image = "docker.io/library/rabbitmq:latest";
-        autoStart = true;
         dependsOn = [ "reitti-postgis" ];
         networks = [ "container:reitti-postgis" ];
         environmentFiles = [ config.age.secrets.reitti-env.path ];
@@ -59,7 +57,6 @@ in
 
       reitti-redis = {
         image = "docker.io/library/redis:latest";
-        autoStart = true;
         dependsOn = [ "reitti-postgis" ];
         networks = [ "container:reitti-postgis" ];
         extraOptions = [ "--tmpfs=/data" ];
@@ -70,7 +67,6 @@ in
 
       reitti-photon = {
         image = "ghcr.io/rtuszik/photon-docker:latest";
-        autoStart = true;
         dependsOn = [ "reitti-postgis" ];
         networks = [ "container:reitti-postgis" ];
         environment = {
@@ -85,7 +81,6 @@ in
 
       reitti-tile-cache = {
         image = "docker.io/library/nginx:alpine";
-        autoStart = true;
         dependsOn = [ "reitti-postgis" ];
         networks = [ "container:reitti-postgis" ];
         cmd = [
@@ -122,7 +117,6 @@ in
 
       reitti-server = {
         image = "docker.io/dedicatedcode/reitti:latest";
-        autoStart = true;
         dependsOn = [
           "reitti-postgis"
           "reitti-rabbitmq"

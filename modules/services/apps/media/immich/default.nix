@@ -38,7 +38,6 @@ in
     virtualisation.oci-containers.containers = {
       immich-postgres = {
         image = "ghcr.io/immich-app/postgres:17-vectorchord0.5.3-pgvector0.8.1";
-        autoStart = true;
         ports = [ "${addresses.localhost}:${toString ports.immich}:${toString ports.immich}" ];
         environmentFiles = [ config.age.secrets.immich-env.path ];
         volumes = [
@@ -63,7 +62,6 @@ in
 
       immich-redis = {
         image = "docker.io/library/redis:latest";
-        autoStart = true;
         dependsOn = [ "immich-postgres" ];
         networks = [ "container:immich-postgres" ];
         cmd = [ "redis-server" ];
@@ -75,7 +73,6 @@ in
 
       immich-server = {
         image = "ghcr.io/immich-app/immich-server:${immich-version}";
-        autoStart = true;
         user = "${toString oci-uids.immich}:${toString oci-uids.immich}";
         dependsOn = [
           "immich-redis"
@@ -97,7 +94,6 @@ in
 
       immich-machine-learning = {
         image = "ghcr.io/immich-app/immich-machine-learning:${immich-version}";
-        autoStart = true;
         user = "${toString oci-uids.immich}:${toString oci-uids.immich}";
         dependsOn = [ "immich-postgres" ];
         networks = [ "container:immich-postgres" ];

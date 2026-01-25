@@ -25,7 +25,6 @@ in
   config = lib.mkIf cfg.enable {
     virtualisation.oci-containers.containers.jellyfin = {
       image = "docker.io/jellyfin/jellyfin:latest";
-      autoStart = true;
       user = "${toString oci-uids.jellyfin}:${toString oci-uids.arr}";
       ports = [ "${addresses.localhost}:${toString ports.jellyfin}:${toString ports.jellyfin}" ];
       volumes = [

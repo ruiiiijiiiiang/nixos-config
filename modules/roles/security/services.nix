@@ -42,6 +42,8 @@ in
           CREATE DATABASE msf OWNER msf;
         '';
       };
+
+      vnstat.enable = true;
     };
 
     security.rtkit.enable = true;

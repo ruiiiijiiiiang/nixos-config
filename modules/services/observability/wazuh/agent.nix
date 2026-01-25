@@ -34,7 +34,6 @@ in
     virtualisation.oci-containers.containers = {
       wazuh-agent = {
         image = "wazuh/wazuh-agent:${config.custom.services.observability.wazuh.version}";
-        autoStart = true;
         volumes = [
           "/var/wazuh/ossec.conf:/wazuh-config-mount/etc/ossec.conf"
           "/var/wazuh/client.keys:/var/ossec/etc/client.keys"
