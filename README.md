@@ -35,12 +35,15 @@ The `vm-network` VM serves as the nerve center of the home network. It replaces 
 
 ### The Routing Core
 
-Two network interfaces define the boundary between the wild internet and the safe intranet:
+The network is physically connected via two interfaces, but logically segmented into distinct security zones using VLANs:
 
 - **WAN (`ens18`):** The shield against the public internet.
-- **LAN (`ens19`):** The gateway to the internal network.
+- **LAN (`ens19`):** The physical trunk carrying multiple logical networks:
+    - **Home (Native):** Trusted user devices.
+    - **Infra (VLAN 20):** Dedicated management lane for servers and critical infrastructure.
+    - **DMZ (VLAN 88):** Isolated zone for untrusted workloads, restricted to WAN access and DNS only.
 
-Powered by **NAT & IP Forwarding**, a strict **Firewall**, and **Kea DHCP**, this core ensures seamless connectivity without compromising security.
+Powered by **NAT & IP Forwarding**, a strict **NFTables Firewall**, and **Kea DHCP**, this core ensures seamless connectivity and strict isolation.
 
 ### High-Availability DNS
 
