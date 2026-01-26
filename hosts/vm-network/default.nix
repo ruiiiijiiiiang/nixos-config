@@ -101,7 +101,10 @@ in
           enable = true;
           interface = infraInterface;
         };
-        dockhand.agent.enable = true;
+        dockhand.agent = {
+          enable = true;
+          interface = infraInterface;
+        };
         prometheus.exporters = {
           kea.enable = true;
           nginx.enable = true;

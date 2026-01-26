@@ -11,6 +11,11 @@ in
 {
   options.custom.services.observability.dockhand.agent = with lib; {
     enable = mkEnableOption "Hawser container agent";
+    interface = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = "Interface to open ports";
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -55,5 +60,15 @@ in
         ];
       };
     };
+
+    networking.firewall =
+      if cfg.interface != null then
+        {
+          interfaces."${cfg.interface}".allowedTCPPorts = [ ports.dockhand.agent ];
+        }
+      else
+        {
+          allowedTCPPorts = [ ports.dockhand.agent ];
+        };
   };
 }
