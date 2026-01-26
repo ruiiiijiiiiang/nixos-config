@@ -58,6 +58,7 @@ in
       maxretry = 5;
       ignoreIP = [
         addresses.home.network
+        addresses.infra.network
         addresses.vpn.network
       ];
 

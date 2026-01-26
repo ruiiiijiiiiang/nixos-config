@@ -52,7 +52,7 @@ in
       user = "${toString oci-uids.nobody}:${toString oci-uids.podman}";
       ports = [
         "${
-          addresses.home.hosts.${config.networking.hostName}
+          addresses.infra.hosts.${config.networking.hostName}
         }:${toString ports.prometheus.exporters.podman}:${toString ports.prometheus.exporters.podman}"
       ];
       volumes = [

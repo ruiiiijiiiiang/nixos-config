@@ -14,7 +14,7 @@ in
 {
   options.custom.services.apps.tools.syncthing = with lib; {
     enable = mkEnableOption "Syncthing file synchronization";
-    proxied = mkEnableOption "Syncthing behind reverse proxy";
+    proxied = mkEnableOption "Syncthing web UI behind reverse proxy";
   };
 
   config = lib.mkIf cfg.enable {

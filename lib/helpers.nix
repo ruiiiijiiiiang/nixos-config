@@ -11,6 +11,7 @@ let
     subdomains
     oci-uids
     ;
+  vlans = [ "infra" ];
 in
 rec {
   mkVirtualHost =
@@ -28,13 +29,6 @@ rec {
         inherit extraConfig;
       };
     };
-
-  getHostAddress =
-    { config, hostname }:
-    if hostname == config.networking.hostName then
-      addresses.localhost
-    else
-      addresses.home.hosts.${hostname};
 
   ensureFile =
     {
@@ -58,32 +52,53 @@ rec {
       chmod ${mode} "${destination}"
     '';
 
+  getHostAddress =
+    { config, hostname }:
+    let
+      inherit (lib) findFirst;
+      hasHost = net: addresses.${net}.hosts ? ${hostname};
+      foundVlan = findFirst hasHost null vlans;
+    in
+    if foundVlan != null then
+      addresses.${foundVlan}.hosts.${hostname}
+    else
+      throw "Host '${hostname}' not found in address lists: ${toString vlans}";
+
   mkHostFqdns =
     hostName:
     let
+      inherit (lib) attrValues;
       hostSubdomainsSet = subdomains.${hostName} or { };
-      hostSubdomainList = lib.attrValues hostSubdomainsSet;
+      hostSubdomainList = attrValues hostSubdomainsSet;
     in
     map (sub: "${sub}.${domains.home}") hostSubdomainList;
 
   mkExtraHosts =
     let
-      inherit (lib) concatStringsSep mapAttrsToList;
+      inherit (lib) concatStringsSep mapAttrsToList concatMap;
       makeHostEntry = hostName: ip: "${ip} ${hostName}";
+      getEntries = network: mapAttrsToList makeHostEntry addresses.${network}.hosts;
     in
-    concatStringsSep "\n" (mapAttrsToList makeHostEntry addresses.home.hosts);
+    concatStringsSep "\n" (concatMap getEntries vlans);
 
   mkFullExtraHosts =
     let
-      inherit (lib) concatStringsSep mapAttrsToList filter;
+      inherit (lib)
+        concatStringsSep
+        mapAttrsToList
+        concatMap
+        filter
+        ;
       makeFullHostEntry =
         hostName: ip:
         let
           fqdns = mkHostFqdns hostName;
         in
         if fqdns == [ ] then "" else "${ip} ${concatStringsSep " " fqdns}";
+      getEntries = network: mapAttrsToList makeFullHostEntry addresses.${network}.hosts;
+      allEntries = concatMap getEntries vlans;
     in
-    concatStringsSep "\n" (filter (s: s != "") (mapAttrsToList makeFullHostEntry addresses.home.hosts));
+    concatStringsSep "\n" (filter (s: s != "") allEntries);
 
   getEnabledServices =
     { config }:

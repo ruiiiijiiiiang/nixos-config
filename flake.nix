@@ -165,7 +165,7 @@
         pi = {
           nixpkgs.system = "aarch64-linux";
           deployment = {
-            targetHost = addresses.home.hosts.pi;
+            targetHost = addresses.infra.hosts.pi;
             tags = [
               "physical"
               "server"
@@ -179,7 +179,7 @@
 
         vm-network = {
           deployment = {
-            targetHost = addresses.home.hosts.vm-network;
+            targetHost = addresses.infra.hosts.vm-network;
             tags = [
               "vm"
               "server"
@@ -193,7 +193,7 @@
 
         vm-app = {
           deployment = {
-            targetHost = addresses.home.hosts.vm-app;
+            targetHost = addresses.infra.hosts.vm-app;
             tags = [
               "vm"
               "server"
@@ -207,7 +207,7 @@
 
         vm-monitor = {
           deployment = {
-            targetHost = addresses.home.hosts.vm-monitor;
+            targetHost = addresses.infra.hosts.vm-monitor;
             tags = [
               "vm"
               "server"

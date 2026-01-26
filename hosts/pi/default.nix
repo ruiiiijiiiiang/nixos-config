@@ -1,4 +1,4 @@
-{ inputs, ... }:
+{ config, inputs, ... }:
 let
   interface = "end0";
 in
@@ -13,6 +13,14 @@ in
   custom = {
     platform.pi = {
       hardware.enable = true;
+      network = {
+        enable = true;
+        inherit interface;
+        vlan = {
+          enable = true;
+          id = 20;
+        };
+      };
       packages.enable = true;
     };
 
@@ -25,7 +33,11 @@ in
     services = {
       networking.dns = {
         enable = true;
-        inherit interface;
+        interface =
+          let
+            cfg = config.custom.platform.pi.network;
+          in
+          if cfg.vlan.enable then "${interface}.${toString cfg.vlan.id}" else interface;
         vrrp = {
           enable = true;
           state = "BACKUP";

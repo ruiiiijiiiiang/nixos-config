@@ -186,16 +186,16 @@ in
           inherit (cfg.vrrp) state priority;
           virtualRouterId = 53;
           virtualIps = [
-            { addr = addresses.home.vip.dns; }
+            { addr = addresses.infra.vip.dns; }
           ];
           trackScripts = [ "check_dns_health" ];
-          unicastSrcIp = addresses.home.hosts.${config.networking.hostName};
+          unicastSrcIp = addresses.infra.hosts.${config.networking.hostName};
           unicastPeers =
             let
               allNodes = [
-                addresses.home.hosts.vm-network
-                addresses.home.hosts.pi
-                addresses.home.hosts.pi-legacy
+                addresses.infra.hosts.vm-network
+                addresses.infra.hosts.pi
+                addresses.infra.hosts.pi-legacy
               ];
             in
             builtins.filter (ip: ip != config.services.keepalived.vrrpInstances.dns_ha.unicastSrcIp) allNodes;

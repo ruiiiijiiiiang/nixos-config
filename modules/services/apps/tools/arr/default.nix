@@ -34,7 +34,7 @@ in
         ports = [
           "${addresses.localhost}:${toString ports.arr.lidarr}:${toString ports.arr.lidarr}"
           "${
-            addresses.home.hosts.${config.networking.hostName}
+            addresses.infra.hosts.${config.networking.hostName}
           }:${toString ports.arr.lidarr}:${toString ports.arr.lidarr}"
         ];
         environment = {
@@ -57,7 +57,7 @@ in
         ports = [
           "${addresses.localhost}:${toString ports.arr.radarr}:${toString ports.arr.radarr}"
           "${
-            addresses.home.hosts.${config.networking.hostName}
+            addresses.infra.hosts.${config.networking.hostName}
           }:${toString ports.arr.radarr}:${toString ports.arr.radarr}"
         ];
         environment = {
@@ -80,7 +80,7 @@ in
         ports = [
           "${addresses.localhost}:${toString ports.arr.sonarr}:${toString ports.arr.sonarr}"
           "${
-            addresses.home.hosts.${config.networking.hostName}
+            addresses.infra.hosts.${config.networking.hostName}
           }:${toString ports.arr.sonarr}:${toString ports.arr.sonarr}"
         ];
         environment = {
@@ -103,7 +103,7 @@ in
         ports = [
           "${addresses.localhost}:${toString ports.arr.prowlarr}:${toString ports.arr.prowlarr}"
           "${
-            addresses.home.hosts.${config.networking.hostName}
+            addresses.infra.hosts.${config.networking.hostName}
           }:${toString ports.arr.prowlarr}:${toString ports.arr.prowlarr}"
         ];
         environment = {

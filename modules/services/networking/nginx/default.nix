@@ -46,6 +46,7 @@ in
           allow ${addresses.localhost};
           allow ${addresses.localhost-v6};
           allow ${addresses.home.network};
+          allow ${addresses.infra.network};
           allow ${addresses.vpn.network};
           allow ${addresses.podman.network};
           deny all;

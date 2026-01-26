@@ -336,7 +336,7 @@ in
               {
                 "Pihole Backup 2" = {
                   icon = "pi-hole";
-                  href = "https://${addresses.home.hosts.pi-legacy}/admin";
+                  href = "https://${addresses.infra.hosts.pi-legacy}/admin";
                   description = "DNS Ad Blocker";
                 };
               }

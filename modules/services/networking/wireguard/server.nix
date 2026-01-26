@@ -19,13 +19,23 @@ in
     };
     wgInterface = mkOption {
       type = types.str;
-      description = "Interface to use for WireGuard server";
       default = "wg0";
+      description = "Interface for WireGuard server";
     };
     lanInterface = mkOption {
-      type = types.str;
-      description = "Interface to use for masquerading LAN traffic";
-      default = "eth0";
+      type = types.nullOr types.str;
+      default = null;
+      description = "Interface for LAN";
+    };
+    infraInterface = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = "Interface for infra VLAN";
+    };
+    dmzInterface = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = "Interface for DMZ VLAN";
     };
 
     peers = mkOption {
@@ -79,18 +89,29 @@ in
         trustedInterfaces = [ cfg.server.wgInterface ];
         allowedUDPPorts = [ ports.wireguard ];
       };
-
-      nftables.tables = {
-        "vpn-nat" = {
-          family = "ip";
-          content = ''
-            chain postrouting {
-              type nat hook postrouting priority 100; policy accept;
-              ip saddr ${addresses.vpn.network} oifname "${cfg.server.lanInterface}" masquerade
-            }
-          '';
-        };
-      };
     };
+
+    custom.services.networking.router.extraForwardRules = ''
+      # VPN -> LAN
+      ${
+        lib.optionalString cfg.server.lanInterface != null ''
+          iifname "${cfg.server.wgInterface}" oifname "${cfg.server.lanInterface}" accept
+        ''
+      }
+
+      # VPN -> Infra
+      ${
+        lib.optionalString cfg.server.infraInterface != null ''
+          iifname "${cfg.server.wgInterface}" oifname "${cfg.server.infraInterface}" accept
+        ''
+      }
+
+      # VPN -> DMZ
+      ${
+        lib.optionalString cfg.server.dmzInterface != null ''
+          iifname "${cfg.server.wgInterface}" oifname "${cfg.server.dmzInterface}" accept
+        ''
+      }
+    '';
   };
 }

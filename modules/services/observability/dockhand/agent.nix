@@ -35,7 +35,7 @@ in
         user = "${toString oci-uids.dockhand}:${toString oci-uids.podman}";
         ports = [
           "${
-            addresses.home.hosts.${config.networking.hostName}
+            addresses.infra.hosts.${config.networking.hostName}
           }:${toString ports.dockhand.agent}:${toString ports.dockhand.agent}"
         ];
         volumes = [

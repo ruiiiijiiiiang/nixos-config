@@ -14,7 +14,7 @@ let
   ossecContent =
     builtins.replaceStrings
       [ "@AGENT_NAME@" "@SERVER_ADDRESS@" ]
-      [ agentName addresses.home.hosts.vm-monitor ]
+      [ agentName addresses.infra.hosts.vm-monitor ]
       ossecTemplate;
   initialFile = pkgs.writeText "ossec.conf" ossecContent;
   ossecFile = "/var/wazuh/ossec.conf";

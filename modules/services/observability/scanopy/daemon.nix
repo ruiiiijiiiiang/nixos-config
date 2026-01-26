@@ -29,7 +29,7 @@ in
         ];
         environmentFiles = [ config.age.secrets.scanopy-daemon-env.path ];
         environment = {
-          SCANOPY_SERVER_URL = "http://${addresses.home.hosts.vm-monitor}:${toString ports.scanopy.server}";
+          SCANOPY_SERVER_URL = "http://${addresses.infra.hosts.vm-monitor}:${toString ports.scanopy.server}";
           SCANOPY_NAME = "${config.networking.hostName}-daemon";
           SCANOPY_MODE = "Pull";
         };

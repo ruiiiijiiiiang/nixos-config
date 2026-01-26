@@ -3,6 +3,8 @@ let
   wanInterface = "ens18";
   lanInterface = "ens19";
   wgInterface = "wg0";
+  infraInterface = "infra0";
+  dmzInterface = "dmz0";
 in
 {
   system.stateVersion = "25.11";
@@ -34,22 +36,35 @@ in
       networking = {
         router = {
           enable = true;
-          inherit wanInterface;
-          inherit lanInterface;
+          inherit wanInterface lanInterface;
+          infra = {
+            vlanId = 20;
+            interface = infraInterface;
+          };
           dmz = {
-            enable = true;
             vlanId = 88;
-            interface = "dmz0";
+            interface = dmzInterface;
           };
         };
+
         suricata = {
           enable = true;
-          inherit wanInterface;
-          inherit lanInterface;
+          inherit
+            wgInterface
+            wanInterface
+            lanInterface
+            infraInterface
+            dmzInterface
+            ;
         };
         wireguard.server = {
           enable = true;
-          inherit wgInterface lanInterface;
+          inherit
+            wgInterface
+            lanInterface
+            infraInterface
+            dmzInterface
+            ;
           privateKeyFile = config.age.secrets.wireguard-server-private-key.path;
           peers = [
             {
@@ -68,7 +83,7 @@ in
         };
         dns = {
           enable = true;
-          interface = lanInterface;
+          interface = infraInterface;
           vrrp = {
             enable = true;
             state = "MASTER";
@@ -84,18 +99,19 @@ in
       observability = {
         beszel.agent = {
           enable = true;
-          interface = lanInterface;
+          interface = infraInterface;
         };
         dockhand.agent.enable = true;
         prometheus.exporters = {
           kea.enable = true;
           nginx.enable = true;
           node.enable = true;
-          interface = lanInterface;
+          podman.enable = true;
+          interface = infraInterface;
         };
         wazuh.agent = {
           enable = true;
-          interface = lanInterface;
+          interface = infraInterface;
         };
       };
     };

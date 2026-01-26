@@ -12,6 +12,11 @@ in
 {
   options.custom.services.networking.wireguard.client = with lib; {
     enable = mkEnableOption "WireGuard VPN client";
+    wgInterface = mkOption {
+      type = types.str;
+      description = "Interface to use for WireGuard client";
+      default = "wg0";
+    };
     address = mkOption {
       type = types.nullOr types.str;
       default = null;
@@ -41,10 +46,10 @@ in
       }
     ];
 
-    networking.wg-quick.interfaces.wg-home = {
+    networking.wg-quick.interfaces.${cfg.client.wgInterface} = {
       inherit (cfg.client) privateKeyFile;
       address = [ "${cfg.client.address}/32" ];
-      dns = [ addresses.home.vip.dns ];
+      dns = [ addresses.infra.vip.dns ];
       peers = [
         {
           inherit (wg.vm-network) publicKey;
@@ -52,6 +57,7 @@ in
           endpoint = "${vpn-endpoint}:${toString ports.wireguard}";
           allowedIPs = [
             addresses.home.network
+            addresses.infra.network
             addresses.vpn.network
           ];
           persistentKeepalive = 25;

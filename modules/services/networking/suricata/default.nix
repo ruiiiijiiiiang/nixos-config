@@ -23,12 +23,27 @@ in
     wanInterface = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Interface connecting to the WAN";
+      description = "Interface for WAN";
     };
     lanInterface = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Interface connecting to the LAN";
+      description = "Interface for LAN";
+    };
+    wgInterface = mkOption {
+      type = types.str;
+      default = null;
+      description = "Interface for WireGuard server";
+    };
+    infraInterface = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = "Interface for infra VLAN";
+    };
+    dmzInterface = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = "Interface for DMZ VLAN";
     };
   };
 
@@ -53,17 +68,35 @@ in
           family = "inet";
           content = ''
             chain forward {
-              # Hook into the FORWARD path (traffic passing through the router)
-              # Priority 0 puts it alongside standard filter rules.
-              type filter hook forward priority 0; policy accept;
+              type filter hook forward priority -10; policy accept;
 
-              ${lib.optionalString config.custom.services.networking.wireguard.server.enable ''
-                iifname ${config.custom.services.networking.wireguard.server.wgInterface} counter return # Traffic coming from VPN
-                oifname ${config.custom.services.networking.wireguard.server.wgInterface} counter return # Traffic going to VPN
-              ''}
+              iifname "${cfg.wanInterface}" oifname "${cfg.lanInterface}" counter queue num 0 bypass
+              iifname "${cfg.lanInterface}" oifname "${cfg.wanInterface}" counter queue num 0 bypass
 
-              iifname "${cfg.wanInterface}" oifname "${cfg.lanInterface}" counter queue num 0 bypass # Forward traffic from WAN to LAN -> Queue 0
-              iifname "${cfg.lanInterface}" oifname "${cfg.wanInterface}" counter queue num 0 bypass # Forward traffic from LAN to WAN -> Queue 0
+              ${
+                lib.optionalString cfg.wgInterface != null ''
+                  iifname ${cfg.wgInterface} counter return
+                  oifname ${cfg.wgInterface} counter return
+                ''
+              }
+
+              ${
+                lib.optionalString cfg.infraInterface != null ''
+                  iifname "${cfg.wanInterface}" oifname "${cfg.infraInterface}" counter queue num 0 bypass
+                  iifname "${cfg.infraInterface}" oifname "${cfg.wanInterface}" counter queue num 0 bypass
+                  iifname "${cfg.lanInterface}" oifname "${cfg.infraInterface}" counter queue num 0 bypass
+                  iifname "${cfg.infraInterface}" oifname "${cfg.lanInterface}" counter queue num 0 bypass
+                ''
+              }
+
+              ${
+                lib.optionalString cfg.dmzInterface != null ''
+                  iifname "${cfg.wanInterface}" oifname "${cfg.dmzInterface}" counter queue num 0 bypass
+                  iifname "${cfg.dmzInterface}" oifname "${cfg.wanInterface}" counter queue num 0 bypass
+                  iifname "${cfg.lanInterface}" oifname "${cfg.dmzInterface}" counter queue num 0 bypass
+                  iifname "${cfg.dmzInterface}" oifname "${cfg.lanInterface}" counter queue num 0 bypass
+                ''
+              }
             }
           '';
         };
@@ -106,7 +139,13 @@ in
 
           vars = {
             address-groups = {
-              HOME_NET = "[${addresses.home.network}]";
+              HOME_NET = "[${
+                lib.concatStringsSep "," [
+                  addresses.home.network
+                  addresses.infra.network
+                  addresses.dmz.network
+                ]
+              }]";
               EXTERNAL_NET = "!$HOME_NET";
             };
           };

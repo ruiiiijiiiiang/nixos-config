@@ -33,18 +33,36 @@ in
       description = "Interface connecting to the LAN";
     };
 
+    infra = {
+      vlanId = mkOption {
+        type = types.int;
+        default = 20;
+        description = "VLAN tag ID for infra";
+      };
+      interface = mkOption {
+        type = types.str;
+        default = "infra0";
+        description = "Virtual interface name for infra";
+      };
+    };
+
     dmz = {
-      enable = mkEnableOption "DMZ VLAN";
       vlanId = mkOption {
         type = types.int;
         default = 88;
-        description = "VLAN tag ID for the DMZ";
+        description = "VLAN tag ID for DMZ";
       };
       interface = mkOption {
         type = types.str;
         default = "dmz0";
-        description = "Virtual interface name for the DMZ";
+        description = "Virtual interface name for DMZ";
       };
+    };
+
+    extraForwardRules = mkOption {
+      type = types.lines;
+      default = "";
+      description = "Extra rules to append to the router forward chain.";
     };
   };
 
@@ -62,6 +80,8 @@ in
     };
 
     networking = {
+      networkmanager.enable = false;
+
       interfaces = {
         ${cfg.wanInterface}.useDHCP = true;
 
@@ -75,7 +95,17 @@ in
           ];
         };
 
-        ${cfg.dmz.interface} = lib.mkIf cfg.dmz.enable {
+        ${cfg.infra.interface} = {
+          useDHCP = false;
+          ipv4.addresses = [
+            {
+              address = addresses.infra.hosts.${config.networking.hostName};
+              prefixLength = 24;
+            }
+          ];
+        };
+
+        ${cfg.dmz.interface} = {
           useDHCP = false;
           ipv4.addresses = [
             {
@@ -89,7 +119,11 @@ in
       nat = {
         enable = true;
         externalInterface = cfg.wanInterface;
-        internalInterfaces = [ cfg.lanInterface ] ++ (lib.optional cfg.dmz.enable cfg.dmz.interface);
+        internalInterfaces = [
+          cfg.lanInterface
+          cfg.infra.interface
+          cfg.dmz.interface
+        ];
       };
 
       firewall = {
@@ -101,22 +135,37 @@ in
           };
 
           ${cfg.lanInterface} = {
-            allowedUDPPorts = [ ports.dhcp ];
-          };
-
-          ${cfg.dmz.interface} = lib.mkIf cfg.dmz.enable {
+            allowedTCPPorts = [ ports.dns ];
             allowedUDPPorts = [
               ports.dhcp
               ports.dns
             ];
+          };
+
+          ${cfg.infra.interface} = {
             allowedTCPPorts = [ ports.dns ];
+            allowedUDPPorts = [
+              ports.dhcp
+              ports.dns
+            ];
+          };
+
+          ${cfg.dmz.interface} = {
+            allowedUDPPorts = [ ports.dhcp ];
           };
         };
       };
 
-      vlans.${cfg.dmz.interface} = lib.mkIf cfg.dmz.enable {
-        id = cfg.dmz.vlanId;
-        interface = cfg.lanInterface;
+      vlans = {
+        ${cfg.infra.interface} = {
+          id = cfg.infra.vlanId;
+          interface = cfg.lanInterface;
+        };
+
+        ${cfg.dmz.interface} = {
+          id = cfg.dmz.vlanId;
+          interface = cfg.lanInterface;
+        };
       };
 
       nftables = {
@@ -125,23 +174,22 @@ in
           family = "ip";
           content = ''
             chain forward {
-              type filter hook forward priority 0; policy accept;
-
-              # Allow return traffic
+              type filter hook forward priority 0; policy drop;
               ct state established,related accept
 
-              # Conditional DMZ Rules inserted via string interpolation
-              ${lib.optionalString cfg.dmz.enable ''
-                # Allow LAN -> DMZ
-                iifname "${cfg.lanInterface}" oifname "${cfg.dmz.interface}" accept
+              iifname "${cfg.lanInterface}" accept
 
-                # Allow DMZ -> LAN (DNS Only)
-                iifname "${cfg.dmz.interface}" oifname "${cfg.lanInterface}" ip daddr ${addresses.home.vip.dns} udp dport ${toString ports.dns} accept
-                iifname "${cfg.dmz.interface}" oifname "${cfg.lanInterface}" ip daddr ${addresses.home.vip.dns} tcp dport ${toString ports.dns} accept
+              ${cfg.extraForwardRules}
 
-                # Drop other DMZ -> LAN
-                iifname "${cfg.dmz.interface}" oifname "${cfg.lanInterface}" drop
-              ''}
+              # Infra -> WAN
+              iifname "${cfg.infra.interface}" oifname "${cfg.wanInterface}" accept
+
+              # DMZ -> WAN
+              iifname "${cfg.dmz.interface}" oifname "${cfg.wanInterface}" accept
+
+              # DMZ -> Infra (DNS Only)
+              iifname "${cfg.dmz.interface}" oifname "${cfg.infra.interface}" ip daddr ${addresses.infra.vip.dns} udp dport ${toString ports.dns} accept
+              iifname "${cfg.dmz.interface}" oifname "${cfg.infra.interface}" ip daddr ${addresses.infra.vip.dns} tcp dport ${toString ports.dns} accept
             }
           '';
         };
@@ -153,28 +201,48 @@ in
         enable = true;
         settings = {
           interfaces-config = {
-            interfaces = [ cfg.lanInterface ] ++ (lib.optional cfg.dmz.enable cfg.dmz.interface);
+            interfaces = [
+              cfg.lanInterface
+              cfg.infra.interface
+              cfg.dmz.interface
+            ];
           };
           valid-lifetime = 86400;
           subnet4 = [
             {
-              id = 1;
+              id = 2;
               reservations = getReservations "home";
               subnet = addresses.home.network;
               pools = [ { pool = "${addresses.home.dhcp-min} - ${addresses.home.dhcp-max}"; } ];
               option-data = [
                 {
                   name = "routers";
-                  data = addresses.home.hosts.vm-network;
+                  data = addresses.home.hosts.${config.networking.hostName};
                 }
                 {
                   name = "domain-name-servers";
-                  data = addresses.home.vip.dns;
+                  data = addresses.infra.vip.dns;
                 }
               ];
             }
-          ]
-          ++ (lib.optionals cfg.dmz.enable [
+
+            {
+              id = cfg.infra.vlanId;
+              subnet = addresses.infra.network;
+              pools = [ { pool = "${addresses.infra.dhcp-min} - ${addresses.infra.dhcp-max}"; } ];
+              reservations = getReservations "infra";
+              option-data = [
+                {
+                  name = "routers";
+                  data = addresses.infra.hosts.${config.networking.hostName};
+                }
+                {
+                  name = "domain-name-servers";
+                  data = addresses.infra.vip.dns;
+                }
+              ];
+            }
+
             {
               id = cfg.dmz.vlanId;
               subnet = addresses.dmz.network;
@@ -187,11 +255,12 @@ in
                 }
                 {
                   name = "domain-name-servers";
-                  data = addresses.home.vip.dns;
+                  data = addresses.infra.vip.dns;
                 }
               ];
             }
-          ]);
+          ];
+
           control-socket = {
             socket-type = "unix";
             socket-name = "/run/kea/kea-dhcp4.socket";

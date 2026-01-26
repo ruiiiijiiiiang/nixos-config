@@ -1,6 +1,7 @@
 { config, consts, ... }:
 let
   inherit (consts) addresses;
+  wgInterface = "wg0";
 in
 {
   system.stateVersion = "25.05";
@@ -31,6 +32,7 @@ in
 
       networking.wireguard.client = {
         enable = true;
+        inherit wgInterface;
         address = addresses.vpn.hosts.framework;
         privateKeyFile = config.age.secrets.wireguard-framework-private-key.path;
         presharedKeyFile = config.age.secrets.wireguard-framework-preshared-key.path;

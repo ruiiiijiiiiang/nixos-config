@@ -22,13 +22,13 @@ in
           credentialsFile = config.age.secrets.cloudflare-tunnel-token.path;
           ingress = {
             "public.${domains.home}" = {
-              service = "https://${addresses.home.hosts.vm-app}:443";
+              service = "https://${addresses.infra.hosts.vm-app}:443";
               originRequest = {
                 originServerName = "public.${domains.home}";
               };
             };
             "bin.${domains.home}" = {
-              service = "https://${addresses.home.hosts.vm-app}:443";
+              service = "https://${addresses.infra.hosts.vm-app}:443";
               originRequest = {
                 originServerName = "bin.${domains.home}";
               };

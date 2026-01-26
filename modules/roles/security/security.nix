@@ -25,7 +25,6 @@ in
 
     security = {
       apparmor.enable = false;
-      polkit.enable = lib.mkForce false;
       sudo.wheelNeedsPassword = false;
     };
 

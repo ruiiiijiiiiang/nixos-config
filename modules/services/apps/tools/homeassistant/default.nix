@@ -29,14 +29,14 @@ in
         image = "ghcr.io/home-assistant/home-assistant:stable";
         ports = [
           "${
-            addresses.home.hosts.${config.networking.hostName}
+            addresses.infra.hosts.${config.networking.hostName}
           }:${toString ports.homeassistant}:${toString ports.homeassistant}"
           "${addresses.localhost}:${toString ports.homeassistant}:${toString ports.homeassistant}"
           "${addresses.localhost}:${toString ports.zwave}:${toString ports.zwave}"
         ];
         volumes = [ "/var/lib/home-assistant:/config" ];
         environment.TZ = timeZone;
-        devices = [ "/dev/serial/by-id/usb-1a86_USB_Serial-if00-port0" ];
+        devices = [ "/dev/serial/by-id/usb-1a86_USB_Serial-if00-port0:/dev/zigbee" ];
         labels = {
           "io.containers.autoupdate" = "registry";
         };
