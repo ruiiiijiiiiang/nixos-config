@@ -94,23 +94,32 @@ in
     custom.services.networking.router.extraForwardRules = ''
       # VPN -> LAN
       ${
-        lib.optionalString cfg.server.lanInterface != null ''
-          iifname "${cfg.server.wgInterface}" oifname "${cfg.server.lanInterface}" accept
-        ''
+        if cfg.server.lanInterface != null then
+          ''
+            iifname "${cfg.server.wgInterface}" oifname "${cfg.server.lanInterface}" accept
+          ''
+        else
+          ""
       }
 
       # VPN -> Infra
       ${
-        lib.optionalString cfg.server.infraInterface != null ''
-          iifname "${cfg.server.wgInterface}" oifname "${cfg.server.infraInterface}" accept
-        ''
+        if cfg.server.infraInterface != null then
+          ''
+            iifname "${cfg.server.wgInterface}" oifname "${cfg.server.infraInterface}" accept
+          ''
+        else
+          ""
       }
 
       # VPN -> DMZ
       ${
-        lib.optionalString cfg.server.dmzInterface != null ''
-          iifname "${cfg.server.wgInterface}" oifname "${cfg.server.dmzInterface}" accept
-        ''
+        if cfg.server.dmzInterface != null then
+          ''
+            iifname "${cfg.server.wgInterface}" oifname "${cfg.server.dmzInterface}" accept
+          ''
+        else
+          ""
       }
     '';
   };
