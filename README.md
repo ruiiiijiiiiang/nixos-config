@@ -10,7 +10,7 @@ Forget "it works on my machine." Here, the entire state of the machine _is_ the 
 
 ## Project Structure
 
-**Modular by Design. Scalable by Default.**
+**Architected for Evolution. Built for Scale.**
 
 This infrastructure is engineered following a rigorous **Domain-Driven Design** philosophy. The codebase is organized into four distinct, composable layers:
 
@@ -22,32 +22,40 @@ This infrastructure is engineered following a rigorous **Domain-Driven Design** 
     - **Observability:** The eyes and ears (Monitoring, Logging, Security Agents).
     - **Apps:** The user experience, grouped by function (Office, Tools, Media, Security, Web).
 
-The `flake.nix` acts as the grand conductor, orchestrating these modules to synthesize specific host configurations. A **hybrid deployment strategy** is employed to balance raw performance with operational stability:
+The `flake.nix` is the central cortex, orchestrating these modules to synthesize specific host configurations. A **hybrid deployment strategy** is employed to balance raw performance with operational stability:
 
 - **Native Infrastructure:** Core network services like **Nginx**, **Kea DHCP**, and **WireGuard** run close to the metal via native NixOS modules for maximum throughput and reliability.
 - **Containerized Applications:** User-facing apps are encapsulated in **OCI containers** (managed by Podman). This ensures strict isolation, precise version pinning, and a clean separation between the "Application Layer" and the "OS Layer."
 
 ## Network Architecture
 
-**The Digital Gatekeeper.**
+**The Cybernetic Core.**
 
 The `vm-network` VM serves as the nerve center of the home network. It replaces consumer-grade router firmware with a fully software-defined, hardened networking appliance that routes every packet, enforces strict firewall rules, and inspects traffic for threats.
 
 ### The Routing Core
 
-The network is physically connected via two interfaces, but logically segmented into distinct security zones using VLANs:
+The network is physically connected via two interfaces, but logically segmented into distinct security zones using VLANs and virtual interfaces:
 
-- **WAN (`ens18`):** The shield against the public internet.
+- **WAN (`ens18`):** The shield against the public internet. Default policy is **DROP**.
 - **LAN (`ens19`):** The physical trunk carrying multiple logical networks:
-    - **Home (Native):** Trusted user devices.
-    - **Infra (VLAN 20):** Dedicated management lane for servers and critical infrastructure.
-    - **DMZ (VLAN 88):** Isolated zone for untrusted workloads, restricted to WAN access and DNS only.
+    - **Home (Native):** Trusted user devices (e.g., `framework`).
+        - *Routing:* Unrestricted access to WAN, Infra, DMZ, and VPN.
+    - **Infra (VLAN 20):** Dedicated management lane for servers and critical infrastructure (e.g., `pi`, `vm-app`, `vm-monitor`).
+        - *Routing:* Access to WAN. Isolated from Home and DMZ.
+    - **DMZ (VLAN 88):** Isolated zone for untrusted workloads (e.g., `vm-security`).
+        - *Routing:* Access to WAN. Restricted access to Infra for DNS (UDP/TCP 53) only. No access to Home.
+- **WireGuard (`wg0`):** Secure remote access tunnel.
+    - *Routing:* Authenticated peers get full access to Home, Infra, and DMZ networks.
 
-Powered by **NAT & IP Forwarding**, a strict **NFTables Firewall**, and **Kea DHCP**, this core ensures seamless connectivity and strict isolation.
+Powered by **NFTables**, the firewall enforces a strict "default drop" policy for forwarding. Traffic is explicitly permitted based on the source zone:
+- **Home:** Trusted; can initiate connections to anywhere.
+- **Infra/DMZ:** Untrusted; can only egress to the internet (WAN), with DMZ having a pinhole for DNS.
+- **VPN:** Trusted; treated effectively as an extension of the Home network.
 
 ### High-Availability DNS
 
-Resolution is redundancy. The network relies on a high-availability DNS cluster spanning `vm-network`, `pi`, and `pi-legacy` to ensure that ad-blocking and name resolution never sleep.
+Redundancy is the only Reality. The network relies on a high-availability DNS cluster spanning `vm-network`, `pi`, and `pi-legacy` to ensure that ad-blocking and name resolution never sleep.
 
 - **The Stack:** **Pi-hole** for network-wide ad-blocking + **Unbound** for recursive, privacy-respecting DNS-over-TLS resolution.
 - **The Redundancy:** **Keepalived** manages a Virtual IP (VIP) that floats across the cluster. If the master node blinks, the VIP instantly migrates to a backup, keeping the network online without a hiccup.
@@ -65,10 +73,12 @@ Every server host (`pi`, `vm-app`, `vm-network`, `vm-monitor`) comes equipped wi
 ### `framework`
 
 **The Command Center.** The primary development workstation, tailored for code, creativity, and control.
+- **Network:** Home (Native)
 
 ### `pi`
 
 **The Physical Bridge.** A Raspberry Pi 4 that bridges the digital and physical worlds. Armed with **Z-Wave and Zigbee** radios, it acts as the central brain for Home Asssistant while standing watch as a backup DNS node.
+- **Network:** Infra (VLAN 20)
 
 ### Virtual Machines (Proxmox)
 
@@ -81,6 +91,7 @@ Every server host (`pi`, `vm-app`, `vm-network`, `vm-monitor`) comes equipped wi
 
 **The Application Hub.** The workhorse running the self-hosted suite:
 
+- **Network:** Infra (VLAN 20)
 - **Productivity:** Paperless-ngx, Memos, OpenCloud, Stirling PDF.
 - **Media & Sync:** Immich, Syncthing.
 - **Tools:** Atuin, Dockhand, PocketID, Vaultwarden, and more.
@@ -88,18 +99,22 @@ Every server host (`pi`, `vm-app`, `vm-network`, `vm-monitor`) comes equipped wi
 #### `vm-network`
 
 **The Sentinel.** The primary router, firewall, and DNS authority. It manages the Cloudflare Tunnels, WireGuard VPNs, and Suricata IDS/IPS.
+- **Network:** Gateway (WAN, Home, Infra, DMZ)
 
 #### `vm-monitor`
 
 **The Watchtower.** Dedicated to keeping the lights on. It hosts the **Beszel Hub**, **Prometheus**, **Wazuh Server**, and **Gatus** to visualize the health and security of the entire infrastructure.
+- **Network:** Infra (VLAN 20)
 
 #### `vm-security`
 
 **The Armory.** A specialized, security-focused desktop environment loaded with tools for penetration testing, forensics, and reverse engineering.
+- **Network:** DMZ (VLAN 88)
+- **Security:** **None.** This host is intentionally left vulnerable with no defenses to ensure maximum attack efficiency and unrestricted tool usage.
 
 ## Security Configuration
 
-**Paranoid by Design.**
+**Ironclad Defense.**
 
 Security isn't a feature; it's the foundation. Every server is hardened against modern threat vectors at the kernel level:
 
@@ -109,7 +124,7 @@ Security isn't a feature; it's the foundation. Every server is hardened against 
 
 ## Secret Management
 
-**Secrets, Kept Secret.**
+**Vault-Grade Secrets.**
 
 No more `.env` files leaking in git history. Sensitive data is encrypted at rest using **age** and **agenix**. Secrets are decrypted only at runtime, in-memory, and only by the specific host identity that requires them. It is GitOps-friendly, cryptographically secure, and zero-trust by default.
 

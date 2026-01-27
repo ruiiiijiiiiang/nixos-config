@@ -35,6 +35,7 @@ in
       john
       hashcat
       thc-hydra
+      seclists
 
       # Exploitation
       metasploit

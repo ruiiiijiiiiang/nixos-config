@@ -63,7 +63,7 @@ rec {
     localhost-v6 = "::1";
     home = {
       network = "192.168.2.0/24";
-      dhcp-min = "192.168.2.100";
+      dhcp-min = "192.168.2.50";
       dhcp-max = "192.168.2.250";
       hosts = {
         vm-network = "192.168.2.1";
@@ -89,7 +89,7 @@ rec {
     };
     dmz = {
       network = "192.168.88.0/24";
-      dhcp-min = "192.168.88.100";
+      dhcp-min = "192.168.88.50";
       dhcp-max = "192.168.88.250";
       hosts = {
         vm-network = "192.168.88.1";
@@ -166,7 +166,6 @@ rec {
     nginx = {
       stub = 8082;
     };
-    oauth2 = 4180;
     onlyoffice = 8001;
     opencloud = 9201;
     paperless = 28981;

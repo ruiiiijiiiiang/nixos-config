@@ -147,6 +147,11 @@ in
             allowedUDPPorts = [ ports.dhcp ];
           };
         };
+
+        extraInputRules = ''
+          iifname "${cfg.dmzInterface}" ip daddr ${addresses.infra.vip.dns} udp dport ${toString ports.dns} accept
+          iifname "${cfg.dmzInterface}" ip daddr ${addresses.infra.vip.dns} tcp dport ${toString ports.dns} accept
+        '';
       };
 
       vlans = {
