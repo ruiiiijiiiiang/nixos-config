@@ -2,9 +2,9 @@
 let
   wanInterface = "ens18";
   lanInterface = "ens19";
-  wgInterface = "wg0";
   infraInterface = "infra0";
   dmzInterface = "dmz0";
+  wgInterface = "wg0";
 in
 {
   system.stateVersion = "25.11";
@@ -36,34 +36,34 @@ in
       networking = {
         router = {
           enable = true;
-          inherit wanInterface lanInterface;
-          infra = {
-            vlanId = 20;
-            interface = infraInterface;
-          };
-          dmz = {
-            vlanId = 88;
-            interface = dmzInterface;
-          };
-        };
-
-        suricata = {
-          enable = true;
           inherit
-            wgInterface
             wanInterface
             lanInterface
             infraInterface
             dmzInterface
             ;
+          infraVlanId = 20;
+          dmzVlanId = 88;
+        };
+
+        suricata = {
+          enable = true;
+          inherit
+            wanInterface
+            lanInterface
+            infraInterface
+            dmzInterface
+            wgInterface
+            ;
         };
         wireguard.server = {
           enable = true;
           inherit
-            wgInterface
+            wanInterface
             lanInterface
             infraInterface
             dmzInterface
+            wgInterface
             ;
           privateKeyFile = config.age.secrets.wireguard-server-private-key.path;
           peers = [

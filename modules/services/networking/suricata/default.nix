@@ -30,20 +30,20 @@ in
       default = null;
       description = "Interface for LAN";
     };
-    wgInterface = mkOption {
-      type = types.str;
-      default = null;
-      description = "Interface for WireGuard server";
-    };
     infraInterface = mkOption {
-      type = types.nullOr types.str;
-      default = null;
+      type = types.str;
+      default = "infra0";
       description = "Interface for infra VLAN";
     };
     dmzInterface = mkOption {
-      type = types.nullOr types.str;
-      default = null;
+      type = types.str;
+      default = "dmz0";
       description = "Interface for DMZ VLAN";
+    };
+    wgInterface = mkOption {
+      type = types.str;
+      default = "wg0";
+      description = "Interface for WireGuard server";
     };
   };
 
@@ -73,39 +73,18 @@ in
               iifname "${cfg.wanInterface}" oifname "${cfg.lanInterface}" counter queue num 0 bypass
               iifname "${cfg.lanInterface}" oifname "${cfg.wanInterface}" counter queue num 0 bypass
 
-              ${
-                if cfg.wgInterface != null then
-                  ''
-                    iifname ${cfg.wgInterface} counter return
-                    oifname ${cfg.wgInterface} counter return
-                  ''
-                else
-                  ""
-              }
+              iifname ${cfg.wgInterface} counter return
+              oifname ${cfg.wgInterface} counter return
 
-              ${
-                if cfg.infraInterface != null then
-                  ''
-                    iifname "${cfg.wanInterface}" oifname "${cfg.infraInterface}" counter queue num 0 bypass
-                    iifname "${cfg.infraInterface}" oifname "${cfg.wanInterface}" counter queue num 0 bypass
-                    iifname "${cfg.lanInterface}" oifname "${cfg.infraInterface}" counter queue num 0 bypass
-                    iifname "${cfg.infraInterface}" oifname "${cfg.lanInterface}" counter queue num 0 bypass
-                  ''
-                else
-                  ""
-              }
+              iifname "${cfg.wanInterface}" oifname "${cfg.infraInterface}" counter queue num 0 bypass
+              iifname "${cfg.infraInterface}" oifname "${cfg.wanInterface}" counter queue num 0 bypass
+              iifname "${cfg.lanInterface}" oifname "${cfg.infraInterface}" counter queue num 0 bypass
+              iifname "${cfg.infraInterface}" oifname "${cfg.lanInterface}" counter queue num 0 bypass
 
-              ${
-                if cfg.dmzInterface != null then
-                  ''
-                    iifname "${cfg.wanInterface}" oifname "${cfg.dmzInterface}" counter queue num 0 bypass
-                    iifname "${cfg.dmzInterface}" oifname "${cfg.wanInterface}" counter queue num 0 bypass
-                    iifname "${cfg.lanInterface}" oifname "${cfg.dmzInterface}" counter queue num 0 bypass
-                    iifname "${cfg.dmzInterface}" oifname "${cfg.lanInterface}" counter queue num 0 bypass
-                  ''
-                else
-                  ""
-              }
+              iifname "${cfg.wanInterface}" oifname "${cfg.dmzInterface}" counter queue num 0 bypass
+              iifname "${cfg.dmzInterface}" oifname "${cfg.wanInterface}" counter queue num 0 bypass
+              iifname "${cfg.lanInterface}" oifname "${cfg.dmzInterface}" counter queue num 0 bypass
+              iifname "${cfg.dmzInterface}" oifname "${cfg.lanInterface}" counter queue num 0 bypass
             }
           '';
         };

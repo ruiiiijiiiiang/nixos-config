@@ -1,6 +1,12 @@
-{ config, lib, ... }:
+{
+  config,
+  consts,
+  lib,
+  ...
+}:
 let
   inherit (import ../../../lib/keys.nix) ssh;
+  inherit (consts) ports;
   cfg = config.custom.roles.headless.network;
 in
 {
@@ -16,9 +22,9 @@ in
       firewall = {
         enable = true;
         allowedTCPPorts = [
-          22
-          80
-          443
+          ports.ssh
+          ports.http
+          ports.https
         ];
         checkReversePath = "loose";
         trustedInterfaces = [ "podman0" ];

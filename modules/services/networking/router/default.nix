@@ -32,33 +32,26 @@ in
       default = null;
       description = "Interface connecting to the LAN";
     };
-
-    infra = {
-      vlanId = mkOption {
-        type = types.int;
-        default = 20;
-        description = "VLAN tag ID for infra";
-      };
-      interface = mkOption {
-        type = types.str;
-        default = "infra0";
-        description = "Virtual interface name for infra";
-      };
+    infraVlanId = mkOption {
+      type = types.int;
+      default = 20;
+      description = "VLAN tag ID for infra";
     };
-
-    dmz = {
-      vlanId = mkOption {
-        type = types.int;
-        default = 88;
-        description = "VLAN tag ID for DMZ";
-      };
-      interface = mkOption {
-        type = types.str;
-        default = "dmz0";
-        description = "Virtual interface name for DMZ";
-      };
+    infraInterface = mkOption {
+      type = types.str;
+      default = "infra0";
+      description = "Virtual interface name for infra";
     };
-
+    dmzVlanId = mkOption {
+      type = types.int;
+      default = 88;
+      description = "VLAN tag ID for DMZ";
+    };
+    dmzInterface = mkOption {
+      type = types.str;
+      default = "dmz0";
+      description = "Virtual interface name for DMZ";
+    };
     extraForwardRules = mkOption {
       type = types.lines;
       default = "";
@@ -95,7 +88,7 @@ in
           ];
         };
 
-        ${cfg.infra.interface} = {
+        ${cfg.infraInterface} = {
           useDHCP = false;
           ipv4.addresses = [
             {
@@ -105,7 +98,7 @@ in
           ];
         };
 
-        ${cfg.dmz.interface} = {
+        ${cfg.dmzInterface} = {
           useDHCP = false;
           ipv4.addresses = [
             {
@@ -121,8 +114,8 @@ in
         externalInterface = cfg.wanInterface;
         internalInterfaces = [
           cfg.lanInterface
-          cfg.infra.interface
-          cfg.dmz.interface
+          cfg.infraInterface
+          cfg.dmzInterface
         ];
       };
 
@@ -142,7 +135,7 @@ in
             ];
           };
 
-          ${cfg.infra.interface} = {
+          ${cfg.infraInterface} = {
             allowedTCPPorts = [ ports.dns ];
             allowedUDPPorts = [
               ports.dhcp
@@ -150,20 +143,20 @@ in
             ];
           };
 
-          ${cfg.dmz.interface} = {
+          ${cfg.dmzInterface} = {
             allowedUDPPorts = [ ports.dhcp ];
           };
         };
       };
 
       vlans = {
-        ${cfg.infra.interface} = {
-          id = cfg.infra.vlanId;
+        ${cfg.infraInterface} = {
+          id = cfg.infraVlanId;
           interface = cfg.lanInterface;
         };
 
-        ${cfg.dmz.interface} = {
-          id = cfg.dmz.vlanId;
+        ${cfg.dmzInterface} = {
+          id = cfg.dmzVlanId;
           interface = cfg.lanInterface;
         };
       };
@@ -182,14 +175,14 @@ in
               ${cfg.extraForwardRules}
 
               # Infra -> WAN
-              iifname "${cfg.infra.interface}" oifname "${cfg.wanInterface}" accept
+              iifname "${cfg.infraInterface}" oifname "${cfg.wanInterface}" accept
 
               # DMZ -> WAN
-              iifname "${cfg.dmz.interface}" oifname "${cfg.wanInterface}" accept
+              iifname "${cfg.dmzInterface}" oifname "${cfg.wanInterface}" accept
 
               # DMZ -> Infra (DNS Only)
-              iifname "${cfg.dmz.interface}" oifname "${cfg.infra.interface}" ip daddr ${addresses.infra.vip.dns} udp dport ${toString ports.dns} accept
-              iifname "${cfg.dmz.interface}" oifname "${cfg.infra.interface}" ip daddr ${addresses.infra.vip.dns} tcp dport ${toString ports.dns} accept
+              iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip daddr ${addresses.infra.vip.dns} udp dport ${toString ports.dns} accept
+              iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip daddr ${addresses.infra.vip.dns} tcp dport ${toString ports.dns} accept
             }
           '';
         };
@@ -203,17 +196,17 @@ in
           interfaces-config = {
             interfaces = [
               cfg.lanInterface
-              cfg.infra.interface
-              cfg.dmz.interface
+              cfg.infraInterface
+              cfg.dmzInterface
             ];
           };
           valid-lifetime = 86400;
           subnet4 = [
             {
               id = 2;
-              reservations = getReservations "home";
               subnet = addresses.home.network;
               pools = [ { pool = "${addresses.home.dhcp-min} - ${addresses.home.dhcp-max}"; } ];
+              reservations = getReservations "home";
               option-data = [
                 {
                   name = "routers";
@@ -227,7 +220,7 @@ in
             }
 
             {
-              id = cfg.infra.vlanId;
+              id = cfg.infraVlanId;
               subnet = addresses.infra.network;
               pools = [ { pool = "${addresses.infra.dhcp-min} - ${addresses.infra.dhcp-max}"; } ];
               reservations = getReservations "infra";
@@ -244,7 +237,7 @@ in
             }
 
             {
-              id = cfg.dmz.vlanId;
+              id = cfg.dmzVlanId;
               subnet = addresses.dmz.network;
               pools = [ { pool = "${addresses.dmz.dhcp-min} - ${addresses.dmz.dhcp-max}"; } ];
               reservations = getReservations "dmz";

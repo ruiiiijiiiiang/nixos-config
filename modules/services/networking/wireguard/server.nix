@@ -17,10 +17,10 @@ in
       default = null;
       description = "Path to WireGuard server private key";
     };
-    wgInterface = mkOption {
-      type = types.str;
-      default = "wg0";
-      description = "Interface for WireGuard server";
+    wanInterface = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = "Interface for WAN";
     };
     lanInterface = mkOption {
       type = types.nullOr types.str;
@@ -28,14 +28,19 @@ in
       description = "Interface for LAN";
     };
     infraInterface = mkOption {
-      type = types.nullOr types.str;
-      default = null;
+      type = types.str;
+      default = "infra0";
       description = "Interface for infra VLAN";
     };
     dmzInterface = mkOption {
-      type = types.nullOr types.str;
-      default = null;
+      type = types.str;
+      default = "dmz0";
       description = "Interface for DMZ VLAN";
+    };
+    wgInterface = mkOption {
+      type = types.str;
+      default = "wg0";
+      description = "Interface for WireGuard server";
     };
 
     peers = mkOption {
@@ -64,6 +69,10 @@ in
         assertion = cfg.server.privateKeyFile != null;
         message = "WireGuard server is enabled but required key is missing.";
       }
+      {
+        assertion = cfg.server.wanInterface != null && cfg.server.lanInterface != null;
+        message = "Suricata is enabled but required interfaces are missing.";
+      }
     ];
 
     networking = {
@@ -81,46 +90,31 @@ in
         }) cfg.server.peers;
       };
 
-      nat = {
-        internalInterfaces = [ cfg.server.wgInterface ];
-      };
+      firewall.interfaces = {
+        "${cfg.server.wanInterface}" = {
+          allowedUDPPorts = [ ports.wireguard ];
+        };
 
-      firewall = {
-        trustedInterfaces = [ cfg.server.wgInterface ];
-        allowedUDPPorts = [ ports.wireguard ];
+        "${cfg.server.lanInterface}" = {
+          allowedUDPPorts = [ ports.wireguard ];
+        };
+
+        "${cfg.server.wgInterface}" = {
+          allowedTCPPorts = [ ports.dns ];
+          allowedUDPPorts = [ ports.dns ];
+        };
       };
     };
 
     custom.services.networking.router.extraForwardRules = ''
       # VPN -> LAN
-      ${
-        if cfg.server.lanInterface != null then
-          ''
-            iifname "${cfg.server.wgInterface}" oifname "${cfg.server.lanInterface}" accept
-          ''
-        else
-          ""
-      }
+      iifname "${cfg.server.wgInterface}" oifname "${cfg.server.lanInterface}" accept
 
       # VPN -> Infra
-      ${
-        if cfg.server.infraInterface != null then
-          ''
-            iifname "${cfg.server.wgInterface}" oifname "${cfg.server.infraInterface}" accept
-          ''
-        else
-          ""
-      }
+      iifname "${cfg.server.wgInterface}" oifname "${cfg.server.infraInterface}" accept
 
       # VPN -> DMZ
-      ${
-        if cfg.server.dmzInterface != null then
-          ''
-            iifname "${cfg.server.wgInterface}" oifname "${cfg.server.dmzInterface}" accept
-          ''
-        else
-          ""
-      }
+      iifname "${cfg.server.wgInterface}" oifname "${cfg.server.dmzInterface}" accept
     '';
   };
 }

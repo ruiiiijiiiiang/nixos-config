@@ -123,6 +123,12 @@ rec {
   };
 
   ports = {
+    ssh = 22;
+    dns = 53;
+    dhcp = 67;
+    http = 80;
+    https = 443;
+
     arr = {
       lidarr = 8686;
       radarr = 7878;
@@ -138,8 +144,6 @@ rec {
       agent = 45876;
     };
     dawarich = 3000;
-    dhcp = 67;
-    dns = 53;
     dockhand = {
       server = 3003;
       agent = 2376;
