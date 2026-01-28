@@ -12,6 +12,11 @@ in
 {
   options.custom.roles.headless.network = with lib; {
     enable = mkEnableOption "Custom network setup for servers";
+    interfaces = mkOption {
+      type = types.listOf types.str;
+      default = [ ];
+      description = "Interfaces to open ports. If empty, ports are open globally.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -19,17 +24,33 @@ in
       networkmanager = {
         wifi.powersave = false;
       };
-      firewall = {
-        enable = true;
-        allowedTCPPorts = [
-          ports.ssh
-          ports.http
-          ports.https
-        ];
-        checkReversePath = "loose";
-        trustedInterfaces = [ "podman0" ];
-        logRefusedConnections = true;
-      };
+      firewall =
+        {
+          enable = true;
+          checkReversePath = "loose";
+          trustedInterfaces = [ "podman0" ];
+          logRefusedConnections = true;
+        }
+        // (
+          if cfg.interfaces != [ ] then
+            {
+              interfaces = lib.genAttrs cfg.interfaces (iface: {
+                allowedTCPPorts = [
+                  ports.ssh
+                  ports.http
+                  ports.https
+                ];
+              });
+            }
+          else
+            {
+              allowedTCPPorts = [
+                ports.ssh
+                ports.http
+                ports.https
+              ];
+            }
+        );
       nat = {
         enable = true;
         internalInterfaces = [ "podman0" ];
@@ -39,6 +60,7 @@ in
     services = {
       openssh = {
         enable = true;
+        openFirewall = false;
         settings = {
           PasswordAuthentication = false;
           PermitRootLogin = "prohibit-password";

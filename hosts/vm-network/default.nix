@@ -19,7 +19,13 @@ in
 
   custom = {
     roles.headless = {
-      network.enable = true;
+      network = {
+        enable = true;
+        interfaces = [
+          lanInterface
+          infraInterface
+        ];
+      };
       security.enable = true;
       services.enable = true;
     };
