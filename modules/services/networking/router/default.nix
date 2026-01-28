@@ -25,17 +25,17 @@ in
     wanInterface = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Interface connecting to the WAN";
+      description = "Interface for WAN";
     };
     lanInterface = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Interface connecting to the LAN";
+      description = "Interface for LAN";
     };
     podmanInterface = mkOption {
       type = types.str;
       default = "podman0";
-      description = "Interface to use for podman";
+      description = "Interface for podman";
     };
     infraVlanId = mkOption {
       type = types.int;
@@ -45,7 +45,7 @@ in
     infraInterface = mkOption {
       type = types.str;
       default = "infra0";
-      description = "Virtual interface name for infra";
+      description = "Interface for infra VLAN";
     };
     dmzVlanId = mkOption {
       type = types.int;
@@ -55,7 +55,7 @@ in
     dmzInterface = mkOption {
       type = types.str;
       default = "dmz0";
-      description = "Virtual interface name for DMZ";
+      description = "Interface for DMZ VLAN";
     };
     extraForwardRules = mkOption {
       type = types.lines;

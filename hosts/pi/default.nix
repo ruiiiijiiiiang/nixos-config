@@ -1,7 +1,9 @@
-{ config, inputs, ... }:
+{ inputs, ... }:
 let
-  interface = "end0";
+  lanInterface = "end0";
+  wlanInterface = "wlan0";
   podmanInterface = "podman0";
+  vlanId = 20;
 in
 {
   imports = [
@@ -16,11 +18,7 @@ in
       hardware.enable = true;
       network = {
         enable = true;
-        inherit interface;
-        vlan = {
-          enable = true;
-          id = 20;
-        };
+        inherit lanInterface wlanInterface vlanId;
       };
       packages.enable = true;
     };
@@ -37,11 +35,7 @@ in
     services = {
       networking.dns = {
         enable = true;
-        interface =
-          let
-            cfg = config.custom.platform.pi.network;
-          in
-          if cfg.vlan.enable then "${interface}.${toString cfg.vlan.id}" else interface;
+        interface = "${lanInterface}.${toString vlanId}";
         vrrp = {
           enable = true;
           state = "BACKUP";

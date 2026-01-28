@@ -9,19 +9,20 @@ in
 {
   options.custom.platform.pi.network = with lib; {
     enable = mkEnableOption "Raspberry Pi 4 network config";
-    interface = mkOption {
+    lanInterface = mkOption {
       type = types.str;
       default = "end0";
       description = "Ethernet interface";
     };
-
-    vlan = {
-      enable = mkEnableOption "Raspberry Pi 4 VLAN config";
-      id = mkOption {
-        type = types.int;
-        default = 20;
-        description = "VLAN tag ID";
-      };
+    wlanInterface = mkOption {
+      type = types.str;
+      default = "wlan0";
+      description = "Wifi interface";
+    };
+    vlanId = mkOption {
+      type = types.int;
+      default = 20;
+      description = "VLAN tag ID";
     };
   };
 
@@ -30,18 +31,26 @@ in
       useDHCP = false;
 
       interfaces = {
-        ${cfg.interface} = {
-          useDHCP = !cfg.vlan.enable;
+        ${cfg.lanInterface} = {
+          useDHCP = false;
         };
-        "${cfg.interface}.${toString cfg.vlan.id}" = lib.mkIf cfg.vlan.enable {
+        ${cfg.wlanInterface} = {
+          useDHCP = false;
+        };
+        "${cfg.lanInterface}.${toString cfg.vlanId}" = {
           useDHCP = true;
         };
       };
 
-      vlans."${cfg.interface}.${toString cfg.vlan.id}" = lib.mkIf cfg.vlan.enable {
-        inherit (cfg) interface;
-        inherit (cfg.vlan) id;
+      vlans."${cfg.lanInterface}.${toString cfg.vlanId}" = {
+        interface = cfg.lanInterface;
+        id = cfg.vlanId;
       };
+
+      networkmanager.unmanaged = [
+        cfg.lanInterface
+        cfg.wlanInterface
+      ];
     };
   };
 }

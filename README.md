@@ -29,7 +29,7 @@ The `flake.nix` is the central cortex, orchestrating these modules to synthesize
 
 ## Network Architecture
 
-### The Cybernetic Core
+### The Cybernetic Nexus
 
 The `vm-network` VM serves as the nerve center of the home network. It replaces consumer-grade router firmware with a fully software-defined, hardened networking appliance that routes every packet, enforces strict firewall rules, and inspects traffic for threats.
 

@@ -252,7 +252,7 @@ in
               {
                 "Proxmox" = {
                   icon = "proxmox";
-                  href = "https://${addresses.home.hosts.proxmox}:${toString ports.proxmox}";
+                  href = "https://${addresses.infra.hosts.proxmox}:${toString ports.proxmox}";
                   description = "Virtual Environment Hypervisor";
                 };
               }

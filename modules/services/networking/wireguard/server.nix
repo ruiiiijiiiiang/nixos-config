@@ -71,7 +71,7 @@ in
       }
       {
         assertion = cfg.server.wanInterface != null && cfg.server.lanInterface != null;
-        message = "Suricata is enabled but required interfaces are missing.";
+        message = "WireGuard server is enabled but required interfaces are missing.";
       }
     ];
 
@@ -107,13 +107,8 @@ in
     };
 
     custom.services.networking.router.extraForwardRules = ''
-      # VPN -> LAN
       iifname "${cfg.server.wgInterface}" oifname "${cfg.server.lanInterface}" accept
-
-      # VPN -> Infra
       iifname "${cfg.server.wgInterface}" oifname "${cfg.server.infraInterface}" accept
-
-      # VPN -> DMZ
       iifname "${cfg.server.wgInterface}" oifname "${cfg.server.dmzInterface}" accept
     '';
   };

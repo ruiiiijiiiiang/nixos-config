@@ -21,6 +21,8 @@ in
       "net.ipv6.conf.all.forwarding" = 1;
 
       "fs.suid_dumpable" = 1;
+
+      "net.ipv4.ip_unprivileged_port_start" = 0;
     };
 
     security = {

@@ -15,12 +15,12 @@ in
     podmanInterface = mkOption {
       type = types.str;
       default = "podman0";
-      description = "Interface to use for podman";
+      description = "Interface for podman";
     };
     trustedInterfaces = mkOption {
       type = types.listOf types.str;
       default = [ ];
-      description = "Interfaces to open ports. If empty, ports are open globally.";
+      description = "Interfaces to open ports; if empty, ports are open globally";
     };
   };
 

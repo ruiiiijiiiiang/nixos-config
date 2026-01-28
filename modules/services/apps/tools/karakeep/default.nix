@@ -74,11 +74,13 @@ in
         user = "${toString oci-uids.karakeep}:${toString oci-uids.karakeep}";
         dependsOn = [ "karakeep-server" ];
         networks = [ "container:karakeep-server" ];
-        volumes = [ "/var/lib/karakeep/meilisearch:/meili_data" ];
         environment = {
           MEILI_NO_ANALYTICS = "true";
         };
         environmentFiles = [ config.age.secrets.karakeep-env.path ];
+        extraOptions = [
+          "--tmpfs=/meili_data:rw,mode=0777"
+        ];
         labels = {
           "io.containers.autoupdate" = "registry";
         };
@@ -89,7 +91,6 @@ in
 
     systemd.tmpfiles.rules = [
       "d /var/lib/karakeep 0700 ${toString oci-uids.karakeep} ${toString oci-uids.karakeep} - -"
-      "d /var/lib/karakeep/meilisearch 0700 ${toString oci-uids.karakeep} ${toString oci-uids.karakeep} - -"
     ];
 
     services = {
