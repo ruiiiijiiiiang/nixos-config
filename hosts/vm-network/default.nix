@@ -2,6 +2,7 @@
 let
   wanInterface = "ens18";
   lanInterface = "ens19";
+  podmanInterface = "podman0";
   infraInterface = "infra0";
   dmzInterface = "dmz0";
   wgInterface = "wg0";
@@ -21,9 +22,11 @@ in
     roles.headless = {
       network = {
         enable = true;
-        interfaces = [
+        inherit podmanInterface;
+        trustedInterfaces = [
           lanInterface
           infraInterface
+          wgInterface
         ];
       };
       security.enable = true;

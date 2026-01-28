@@ -29,26 +29,27 @@ The `flake.nix` is the central cortex, orchestrating these modules to synthesize
 
 ## Network Architecture
 
-**The Cybernetic Core.**
+### The Cybernetic Core
 
 The `vm-network` VM serves as the nerve center of the home network. It replaces consumer-grade router firmware with a fully software-defined, hardened networking appliance that routes every packet, enforces strict firewall rules, and inspects traffic for threats.
 
-### The Routing Core
+### Routing Foundation
 
 The network is physically connected via two interfaces, but logically segmented into distinct security zones using VLANs and virtual interfaces:
 
 - **WAN (`ens18`):** The shield against the public internet. Default policy is **DROP**.
 - **LAN (`ens19`):** The physical trunk carrying multiple logical networks:
-    - **Home (Native):** Trusted user devices (e.g., `framework`).
-        - *Routing:* Unrestricted access to WAN, Infra, DMZ, and VPN.
-    - **Infra (VLAN 20):** Dedicated management lane for servers and critical infrastructure (e.g., `pi`, `vm-app`, `vm-monitor`).
-        - *Routing:* Access to WAN. Isolated from Home and DMZ.
-    - **DMZ (VLAN 88):** Isolated zone for untrusted workloads (e.g., `vm-security`).
-        - *Routing:* Access to WAN. Restricted access to Infra for DNS (UDP/TCP 53) only. No access to Home.
+  - **Home (Native):** Trusted user devices (e.g., `framework`).
+    - _Routing:_ Unrestricted access to WAN, Infra, DMZ, and VPN.
+  - **Infra (VLAN 20):** Dedicated management lane for servers and critical infrastructure (e.g., `pi`, `vm-app`, `vm-monitor`).
+    - _Routing:_ Access to WAN. Isolated from Home.
+  - **DMZ (VLAN 88):** Isolated zone for untrusted workloads (e.g., `vm-security`).
+    - _Routing:_ Access to WAN. Restricted access to Infra for DNS (UDP/TCP 53) only. No access to Home.
 - **WireGuard (`wg0`):** Secure remote access tunnel.
-    - *Routing:* Authenticated peers get full access to Home, Infra, and DMZ networks.
+  - _Routing:_ Authenticated peers get full access to Home, Infra, and DMZ networks.
 
 Powered by **NFTables**, the firewall enforces a strict "default drop" policy for forwarding. Traffic is explicitly permitted based on the source zone:
+
 - **Home:** Trusted; can initiate connections to anywhere.
 - **Infra/DMZ:** Untrusted; can only egress to the internet (WAN), with DMZ having a pinhole for DNS.
 - **VPN:** Trusted; treated effectively as an extension of the Home network.
@@ -73,21 +74,16 @@ Every server host (`pi`, `vm-app`, `vm-network`, `vm-monitor`) comes equipped wi
 ### `framework`
 
 **The Command Center.** The primary development workstation, tailored for code, creativity, and control.
+
 - **Network:** Home (Native)
 
 ### `pi`
 
 **The Physical Bridge.** A Raspberry Pi 4 that bridges the digital and physical worlds. Armed with **Z-Wave and Zigbee** radios, it acts as the central brain for Home Asssistant while standing watch as a backup DNS node.
+
 - **Network:** Infra (VLAN 20)
 
-### Virtual Machines (Proxmox)
-
-**Virtualized Power.** Powered by **Proxmox** but defined by **Disko**, each VM utilizes a high-performance dual-disk strategy:
-
-- **System Drive (NVMe):** Blazing fast root filesystem (`/`) for instant boot and responsive services.
-- **Data Drive (HDD):** Massive storage mounted at `/data` for `/home` and `/var`, ensuring user data survives even total system rebuilds.
-
-#### `vm-app`
+### `vm-app`
 
 **The Application Hub.** The workhorse running the self-hosted suite:
 
@@ -96,19 +92,22 @@ Every server host (`pi`, `vm-app`, `vm-network`, `vm-monitor`) comes equipped wi
 - **Media & Sync:** Immich, Syncthing.
 - **Tools:** Atuin, Dockhand, PocketID, Vaultwarden, and more.
 
-#### `vm-network`
+### `vm-network`
 
 **The Sentinel.** The primary router, firewall, and DNS authority. It manages the Cloudflare Tunnels, WireGuard VPNs, and Suricata IDS/IPS.
+
 - **Network:** Gateway (WAN, Home, Infra, DMZ)
 
-#### `vm-monitor`
+### `vm-monitor`
 
 **The Watchtower.** Dedicated to keeping the lights on. It hosts the **Beszel Hub**, **Prometheus**, **Wazuh Server**, and **Gatus** to visualize the health and security of the entire infrastructure.
+
 - **Network:** Infra (VLAN 20)
 
-#### `vm-security`
+### `vm-security`
 
 **The Armory.** A specialized, security-focused desktop environment loaded with tools for penetration testing, forensics, and reverse engineering.
+
 - **Network:** DMZ (VLAN 88)
 - **Security:** **None.** This host is intentionally left vulnerable with no defenses to ensure maximum attack efficiency and unrestricted tool usage.
 

@@ -1,6 +1,7 @@
 { config, inputs, ... }:
 let
   interface = "end0";
+  podmanInterface = "podman0";
 in
 {
   imports = [
@@ -25,7 +26,10 @@ in
     };
 
     roles.headless = {
-      network.enable = true;
+      network = {
+        enable = true;
+        inherit podmanInterface;
+      };
       security.enable = true;
       services.enable = true;
     };

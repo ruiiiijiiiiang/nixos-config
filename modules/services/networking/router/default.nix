@@ -32,6 +32,11 @@ in
       default = null;
       description = "Interface connecting to the LAN";
     };
+    podmanInterface = mkOption {
+      type = types.str;
+      default = "podman0";
+      description = "Interface to use for podman";
+    };
     infraVlanId = mkOption {
       type = types.int;
       default = 20;
@@ -177,17 +182,15 @@ in
 
               iifname "${cfg.lanInterface}" accept
 
-              ${cfg.extraForwardRules}
-
-              # Infra -> WAN
               iifname "${cfg.infraInterface}" oifname "${cfg.wanInterface}" accept
+              iifname "${cfg.infraInterface}" oifname "${cfg.podmanInterface}" accept
+              iifname "${cfg.infraInterface}" oifname "${cfg.dmzInterface}" accept
 
-              # DMZ -> WAN
               iifname "${cfg.dmzInterface}" oifname "${cfg.wanInterface}" accept
-
-              # DMZ -> Infra (DNS Only)
               iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip daddr ${addresses.infra.vip.dns} udp dport ${toString ports.dns} accept
               iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip daddr ${addresses.infra.vip.dns} tcp dport ${toString ports.dns} accept
+
+              ${cfg.extraForwardRules}
             }
           '';
         };
