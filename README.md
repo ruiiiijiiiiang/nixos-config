@@ -73,41 +73,32 @@ Every server host (`pi`, `vm-app`, `vm-network`, `vm-monitor`) comes equipped wi
 
 ### `framework`
 
-**The Command Center.** The primary development workstation, tailored for code, creativity, and control.
-
+- **The Command Center.** The primary development workstation, tailored for code, creativity, and control.
 - **Network:** Home (Native)
 
 ### `pi`
 
-**The Physical Bridge.** A Raspberry Pi 4 that bridges the digital and physical worlds. Armed with **Z-Wave and Zigbee** radios, it acts as the central brain for Home Asssistant while standing watch as a backup DNS node.
-
+- **The Physical Bridge.** A Raspberry Pi 4 that bridges the digital and physical worlds. Armed with **Z-Wave and Zigbee** radios, it acts as the central brain for Home Asssistant while standing watch as a backup DNS node.
 - **Network:** Infra (VLAN 20)
 
 ### `vm-app`
 
-**The Application Hub.** The workhorse running the self-hosted suite:
-
+- **The Application Hub.** The workhorse running a suite of self-hosted services, including OpenCloud, Immich, Vaultwarden, and more.
 - **Network:** Infra (VLAN 20)
-- **Productivity:** Paperless-ngx, Memos, OpenCloud, Stirling PDF.
-- **Media & Sync:** Immich, Syncthing.
-- **Tools:** Atuin, Dockhand, PocketID, Vaultwarden, and more.
 
 ### `vm-network`
 
-**The Sentinel.** The primary router, firewall, and DNS authority. It manages the Cloudflare Tunnels, WireGuard VPNs, and Suricata IDS/IPS.
-
+- **The Sentinel.** The primary router, firewall, and DNS authority. It manages the Cloudflare Tunnels, WireGuard VPNs, and Suricata IDS/IPS.
 - **Network:** Gateway (WAN, Home, Infra, DMZ)
 
 ### `vm-monitor`
 
-**The Watchtower.** Dedicated to keeping the lights on. It hosts the **Beszel Hub**, **Prometheus**, **Wazuh Server**, and **Gatus** to visualize the health and security of the entire infrastructure.
-
+- **The Watchtower.** Dedicated to keeping the lights on. It hosts the **Beszel Hub**, **Prometheus**, **Grafana**, **Wazuh Server**, and **Gatus** to visualize the health and security of the entire infrastructure.
 - **Network:** Infra (VLAN 20)
 
 ### `vm-security`
 
-**The Armory.** A specialized, security-focused desktop environment loaded with tools for penetration testing, forensics, and reverse engineering.
-
+- **The Armory.** A specialized, security-focused desktop environment loaded with tools for penetration testing, forensics, and reverse engineering.
 - **Network:** DMZ (VLAN 88)
 - **Security:** **None.** This host is intentionally left vulnerable with no defenses to ensure maximum attack efficiency and unrestricted tool usage.
 
