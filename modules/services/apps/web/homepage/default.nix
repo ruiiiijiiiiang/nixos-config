@@ -218,13 +218,6 @@ in
                 };
               }
               {
-                "Dawarich" = {
-                  icon = "dawarich";
-                  href = "https://${subdomains.vm-app.dawarich}.${domains.home}";
-                  description = "Location Tracking";
-                };
-              }
-              {
                 "Reitti" = {
                   icon = "https://cdn.jsdelivr.net/gh/selfhst/icons@main/png/reitti.png";
                   href = "https://${subdomains.vm-app.reitti}.${domains.home}";

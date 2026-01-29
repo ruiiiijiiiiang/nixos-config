@@ -4,15 +4,15 @@
 
 This repository isn't just a collection of config files; it is a **fully declarative, reproducible, and fortified infrastructure** definition for my personal homelab. Built on the bedrock of **NixOS** and **Nix Flakes**, this project represents a complete paradigm shift from fragile, imperative sysadmin tasks to a robust, code-driven ecosystem.
 
-Every single aspect of this infrastructure—from the kernel hardening flags and firewall rules to the complex web of containerized microservices and their secret management—is defined in code. It emphasizes **stability** through atomic rollbacks, **observability** via a comprehensive monitoring stack, and **security** with hardened kernels and isolated networking.
+Every single aspect of this infrastructure—from the kernel hardening flags and vlan routing rules to the complex web of containerized microservices and their secret management—is defined in code. Version controlled and GitOps-friendly, it emphasizes **stability** through atomic rollbacks, **observability** via a comprehensive monitoring stack, and **security** with hardened kernels and isolated networking.
 
-Forget "it works on my machine." Here, the entire state of the machine _is_ the code.
+We're way past infrastructure-as-code. It's time for infrastructure/network/configuration/security all-rolled-into-one-as-code.
 
 ## Project Structure
 
 **Architected for Evolution. Built for Scale.**
 
-This infrastructure is engineered following a rigorous **Domain-Driven Design** philosophy. The codebase is organized into four distinct, composable layers:
+This infrastructure is engineered following a rigorous **Domain-Driven Design** philosophy. The modules are organized into four distinct, composable layers:
 
 1.  **Core (`modules/core`):** The foundational DNA. Universal baselines shared across all systems, defining the essential "NixOS-ness" of the fleet.
 2.  **Platform (`modules/platform`):** The hardware abstraction layer. Whether it's a Raspberry Pi ARM chip or a virtualized x86 hypervisor, this layer handles the metal.
@@ -20,7 +20,7 @@ This infrastructure is engineered following a rigorous **Domain-Driven Design** 
 4.  **Services (`modules/services`):** The functional payload. Granular, plug-and-play applications categorized by domain:
     - **Networking:** The mesh that connects it all (DNS, Routing, VPNs).
     - **Observability:** The eyes and ears (Monitoring, Logging, Security Agents).
-    - **Apps:** The user experience, grouped by function (Office, Tools, Media, Security, Web).
+    - **Apps:** The user experience, grouped by function (Office, Tools, Media, Authentication, Web).
 
 The `flake.nix` is the central cortex, orchestrating these modules to synthesize specific host configurations. A **hybrid deployment strategy** is employed to balance raw performance with operational stability:
 
@@ -41,9 +41,9 @@ The network is physically connected via two interfaces, but logically segmented 
 - **LAN (`ens19`):** The physical trunk carrying multiple logical networks:
   - **Home (Native):** Trusted user devices (e.g., `framework`).
     - _Routing:_ Unrestricted access to WAN, Infra, DMZ, and VPN.
-  - **Infra (VLAN 20):** Dedicated management lane for servers and critical infrastructure (e.g., `pi`, `vm-app`, `vm-monitor`).
+  - **VLAN 20 (`infa0`):** Dedicated management lane for servers and critical infrastructure (e.g., `pi`, `vm-app`, `vm-monitor`).
     - _Routing:_ Access to WAN. Isolated from Home.
-  - **DMZ (VLAN 88):** Isolated zone for untrusted workloads (e.g., `vm-security`).
+  - **VLAN 88 (`dmz0`):** Isolated zone for untrusted workloads (e.g., `vm-security`).
     - _Routing:_ Access to WAN. Restricted access to Infra for DNS (UDP/TCP 53) only. No access to Home.
 - **WireGuard (`wg0`):** Secure remote access tunnel.
   - _Routing:_ Authenticated peers get full access to Home, Infra, and DMZ networks.
@@ -51,7 +51,7 @@ The network is physically connected via two interfaces, but logically segmented 
 Powered by **NFTables**, the firewall enforces a strict "default drop" policy for forwarding. Traffic is explicitly permitted based on the source zone:
 
 - **Home:** Trusted; can initiate connections to anywhere.
-- **Infra/DMZ:** Untrusted; can only egress to the internet (WAN), with DMZ having a pinhole for DNS.
+- **Infra/DMZ:** Untrusted; can only egress to the internet (WAN), with DMZ having a pinhole into Infra for DNS.
 - **VPN:** Trusted; treated effectively as an extension of the Home network.
 
 ### High-Availability DNS
@@ -62,14 +62,6 @@ Redundancy is the only Reality. The network relies on a high-availability DNS cl
 - **The Redundancy:** **Keepalived** manages a Virtual IP (VIP) that floats across the cluster. If the master node blinks, the VIP instantly migrates to a backup, keeping the network online without a hiccup.
 
 ## The Fleet
-
-### Shared Services
-
-Every server host (`pi`, `vm-app`, `vm-network`, `vm-monitor`) comes equipped with a standard observability and security sidecar:
-
-- **Beszel & Dockhand Agents:** Real-time system and container metrics.
-- **Prometheus Exporters:** Granular telemetry for Nginx, Node, and Podman.
-- **Wazuh Agent:** Enterprise-grade security monitoring and intrusion detection.
 
 ### `framework`
 
@@ -102,6 +94,14 @@ Every server host (`pi`, `vm-app`, `vm-network`, `vm-monitor`) comes equipped wi
 - **Network:** DMZ (VLAN 88)
 - **Security:** **None.** This host is intentionally left vulnerable with no defenses to ensure maximum attack efficiency and unrestricted tool usage.
 
+### Shared Services
+
+Every server host (`pi`, `vm-app`, `vm-network`, `vm-monitor`) comes equipped with a standard observability and security sidecar:
+
+- **Beszel & Dockhand Agents:** Real-time system and container metrics.
+- **Prometheus Exporters:** Granular telemetry for Nginx, Node, and Podman.
+- **Wazuh Agent:** Enterprise-grade security monitoring and intrusion detection.
+
 ## Security Configuration
 
 **Ironclad Defense.**
@@ -116,7 +116,7 @@ Security isn't a feature; it's the foundation. Every server is hardened against 
 
 **Vault-Grade Secrets.**
 
-No more `.env` files leaking in git history. Sensitive data is encrypted at rest using **age** and **agenix**. Secrets are decrypted only at runtime, in-memory, and only by the specific host identity that requires them. It is GitOps-friendly, cryptographically secure, and zero-trust by default.
+No more `.env` files leaking in git history. Sensitive data is encrypted at rest using **age** and **agenix**. Secrets are decrypted only at runtime, in-memory, and only by the specific host identity that requires them. It is cryptographically secure and zero-trust by default.
 
 ## Build & Deployment
 

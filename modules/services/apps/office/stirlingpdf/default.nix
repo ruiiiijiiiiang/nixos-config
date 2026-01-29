@@ -31,10 +31,15 @@ in
           PUID = toString oci-uids.nobody;
           GUID = toString oci-uids.nobody;
           SECURITY_ENABLELOGIN = "false";
+          JAVA_TOOL_OPTIONS = "-Xms128m -Xmx512m -XX:MaxMetaspaceSize=128m";
         };
         labels = {
           "io.containers.autoupdate" = "registry";
         };
+        extraOptions = [
+          "--memory=768m"
+          "--memory-swap=768m"
+        ];
       };
     };
 

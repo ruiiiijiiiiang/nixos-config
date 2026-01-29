@@ -73,6 +73,10 @@ in
         labels = {
           "io.containers.autoupdate" = "registry";
         };
+        extraOptions = [
+          "--memory=512m"
+          "--memory-swap=512m"
+        ];
       };
     };
 

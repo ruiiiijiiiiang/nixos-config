@@ -38,7 +38,6 @@ in
         tools = {
           arr.enable = true;
           atuin.enable = true;
-          dawarich.enable = true;
           karakeep.enable = true;
           microbin.enable = true;
           reitti.enable = true;

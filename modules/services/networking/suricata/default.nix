@@ -102,6 +102,16 @@ in
           "re:enip"
         ];
         settings = {
+          threshold-file = "${pkgs.writeText "threshold.conf" ''
+            # Suppress "Packet seen on wrong thread"
+            suppress gen_id 1, sig_id 2210059
+
+            # Suppress "3way handshake wrong seq wrong ack"
+            suppress gen_id 1, sig_id 2210010
+
+            # Suppress "Ethertype unknown"
+            suppress gen_id 1, sig_id 2200121
+          ''}";
           nfq = [
             {
               mode = "accept";
@@ -112,16 +122,14 @@ in
             }
           ];
 
-          # Dummy listener just to make nix happy
           af-packet = [
             {
-              interface = "lo";
+              interface = cfg.lanInterface;
               cluster-id = 99;
               cluster-type = "cluster_flow";
               defrag = "yes";
               use-mmap = "yes";
               tpacket-v3 = "yes";
-              bpf-filter = "not host 127.0.0.1";
             }
           ];
 
@@ -145,9 +153,51 @@ in
                 filetype = "regular";
                 filename = eveJsonPath;
                 file-mode = "0644";
+                pcap-file = false;
+                rotate-interval = "day";
                 types = [
                   "alert"
                   "drop"
+                  {
+                    flow = {
+                      enabled = true;
+                    };
+                  }
+                  {
+                    dns = {
+                      enabled = true;
+                      query = "yes";
+                      answer = "yes";
+                    };
+                  }
+                  {
+                    tls = {
+                      enabled = true;
+                      extended = "yes";
+                    };
+                  }
+                  {
+                    http = {
+                      enabled = true;
+                      extended = "yes";
+                    };
+                  }
+                  {
+                    ssh = {
+                      enabled = true;
+                    };
+                  }
+                  {
+                    dhcp = {
+                      enabled = true;
+                      extended = "yes";
+                    };
+                  }
+                  {
+                    stats = {
+                      enabled = true;
+                    };
+                  }
                 ];
               };
             }
