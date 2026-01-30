@@ -12,18 +12,10 @@ on:
           - vm-app
           - vm-monitor
           - vm-network
-      runner_os:
-        description: "Runner OS"
-        required: true
-        type: choice
-        default: "ubuntu-latest"
-        options:
-          - "ubuntu-latest"
-          - "ubuntu-24.04-arm"
 
 jobs:
   deploy:
-    runs-on: ${{ inputs.runner_os }}
+    runs-on: ${{ inputs.target_host == 'pi' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
