@@ -40,5 +40,8 @@
     iphone-17 = {
       publicKey = "5sRnWVrwknQAwiCLSAX8tWlt7gEbi03j14GUgKm44lY=";
     };
+    github-action = {
+      publicKey = "Rq0Ff32HJjGJ19p1tnKwkCvcpEZKR4fP/Ov+ICUs3gU=";
+    };
   };
 }

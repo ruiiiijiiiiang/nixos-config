@@ -7,7 +7,7 @@
 let
   inherit (import ../../../../lib/keys.nix) wg;
   inherit (consts) addresses ports vpn-endpoint;
-  cfg = config.custom.services.networking.wireguard;
+  cfg = config.custom.services.networking.wireguard.client;
 in
 {
   options.custom.services.networking.wireguard.client = with lib; {
@@ -34,26 +34,26 @@ in
     };
   };
 
-  config = lib.mkIf cfg.client.enable {
+  config = lib.mkIf cfg.enable {
     assertions = [
       {
-        assertion = cfg.client.address != null;
+        assertion = cfg.address != null;
         message = "WireGuard client is enabled but client address is missing.";
       }
       {
-        assertion = cfg.client.privateKeyFile != null && cfg.client.presharedKeyFile != null;
+        assertion = cfg.privateKeyFile != null && cfg.client.presharedKeyFile != null;
         message = "WireGuard client is enabled but required keys are missing.";
       }
     ];
 
-    networking.wg-quick.interfaces.${cfg.client.wgInterface} = {
-      inherit (cfg.client) privateKeyFile;
-      address = [ "${cfg.client.address}/32" ];
+    networking.wg-quick.interfaces.${cfg.wgInterface} = {
+      inherit (cfg) privateKeyFile;
+      address = [ "${cfg.address}/32" ];
       dns = [ addresses.infra.vip.dns ];
       peers = [
         {
           inherit (wg.vm-network) publicKey;
-          inherit (cfg.client) presharedKeyFile;
+          inherit (cfg) presharedKeyFile;
           endpoint = "${vpn-endpoint}:${toString ports.wireguard}";
           allowedIPs = [
             addresses.home.network

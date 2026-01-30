@@ -1,9 +1,14 @@
+{ config, ... }:
 let
   podmanInterface = "podman0";
 in
 {
   system.stateVersion = "25.11";
   networking.hostName = "vm-monitor";
+
+  age.secrets = {
+    scanopy-daemon-vm-monitor-env.file = ../../secrets/scanopy/daemon-vm-monitor-env.age;
+  };
 
   custom = {
     roles.headless = {
@@ -40,6 +45,13 @@ in
             nginx.enable = true;
             node.enable = true;
             podman.enable = true;
+          };
+        };
+        scanopy = {
+          server.enable = true;
+          daemon = {
+            enable = true;
+            envFile = config.age.secrets.scanopy-daemon-vm-monitor-env.path;
           };
         };
         wazuh = {

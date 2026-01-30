@@ -10,6 +10,7 @@ on:
         options:
           - pi
           - vm-app
+          - vm-monitor
           - vm-network
       runner_os:
         description: "Runner OS"
@@ -32,13 +33,16 @@ jobs:
         run: |
           case "${{ inputs.target_host }}" in
             "pi")
-              echo "TARGET_IP=192.168.68.80" >> $GITHUB_ENV
+              echo "TARGET_IP=192.168.20.51" >> $GITHUB_ENV
               ;;
             "vm-app")
-              echo "TARGET_IP=192.168.68.89" >> $GITHUB_ENV
+              echo "TARGET_IP=192.168.20.2" >> $GITHUB_ENV
+              ;;
+            "vm-monitor")
+              echo "TARGET_IP=192.168.20.3" >> $GITHUB_ENV
               ;;
             "vm-network")
-              echo "TARGET_IP=192.168.68.87" >> $GITHUB_ENV
+              echo "TARGET_IP=192.168.20.1" >> $GITHUB_ENV
               ;;
             *)
               echo "Unknown host selected"
@@ -69,7 +73,7 @@ jobs:
           chmod 600 ~/.ssh/id_ed25519
           eval $(ssh-agent -s)
           ssh-add ~/.ssh/id_ed25519
-          ssh-keyscan -H 192.168.68.80 >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ env.TARGET_IP }} >> ~/.ssh/known_hosts
 
       - name: NixOS Rebuild & Switch
         env:

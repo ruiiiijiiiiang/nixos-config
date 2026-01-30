@@ -6,8 +6,13 @@
   ...
 }:
 let
-  inherit (consts) domains subdomains ports;
-  inherit (helpers) mkVirtualHost;
+  inherit (consts)
+    domains
+    subdomains
+    ports
+    oci-uids
+    ;
+  inherit (helpers) mkVirtualHost mkOciUser;
   cfg = config.custom.services.observability.scanopy.server;
   fqdn = "${subdomains.${config.networking.hostName}.scanopy}.${domains.home}";
 in
@@ -33,17 +38,18 @@ in
           "${toString ports.scanopy.server}:${toString ports.scanopy.server}"
         ];
         environmentFiles = [ config.age.secrets.scanopy-server-env.path ];
-        volumes = [ "scanopy-postgres-data:/var/lib/postgresql/data" ];
+        volumes = [ "/var/lib/scanopy/postgres:/var/lib/postgresql/data" ];
       };
 
       scanopy-server = {
         image = "ghcr.io/scanopy/scanopy/server:latest";
-        volumes = [ "scanopy-data:/data" ];
+        user = "${toString oci-uids.scanopy}:${toString oci-uids.scanopy}";
         environment = {
           SCANOPY_WEB_EXTERNAL_PATH = "/app/static";
           SCANOPY_PUBLIC_URL = "https://${fqdn}";
         };
         environmentFiles = [ config.age.secrets.scanopy-server-env.path ];
+        volumes = [ "/var/lib/scanopy/data:/data" ];
         dependsOn = [ "scanopy-postgres" ];
         networks = [ "container:scanopy-postgres" ];
         labels = {
@@ -51,6 +57,13 @@ in
         };
       };
     };
+
+    users = mkOciUser "scanopy";
+
+    systemd.tmpfiles.rules = [
+      "d /var/lib/scanopy/postgres 0700 ${toString oci-uids.postgres} ${toString oci-uids.postgres} - -"
+      "d /var/lib/scanopy/data 0700 ${toString oci-uids.scanopy} ${toString oci-uids.scanopy} - -"
+    ];
 
     services.nginx.virtualHosts."${fqdn}" = mkVirtualHost {
       inherit fqdn;

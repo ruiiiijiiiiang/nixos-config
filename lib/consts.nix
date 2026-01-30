@@ -103,6 +103,7 @@ rec {
         framework = "10.5.5.2";
         iphone-16 = "10.5.5.3";
         iphone-17 = "10.5.5.4";
+        github-action = "10.5.5.5";
       };
     };
     podman = {
@@ -228,6 +229,7 @@ rec {
     qbittorrent = 908;
     jellyfin = 909;
     dockhand = 910;
+    scanopy = 911;
     postgis = 70;
     postgres = 999;
     user = 1000;

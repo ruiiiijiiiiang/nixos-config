@@ -70,8 +70,20 @@ in
     publicKeys = ssh.vm-monitor;
     armor = true;
   };
-  "scanopy/daemon-env.age" = {
-    publicKeys = ssh.pi ++ ssh.vm-network ++ ssh.vm-app ++ ssh.vm-monitor;
+  "scanopy/daemon-pi-env.age" = {
+    publicKeys = ssh.pi;
+    armor = true;
+  };
+  "scanopy/daemon-vm-app-env.age" = {
+    publicKeys = ssh.vm-app;
+    armor = true;
+  };
+  "scanopy/daemon-vm-monitor-env.age" = {
+    publicKeys = ssh.vm-monitor;
+    armor = true;
+  };
+  "scanopy/daemon-vm-network-env.age" = {
+    publicKeys = ssh.vm-network;
     armor = true;
   };
   "vaultwarden-env.age" = {
@@ -95,6 +107,10 @@ in
     armor = true;
   };
   "wireguard/iphone-17-preshared-key.age" = {
+    publicKeys = ssh.vm-network;
+    armor = true;
+  };
+  "wireguard/github-action-preshared-key.age" = {
     publicKeys = ssh.vm-network;
     armor = true;
   };

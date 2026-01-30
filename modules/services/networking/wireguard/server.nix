@@ -7,7 +7,7 @@
 let
   inherit (import ../../../../lib/keys.nix) wg;
   inherit (consts) addresses ports;
-  cfg = config.custom.services.networking.wireguard;
+  cfg = config.custom.services.networking.wireguard.server;
 in
 {
   options.custom.services.networking.wireguard.server = with lib; {
@@ -63,43 +63,43 @@ in
     };
   };
 
-  config = lib.mkIf cfg.server.enable {
+  config = lib.mkIf cfg.enable {
     assertions = [
       {
-        assertion = cfg.server.privateKeyFile != null;
+        assertion = cfg.privateKeyFile != null;
         message = "WireGuard server is enabled but required key is missing.";
       }
       {
-        assertion = cfg.server.wanInterface != null && cfg.server.lanInterface != null;
+        assertion = cfg.wanInterface != null && cfg.lanInterface != null;
         message = "WireGuard server is enabled but required interfaces are missing.";
       }
     ];
 
     networking = {
-      wireguard.interfaces.${cfg.server.wgInterface} = {
+      wireguard.interfaces.${cfg.wgInterface} = {
         ips = [
           "${addresses.vpn.hosts.${config.networking.hostName}}/32"
         ];
         listenPort = ports.wireguard;
-        inherit (cfg.server) privateKeyFile;
+        inherit (cfg) privateKeyFile;
 
         peers = map (peer: {
           inherit (wg.${peer.hostName}) publicKey;
           inherit (peer) presharedKeyFile;
           allowedIPs = [ "${addresses.vpn.hosts.${peer.hostName}}/32" ];
-        }) cfg.server.peers;
+        }) cfg.peers;
       };
 
       firewall.interfaces = {
-        "${cfg.server.wanInterface}" = {
+        "${cfg.wanInterface}" = {
           allowedUDPPorts = [ ports.wireguard ];
         };
 
-        "${cfg.server.lanInterface}" = {
+        "${cfg.lanInterface}" = {
           allowedUDPPorts = [ ports.wireguard ];
         };
 
-        "${cfg.server.wgInterface}" = {
+        "${cfg.wgInterface}" = {
           allowedTCPPorts = [ ports.dns ];
           allowedUDPPorts = [ ports.dns ];
         };
@@ -107,9 +107,9 @@ in
     };
 
     custom.services.networking.router.extraForwardRules = ''
-      iifname "${cfg.server.wgInterface}" oifname "${cfg.server.lanInterface}" accept
-      iifname "${cfg.server.wgInterface}" oifname "${cfg.server.infraInterface}" accept
-      iifname "${cfg.server.wgInterface}" oifname "${cfg.server.dmzInterface}" accept
+      iifname "${cfg.wgInterface}" oifname "${cfg.lanInterface}" accept
+      iifname "${cfg.wgInterface}" oifname "${cfg.infraInterface}" accept
+      iifname "${cfg.wgInterface}" oifname "${cfg.dmzInterface}" accept
     '';
   };
 }

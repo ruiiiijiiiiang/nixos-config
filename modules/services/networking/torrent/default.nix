@@ -31,9 +31,6 @@ in
     virtualisation.oci-containers.containers = {
       gluetun = {
         image = "ghcr.io/qdm12/gluetun:latest";
-        extraOptions = [
-          "--cap-add=NET_ADMIN"
-        ];
         environment = {
           TZ = timeZone;
           FIREWALL_OUTBOUND_SUBNETS = addresses.home.network;
@@ -50,6 +47,9 @@ in
           "${config.age.secrets.wireguard-proton-private-key.path}:/wg_key:ro"
         ];
         devices = [ "/dev/net/tun:/dev/net/tun" ];
+        extraOptions = [
+          "--cap-add=NET_ADMIN"
+        ];
         labels = {
           "io.containers.autoupdate" = "registry";
         };
