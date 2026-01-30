@@ -8,6 +8,7 @@ with consts;
         "wheel"
         "networkmanager"
         "podman"
+        "audio"
       ];
       initialPassword = "yoloswag";
       group = "rui";

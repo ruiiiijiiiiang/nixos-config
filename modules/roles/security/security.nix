@@ -28,6 +28,7 @@ in
     security = {
       apparmor.enable = false;
       sudo.wheelNeedsPassword = false;
+      rtkit.enable = true;
     };
 
     users.users.rui.extraGroups = [ "pcap" ];

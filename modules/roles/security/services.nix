@@ -21,13 +21,12 @@ in
         videoDrivers = [ "modesetting" ];
       };
 
-      pipewire = {
+      pipewire.enable = false;
+
+      pulseaudio = {
         enable = true;
-        alsa.enable = true;
-        alsa.support32Bit = true;
-        pulse.enable = true;
+        extraConfig = "load-module module-xrdp-sink";
       };
-      spice-vdagentd.enable = true;
 
       postgresql = {
         enable = true;
@@ -44,8 +43,12 @@ in
       };
 
       vnstat.enable = true;
-    };
 
-    security.rtkit.enable = true;
+      xrdp = {
+        enable = true;
+        audio.enable = true;
+        defaultWindowManager = "startlxqt";
+      };
+    };
   };
 }

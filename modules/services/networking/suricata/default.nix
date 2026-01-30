@@ -102,6 +102,7 @@ in
           "re:enip"
         ];
         settings = {
+          stats.interval = "60";
           threshold-file = "${pkgs.writeText "threshold.conf" ''
             # Suppress "Packet seen on wrong thread"
             suppress gen_id 1, sig_id 2210059
@@ -159,42 +160,7 @@ in
                   "alert"
                   "drop"
                   {
-                    flow = {
-                      enabled = true;
-                    };
-                  }
-                  {
-                    dns = {
-                      enabled = true;
-                      query = "yes";
-                      answer = "yes";
-                    };
-                  }
-                  {
-                    tls = {
-                      enabled = true;
-                      extended = "yes";
-                    };
-                  }
-                  {
-                    http = {
-                      enabled = true;
-                      extended = "yes";
-                    };
-                  }
-                  {
                     ssh = {
-                      enabled = true;
-                    };
-                  }
-                  {
-                    dhcp = {
-                      enabled = true;
-                      extended = "yes";
-                    };
-                  }
-                  {
-                    stats = {
                       enabled = true;
                     };
                   }

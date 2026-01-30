@@ -58,6 +58,7 @@ in
       inputs.lazynmap.packages.${stdenv.system}.default
 
       networkmanagerapplet
+      pulseaudio-module-xrdp
     ];
 
     programs.tcpdump.enable = true;

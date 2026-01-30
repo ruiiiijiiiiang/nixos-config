@@ -292,6 +292,13 @@ in
                 };
               }
               {
+                "Scanopy" = {
+                  icon = "scanopy";
+                  href = "https://${subdomains.vm-monitor.scanopy}.${domains.home}";
+                  description = "Network Scanner";
+                };
+              }
+              {
                 "Wazuh" = {
                   icon = "wazuh";
                   href = "https://${subdomains.vm-monitor.wazuh}.${domains.home}";

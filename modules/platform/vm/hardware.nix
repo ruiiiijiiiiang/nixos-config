@@ -11,6 +11,7 @@ in
   options.custom.platform.vm.hardware = with lib; {
     enable = mkEnableOption "Custom hardware config for vm";
     gpuPassthrough = mkEnableOption "Allow PIC GPU passthrough";
+    workstation = mkEnableOption "Enable workstation features";
   };
 
   config = lib.mkIf cfg.enable {
@@ -29,9 +30,11 @@ in
           "virtio_scsi"
           "sd_mod"
           "sr_mod"
-        ];
+        ]
+        ++ pkgs.lib.optionals cfg.workstation [ "virtio_gpu" ];
 
-        kernelModules = lib.mkIf cfg.gpuPassthrough [ "amdgpu" ];
+        kernelModules =
+          (lib.optionals cfg.gpuPassthrough [ "amdgpu" ]) ++ (lib.optionals cfg.workstation [ "virtio-gpu" ]);
       };
       kernelModules = [ "kvm-amd" ];
       kernelParams = [

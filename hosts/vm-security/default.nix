@@ -3,7 +3,10 @@
 
   custom = {
     platform.vm = {
-      hardware.enable = true;
+      hardware = {
+        enable = true;
+        workstation = true;
+      };
       disks.enableMain = true;
     };
 
