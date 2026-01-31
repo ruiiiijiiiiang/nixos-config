@@ -41,7 +41,7 @@ in
         message = "WireGuard client is enabled but client address is missing.";
       }
       {
-        assertion = cfg.privateKeyFile != null && cfg.client.presharedKeyFile != null;
+        assertion = cfg.privateKeyFile != null && cfg.presharedKeyFile != null;
         message = "WireGuard client is enabled but required keys are missing.";
       }
     ];
