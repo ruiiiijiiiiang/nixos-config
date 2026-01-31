@@ -113,6 +113,7 @@ rec {
         atuin = config.custom.services.apps.tools.atuin.enable;
         beszel = config.custom.services.observability.beszel.hub.enable;
         bentopdf = config.custom.services.apps.office.bentopdf.enable;
+        bytestash = config.custom.services.apps.tools.bytestash.enable;
         dawarich = config.custom.services.apps.tools.dawarich.enable;
         dockhand = config.custom.services.observability.dockhand.server.enable;
         evebox = config.custom.services.networking.suricata.enable;

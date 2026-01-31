@@ -189,6 +189,7 @@ in
               iifname "${cfg.dmzInterface}" oifname "${cfg.wanInterface}" accept
               iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip daddr ${addresses.infra.vip.dns} udp dport ${toString ports.dns} accept
               iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip daddr ${addresses.infra.vip.dns} tcp dport ${toString ports.dns} accept
+              iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip daddr ${addresses.infra.hosts.vm-app} tcp dport { ${toString ports.http}, ${toString ports.https} } accept
 
               ${cfg.extraForwardRules}
             }

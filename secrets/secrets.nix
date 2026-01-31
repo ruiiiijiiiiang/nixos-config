@@ -2,6 +2,10 @@ let
   inherit (import ../lib/keys.nix) ssh;
 in
 {
+  "bytestash-env.age" = {
+    publicKeys = ssh.vm-app;
+    armor = true;
+  };
   "cloudflare-token.age" = {
     publicKeys = ssh.pi ++ ssh.vm-network ++ ssh.vm-app ++ ssh.vm-monitor;
     armor = true;

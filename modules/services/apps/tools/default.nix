@@ -2,6 +2,7 @@
   imports = [
     ./arr
     ./atuin
+    ./bytestash
     ./dawarich
     ./homeassistant
     ./karakeep

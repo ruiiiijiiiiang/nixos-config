@@ -50,6 +50,7 @@ in
       exiftool
       binsider
       zsteg
+      poppler-utils
 
       gh
       unzip

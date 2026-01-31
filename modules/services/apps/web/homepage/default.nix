@@ -211,6 +211,13 @@ in
                 };
               }
               {
+                "ByteStash" = {
+                  icon = "bytestash";
+                  href = "https://${subdomains.vm-app.bytestash}.${domains.home}";
+                  description = "Code Snippets";
+                };
+              }
+              {
                 "Karakeep" = {
                   icon = "karakeep";
                   href = "https://${subdomains.vm-app.karakeep}.${domains.home}";
