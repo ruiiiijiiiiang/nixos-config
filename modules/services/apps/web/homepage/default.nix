@@ -218,6 +218,13 @@ in
                 };
               }
               {
+                "Forgejo" = {
+                  icon = "forgejo";
+                  href = "https://${subdomains.vm-app.forgejo}.${domains.home}";
+                  description = "Version Control";
+                };
+              }
+              {
                 "Karakeep" = {
                   icon = "karakeep";
                   href = "https://${subdomains.vm-app.karakeep}.${domains.home}";

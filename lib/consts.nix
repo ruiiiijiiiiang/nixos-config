@@ -23,9 +23,10 @@ rec {
       prowlarr = "prowlarr";
       bazarr = "bazarr";
       atuin = "atuin";
-      bytestash = "bytestash";
+      bytestash = "stash";
       dawarich = "dawarich";
       bentopdf = "pdf";
+      forgejo = "git";
       homepage = "home";
       immich = "immich";
       jellyfin = "jellyfin";
@@ -142,6 +143,10 @@ rec {
     atuin = 8888;
     bentopdf = 8080;
     bytestash = 5000;
+    forgejo = {
+      ssh = 2222;
+      server = 3004;
+    };
     beszel = {
       hub = 8090;
       agent = 45876;
@@ -233,6 +238,7 @@ rec {
     dockhand = 910;
     scanopy = 911;
     bytestash = 912;
+    forgejo = 913;
     postgis = 70;
     postgres = 999;
     user = 1000;

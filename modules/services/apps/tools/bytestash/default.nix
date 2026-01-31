@@ -25,17 +25,20 @@ in
   config = lib.mkIf cfg.enable {
     age.secrets = {
       bytestash-env.file = ../../../../../secrets/bytestash-env.age;
+      # JWT_SECRET
     };
 
     virtualisation.oci-containers.containers = {
       bytestash = {
         image = "ghcr.io/jordan-dalby/bytestash:latest";
+        user = "${toString oci-uids.bytestash}:${toString oci-uids.bytestash}";
         ports = [ "${addresses.localhost}:${toString ports.bytestash}:${toString ports.bytestash}" ];
-        volumes = [ "/var/lib/bytestash:/app/data" ];
+        volumes = [ "/var/lib/bytestash:/data" ];
         environment = {
           DISABLE_ACCOUNTS = "true";
         };
         environmentFiles = [ config.age.secrets.bytestash-env.path ];
+        extraOptions = [ "--tmpfs=/tmp" ];
         labels = {
           "io.containers.autoupdate" = "registry";
         };

@@ -4,6 +4,7 @@
     ./atuin
     ./bytestash
     ./dawarich
+    ./forgejo
     ./homeassistant
     ./karakeep
     ./microbin

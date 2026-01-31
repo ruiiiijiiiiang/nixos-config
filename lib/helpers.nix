@@ -117,6 +117,7 @@ rec {
         dawarich = config.custom.services.apps.tools.dawarich.enable;
         dockhand = config.custom.services.observability.dockhand.server.enable;
         evebox = config.custom.services.networking.suricata.enable;
+        forgejo = config.custom.services.apps.tools.forgejo.enable;
         gatus = config.custom.services.observability.gatus.enable;
         grafana = config.custom.services.observability.prometheus.server.enable;
         homeassistant = config.custom.services.apps.tools.homeassistant.enable;

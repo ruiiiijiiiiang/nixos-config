@@ -30,6 +30,10 @@ in
     publicKeys = ssh.pi ++ ssh.vm-network ++ ssh.vm-app ++ ssh.vm-monitor;
     armor = true;
   };
+  "forgejo-env.age" = {
+    publicKeys = ssh.vm-app;
+    armor = true;
+  };
   "geoip-key.age" = {
     publicKeys = ssh.vm-network ++ ssh.vm-app ++ ssh.vm-monitor;
     armor = true;

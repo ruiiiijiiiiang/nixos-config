@@ -44,6 +44,7 @@ in
           arr.enable = true;
           atuin.enable = true;
           bytestash.enable = true;
+          forgejo.enable = true;
           karakeep.enable = true;
           microbin.enable = true;
           reitti.enable = true;

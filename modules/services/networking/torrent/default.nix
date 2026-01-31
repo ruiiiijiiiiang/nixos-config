@@ -64,7 +64,7 @@ in
           PUID = toString oci-uids.qbittorrent;
           PGID = toString oci-uids.arr;
           UMASK_SET = "002";
-          WEBUI_PORT = "${toString ports.qbittorrent}";
+          WEBUI_PORT = toString ports.qbittorrent;
         };
         volumes = [
           "/var/lib/qbittorrent/config:/config"
