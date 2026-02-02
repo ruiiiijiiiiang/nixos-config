@@ -30,7 +30,5 @@ in
       sudo.wheelNeedsPassword = false;
       rtkit.enable = true;
     };
-
-    users.users.rui.extraGroups = [ "pcap" ];
   };
 }

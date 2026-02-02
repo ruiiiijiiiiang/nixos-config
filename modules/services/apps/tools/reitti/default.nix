@@ -18,7 +18,7 @@ let
 in
 {
   options.custom.services.apps.tools.reitti = with lib; {
-    enable = mkEnableOption "Reitti route planning service";
+    enable = mkEnableOption "Reitti location record";
   };
 
   config = lib.mkIf cfg.enable {

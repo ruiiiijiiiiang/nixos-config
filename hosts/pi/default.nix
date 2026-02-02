@@ -1,4 +1,4 @@
-{ config, inputs, ... }:
+{ inputs, ... }:
 let
   lanInterface = "end0";
   wlanInterface = "wlan0";
@@ -12,10 +12,6 @@ in
 
   system.stateVersion = "25.05";
   networking.hostName = "pi";
-
-  age.secrets = {
-    scanopy-daemon-pi-env.file = ../../secrets/scanopy/daemon-pi-env.age;
-  };
 
   custom = {
     platform.pi = {
@@ -56,12 +52,6 @@ in
           nginx.enable = true;
           node.enable = true;
           podman.enable = true;
-        };
-        scanopy = {
-          daemon = {
-            enable = true;
-            envFile = config.age.secrets.scanopy-daemon-pi-env.path;
-          };
         };
       };
     };

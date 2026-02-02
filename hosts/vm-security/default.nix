@@ -1,5 +1,6 @@
 {
   system.stateVersion = "25.11";
+  networking.hostName = "vm-security";
 
   custom = {
     platform.vm = {

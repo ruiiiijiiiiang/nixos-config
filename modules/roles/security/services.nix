@@ -50,5 +50,11 @@ in
         defaultWindowManager = "startlxqt";
       };
     };
+
+    users.users.rui.extraGroups = [
+      "audio"
+      "pcap"
+      "wireshark"
+    ];
   };
 }

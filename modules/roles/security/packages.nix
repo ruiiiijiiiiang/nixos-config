@@ -20,8 +20,8 @@ in
       masscan
       netcat
       socat
-      tshark
       openvas-scanner
+      wireshark
 
       # Web security
       burpsuite

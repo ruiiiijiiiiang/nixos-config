@@ -1,14 +1,9 @@
-{ config, ... }:
 let
   podmanInterface = "podman0";
 in
 {
   system.stateVersion = "25.11";
   networking.hostName = "vm-app";
-
-  age.secrets = {
-    scanopy-daemon-vm-app-env.file = ../../secrets/scanopy/daemon-vm-app-env.age;
-  };
 
   custom = {
     roles.headless = {
@@ -46,8 +41,10 @@ in
           bytestash.enable = true;
           forgejo.enable = true;
           karakeep.enable = true;
+          llm.enable = true;
           microbin.enable = true;
           reitti.enable = true;
+          searxng.enable = true;
           syncthing = {
             enable = true;
             proxied = true;
@@ -80,12 +77,6 @@ in
           nginx.enable = true;
           node.enable = true;
           podman.enable = true;
-        };
-        scanopy = {
-          daemon = {
-            enable = true;
-            envFile = config.age.secrets.scanopy-daemon-vm-app-env.path;
-          };
         };
         wazuh.agent.enable = true;
       };

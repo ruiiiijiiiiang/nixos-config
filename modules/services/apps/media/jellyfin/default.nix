@@ -19,7 +19,7 @@ let
 in
 {
   options.custom.services.apps.media.jellyfin = with lib; {
-    enable = mkEnableOption "Jellyfin media service";
+    enable = mkEnableOption "Jellyfin media stream";
   };
 
   config = lib.mkIf cfg.enable {

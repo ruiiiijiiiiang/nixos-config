@@ -4,12 +4,7 @@ with consts;
   users = {
     users.rui = {
       isNormalUser = true;
-      extraGroups = [
-        "wheel"
-        "networkmanager"
-        "podman"
-        "audio"
-      ];
+      extraGroups = [ "wheel" ];
       initialPassword = "yoloswag";
       group = "rui";
       home = "/home/rui";

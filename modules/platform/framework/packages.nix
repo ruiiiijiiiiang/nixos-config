@@ -109,13 +109,13 @@ in
       spicetify-cli
       cava
 
-      # --- Development Tools: Compilers, Debuggers, Build Systems ---
+      # --- Development Tools ---
+      # Compilers, Debuggers, Build Systems
       gcc
       gdb
       lldb
       cmake
       gnumake
-      # --- Development Tools: Language Tooling ---
 
       # AI
       gemini-cli
@@ -178,7 +178,6 @@ in
       pipes
 
       # --- Nix-Specific Tools ---
-      nix-search-cli
       nix-tree
       nix-inspect
       inputs.colmena.packages.${stdenv.system}.colmena

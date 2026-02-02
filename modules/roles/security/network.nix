@@ -15,7 +15,6 @@ in
 
   config = lib.mkIf cfg.enable {
     networking = {
-      hostName = "vm-security";
       firewall.enable = false;
       nftables.enable = false;
       networkmanager = {

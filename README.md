@@ -76,6 +76,9 @@ Redundancy is the only Reality. The network relies on a high-availability DNS cl
 ### `vm-app`
 
 - **The Application Hub.** The workhorse running a suite of self-hosted services, including OpenCloud, Immich, Vaultwarden, and more.
+- **Hardware:** Equipped with **GPU Passthrough** from the Proxmox host. This hardware acceleration powers:
+  - **Media:** Transcoding for **Jellyfin**.
+  - **AI:** Local LLM inference for **Ollama/Open WebUI**.
 - **Network:** Infra (VLAN 20)
 
 ### `vm-network`

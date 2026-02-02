@@ -7,9 +7,11 @@
     ./forgejo
     ./homeassistant
     ./karakeep
+    ./llm
     ./microbin
     ./portainer
     ./reitti
+    ./searxng
     ./syncthing
     ./yourls
   ];

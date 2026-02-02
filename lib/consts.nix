@@ -36,12 +36,14 @@ rec {
       nextcloud = "nextcloud";
       onlyoffice = "office";
       opencloud = "opencloud";
+      openwebui = "llm";
       paperless = "paperless";
       pocketid = "id";
       portainer = "portainer";
       public = "public";
       qbittorrent = "qbittorrent";
       reitti = "reitti";
+      searxng = "searxng";
       stirlingpdf = "pdf";
       syncthing = "syncthing";
       vaultwarden = "vault";
@@ -174,8 +176,10 @@ rec {
     nginx = {
       stub = 8082;
     };
+    ollama = 11434;
     onlyoffice = 8001;
     opencloud = 9201;
+    openwebui = 8087;
     paperless = 28981;
     pihole = 8008;
     pocketid = 1411;
@@ -200,6 +204,7 @@ rec {
       server = 60072;
       daemon = 60073;
     };
+    searxng = 8092;
     stirlingpdf = 8080;
     syncthing = 8384;
     unbound = 5335;
@@ -239,6 +244,8 @@ rec {
     scanopy = 911;
     bytestash = 912;
     forgejo = 913;
+    llm = 914;
+    searxng = 915;
     postgis = 70;
     postgres = 999;
     user = 1000;

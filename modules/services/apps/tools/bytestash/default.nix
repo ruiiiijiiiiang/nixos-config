@@ -12,6 +12,7 @@ let
     subdomains
     ports
     oci-uids
+    oidc-issuer
     ;
   inherit (helpers) mkOciUser mkVirtualHost;
   cfg = config.custom.services.apps.tools.bytestash;
@@ -19,13 +20,15 @@ let
 in
 {
   options.custom.services.apps.tools.bytestash = with lib; {
-    enable = mkEnableOption "ByteStash service";
+    enable = mkEnableOption "ByteStash code snippet stash";
   };
 
   config = lib.mkIf cfg.enable {
     age.secrets = {
       bytestash-env.file = ../../../../../secrets/bytestash-env.age;
       # JWT_SECRET
+      # OIDC_CLIENT_ID
+      # OIDC_CLIENT_SECRET
     };
 
     virtualisation.oci-containers.containers = {
@@ -35,7 +38,12 @@ in
         ports = [ "${addresses.localhost}:${toString ports.bytestash}:${toString ports.bytestash}" ];
         volumes = [ "/var/lib/bytestash:/data" ];
         environment = {
-          DISABLE_ACCOUNTS = "true";
+          ADMIN_USERNAMES = "rui";
+          DISABLE_ACCOUNTS = "false";
+          DISABLE_INTERNAL_ACCOUNTS = "true";
+          OIDC_ENABLED = "true";
+          OIDC_DISPLAY_NAME = "Pocket ID";
+          OIDC_ISSUER_URL = "https://${oidc-issuer}";
         };
         environmentFiles = [ config.age.secrets.bytestash-env.path ];
         extraOptions = [ "--tmpfs=/tmp" ];

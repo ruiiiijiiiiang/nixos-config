@@ -31,7 +31,7 @@ in
           "sd_mod"
           "sr_mod"
         ]
-        ++ pkgs.lib.optionals cfg.workstation [ "virtio_gpu" ];
+        ++ lib.optionals cfg.workstation [ "virtio_gpu" ];
 
         kernelModules =
           (lib.optionals cfg.gpuPassthrough [ "amdgpu" ]) ++ (lib.optionals cfg.workstation [ "virtio-gpu" ]);
@@ -41,6 +41,11 @@ in
         "rootdelay=5"
         "console=tty1"
         "console=ttyS0"
+      ]
+      ++ lib.optionals cfg.gpuPassthrough [
+        "amdgpu.noretry=0"
+        "amdgpu.gttsize=8192"
+        "amdgpu.cwsr_enable=0"
       ];
     };
 

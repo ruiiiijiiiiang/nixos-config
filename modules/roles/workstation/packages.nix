@@ -1,4 +1,10 @@
-{ config, inputs, lib, pkgs, ... }:
+{
+  config,
+  inputs,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.custom.roles.workstation.packages;
 in
@@ -25,6 +31,7 @@ in
       delta
       glow
       zed-editor
+      nix-search-cli
       inputs.file_clipper.packages.${stdenv.system}.default
     ];
 
@@ -48,3 +55,4 @@ in
     };
   };
 }
+

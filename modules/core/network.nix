@@ -21,5 +21,7 @@ in
     ];
   };
 
+  users.users.rui.extraGroups = [ "networkmanager" ];
+
   services.resolved.enable = mkDefault true;
 }

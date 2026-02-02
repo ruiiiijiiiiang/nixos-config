@@ -34,32 +34,57 @@ in
             image = "https://i.imgur.com/heDeGHH.jpeg";
           };
           cardBlur = "xl";
-          layout = {
-            "Media" = {
-              style = "row";
-              columns = 6;
-            };
-            "Downloads" = {
-              style = "row";
-              columns = 6;
-            };
-            "Office" = {
-              style = "row";
-              columns = 6;
-            };
-            "Security" = {
-              style = "row";
-              columns = 6;
-            };
-            "Tools" = {
-              style = "row";
-              columns = 6;
-            };
-            "System" = {
-              style = "row";
-              columns = 6;
-            };
-          };
+          layout = [
+            {
+              "Media" = {
+                style = "row";
+                columns = 6;
+                tab = "Apps";
+              };
+            }
+            {
+              "Office" = {
+                style = "row";
+                columns = 6;
+                tab = "Apps";
+              };
+            }
+            {
+              "Tools" = {
+                style = "row";
+                columns = 6;
+                tab = "Apps";
+              };
+            }
+            {
+              "Security" = {
+                style = "row";
+                columns = 6;
+                tab = "Apps";
+              };
+            }
+            {
+              "Development" = {
+                style = "row";
+                columns = 6;
+                tab = "System";
+              };
+            }
+            {
+              "Downloads" = {
+                style = "row";
+                columns = 6;
+                tab = "System";
+              };
+            }
+            {
+              "System" = {
+                style = "row";
+                columns = 6;
+                tab = "System";
+              };
+            }
+          ];
         };
 
         widgets = [
@@ -94,6 +119,24 @@ in
                   icon = "jellyfin";
                   href = "https://${subdomains.vm-app.jellyfin}.${domains.home}";
                   description = "Media Server";
+                };
+              }
+            ];
+          }
+          {
+            "Development" = [
+              {
+                "ByteStash" = {
+                  icon = "bytestash";
+                  href = "https://${subdomains.vm-app.bytestash}.${domains.home}";
+                  description = "Code Snippets";
+                };
+              }
+              {
+                "Forgejo" = {
+                  icon = "forgejo";
+                  href = "https://${subdomains.vm-app.forgejo}.${domains.home}";
+                  description = "Version Control";
                 };
               }
             ];
@@ -211,17 +254,17 @@ in
                 };
               }
               {
-                "ByteStash" = {
-                  icon = "bytestash";
-                  href = "https://${subdomains.vm-app.bytestash}.${domains.home}";
-                  description = "Code Snippets";
+                "Open WebUI" = {
+                  icon = "open-webui";
+                  href = "https://${subdomains.vm-app.openwebui}.${domains.home}";
+                  description = "WebUI for AI";
                 };
               }
               {
-                "Forgejo" = {
-                  icon = "forgejo";
-                  href = "https://${subdomains.vm-app.forgejo}.${domains.home}";
-                  description = "Version Control";
+                "SearXNG" = {
+                  icon = "searxng";
+                  href = "https://${subdomains.vm-app.searxng}.${domains.home}";
+                  description = "Search engine";
                 };
               }
               {
@@ -303,13 +346,6 @@ in
                   icon = "myspeed";
                   href = "https://${subdomains.vm-monitor.myspeed}.${domains.home}";
                   description = "Speed Test Analysis";
-                };
-              }
-              {
-                "Scanopy" = {
-                  icon = "scanopy";
-                  href = "https://${subdomains.vm-monitor.scanopy}.${domains.home}";
-                  description = "Network Scanner";
                 };
               }
               {

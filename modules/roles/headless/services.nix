@@ -52,7 +52,12 @@ in
       };
     };
 
-    users.groups.podman.gid = oci-uids.podman;
+    users = {
+      users.rui.extraGroups = [
+        "podman"
+      ];
+      groups.podman.gid = oci-uids.podman;
+    };
 
     systemd.timers.podman-auto-update = {
       wantedBy = [ "timers.target" ];

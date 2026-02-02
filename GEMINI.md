@@ -14,16 +14,16 @@ The repository is organized into several key directories:
 - `hosts/`: Defines host-specific NixOS configurations.
   - `framework/`: Configuration for a Framework laptop (GUI, physical).
   - `pi/`: Configuration for a Raspberry Pi (Server, physical).
-  - `vm-app/`: Dedicated to application hosting.
+  - `vm-app/`: Dedicated to application hosting (GPU Passthrough enabled).
   - `vm-network/`: Acts as the central software router (DHCP, DNS, VPN, IPS).
   - `vm-monitor/`: dedicated to system and security monitoring.
   - `vm-security/`: Specialized security and forensics environment.
-- `modules/`: Custom NixOS modules for various services and features. Each module is self-contained with its own option definitions.
-  - `common/`: Shared NixOS modules and settings used by multiple hosts.
-  - `selfhost/`: A wide array of self-hosted services (e.g., Immich, Nextcloud, Paperless-ngx, Wazuh, etc.).
-  - `server/`: Common server configurations (network, security, services).
-  - `desktop/`: Desktop-specific configurations (Catppuccin, Flatpak, packages).
-  - `vm/`: Virtual machine hardware and disk layouts.
+- `modules/`: Custom NixOS modules organized by layer.
+  - `core/`: Universal baselines shared across all systems (Hardware, Network, NixOS, Packages).
+  - `platform/`: Hardware abstraction layer (Framework, Pi, VM).
+  - `roles/`: Host personality definitions (Headless, Security, Workstation).
+  - `services/`: Functional payloads categorized by domain (Apps, Networking, Observability).
+  
 - `lib/`: Utility functions and constants used throughout the configuration.
 - `secrets/`: Encrypted secrets managed by `agenix`.
 - `shells/`: Custom development shells (e.g., `rust`, `devops`, `forensics`).
@@ -75,10 +75,10 @@ nix develop .#<shell-name> # e.g., nix develop .#rust
 
 ## Self-Hosted Services
 
-The `modules/selfhost/` directory contains configurations for numerous services, including:
+The `modules/services/apps/` directory contains configurations for numerous services, organized by domain:
 
-- **Media & Photos:** Immich
-- **Cloud & Productivity:** Opencloud, Paperless-ngx, Stirling-PDF, Vaultwarden
-- **Monitoring & Security:** Beszel, Gatus, Prometheus, Wazuh, Suricata, Scanopy
-- **Utilities:** Atuin, MicroBin, Syncthing, Home Assistant, Dockhand
-- **Web:** Nginx, Cloudflared, Website, YOURLS
+- **Media:** Immich, Jellyfin (GPU accelerated)
+- **Office:** Opencloud, Paperless-ngx, Stirling-PDF, Memos, Nextcloud
+- **Tools:** Atuin, MicroBin, Syncthing, Home Assistant, Forgejo, LLM (Ollama + Open WebUI - GPU accelerated), SearXNG
+- **Security:** Vaultwarden, PocketID
+- **Web:** Homepage, Website

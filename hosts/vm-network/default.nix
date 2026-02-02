@@ -12,7 +12,6 @@ in
   networking.hostName = "vm-network";
 
   age.secrets = {
-    scanopy-daemon-vm-network-env.file = ../../secrets/scanopy/daemon-vm-network-env.age;
     wireguard-server-private-key.file = ../../secrets/wireguard/server-private-key.age;
     wireguard-framework-preshared-key.file = ../../secrets/wireguard/framework-preshared-key.age;
     wireguard-iphone-16-preshared-key.file = ../../secrets/wireguard/iphone-16-preshared-key.age;
@@ -126,12 +125,6 @@ in
           node.enable = true;
           podman.enable = true;
           interface = infraInterface;
-        };
-        scanopy = {
-          daemon = {
-            enable = true;
-            envFile = config.age.secrets.scanopy-daemon-vm-network-env.path;
-          };
         };
         wazuh.agent = {
           enable = true;

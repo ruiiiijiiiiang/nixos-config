@@ -62,6 +62,10 @@ in
     publicKeys = ssh.vm-app;
     armor = true;
   };
+  "openwebui-env.age" = {
+    publicKeys = ssh.vm-app;
+    armor = true;
+  };
   "paperless-env.age" = {
     publicKeys = ssh.vm-app;
     armor = true;

@@ -131,6 +131,7 @@ rec {
         nextcloud = config.custom.services.apps.office.nextcloud.enable;
         onlyoffice = config.custom.services.apps.office.opencloud.enable;
         opencloud = config.custom.services.apps.office.opencloud.enable;
+        openwebui = config.custom.services.apps.tools.llm.enable;
         paperless = config.custom.services.apps.office.paperless.enable;
         pihole = config.custom.services.networking.dns.enable;
         pocketid = config.custom.services.apps.security.pocketid.enable;
@@ -140,6 +141,7 @@ rec {
         qbittorrent = config.custom.services.networking.torrent.enable;
         reitti = config.custom.services.apps.tools.reitti.enable;
         scanopy = config.custom.services.observability.scanopy.server.enable;
+        searxng = config.custom.services.apps.tools.searxng.enable;
         stirlingpdf = config.custom.services.apps.office.stirlingpdf.enable;
         syncthing = config.custom.services.apps.tools.syncthing.enable;
         vaultwarden = config.custom.services.apps.security.vaultwarden.enable;
