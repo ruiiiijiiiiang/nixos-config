@@ -61,7 +61,7 @@ in
     users = mkOciUser "scanopy";
 
     systemd.tmpfiles.rules = [
-      "d /var/lib/scanopy/postgres 0700 ${toString oci-uids.postgres} ${toString oci-uids.postgres} - -"
+      "d /var/lib/scanopy/postgres 0700 ${toString oci-uids.postgres-alpine} ${toString oci-uids.postgres-alpine} - -"
       "d /var/lib/scanopy/data 0700 ${toString oci-uids.scanopy} ${toString oci-uids.scanopy} - -"
     ];
 

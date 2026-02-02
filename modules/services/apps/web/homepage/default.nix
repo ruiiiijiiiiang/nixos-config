@@ -218,6 +218,13 @@ in
                 };
               }
               {
+                "Bento PDF" = {
+                  icon = "bentopdf";
+                  href = "https://www.bentopdf.com/index.html";
+                  description = "PDF Editor";
+                };
+              }
+              {
                 "Calendar Parser" = {
                   icon = "p-cal";
                   href = "https://calendar-parse.ruiiiijiiiiang.deno.net";

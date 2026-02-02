@@ -127,7 +127,7 @@ in
     users = mkOciUser "dawarich";
 
     systemd.tmpfiles.rules = [
-      "d /var/lib/dawarich/postgis 0700 ${toString oci-uids.postgis} ${toString oci-uids.postgis} - -"
+      "d /var/lib/dawarich/postgis 0700 ${toString oci-uids.postgres-alpine} ${toString oci-uids.postgres-alpine} - -"
       "d /var/lib/dawarich/data/storage 0700 ${toString oci-uids.dawarich} ${toString oci-uids.dawarich} - -"
       "d /var/lib/dawarich/data/public 0700 ${toString oci-uids.dawarich} ${toString oci-uids.dawarich} - -"
       "d /var/lib/dawarich/data/tmp 0700 ${toString oci-uids.dawarich} ${toString oci-uids.dawarich} - -"

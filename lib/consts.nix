@@ -246,10 +246,11 @@ rec {
     forgejo = 913;
     llm = 914;
     searxng = 915;
-    postgis = 70;
-    postgres = 999;
     user = 1000;
     nobody = 65534;
+
+    postgres = 999;
+    postgres-alpine = 70;
   };
 
   oidc-issuer = "${subdomains.vm-app.pocketid}.${domains.home}";

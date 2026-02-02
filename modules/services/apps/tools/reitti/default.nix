@@ -146,7 +146,7 @@ in
     };
 
     systemd.tmpfiles.rules = [
-      "d /var/lib/reitti/postgis 0700 ${toString oci-uids.postgis} ${toString oci-uids.postgis} - -"
+      "d /var/lib/reitti/postgis 0700 ${toString oci-uids.postgres-alpine} ${toString oci-uids.postgres-alpine} - -"
       "d /var/lib/reitti/data 0700 ${toString oci-uids.reitti} ${toString oci-uids.reitti} - -"
     ];
 
