@@ -1,21 +1,13 @@
 {
   config,
+  consts,
   lib,
   pkgs,
-  helpers,
   ...
 }:
 let
-  inherit (import ../../../../lib/consts.nix)
-    addresses
-    domains
-    subdomains
-    ports
-    ;
-  inherit (helpers) mkVirtualHost;
+  inherit (consts) addresses;
   cfg = config.custom.services.networking.suricata;
-  fqdn = "${subdomains.${config.networking.hostName}.evebox}.${domains.home}";
-  eveJsonPath = "/var/log/suricata/eve.json";
 in
 {
   options.custom.services.networking.suricata = with lib; {
@@ -89,8 +81,6 @@ in
           '';
         };
       };
-
-      firewall.interfaces.${cfg.lanInterface}.allowedTCPPorts = [ ports.evebox ];
     };
 
     services = {
@@ -152,7 +142,7 @@ in
               eve-log = {
                 enabled = true;
                 filetype = "regular";
-                filename = eveJsonPath;
+                filename = "/var/log/suricata/eve.json";
                 file-mode = "0644";
                 pcap-file = false;
                 rotate-interval = "day";
@@ -175,41 +165,6 @@ in
           };
         };
       };
-
-      nginx.virtualHosts."${fqdn}" = mkVirtualHost {
-        inherit fqdn;
-        port = ports.evebox;
-      };
     };
-
-    virtualisation.oci-containers.containers = {
-      evebox = {
-        image = "docker.io/jasonish/evebox:latest";
-        ports = [ "${addresses.localhost}:${toString ports.evebox}:${toString ports.evebox}" ];
-        volumes = [
-          "${eveJsonPath}:${eveJsonPath}:ro"
-          "/var/lib/evebox:/var/lib/evebox"
-        ]
-        ++ lib.optional config.custom.services.networking.geoipupdate.enable "/var/lib/GeoIP:/etc/evebox/:ro";
-        labels = {
-          "io.containers.autoupdate" = "registry";
-        };
-        cmd = [
-          "evebox"
-          "server"
-          "--datastore"
-          "sqlite"
-          "--input"
-          eveJsonPath
-          "--no-tls"
-        ];
-        # Run `nix-shell -p sqlite --run "sqlite3 /var/lib/evebox/events.sqlite 'PRAGMA journal_mode=WAL;'"` once to enable WAL
-        # Write-Ahead Logging significantly reduces I/O load
-      };
-    };
-
-    systemd.tmpfiles.rules = [
-      "d /var/lib/evebox 0755 root root -"
-    ];
   };
 }

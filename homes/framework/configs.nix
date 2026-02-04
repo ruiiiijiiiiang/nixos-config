@@ -1,10 +1,20 @@
-{ lib, helper, ... }:
+{ lib, helpers, ... }:
 
 let
-  inherit (helper) linkConfig;
+  inherit (helpers) linkConfig;
+  host = "framework";
 
   links = lib.mkMerge (
     map linkConfig [
+      {
+        name = "DankMaterialShell";
+        paths = [
+          {
+            target = ".config/DankMaterialShell/settings.json";
+            src = ".config/DankMaterialShell/${host}-settings.json";
+          }
+        ];
+      }
       {
         name = "ncspot";
         paths = [ ".config/ncspot" ];

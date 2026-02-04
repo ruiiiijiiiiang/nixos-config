@@ -15,7 +15,6 @@ rec {
       zwave = "zwave";
     };
     vm-network = {
-      evebox = "evebox";
       pihole = "pihole";
     };
     vm-app = {
@@ -160,7 +159,6 @@ rec {
       server = 3003;
       agent = 2376;
     };
-    evebox = 5636;
     gatus = 8083;
     grafana = 3001;
     homeassistant = 8123;

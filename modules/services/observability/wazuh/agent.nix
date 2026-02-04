@@ -9,14 +9,38 @@ let
   inherit (import ../../../../lib/consts.nix) addresses ports;
   inherit (helpers) ensureFile;
   cfg = config.custom.services.observability.wazuh.agent;
-  agentName = config.networking.hostName;
+
+  nginxXml = ''
+    <localfile>
+      <log_format>apache</log_format>
+      <location>/var/log/nginx/error.log</location>
+    </localfile>
+  '';
+
+  suricataXml = ''
+    <localfile>
+      <log_format>json</log_format>
+      <location>/var/log/suricata/eve.json</location>
+    </localfile>
+  '';
+
+  extraLocalfiles = lib.concatStringsSep "\n" [
+    (if config.custom.services.networking.suricata.enable
+    then suricataXml
+    else "")
+    (if config.custom.services.networking.nginx.enable
+    then nginxXml
+    else "")
+  ];
+
   ossecTemplate = import ./ossec.conf.nix;
   ossecContent =
     builtins.replaceStrings
-      [ "@AGENT_NAME@" "@SERVER_ADDRESS@" ]
-      [ agentName addresses.infra.hosts.vm-monitor ]
+      [ "@AGENT_NAME@" "@SERVER_ADDRESS@" "@EXTRA_LOCALFILES@" ]
+      [ config.networking.hostName addresses.infra.hosts.vm-monitor extraLocalfiles ]
       ossecTemplate;
   initialFile = pkgs.writeText "ossec.conf" ossecContent;
+
   ossecFile = "/var/wazuh/ossec.conf";
   keysFile = "/var/wazuh/client.keys";
 in

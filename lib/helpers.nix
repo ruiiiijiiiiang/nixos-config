@@ -117,7 +117,6 @@ rec {
         bytestash = config.custom.services.apps.tools.bytestash.enable;
         dawarich = config.custom.services.apps.tools.dawarich.enable;
         dockhand = config.custom.services.observability.dockhand.server.enable;
-        evebox = config.custom.services.networking.suricata.enable;
         forgejo = config.custom.services.apps.tools.forgejo.enable;
         gatus = config.custom.services.observability.gatus.enable;
         grafana = config.custom.services.observability.prometheus.server.enable;
@@ -176,6 +175,13 @@ rec {
     };
   };
 
+  mkOutOfStoreSymlink = path:
+    let
+      pathStr = toString path;
+      name = baseNameOf pathStr;
+    in
+      pkgs.runCommandLocal name {} ''ln -s ${lib.escapeShellArg pathStr} $out'';
+
   linkConfig =
     {
       name,
@@ -183,9 +189,13 @@ rec {
       host ? "",
     }:
     builtins.listToAttrs (
-      map (path: {
-        name = path;
-        value.source = lib.file.mkOutOfStoreSymlink "${home}/dotfiles/${name}/${path}";
+      map (item: let
+        isSimple = builtins.isString item;
+        targetPath = if isSimple then item else item.target;
+        sourceSuffix = if isSimple then item else item.src;
+      in {
+        name = targetPath;
+        value.source = mkOutOfStoreSymlink "${home}/dotfiles/${name}/${sourceSuffix}";
       }) paths
     );
 }

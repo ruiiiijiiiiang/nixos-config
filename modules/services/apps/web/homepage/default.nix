@@ -78,6 +78,13 @@ in
               };
             }
             {
+              "Networking" = {
+                style = "row";
+                columns = 6;
+                tab = "System";
+              };
+            }
+            {
               "System" = {
                 style = "row";
                 columns = 6;
@@ -261,6 +268,13 @@ in
                 };
               }
               {
+                "Zwave" = {
+                  icon = "z-wave-js-ui";
+                  href = "https://${subdomains.pi.zwave}.${domains.home}";
+                  description = "Zwave Device Manager";
+                };
+              }
+              {
                 "Open WebUI" = {
                   icon = "open-webui";
                   href = "https://${subdomains.vm-app.openwebui}.${domains.home}";
@@ -300,6 +314,38 @@ in
                   icon = "syncthing";
                   href = "https://${subdomains.vm-app.syncthing}.${domains.home}";
                   description = "File Sync Tool";
+                };
+              }
+            ];
+          }
+          {
+            "Networking" = [
+              {
+                "Myspeed" = {
+                  icon = "myspeed";
+                  href = "https://${subdomains.vm-monitor.myspeed}.${domains.home}";
+                  description = "Speed Test Analysis";
+                };
+              }
+              {
+                "Pihole" = {
+                  icon = "pi-hole";
+                  href = "https://${subdomains.vm-network.pihole}.${domains.home}";
+                  description = "DNS Ad Blocker";
+                };
+              }
+              {
+                "Pihole Backup 1" = {
+                  icon = "pi-hole";
+                  href = "https://${subdomains.pi.pihole}.${domains.home}";
+                  description = "DNS Ad Blocker";
+                };
+              }
+              {
+                "Pihole Backup 2" = {
+                  icon = "pi-hole";
+                  href = "https://${addresses.infra.hosts.pi-legacy}/admin";
+                  description = "DNS Ad Blocker";
                 };
               }
             ];
@@ -349,52 +395,10 @@ in
                 };
               }
               {
-                "Myspeed" = {
-                  icon = "myspeed";
-                  href = "https://${subdomains.vm-monitor.myspeed}.${domains.home}";
-                  description = "Speed Test Analysis";
-                };
-              }
-              {
                 "Wazuh" = {
                   icon = "wazuh";
                   href = "https://${subdomains.vm-monitor.wazuh}.${domains.home}";
                   description = "Security Monitoring";
-                };
-              }
-              {
-                "Evebox" = {
-                  icon = "evebox";
-                  href = "https://${subdomains.vm-network.evebox}.${domains.home}";
-                  description = "IDS Event Viewer";
-                };
-              }
-              {
-                "Zwave" = {
-                  icon = "z-wave-js-ui";
-                  href = "https://${subdomains.pi.zwave}.${domains.home}";
-                  description = "Zwave Device Manager";
-                };
-              }
-              {
-                "Pihole" = {
-                  icon = "pi-hole";
-                  href = "https://${subdomains.vm-network.pihole}.${domains.home}";
-                  description = "DNS Ad Blocker";
-                };
-              }
-              {
-                "Pihole Backup 1" = {
-                  icon = "pi-hole";
-                  href = "https://${subdomains.pi.pihole}.${domains.home}";
-                  description = "DNS Ad Blocker";
-                };
-              }
-              {
-                "Pihole Backup 2" = {
-                  icon = "pi-hole";
-                  href = "https://${addresses.infra.hosts.pi-legacy}/admin";
-                  description = "DNS Ad Blocker";
                 };
               }
             ];

@@ -118,6 +118,8 @@
     <frequency>360</frequency>
   </localfile>
 
+  @EXTRA_LOCALFILES@
+
   <active-response>
     <disabled>no</disabled>
     <ca_store>etc/wpk_root.pem</ca_store>

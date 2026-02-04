@@ -243,7 +243,7 @@
       homeConfigurations = {
         framework = homeManagerConfiguration {
           inherit pkgs;
-          specialArgs = {
+          extraSpecialArgs = {
             inherit consts;
             inherit helpers;
           };
@@ -254,7 +254,7 @@
 
         arch = homeManagerConfiguration {
           inherit pkgs;
-          specialArgs = {
+          extraSpecialArgs = {
             inherit consts;
             inherit helpers;
           };
@@ -265,7 +265,7 @@
 
         vm-security = homeManagerConfiguration {
           inherit pkgs;
-          specialArgs = {
+          extraSpecialArgs = {
             inherit consts;
             inherit helpers;
           };

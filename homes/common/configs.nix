@@ -1,7 +1,7 @@
-{ lib, helper, ... }:
+{ lib, helpers, ... }:
 
 let
-  inherit (helper) linkConfig;
+  inherit (helpers) linkConfig;
 
   links = lib.mkMerge (
     map linkConfig [
