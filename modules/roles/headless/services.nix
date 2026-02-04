@@ -64,10 +64,6 @@ in
       enable = true;
     };
 
-    systemd.tmpfiles.rules = [
-      "L+ /var/run/docker.sock - - - - /run/podman/podman.sock"
-    ];
-
     services = {
       logrotate.enable = true;
       journald.extraConfig = ''

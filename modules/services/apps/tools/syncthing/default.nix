@@ -6,7 +6,12 @@
   ...
 }:
 let
-  inherit (consts) domains subdomains ports;
+  inherit (consts)
+    home
+    domains
+    subdomains
+    ports
+    ;
   inherit (helpers) mkVirtualHost;
   cfg = config.custom.services.apps.tools.syncthing;
   fqdn = "${subdomains.${config.networking.hostName}.syncthing}.${domains.home}";
@@ -23,7 +28,7 @@ in
         enable = true;
         user = "rui";
         group = "rui";
-        dataDir = "/home/rui/Syncthing";
+        dataDir = "${home}/Syncthing";
         settings = {
           devices = {
             "rui-arch" = {

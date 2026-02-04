@@ -1,10 +1,12 @@
 {
   config,
+  consts,
   lib,
   pkgs,
   ...
 }:
 let
+  inherit (consts) home;
   cfg = config.custom.platform.framework.nixos;
 in
 {
@@ -19,8 +21,8 @@ in
       };
       serviceConfig = {
         Type = "oneshot";
-        ExecStart = "${pkgs.nix}/bin/nix flake update --flake /home/rui/nixos-config";
-        WorkingDirectory = "/home/rui/nixos-config";
+        ExecStart = "${pkgs.nix}/bin/nix flake update --flake ${home}/nixos-config";
+        WorkingDirectory = "${home}/nixos-config";
       };
       wantedBy = [ "default.target" ];
     };

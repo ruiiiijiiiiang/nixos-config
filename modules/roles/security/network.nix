@@ -1,11 +1,13 @@
 {
   config,
+  consts,
   lib,
   pkgs,
   ...
 }:
 let
   inherit (import ../../../lib/keys.nix) ssh;
+  inherit (consts) home;
   cfg = config.custom.roles.security.network;
 in
 {
@@ -26,7 +28,7 @@ in
 
     services = {
       openvpn.servers.tryhackme = {
-        config = "config /home/rui/tryhackme/tryhackme.ovpn";
+        config = "config ${home}/tryhackme/tryhackme.ovpn";
       };
 
       openssh = {

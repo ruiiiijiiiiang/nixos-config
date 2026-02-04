@@ -30,7 +30,7 @@ in
           "${addresses.localhost}:${toString ports.portainer.edge}:${toString ports.portainer.edge}"
         ];
         volumes = [
-          "/var/run/docker.sock:/var/run/docker.sock:ro"
+          "/run/docker.sock:/var/run/docker.sock:ro"
           "portainer_data:/data"
         ];
         labels = {

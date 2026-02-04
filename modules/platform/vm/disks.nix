@@ -109,6 +109,15 @@ in
         ];
         depends = [ "/bulk" ];
       };
+
+      "/cache" = mkIf cfg.enableScratch {
+        device = "/bulk/cache";
+        options = [
+          "bind"
+          "nofail"
+        ];
+        depends = [ "/bulk" ];
+      };
     };
 
     systemd.tmpfiles.rules =
@@ -118,6 +127,7 @@ in
       ])
       ++ (lib.optionals cfg.enableScratch [
         "d /bulk/media 0755 root root -"
+        "d /bulk/cache 0755 root root -"
       ]);
   };
 }

@@ -1,6 +1,8 @@
 rec {
   timeZone = "America/Chicago";
   defaultLocale = "en_US.UTF-8";
+  username = "rui";
+  home = "/home/${username}";
 
   domains = {
     home = "ruijiang.me";
@@ -246,6 +248,7 @@ rec {
     forgejo = 913;
     llm = 914;
     searxng = 915;
+    atuin = 916;
     user = 1000;
     nobody = 65534;
 

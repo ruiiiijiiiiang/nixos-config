@@ -10,6 +10,7 @@ let
     domains
     subdomains
     oci-uids
+    home
     ;
   vlans = [ "infra" ];
 in
@@ -174,4 +175,17 @@ rec {
       isSystemUser = true;
     };
   };
+
+  linkConfig =
+    {
+      name,
+      paths,
+      host ? "",
+    }:
+    builtins.listToAttrs (
+      map (path: {
+        name = path;
+        value.source = lib.file.mkOutOfStoreSymlink "${home}/dotfiles/${name}/${path}";
+      }) paths
+    );
 }

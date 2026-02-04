@@ -1,7 +1,7 @@
+{ consts, ... }:
 let
-  username = "rui";
-  homePath = "/home/${username}";
-  flakePath = "${homePath}/nixos-config";
+  inherit (consts) username home;
+  flakePath = "${home}/nixos-config";
 in
 {
   imports = [
@@ -10,7 +10,7 @@ in
 
   home = {
     inherit username;
-    homeDirectory = homePath;
+    homeDirectory = home;
     stateVersion = "25.05";
   };
 

@@ -19,5 +19,6 @@
 
   programs = {
     vim.enable = true;
+    git.enable = true;
   };
 }

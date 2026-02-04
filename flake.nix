@@ -241,15 +241,34 @@
       };
 
       homeConfigurations = {
-        rui = homeManagerConfiguration {
+        framework = homeManagerConfiguration {
           inherit pkgs;
+          specialArgs = {
+            inherit consts;
+            inherit helpers;
+          };
           modules = [
-            ./homes/rui
+            ./homes/framework
+          ];
+        };
+
+        arch = homeManagerConfiguration {
+          inherit pkgs;
+          specialArgs = {
+            inherit consts;
+            inherit helpers;
+          };
+          modules = [
+            ./homes/arch
           ];
         };
 
         vm-security = homeManagerConfiguration {
           inherit pkgs;
+          specialArgs = {
+            inherit consts;
+            inherit helpers;
+          };
           modules = [
             ./homes/vm-security
           ];

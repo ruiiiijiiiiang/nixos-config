@@ -2,6 +2,10 @@ let
   inherit (import ../lib/keys.nix) ssh;
 in
 {
+  "atuin-env.age" = {
+    publicKeys = ssh.vm-app;
+    armor = true;
+  };
   "bytestash-env.age" = {
     publicKeys = ssh.vm-app;
     armor = true;

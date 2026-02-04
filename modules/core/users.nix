@@ -1,19 +1,26 @@
 { consts, ... }:
-with consts;
+let
+  inherit (consts)
+    timeZone
+    defaultLocale
+    username
+    home
+    ;
+in
 {
   users = {
-    users.rui = {
+    users.${username} = {
       isNormalUser = true;
       extraGroups = [ "wheel" ];
       initialPassword = "yoloswag";
-      group = "rui";
-      home = "/home/rui";
+      group = username;
+      inherit home;
       createHome = true;
     };
 
-    groups.rui = {
-      name = "rui";
-      members = [ "rui" ];
+    groups.${username} = {
+      name = username;
+      members = [ username ];
     };
   };
 

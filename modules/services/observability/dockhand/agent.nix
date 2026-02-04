@@ -44,7 +44,7 @@ in
           }:${toString ports.dockhand.agent}:${toString ports.dockhand.agent}"
         ];
         volumes = [
-          "/var/run/docker.sock:/var/run/docker.sock"
+          "/run/docker.sock:/var/run/docker.sock"
           "${config.age.secrets.dockhand-agent-crt.path}:/certs/server.crt:ro"
           "${config.age.secrets.dockhand-agent-key.path}:/certs/server.key:ro"
         ];

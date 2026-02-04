@@ -34,7 +34,7 @@ in
         user = "${toString oci-uids.nobody}:${toString oci-uids.podman}";
         volumes = [
           "scanopy-daemon-config:/tmp/.config/daemon:U"
-          "/run/podman/podman.sock:/var/run/docker.sock:ro"
+          "/run/docker.sock:/var/run/docker.sock:ro"
         ];
         environmentFiles = [ cfg.envFile ];
         environment = {

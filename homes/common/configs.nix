@@ -1,14 +1,8 @@
-{ config, lib, ... }:
+{ lib, helper, ... }:
 
 let
-  linkConfig =
-    { name, paths }:
-    builtins.listToAttrs (
-      map (path: {
-        name = path;
-        value.source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/${name}/${path}";
-      }) paths
-    );
+  inherit (helper) linkConfig;
+
   links = lib.mkMerge (
     map linkConfig [
       {
@@ -56,18 +50,6 @@ let
         paths = [ ".config/lsd" ];
       }
       {
-        name = "ncspot";
-        paths = [ ".config/ncspot" ];
-      }
-      {
-        name = "niri";
-        paths = [ ".config/niri" ];
-      }
-      {
-        name = "noxdir";
-        paths = [ ".noxdir" ];
-      }
-      {
         name = "nvim";
         paths = [ ".config/nvim" ];
       }
@@ -77,10 +59,6 @@ let
           ".config/posting"
           ".local/share/posting/themes"
         ];
-      }
-      {
-        name = "spicetify";
-        paths = [ ".config/spicetify/Themes/text" ];
       }
       {
         name = "starship";

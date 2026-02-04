@@ -27,7 +27,7 @@ in
         image = "docker.io/fnsys/dockhand:latest";
         ports = [ "${addresses.localhost}:${toString ports.dockhand.server}:3000" ];
         volumes = [
-          "/var/run/docker.sock:/var/run/docker.sock"
+          "/run/docker.sock:/var/run/docker.sock"
           "dockhand_data:/app/data"
         ];
         environment = {
