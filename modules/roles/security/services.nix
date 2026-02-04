@@ -1,10 +1,12 @@
 {
   config,
+  consts,
   lib,
   pkgs,
   ...
 }:
 let
+  inherit (consts) username;
   cfg = config.custom.roles.security.services;
 in
 {
@@ -51,7 +53,7 @@ in
       };
     };
 
-    users.users.rui.extraGroups = [
+    users.users.${username}.extraGroups = [
       "audio"
       "pcap"
       "wireshark"

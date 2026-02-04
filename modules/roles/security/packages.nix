@@ -51,6 +51,13 @@ in
       binsider
       zsteg
       poppler-utils
+      volatility3
+      flare-floss
+
+      # Reverse Engineering
+      ghidra-bin
+      radare2
+      binaryninja-free
 
       gh
       unzip
@@ -60,6 +67,7 @@ in
 
       networkmanagerapplet
       pulseaudio-module-xrdp
+      remmina
     ];
 
     programs.tcpdump.enable = true;

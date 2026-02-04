@@ -7,7 +7,7 @@
   ...
 }:
 let
-  inherit (consts) oci-uids;
+  inherit (consts) username oci-uids;
   cfg = config.custom.roles.headless.services;
 in
 {
@@ -53,7 +53,7 @@ in
     };
 
     users = {
-      users.rui.extraGroups = [
+      users.${username}.extraGroups = [
         "podman"
       ];
       groups.podman.gid = oci-uids.podman;

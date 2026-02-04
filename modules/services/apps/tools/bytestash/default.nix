@@ -7,6 +7,7 @@
 }:
 let
   inherit (consts)
+    username
     addresses
     domains
     subdomains
@@ -38,7 +39,7 @@ in
         ports = [ "${addresses.localhost}:${toString ports.bytestash}:${toString ports.bytestash}" ];
         volumes = [ "/var/lib/bytestash:/data" ];
         environment = {
-          ADMIN_USERNAMES = "rui";
+          ADMIN_USERNAMES = username;
           DISABLE_ACCOUNTS = "false";
           DISABLE_INTERNAL_ACCOUNTS = "true";
           OIDC_ENABLED = "true";

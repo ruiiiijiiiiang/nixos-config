@@ -1,5 +1,6 @@
-{ lib, helpers, ... }:
+{ consts, lib, helpers, ... }:
 let
+  inherit (consts) username;
   inherit (lib) mkDefault;
   inherit (helpers) mkExtraHosts;
 in
@@ -21,7 +22,7 @@ in
     ];
   };
 
-  users.users.rui.extraGroups = [ "networkmanager" ];
+  users.users.${username}.extraGroups = [ "networkmanager" ];
 
   services.resolved.enable = mkDefault true;
 }

@@ -31,7 +31,7 @@ in
         dataDir = "${home}/Syncthing";
         settings = {
           devices = {
-            "rui-arch" = {
+            "arch" = {
               id = "DIKD4FJ-4SE2EKP-3Y23ROB-YAKQJP7-KHN2GRN-CTHD2OF-ECAXI3P-JGSYFQM";
             };
             "framework" = {
@@ -50,7 +50,7 @@ in
               id = "default";
               path = "~/Sync";
               devices = [
-                "rui-arch"
+                "arch"
                 "framework"
                 "vm-app"
                 "Rui-Desktop"
@@ -60,7 +60,7 @@ in
               id = "dotfiles";
               path = "~/dotfiles";
               devices = [
-                "rui-arch"
+                "arch"
                 "framework"
                 "vm-app"
               ];
@@ -69,7 +69,7 @@ in
               id = "nixos-config";
               path = "~/nixos-config";
               devices = [
-                "rui-arch"
+                "arch"
                 "framework"
                 "vm-app"
               ];

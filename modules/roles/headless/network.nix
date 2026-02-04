@@ -6,7 +6,7 @@
 }:
 let
   inherit (import ../../../lib/keys.nix) ssh;
-  inherit (consts) ports;
+  inherit (consts) username ports;
   cfg = config.custom.roles.headless.network;
 in
 {
@@ -75,11 +75,11 @@ in
       };
     };
 
-    users.users.rui.openssh.authorizedKeys.keys = ssh.rui-arch ++ ssh.framework;
+    users.users.${username}.openssh.authorizedKeys.keys = ssh.arch ++ ssh.framework;
     users.users.root.openssh.authorizedKeys.keys = [
       ssh.github-action
     ]
-    ++ ssh.rui-arch
+    ++ ssh.arch
     ++ ssh.framework;
   };
 }

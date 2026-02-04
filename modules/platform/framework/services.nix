@@ -1,10 +1,12 @@
 {
   config,
+  consts,
   lib,
   pkgs,
   ...
 }:
 let
+  inherit (consts) username;
   cfg = config.custom.platform.framework.services;
 in
 {
@@ -48,7 +50,7 @@ in
 
     security.pam.services = {
       sddm.enableKwallet = true;
-      rui.kwallet.enable = true;
+      ${username}.kwallet.enable = true;
     };
 
     xdg.portal = {

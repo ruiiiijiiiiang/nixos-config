@@ -1,7 +1,7 @@
 {
   ssh = {
-    rui-arch = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMsyTs7DiG/Emm8B/fPqDh5LIEc+1V7DkF/ICIxPy68O rui@rui-arch"
+    arch = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMsyTs7DiG/Emm8B/fPqDh5LIEc+1V7DkF/ICIxPy68O rui@arch"
     ];
     framework = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIM9m3eaPWXrwynrF4hS5Llwfxm/FpNMjgoz41WnNfCUg rui@framework"
