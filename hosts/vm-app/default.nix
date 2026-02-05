@@ -41,6 +41,7 @@ in
           bytestash.enable = true;
           forgejo.enable = true;
           karakeep.enable = true;
+          harmonia.enable = true;
           llm.enable = true;
           microbin.enable = true;
           reitti.enable = true;

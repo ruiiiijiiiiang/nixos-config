@@ -12,7 +12,7 @@ let
     ports
     oci-uids
     ;
-  inherit (helpers) mkVirtualHost mkOciUser;
+  inherit (helpers) mkVirtualHost mkOciUser mkNotifyService;
   cfg = config.custom.services.observability.scanopy.server;
   fqdn = "${subdomains.${config.networking.hostName}.scanopy}.${domains.home}";
 in
@@ -44,14 +44,14 @@ in
       scanopy-server = {
         image = "ghcr.io/scanopy/scanopy/server:latest";
         user = "${toString oci-uids.scanopy}:${toString oci-uids.scanopy}";
+        dependsOn = [ "scanopy-postgres" ];
+        networks = [ "container:scanopy-postgres" ];
         environment = {
           SCANOPY_WEB_EXTERNAL_PATH = "/app/static";
           SCANOPY_PUBLIC_URL = "https://${fqdn}";
         };
         environmentFiles = [ config.age.secrets.scanopy-server-env.path ];
         volumes = [ "/var/lib/scanopy/data:/data" ];
-        dependsOn = [ "scanopy-postgres" ];
-        networks = [ "container:scanopy-postgres" ];
         labels = {
           "io.containers.autoupdate" = "registry";
         };
@@ -60,10 +60,14 @@ in
 
     users = mkOciUser "scanopy";
 
-    systemd.tmpfiles.rules = [
-      "d /var/lib/scanopy/postgres 0700 ${toString oci-uids.postgres-alpine} ${toString oci-uids.postgres-alpine} - -"
-      "d /var/lib/scanopy/data 0700 ${toString oci-uids.scanopy} ${toString oci-uids.scanopy} - -"
-    ];
+    systemd = {
+      tmpfiles.rules = [
+        "d /var/lib/scanopy/postgres 0700 ${toString oci-uids.postgres-alpine} ${toString oci-uids.postgres-alpine} - -"
+        "d /var/lib/scanopy/data 0700 ${toString oci-uids.scanopy} ${toString oci-uids.scanopy} - -"
+      ];
+
+      services.podman-scanopy-postgres = mkNotifyService { };
+    };
 
     services.nginx.virtualHosts."${fqdn}" = mkVirtualHost {
       inherit fqdn;

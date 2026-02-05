@@ -13,7 +13,7 @@ let
     ports
     oci-uids
     ;
-  inherit (helpers) mkOciUser mkVirtualHost;
+  inherit (helpers) mkOciUser mkVirtualHost mkNotifyService;
   cfg = config.custom.services.apps.tools.atuin;
   fqdn = "${subdomains.${config.networking.hostName}.atuin}.${domains.home}";
 in
@@ -62,10 +62,14 @@ in
 
     users = mkOciUser "atuin";
 
-    systemd.tmpfiles.rules = [
-      "d /var/lib/atuin/postgres 0700 ${toString oci-uids.postgres} ${toString oci-uids.postgres} - -"
-      "d /var/lib/atuin/config 0700 ${toString oci-uids.atuin} ${toString oci-uids.atuin} - -"
-    ];
+    systemd = {
+      tmpfiles.rules = [
+        "d /var/lib/atuin/postgres 0700 ${toString oci-uids.postgres} ${toString oci-uids.postgres} - -"
+        "d /var/lib/atuin/config 0700 ${toString oci-uids.atuin} ${toString oci-uids.atuin} - -"
+      ];
+
+      services.podman-atuin-postgres = mkNotifyService { };
+    };
 
     services.nginx.virtualHosts."${fqdn}" = mkVirtualHost {
       inherit fqdn;

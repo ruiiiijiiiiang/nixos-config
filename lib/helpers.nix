@@ -120,6 +120,7 @@ rec {
         forgejo = config.custom.services.apps.tools.forgejo.enable;
         gatus = config.custom.services.observability.gatus.enable;
         grafana = config.custom.services.observability.prometheus.server.enable;
+        harmonia = config.custom.services.apps.tools.harmonia.enable;
         homeassistant = config.custom.services.apps.tools.homeassistant.enable;
         homepage = config.custom.services.apps.web.homepage.enable;
         immich = config.custom.services.apps.media.immich.enable;
@@ -175,27 +176,43 @@ rec {
     };
   };
 
-  mkOutOfStoreSymlink = path:
+  mkNotifyService =
+    {
+      timeout ? 300,
+    }:
+    {
+      serviceConfig = {
+        Type = "notify";
+        NotifyAccess = "all";
+        TimeoutStartSec = lib.mkForce (toString timeout);
+      };
+    };
+
+  mkOutOfStoreSymlink =
+    path:
     let
       pathStr = toString path;
       name = baseNameOf pathStr;
     in
-      pkgs.runCommandLocal name {} ''ln -s ${lib.escapeShellArg pathStr} $out'';
+    pkgs.runCommandLocal name { } "ln -s ${lib.escapeShellArg pathStr} $out";
 
   linkConfig =
     {
       name,
       paths,
-      host ? "",
     }:
     builtins.listToAttrs (
-      map (item: let
-        isSimple = builtins.isString item;
-        targetPath = if isSimple then item else item.target;
-        sourceSuffix = if isSimple then item else item.src;
-      in {
-        name = targetPath;
-        value.source = mkOutOfStoreSymlink "${home}/dotfiles/${name}/${sourceSuffix}";
-      }) paths
+      map (
+        item:
+        let
+          isSimple = builtins.isString item;
+          targetPath = if isSimple then item else item.target;
+          sourceSuffix = if isSimple then item else item.src;
+        in
+        {
+          name = targetPath;
+          value.source = mkOutOfStoreSymlink "${home}/dotfiles/${name}/${sourceSuffix}";
+        }
+      ) paths
     );
 }

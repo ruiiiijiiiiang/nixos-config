@@ -15,7 +15,7 @@ let
     oci-uids
     oidc-issuer
     ;
-  inherit (helpers) mkOciUser mkVirtualHost;
+  inherit (helpers) mkOciUser mkVirtualHost mkNotifyService;
   cfg = config.custom.services.apps.tools.dawarich;
   fqdn = "${subdomains.${config.networking.hostName}.dawarich}.${domains.home}";
 in
@@ -58,10 +58,7 @@ in
       dawarich-app = {
         image = "docker.io/freikin/dawarich:latest";
         user = "${toString oci-uids.dawarich}:${toString oci-uids.dawarich}";
-        dependsOn = [
-          "dawarich-postgis"
-          "dawarich-redis"
-        ];
+        dependsOn = [ "dawarich-postgis" ];
         networks = [ "container:dawarich-postgis" ];
         environment = {
           APPLICATION_HOSTS = fqdn;
@@ -95,11 +92,7 @@ in
       dawarich-sidekiq = {
         image = "docker.io/freikin/dawarich:latest";
         user = "${toString oci-uids.dawarich}:${toString oci-uids.dawarich}";
-        dependsOn = [
-          "dawarich-postgis"
-          "dawarich-redis"
-          "dawarich-app"
-        ];
+        dependsOn = [ "dawarich-postgis" ];
         networks = [ "container:dawarich-postgis" ];
         environment = {
           APPLICATION_HOSTS = fqdn;
@@ -126,12 +119,16 @@ in
 
     users = mkOciUser "dawarich";
 
-    systemd.tmpfiles.rules = [
-      "d /var/lib/dawarich/postgis 0700 ${toString oci-uids.postgres-alpine} ${toString oci-uids.postgres-alpine} - -"
-      "d /var/lib/dawarich/data/storage 0700 ${toString oci-uids.dawarich} ${toString oci-uids.dawarich} - -"
-      "d /var/lib/dawarich/data/public 0700 ${toString oci-uids.dawarich} ${toString oci-uids.dawarich} - -"
-      "d /var/lib/dawarich/data/tmp 0700 ${toString oci-uids.dawarich} ${toString oci-uids.dawarich} - -"
-    ];
+    systemd = {
+      tmpfiles.rules = [
+        "d /var/lib/dawarich/postgis 0700 ${toString oci-uids.postgres-alpine} ${toString oci-uids.postgres-alpine} - -"
+        "d /var/lib/dawarich/data/storage 0700 ${toString oci-uids.dawarich} ${toString oci-uids.dawarich} - -"
+        "d /var/lib/dawarich/data/public 0700 ${toString oci-uids.dawarich} ${toString oci-uids.dawarich} - -"
+        "d /var/lib/dawarich/data/tmp 0700 ${toString oci-uids.dawarich} ${toString oci-uids.dawarich} - -"
+      ];
+
+      services.podman-dawarich-postgis = mkNotifyService { };
+    };
 
     services.nginx.virtualHosts."${fqdn}" = mkVirtualHost {
       inherit fqdn;

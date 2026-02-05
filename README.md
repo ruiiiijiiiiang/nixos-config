@@ -6,7 +6,7 @@ This repository isn't just a collection of config files; it is a **fully declara
 
 Every single aspect of this infrastructure—from the kernel hardening flags and vlan routing rules to the complex web of containerized microservices and their secret management—is defined in code. Version controlled and GitOps-friendly, it emphasizes **stability** through atomic rollbacks, **observability** via a comprehensive monitoring stack, and **security** with hardened kernels and isolated networking.
 
-We're way past infrastructure-as-code. It's time for infrastructure/network/configuration/security all-rolled-into-one-as-code.
+We're way past infrastructure-as-code. It's time for infrastructure/network/configuration/security/pipeline all-rolled-into-one-as-code.
 
 ## Project Structure
 
@@ -64,6 +64,8 @@ Redundancy is the only Reality. The network relies on a high-availability DNS cl
 ### External Access
 
 To maintain a zero-exposure posture, all external access is brokered by **Cloudflare Tunnels**. This architecture ensures that no ports are open on the WAN interface (besides WireGuard), completely eliminating the need for traditional port forwarding. The `cloudflared` service (running on `vm-network`) establishes an encrypted outbound connection to the Cloudflare edge, securely routing traffic for public-facing subdomains directly to the internal application stack.
+
+Furthermore, all web-facing services are placed behind an **Nginx reverse proxy**, which acts as a unified gateway. SSL/TLS certificates are automatically provisioned and managed by **ACME (Let's Encrypt)**, leveraging Cloudflare for DNS challenges, ensuring robust, always-on encryption without manual intervention.
 
 ## The Fleet
 
@@ -131,12 +133,18 @@ No more `.env` files leaking in git history. Sensitive data is encrypted at rest
 
 Deployment is atomic, consistent, and flexible.
 
+### Local Binary Cache
+
+**Accelerated Builds. Guaranteed Availability.**
+
+To accelerate deployments and ensure build artifacts are always available even if external services are not, this infrastructure runs its own private binary cache powered by **Harmonia**. Every night, a scheduled job automatically builds the latest configurations for all major hosts and populates the cache. This means that subsequent deployments are lightning-fast, pulling pre-built packages directly from the local network instead of rebuilding them from source or downloading from public caches.
+
 ### `nixos-rebuild`
 
 **The Surgical Strike.** For precise, single-host updates initiated directly from the dev machine:
 
 ```bash
-nixos-rebuild switch --flake .#<hostname> --target-host <hostname> --use-remote-sudo
+nixos-rebuild switch --flake .#<hostname> --target-host <hostname>
 ```
 
 ### `colmena`
@@ -146,7 +154,3 @@ nixos-rebuild switch --flake .#<hostname> --target-host <hostname> --use-remote-
 ```bash
 colmena apply -v --on @server
 ```
-
-### GitHub Actions
-
-**The Automated Pipeline.** A CI/CD workflow that can rebuild and deploy the fleet automatically, ensuring the infrastructure is always in sync with the repository.

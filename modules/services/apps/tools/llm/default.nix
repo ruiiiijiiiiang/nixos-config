@@ -14,7 +14,7 @@ let
     oci-uids
     oidc-issuer
     ;
-  inherit (helpers) mkOciUser mkVirtualHost;
+  inherit (helpers) mkOciUser mkVirtualHost mkNotifyService;
   cfg = config.custom.services.apps.tools.llm;
   fqdn = "${subdomains.${config.networking.hostName}.openwebui}.${domains.home}";
 in
@@ -83,10 +83,14 @@ in
 
     users = mkOciUser "llm";
 
-    systemd.tmpfiles.rules = [
-      "d /var/lib/ollama 0700 ${toString oci-uids.llm} ${toString oci-uids.llm} - -"
-      "d /var/lib/open-webui 0700 ${toString oci-uids.llm} ${toString oci-uids.llm} - -"
-    ];
+    systemd = {
+      tmpfiles.rules = [
+        "d /var/lib/ollama 0700 ${toString oci-uids.llm} ${toString oci-uids.llm} - -"
+        "d /var/lib/open-webui 0700 ${toString oci-uids.llm} ${toString oci-uids.llm} - -"
+      ];
+
+      services.podman-ollama = mkNotifyService { };
+    };
 
     services = {
       nginx.virtualHosts."${fqdn}" = mkVirtualHost {

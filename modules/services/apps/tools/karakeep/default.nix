@@ -13,7 +13,7 @@ let
     oidc-issuer
     oci-uids
     ;
-  inherit (helpers) mkOciUser mkVirtualHost;
+  inherit (helpers) mkOciUser mkVirtualHost mkNotifyService;
   cfg = config.custom.services.apps.tools.karakeep;
   fqdn = "${subdomains.${config.networking.hostName}.karakeep}.${domains.home}";
 in
@@ -89,9 +89,13 @@ in
 
     users = mkOciUser "karakeep";
 
-    systemd.tmpfiles.rules = [
-      "d /var/lib/karakeep 0700 ${toString oci-uids.karakeep} ${toString oci-uids.karakeep} - -"
-    ];
+    systemd = {
+      tmpfiles.rules = [
+        "d /var/lib/karakeep 0700 ${toString oci-uids.karakeep} ${toString oci-uids.karakeep} - -"
+      ];
+
+      services.podman-karakeep-server = mkNotifyService { };
+    };
 
     services = {
       nginx.virtualHosts."${fqdn}" = mkVirtualHost {

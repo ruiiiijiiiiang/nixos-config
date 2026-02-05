@@ -13,7 +13,7 @@ let
     ports
     oci-uids
     ;
-  inherit (helpers) mkOciUser mkVirtualHost;
+  inherit (helpers) mkOciUser mkVirtualHost mkNotifyService;
   cfg = config.custom.services.apps.office.memos;
   fqdn = "${subdomains.${config.networking.hostName}.memos}.${domains.home}";
 in
@@ -57,10 +57,14 @@ in
 
     users = mkOciUser "memos";
 
-    systemd.tmpfiles.rules = [
-      "d /var/lib/memos/postgres 0700 ${toString oci-uids.postgres} ${toString oci-uids.postgres} - -"
-      "d /var/lib/memos/app 0700 ${toString oci-uids.memos} ${toString oci-uids.memos} - -"
-    ];
+    systemd = {
+      tmpfiles.rules = [
+        "d /var/lib/memos/postgres 0700 ${toString oci-uids.postgres} ${toString oci-uids.postgres} - -"
+        "d /var/lib/memos/app 0700 ${toString oci-uids.memos} ${toString oci-uids.memos} - -"
+      ];
+
+      services.podman-memos-postgres = mkNotifyService { };
+    };
 
     services.nginx.virtualHosts."${fqdn}" = mkVirtualHost {
       inherit fqdn;

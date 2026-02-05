@@ -13,7 +13,7 @@ let
     subdomains
     ports
     ;
-  inherit (helpers) mkVirtualHost ensureFile;
+  inherit (helpers) ensureFile mkVirtualHost mkNotifyService;
   cfg = config.custom.services.observability.wazuh.server;
   fqdn = "${subdomains.${config.networking.hostName}.wazuh}.${domains.home}";
   dashboardsContent = import ./opensearch_dashboards.yml.nix;
@@ -85,10 +85,7 @@ in
 
       wazuh-dashboard = {
         image = "wazuh/wazuh-dashboard:${config.custom.services.observability.wazuh.version}";
-        dependsOn = [
-          "wazuh-indexer"
-          "wazuh-manager"
-        ];
+        dependsOn = [ "wazuh-indexer" ];
         environment = {
           INDEXER_URL = "https://${addresses.localhost}";
           WAZUH_API_URL = "https://${addresses.localhost}";
@@ -128,6 +125,10 @@ in
         mode = "644";
       }}
     '';
+
+    systemd = {
+      services.podman-wazuh-indexer = mkNotifyService { };
+    };
   };
 }
 

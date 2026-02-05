@@ -12,7 +12,7 @@ let
     ports
     oci-uids
     ;
-  inherit (helpers) mkOciUser mkVirtualHost;
+  inherit (helpers) mkOciUser mkVirtualHost mkNotifyService;
   cfg = config.custom.services.apps.tools.reitti;
   fqdn = "${subdomains.${config.networking.hostName}.reitti}.${domains.home}";
 in
@@ -117,13 +117,7 @@ in
 
       reitti-server = {
         image = "docker.io/dedicatedcode/reitti:latest";
-        dependsOn = [
-          "reitti-postgis"
-          "reitti-rabbitmq"
-          "reitti-redis"
-          "reitti-photon"
-          "reitti-tile-cache"
-        ];
+        dependsOn = [ "reitti-postgis" ];
         networks = [ "container:reitti-postgis" ];
         environment = {
           SERVER_PORT = toString ports.reitti;
@@ -145,10 +139,14 @@ in
       };
     };
 
-    systemd.tmpfiles.rules = [
-      "d /var/lib/reitti/postgis 0700 ${toString oci-uids.postgres-alpine} ${toString oci-uids.postgres-alpine} - -"
-      "d /var/lib/reitti/data 0700 ${toString oci-uids.reitti} ${toString oci-uids.reitti} - -"
-    ];
+    systemd = {
+      tmpfiles.rules = [
+        "d /var/lib/reitti/postgis 0700 ${toString oci-uids.postgres-alpine} ${toString oci-uids.postgres-alpine} - -"
+        "d /var/lib/reitti/data 0700 ${toString oci-uids.reitti} ${toString oci-uids.reitti} - -"
+      ];
+
+      services.podman-reitti-postgis = mkNotifyService { timeout = 600; };
+    };
 
     users = mkOciUser "reitti";
 

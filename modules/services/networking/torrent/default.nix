@@ -14,7 +14,7 @@ let
     timeZone
     oci-uids
     ;
-  inherit (helpers) mkVirtualHost;
+  inherit (helpers) mkVirtualHost mkNotifyService;
   cfg = config.custom.services.networking.torrent;
   fqdn = "${subdomains.${config.networking.hostName}.qbittorrent}.${domains.home}";
 in
@@ -86,10 +86,14 @@ in
       isSystemUser = true;
     };
 
-    systemd.tmpfiles.rules = [
-      "d /media/downloads 0775 ${toString oci-uids.arr} ${toString oci-uids.arr} - -"
-      "d /var/lib/qbittorrent/config 0755 ${toString oci-uids.qbittorrent} ${toString oci-uids.arr} - -"
-    ];
+    systemd = {
+      tmpfiles.rules = [
+        "d /media/downloads 0775 ${toString oci-uids.arr} ${toString oci-uids.arr} - -"
+        "d /var/lib/qbittorrent/config 0755 ${toString oci-uids.qbittorrent} ${toString oci-uids.arr} - -"
+      ];
+
+      services.podman-gluetun = mkNotifyService { };
+    };
 
     services.nginx.virtualHosts."${fqdn}" = mkVirtualHost {
       inherit fqdn;

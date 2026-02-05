@@ -5,6 +5,7 @@
     ./bytestash
     ./dawarich
     ./forgejo
+    ./harmonia
     ./homeassistant
     ./karakeep
     ./llm

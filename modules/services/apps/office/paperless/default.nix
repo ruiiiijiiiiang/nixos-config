@@ -14,7 +14,7 @@ let
     ports
     oci-uids
     ;
-  inherit (helpers) mkOciUser mkVirtualHost;
+  inherit (helpers) mkOciUser mkVirtualHost mkNotifyService;
   cfg = config.custom.services.apps.office.paperless;
   fqdn = "${subdomains.${config.networking.hostName}.paperless}.${domains.home}";
 in
@@ -58,12 +58,8 @@ in
 
       paperless-app = {
         image = "ghcr.io/paperless-ngx/paperless-ngx:latest";
-        dependsOn = [
-          "paperless-postgres"
-          "paperless-redis"
-        ];
+        dependsOn = [ "paperless-postgres" ];
         networks = [ "container:paperless-postgres" ];
-
         volumes = [
           "/var/storage/paperless/log:/usr/src/paperless/log"
           "/var/storage/paperless/media:/usr/src/paperless/media"
@@ -93,15 +89,19 @@ in
       };
     };
 
-    systemd.tmpfiles.rules = [
-      "d /var/storage/paperless 0700 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
-      "d /var/storage/paperless/log 0700 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
-      "d /var/storage/paperless/media 0700 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
-      "d /var/storage/paperless/consume 0700 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
-      "d /var/storage/paperless/data 0700 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
-      "d /var/storage/paperless/data/data 0700 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
-      "d /var/lib/paperless/postgres 0700 ${toString oci-uids.postgres} ${toString oci-uids.postgres} - -"
-    ];
+    systemd = {
+      tmpfiles.rules = [
+        "d /var/storage/paperless 0700 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
+        "d /var/storage/paperless/log 0700 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
+        "d /var/storage/paperless/media 0700 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
+        "d /var/storage/paperless/consume 0700 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
+        "d /var/storage/paperless/data 0700 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
+        "d /var/storage/paperless/data/data 0700 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
+        "d /var/lib/paperless/postgres 0700 ${toString oci-uids.postgres} ${toString oci-uids.postgres} - -"
+      ];
+
+      services.podman-paperless-postgres = mkNotifyService { timeout = 600; };
+    };
 
     users = mkOciUser "paperless";
 

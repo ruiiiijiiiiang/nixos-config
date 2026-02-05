@@ -13,7 +13,7 @@ let
     subdomains
     ports
     ;
-  inherit (helpers) mkVirtualHost;
+  inherit (helpers) mkVirtualHost mkNotifyService;
   cfg = config.custom.services.apps.tools.homeassistant;
   ha-fqdn = "${subdomains.${config.networking.hostName}.homeassistant}.${domains.home}";
   zwave-fqdn = "${subdomains.${config.networking.hostName}.zwave}.${domains.home}";
@@ -56,10 +56,14 @@ in
       };
     };
 
-    systemd.tmpfiles.rules = [
-      "d /var/lib/home-assistant 0775 root wheel -"
-      "d /var/lib/zwave-js-ui 0775 root wheel -"
-    ];
+    systemd = {
+      tmpfiles.rules = [
+        "d /var/lib/home-assistant 0775 root wheel -"
+        "d /var/lib/zwave-js-ui 0775 root wheel -"
+      ];
+
+      services.podman-homeassistant = mkNotifyService { };
+    };
 
     services = {
       nginx.virtualHosts."${ha-fqdn}" = mkVirtualHost {

@@ -13,7 +13,7 @@ let
     ports
     oci-uids
     ;
-  inherit (helpers) mkOciUser mkVirtualHost;
+  inherit (helpers) mkOciUser mkVirtualHost mkNotifyService;
   cfg = config.custom.services.apps.tools.forgejo;
   fqdn = "${subdomains.${config.networking.hostName}.forgejo}.${domains.home}";
 in
@@ -70,11 +70,15 @@ in
 
     users = mkOciUser "forgejo";
 
-    systemd.tmpfiles.rules = [
-      "d /var/lib/forgejo/postgres 0700 ${toString oci-uids.postgres} ${toString oci-uids.postgres} - -"
-      "d /var/lib/forgejo/data 0700 ${toString oci-uids.forgejo} ${toString oci-uids.forgejo} - -"
-      "d /var/lib/forgejo/conf 0700 ${toString oci-uids.forgejo} ${toString oci-uids.forgejo} - -"
-    ];
+    systemd = {
+      tmpfiles.rules = [
+        "d /var/lib/forgejo/postgres 0700 ${toString oci-uids.postgres} ${toString oci-uids.postgres} - -"
+        "d /var/lib/forgejo/data 0700 ${toString oci-uids.forgejo} ${toString oci-uids.forgejo} - -"
+        "d /var/lib/forgejo/conf 0700 ${toString oci-uids.forgejo} ${toString oci-uids.forgejo} - -"
+      ];
+
+      services.podman-forgejo-postgres = mkNotifyService { };
+    };
 
     services = {
       nginx.virtualHosts."${fqdn}" = mkVirtualHost {

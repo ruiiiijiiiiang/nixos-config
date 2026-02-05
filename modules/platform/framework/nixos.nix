@@ -15,28 +15,30 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    systemd.user.services.flake-update = {
-      unitConfig = {
-        Description = "Update Nix flakes automatically";
+    systemd.user = {
+      services.flake-update = {
+        unitConfig = {
+          Description = "Update Nix flakes automatically";
+        };
+        serviceConfig = {
+          Type = "oneshot";
+          ExecStart = "${pkgs.nix}/bin/nix flake update --flake ${home}/nixos-config";
+          WorkingDirectory = "${home}/nixos-config";
+        };
+        wantedBy = [ "default.target" ];
       };
-      serviceConfig = {
-        Type = "oneshot";
-        ExecStart = "${pkgs.nix}/bin/nix flake update --flake ${home}/nixos-config";
-        WorkingDirectory = "${home}/nixos-config";
-      };
-      wantedBy = [ "default.target" ];
-    };
 
-    systemd.user.timers.flake-update = {
-      unitConfig = {
-        Description = "Run flake-update daily";
+      timers.flake-update = {
+        unitConfig = {
+          Description = "Run flake-update daily";
+        };
+        timerConfig = {
+          OnCalendar = "daily";
+          Persistent = true;
+          Unit = "flake-update.service";
+        };
+        wantedBy = [ "timers.target" ];
       };
-      timerConfig = {
-        OnCalendar = "daily";
-        Persistent = true;
-        Unit = "flake-update.service";
-      };
-      wantedBy = [ "timers.target" ];
     };
   };
 }

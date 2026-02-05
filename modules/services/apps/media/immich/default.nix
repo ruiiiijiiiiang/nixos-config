@@ -14,7 +14,7 @@ let
     ports
     oci-uids
     ;
-  inherit (helpers) mkOciUser mkVirtualHost;
+  inherit (helpers) mkOciUser mkVirtualHost mkNotifyService;
   cfg = config.custom.services.apps.media.immich;
   fqdn = "${subdomains.${config.networking.hostName}.immich}.${domains.home}";
   immich-version = "v2.4.1";
@@ -74,10 +74,7 @@ in
       immich-server = {
         image = "ghcr.io/immich-app/immich-server:${immich-version}";
         user = "${toString oci-uids.immich}:${toString oci-uids.immich}";
-        dependsOn = [
-          "immich-redis"
-          "immich-postgres"
-        ];
+        dependsOn = [ "immich-postgres" ];
         networks = [ "container:immich-postgres" ];
         environment = {
           REDIS_HOSTNAME = addresses.localhost;
@@ -105,11 +102,15 @@ in
 
     users = mkOciUser "immich";
 
-    systemd.tmpfiles.rules = [
-      "d /var/lib/immich/postgres 0700 ${toString oci-uids.postgres} ${toString oci-uids.postgres} - -"
-      "d /var/lib/immich/model-cache 0755 ${toString oci-uids.immich} ${toString oci-uids.immich} - -"
-      "d /var/storage/immich 0755 ${toString oci-uids.immich} ${toString oci-uids.immich} - -"
-    ];
+    systemd = {
+      tmpfiles.rules = [
+        "d /var/lib/immich/postgres 0700 ${toString oci-uids.postgres} ${toString oci-uids.postgres} - -"
+        "d /var/lib/immich/model-cache 0755 ${toString oci-uids.immich} ${toString oci-uids.immich} - -"
+        "d /var/storage/immich 0755 ${toString oci-uids.immich} ${toString oci-uids.immich} - -"
+      ];
+
+      services.podman-immich-postgres = mkNotifyService { timeout = 600; };
+    };
 
     services = {
       nginx.virtualHosts."${fqdn}" = mkVirtualHost {

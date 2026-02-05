@@ -15,7 +15,12 @@ let
     oidc-issuer
     oci-uids
     ;
-  inherit (helpers) mkOciUser mkVirtualHost ensureFile;
+  inherit (helpers)
+    ensureFile
+    mkOciUser
+    mkVirtualHost
+    mkNotifyService
+    ;
   cfg = config.custom.services.apps.office.opencloud;
   opencloud-fqdn = "${subdomains.${config.networking.hostName}.opencloud}.${domains.home}";
   onlyoffice-fqdn = "${subdomains.${config.networking.hostName}.onlyoffice}.${domains.home}";
@@ -108,10 +113,14 @@ in
 
     users = mkOciUser "opencloud";
 
-    systemd.tmpfiles.rules = [
-      "d /var/lib/opencloud/config 0755 ${toString oci-uids.opencloud} ${toString oci-uids.opencloud} - -"
-      "d /var/storage/opencloud 0755 ${toString oci-uids.opencloud} ${toString oci-uids.opencloud} - -"
-    ];
+    systemd = {
+      tmpfiles.rules = [
+        "d /var/lib/opencloud/config 0755 ${toString oci-uids.opencloud} ${toString oci-uids.opencloud} - -"
+        "d /var/storage/opencloud 0755 ${toString oci-uids.opencloud} ${toString oci-uids.opencloud} - -"
+      ];
+
+      services.podman-opencloud = mkNotifyService { timeout = 600; };
+    };
 
     services.nginx.virtualHosts = {
       "${opencloud-fqdn}" = mkVirtualHost {

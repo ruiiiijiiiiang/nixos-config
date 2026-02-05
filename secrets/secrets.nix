@@ -42,6 +42,10 @@ in
     publicKeys = ssh.vm-network ++ ssh.vm-app ++ ssh.vm-monitor;
     armor = true;
   };
+  "harmonia.age" = {
+    publicKeys = ssh.vm-app;
+    armor = true;
+  };
   "immich-env.age" = {
     publicKeys = ssh.vm-app;
     armor = true;

@@ -28,6 +28,7 @@ rec {
       dawarich = "dawarich";
       bentopdf = "pdf";
       forgejo = "git";
+      harmonia = "cache";
       homepage = "home";
       immich = "immich";
       jellyfin = "jellyfin";
@@ -161,6 +162,7 @@ rec {
     };
     gatus = 8083;
     grafana = 3001;
+    harmonia = 5001;
     homeassistant = 8123;
     homepage = 8089;
     karakeep = 8084;

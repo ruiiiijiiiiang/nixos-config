@@ -303,6 +303,13 @@ in
                 };
               }
               {
+                "Vert" = {
+                  icon = "https://avatars.githubusercontent.com/u/198117259?s=48&v=4";
+                  href = "https://vert.sh";
+                  description = "File Converter";
+                };
+              }
+              {
                 "Microbin" = {
                   icon = "microbin";
                   href = "https://${subdomains.vm-app.microbin}.${domains.home}";

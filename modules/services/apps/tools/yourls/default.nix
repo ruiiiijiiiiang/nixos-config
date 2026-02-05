@@ -12,7 +12,7 @@ let
     subdomains
     ports
     ;
-  inherit (helpers) mkVirtualHost;
+  inherit (helpers) mkVirtualHost mkNotifyService;
   cfg = config.custom.services.apps.tools.yourls;
   fqdn = "${subdomains.${config.networking.hostName}.yourls}.${domains.home}";
 in
@@ -63,10 +63,14 @@ in
       };
     };
 
-    systemd.tmpfiles.rules = [
-      "d /var/lib/yourls/mysql 0700 999 999 - -"
-      "d /var/lib/yourls/html 0755 33 33 - -"
-    ];
+    systemd = {
+      tmpfiles.rules = [
+        "d /var/lib/yourls/mysql 0700 999 999 - -"
+        "d /var/lib/yourls/html 0755 33 33 - -"
+      ];
+
+      services.podman-yourls-db = mkNotifyService { };
+    };
 
     services.nginx.virtualHosts."${fqdn}" = mkVirtualHost {
       inherit fqdn;
