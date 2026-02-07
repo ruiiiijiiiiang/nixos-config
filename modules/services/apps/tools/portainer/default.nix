@@ -24,7 +24,7 @@ in
   config = lib.mkIf cfg.enable {
     virtualisation.oci-containers.containers = {
       portainer = {
-        image = "portainer/portainer-ce";
+        image = "docker.io/portainer/portainer-ce";
         ports = [
           "${addresses.localhost}:${toString ports.portainer.server}:${toString ports.portainer.server}"
           "${addresses.localhost}:${toString ports.portainer.edge}:${toString ports.portainer.edge}"

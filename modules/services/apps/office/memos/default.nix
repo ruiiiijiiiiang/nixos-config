@@ -33,10 +33,13 @@ in
 
     virtualisation.oci-containers.containers = {
       memos-postgres = {
-        image = "postgres:15";
+        image = "docker.io/library/postgres:15";
         ports = [ "${addresses.localhost}:${toString ports.memos}:${toString ports.memos}" ];
         environmentFiles = [ config.age.secrets.memos-env.path ];
         volumes = [ "/var/lib/memos/postgres:/var/lib/postgresql/data" ];
+        labels = {
+          "io.containers.autoupdate" = "registry";
+        };
       };
 
       memos-app = {

@@ -7,6 +7,7 @@
 }:
 let
   inherit (consts)
+    timeZone
     addresses
     domains
     subdomains
@@ -24,15 +25,17 @@ in
 
   config = lib.mkIf cfg.enable {
     virtualisation.oci-containers.containers.jellyfin = {
-      image = "docker.io/jellyfin/jellyfin:latest";
-      user = "${toString oci-uids.jellyfin}:${toString oci-uids.arr}";
+      image = "lscr.io/linuxserver/jellyfin:latest";
       ports = [ "${addresses.localhost}:${toString ports.jellyfin}:${toString ports.jellyfin}" ];
       volumes = [
         "/var/lib/jellyfin/config:/config"
-        "/var/lib/jellyfin/cache:/cache"
         "/media:/media"
+        "jellyfin-cache:/cache"
       ];
       environment = {
+        TZ = timeZone;
+        PUID = toString oci-uids.jellyfin;
+        PGID = toString oci-uids.arr;
         UMASK_SET = "002";
         LIBVA_DRIVER_NAME = "radeonsi";
       };
@@ -53,7 +56,6 @@ in
 
     systemd.tmpfiles.rules = [
       "d /var/lib/jellyfin/config 0755 ${toString oci-uids.jellyfin} ${toString oci-uids.arr} - -"
-      "d /var/lib/jellyfin/cache 0755 ${toString oci-uids.jellyfin} ${toString oci-uids.arr} - -"
     ];
 
     services = {

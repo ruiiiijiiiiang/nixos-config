@@ -33,10 +33,13 @@ in
 
     virtualisation.oci-containers.containers = {
       atuin-postgres = {
-        image = "postgres:14";
+        image = "docker.io/library/postgres:14";
         ports = [ "${addresses.localhost}:${toString ports.atuin}:${toString ports.atuin}" ];
         environmentFiles = [ config.age.secrets.atuin-env.path ];
         volumes = [ "/var/lib/atuin/postgres:/var/lib/postgresql/data" ];
+        labels = {
+          "io.containers.autoupdate" = "registry";
+        };
       };
 
       atuin-server = {

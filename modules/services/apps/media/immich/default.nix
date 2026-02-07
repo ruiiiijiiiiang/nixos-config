@@ -17,7 +17,7 @@ let
   inherit (helpers) mkOciUser mkVirtualHost mkNotifyService;
   cfg = config.custom.services.apps.media.immich;
   fqdn = "${subdomains.${config.networking.hostName}.immich}.${domains.home}";
-  immich-version = "v2.4.1";
+  immich-version = "v2.5.5";
 in
 {
   options.custom.services.apps.media.immich = with lib; {

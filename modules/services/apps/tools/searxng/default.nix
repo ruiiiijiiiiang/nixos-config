@@ -32,6 +32,9 @@ in
           "/var/lib/searxng/config/:/etc/searxng/"
           "/var/lib/searxng/data/:/var/cache/searxng/"
         ];
+        labels = {
+          "io.containers.autoupdate" = "registry";
+        };
       };
     };
 

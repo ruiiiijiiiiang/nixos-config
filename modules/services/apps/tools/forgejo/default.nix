@@ -35,7 +35,7 @@ in
 
     virtualisation.oci-containers.containers = {
       forgejo-postgres = {
-        image = "postgres:14";
+        image = "docker.io/library/postgres:14";
         ports = [
           "${addresses.localhost}:${toString ports.forgejo.server}:${toString ports.forgejo.server}"
           "${
@@ -44,6 +44,9 @@ in
         ];
         environmentFiles = [ config.age.secrets.forgejo-env.path ];
         volumes = [ "/var/lib/forgejo/postgres:/var/lib/postgresql/data" ];
+        labels = {
+          "io.containers.autoupdate" = "registry";
+        };
       };
 
       forgejo-server = {

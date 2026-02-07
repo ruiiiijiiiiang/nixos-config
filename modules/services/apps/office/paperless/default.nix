@@ -39,10 +39,13 @@ in
 
     virtualisation.oci-containers.containers = {
       paperless-postgres = {
-        image = "postgres:16";
+        image = "docker.io/library/postgres:16";
         ports = [ "${addresses.localhost}:${toString ports.paperless}:8000" ];
         environmentFiles = [ config.age.secrets.paperless-env.path ];
         volumes = [ "/var/lib/paperless/postgres:/var/lib/postgresql/data" ];
+        labels = {
+          "io.containers.autoupdate" = "registry";
+        };
       };
 
       paperless-redis = {
