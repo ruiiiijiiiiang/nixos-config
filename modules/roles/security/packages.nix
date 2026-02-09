@@ -30,6 +30,7 @@ in
       gobuster
       dirb
       whatweb
+      ffuf
 
       # Passwords & auth
       john
@@ -59,6 +60,7 @@ in
       radare2
       binaryninja-free
 
+      python3
       gh
       unzip
       unrar

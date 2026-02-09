@@ -33,7 +33,6 @@ in
           memos.enable = true;
           opencloud.enable = true;
           paperless.enable = true;
-          stirlingpdf.enable = true;
         };
         tools = {
           arr.enable = true;

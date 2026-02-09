@@ -218,13 +218,6 @@ in
                 };
               }
               {
-                "Stirling PDF" = {
-                  icon = "stirling-pdf";
-                  href = "https://${subdomains.vm-app.stirlingpdf}.${domains.home}";
-                  description = "PDF Editor";
-                };
-              }
-              {
                 "Bento PDF" = {
                   icon = "bentopdf";
                   href = "https://www.bentopdf.com/index.html";
@@ -275,17 +268,10 @@ in
                 };
               }
               {
-                "Open WebUI" = {
-                  icon = "open-webui";
-                  href = "https://${subdomains.vm-app.openwebui}.${domains.home}";
-                  description = "WebUI for AI";
-                };
-              }
-              {
-                "SearXNG" = {
-                  icon = "searxng";
-                  href = "https://${subdomains.vm-app.searxng}.${domains.home}";
-                  description = "Search engine";
+                "Microbin" = {
+                  icon = "microbin";
+                  href = "https://${subdomains.vm-app.microbin}.${domains.home}";
+                  description = "Pastebin";
                 };
               }
               {
@@ -303,17 +289,31 @@ in
                 };
               }
               {
+                "Open WebUI" = {
+                  icon = "open-webui";
+                  href = "https://${subdomains.vm-app.openwebui}.${domains.home}";
+                  description = "WebUI for AI";
+                };
+              }
+              {
+                "SearXNG" = {
+                  icon = "searxng";
+                  href = "https://${subdomains.vm-app.searxng}.${domains.home}";
+                  description = "Search engine";
+                };
+              }
+              {
+                "OmniTools" = {
+                  icon = "omni-tools";
+                  href = "https://omnitools.app";
+                  description = "Miscellaneous Utilities";
+                };
+              }
+              {
                 "Vert" = {
                   icon = "https://avatars.githubusercontent.com/u/198117259?s=48&v=4";
                   href = "https://vert.sh";
                   description = "File Converter";
-                };
-              }
-              {
-                "Microbin" = {
-                  icon = "microbin";
-                  href = "https://${subdomains.vm-app.microbin}.${domains.home}";
-                  description = "Pastebin";
                 };
               }
               {

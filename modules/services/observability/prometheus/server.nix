@@ -3,6 +3,7 @@
   consts,
   inputs,
   lib,
+  pkgs,
   helpers,
   ...
 }:
@@ -43,6 +44,49 @@ let
       }
     ];
   };
+
+  # Generate the hash by running: nix-prefetch-url <url>
+  node-exporter-dashboard = pkgs.fetchurl {
+    name = "node-exporter.json";
+    url = "https://grafana.com/api/dashboards/1860/revisions/42/download";
+    sha256 = "0phjy96kq4kymzggm0r51y8i2s2z2x3p69bd5nx4n10r33mjgn54";
+  };
+
+  podman-exporter-dashboard = pkgs.fetchurl {
+    name = "podman-exporter.json";
+    url = "https://grafana.com/api/dashboards/21559/revisions/1/download";
+    sha256 = "1aqirx7cjnvn0fmy872nbkxh5xgk3rgz0dllg12j1nismc4mcklb";
+  };
+
+  nginx-exporter-dashboard = pkgs.fetchurl {
+    name = "nginx-exporter.json";
+    url = "https://grafana.com/api/dashboards/12767/revisions/2/download";
+    sha256 = "1zkx8nhh05rzsc4di81wc90gvfc7k2nby149cx6y6y8iaibgz3sn";
+  };
+
+  kea-exporter-dashboard = pkgs.fetchurl {
+    name = "kea-exporter.json";
+    url = "https://grafana.com/api/dashboards/12688/revisions/4/download";
+    sha256 = "1rq8yax192s5knf6lw3sl9rq55xirm1di8ngnqc07b7mmf5gjj7x";
+  };
+
+  grafana-dashboards = pkgs.runCommand "grafana-dashboards" { } ''
+    mkdir -p $out
+
+    # Sanitize the json data sources
+    install_dash() {
+      sed -e 's/''${DS_PROMETHEUS-DNTG}/prometheus/g' \
+          -e 's/''${DS_PROMETHEUS}/prometheus/g' \
+          -e 's/''${ds_prometheus}/prometheus/g' \
+      "$1" > "$out/$2"
+    }
+
+    install_dash ${node-exporter-dashboard} "node-exporter.json"
+    install_dash ${podman-exporter-dashboard} "podman-exporter.json"
+    install_dash ${nginx-exporter-dashboard} "nginx-exporter.json"
+    install_dash ${kea-exporter-dashboard} "kea-exporter.json"
+  '';
+
 in
 {
   options.custom.services.observability.prometheus.server = with lib; {
@@ -73,12 +117,22 @@ in
 
         provision = {
           enable = true;
-          datasources.settings.datasources = [
+          datasources.settings = {
+            apiVersion = 1;
+            datasources = [
+              {
+                name = "Prometheus";
+                type = "prometheus";
+                uid = "prometheus";
+                access = "proxy";
+                url = "http://${addresses.localhost}:${toString ports.prometheus.server}";
+              }
+            ];
+          };
+          dashboards.settings.providers = [
             {
-              name = "Prometheus";
-              type = "prometheus";
-              access = "proxy";
-              url = "http://${addresses.localhost}:${toString ports.prometheus.server}";
+              name = "Homelab Dashboards";
+              options.path = grafana-dashboards;
             }
           ];
         };
