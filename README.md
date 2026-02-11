@@ -33,6 +33,7 @@ The `flake.nix` is the central cortex, orchestrating these modules to synthesize
               +------------------+       +-----------------+       +---------------------+
               |  The Internet    |       | Cloudflare Edge |       | Remote VPN Clients  |
               +------------------+       +-----------------+       +---------------------+
+                       ^                         ^                           ^
                        |                         |                           |
                  (WAN / ens18)           (Cloudflare Tunnel)         (WireGuard Tunnel)
                        |                         |                           |
@@ -42,12 +43,14 @@ The `flake.nix` is the central cortex, orchestrating these modules to synthesize
 | 4 vCPU, 4GB RAM                                                                                      |
 | Role: Router, Firewall (nftables), DHCP (Kea), DNS (Pi-hole/Unbound), VPN Gateway (WireGuard)        |
 +------------------------------------------------|-----------------------------------------------------+
+                                                 ^
                                                  |
                                         (LAN Trunk / ens19)
                                                  |
-             +-----------------------------------|----------------------------------------+
-             |                                   |                                        |
-+------------|------------+    +-----------------|-------------------+    +---------------|------------+
+             +-----------------------------------|---------------------------------------+
+             |                                   |                                       |
+             v                                   v                                       v
++-------------------------+    +-------------------------------------+    +----------------------------+
 | LAN (Native/Untagged)   |    | VLA (Infra)                         |    | VLAN 88 (DMZ)              |
 | Network: 192.168.2.0/24 |    | Network: 192.168.20.0/24            |    | Network: 192.168.88.0/24   |
 | Desc: Trusted Clients   |    | Desc: Servers & Infrastructure      |    | Desc: Untrusted Workloads  |
@@ -69,6 +72,9 @@ The `flake.nix` is the central cortex, orchestrating these modules to synthesize
 |                         |    |                                     |    |                            |
 |                         |    | DNS VIP: 192.168.20.53 (HA Cluster) |    |                            |
 +-------------------------+    +-------------------------------------+    +----------------------------+
+            |                                    ^                                      ^
+            |                                    |                                      |
+            +------------------------------------|--------------------------------------+
 ```
 
 ### The Cybernetic Nexus
