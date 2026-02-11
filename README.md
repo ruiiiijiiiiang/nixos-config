@@ -37,11 +37,11 @@ The `flake.nix` is the central cortex, orchestrating these modules to synthesize
                         |                         |                           |
                   (WAN / ens18)           (Cloudflare Tunnel)         (WireGuard Tunnel)
                         |                         |                           |
-                        v                         v                           v
+                        |                         v                           v
 +------------------------------------------------------------------------------------------------------+
 | [vm-network] (Proxmox VM)                                                                            |
 | 4 vCPU, 4GB RAM                                                                                      |
-| Role: Router, Firewall (nftables), DHCP (Kea), DNS (Pi-hole/Unbound), VPN Gateway (WireGuard)        |
+| Role: Router, Firewall (nftables), DHCP (Kea), DNS master (Pi-hole/Unbound), VPN Gateway (WireGuard) |
 +-------------------------------------------------|----------------------------------------------------+
                                                   ^
                                                   |

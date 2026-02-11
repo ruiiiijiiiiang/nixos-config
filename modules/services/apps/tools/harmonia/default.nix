@@ -24,6 +24,7 @@ let
     "vm-app"
     "vm-monitor"
     "vm-cyber"
+    "pi"
   ];
   gcRootStr = "/var/lib/nix-cache-roots";
 in
@@ -57,6 +58,8 @@ in
       };
     };
 
+    boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
+
     systemd = {
       tmpfiles.rules = [
         "d ${gcRootStr} 0755 ${toString oci-uids.user} ${toString oci-uids.user} - -"
@@ -80,7 +83,7 @@ in
           WorkingDirectory = "${home}/nixos-config";
         };
 
-        path = with pkgs; [ nix ];
+        path = with pkgs; [ nix git ];
 
         script = ''
           set -e

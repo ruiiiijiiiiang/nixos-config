@@ -43,13 +43,16 @@ in
           HSA_OVERRIDE_GFX_VERSION = "10.3.0";
           OLLAMA_HOST = addresses.any;
           HOME = "/var/lib/ollama";
-          HSA_ENABLE_SDMA = "0";
-          HSA_AMD_INTERFACE_VERSION = "2";
         };
-        volumes = [ "/var/lib/ollama:/var/lib/ollama" ];
+        volumes = [
+          "/var/lib/ollama:/var/lib/ollama"
+          "/dev/kfd:/dev/kfd:ro"
+          "/dev/dri:/dev/dri:ro"
+        ];
         devices = [
-          "/dev/kfd:/dev/kfd"
           "/dev/dri/renderD128:/dev/dri/renderD128"
+          "/dev/kfd:/dev/kfd"
+          "/dev/dri:/dev/dri"
         ];
         labels = {
           "io.containers.autoupdate" = "registry";
@@ -81,7 +84,12 @@ in
       };
     };
 
-    users = mkOciUser "llm";
+    users = lib.mkMerge [
+      (mkOciUser "llm")
+      {
+        users.llm.extraGroups = [ "video" "render" ];
+      }
+    ];
 
     systemd = {
       tmpfiles.rules = [
