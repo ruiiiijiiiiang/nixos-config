@@ -120,7 +120,7 @@
           ];
         };
 
-        vm-security = nixosSystem {
+        vm-cyber = nixosSystem {
           inherit system;
           specialArgs = {
             inherit inputs;
@@ -129,7 +129,7 @@
           };
           modules = [
             ./modules
-            ./hosts/vm-security
+            ./hosts/vm-cyber
           ];
         };
       };
@@ -219,9 +219,9 @@
           ];
         };
 
-        vm-security = {
+        vm-cyber = {
           deployment = {
-            targetHost = addresses.dmz.hosts.vm-security;
+            targetHost = addresses.dmz.hosts.vm-cyber;
             tags = [
               "vm"
               "workstation"
@@ -229,7 +229,7 @@
           };
           imports = [
             ./modules
-            ./hosts/vm-security
+            ./hosts/vm-cyber
           ];
         };
       };
@@ -263,14 +263,14 @@
           ];
         };
 
-        vm-security = homeManagerConfiguration {
+        vm-cyber = homeManagerConfiguration {
           inherit pkgs;
           extraSpecialArgs = {
             inherit consts;
             inherit helpers;
           };
           modules = [
-            ./homes/vm-security
+            ./homes/vm-cyber
           ];
         };
       };

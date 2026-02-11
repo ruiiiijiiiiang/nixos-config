@@ -23,7 +23,7 @@ let
     "vm-network"
     "vm-app"
     "vm-monitor"
-    "vm-security"
+    "vm-cyber"
   ];
   gcRootStr = "/var/lib/nix-cache-roots";
 in

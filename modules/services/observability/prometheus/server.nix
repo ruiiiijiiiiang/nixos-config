@@ -25,11 +25,13 @@ let
       nginx
       node
       podman
+      wireguard
       ;
   };
 
   mkScrapeJob = exporterName: port: {
     job_name = "${exporterName}-exporter";
+    scrape_interval = "30s";
     static_configs = [
       {
         targets = lib.pipe nixosConfigurations [
@@ -46,6 +48,18 @@ let
   };
 
   # Generate the hash by running: nix-prefetch-url <url>
+  kea-exporter-dashboard = pkgs.fetchurl {
+    name = "kea-exporter.json";
+    url = "https://grafana.com/api/dashboards/12688/revisions/4/download";
+    sha256 = "1rq8yax192s5knf6lw3sl9rq55xirm1di8ngnqc07b7mmf5gjj7x";
+  };
+
+  nginx-exporter-dashboard = pkgs.fetchurl {
+    name = "nginx-exporter.json";
+    url = "https://grafana.com/api/dashboards/12767/revisions/2/download";
+    sha256 = "1zkx8nhh05rzsc4di81wc90gvfc7k2nby149cx6y6y8iaibgz3sn";
+  };
+
   node-exporter-dashboard = pkgs.fetchurl {
     name = "node-exporter.json";
     url = "https://grafana.com/api/dashboards/1860/revisions/42/download";
@@ -58,16 +72,10 @@ let
     sha256 = "1aqirx7cjnvn0fmy872nbkxh5xgk3rgz0dllg12j1nismc4mcklb";
   };
 
-  nginx-exporter-dashboard = pkgs.fetchurl {
-    name = "nginx-exporter.json";
-    url = "https://grafana.com/api/dashboards/12767/revisions/2/download";
-    sha256 = "1zkx8nhh05rzsc4di81wc90gvfc7k2nby149cx6y6y8iaibgz3sn";
-  };
-
-  kea-exporter-dashboard = pkgs.fetchurl {
-    name = "kea-exporter.json";
-    url = "https://grafana.com/api/dashboards/12688/revisions/4/download";
-    sha256 = "1rq8yax192s5knf6lw3sl9rq55xirm1di8ngnqc07b7mmf5gjj7x";
+  wireguard-exporter-dashboard = pkgs.fetchurl {
+    name = "wireguard-exporter.json";
+    url = "https://grafana.com/api/dashboards/17251/revisions/1/download";
+    sha256 = "13qganba7c3b9vahxfc059iingzq5dw46vhl3bzvr7jfp3m8dh7s";
   };
 
   grafana-dashboards = pkgs.runCommand "grafana-dashboards" { } ''
@@ -81,10 +89,11 @@ let
       "$1" > "$out/$2"
     }
 
+    install_dash ${kea-exporter-dashboard} "kea-exporter.json"
+    install_dash ${nginx-exporter-dashboard} "nginx-exporter.json"
     install_dash ${node-exporter-dashboard} "node-exporter.json"
     install_dash ${podman-exporter-dashboard} "podman-exporter.json"
-    install_dash ${nginx-exporter-dashboard} "nginx-exporter.json"
-    install_dash ${kea-exporter-dashboard} "kea-exporter.json"
+    install_dash ${wireguard-exporter-dashboard} "wireguard-exporter.json"
   '';
 
 in

@@ -14,6 +14,7 @@ in
     nginx.enable = mkEnableOption "Prometheus Nginx exporter";
     node.enable = mkEnableOption "Prometheus Node exporter";
     podman.enable = mkEnableOption "Prometheus Podman exporter";
+    wireguard.enable = mkEnableOption "Prometheus Wireguard exporter";
     interface = mkOption {
       type = types.nullOr types.str;
       default = null;
@@ -45,6 +46,11 @@ in
           "tcpstat"
         ];
       };
+
+      wireguard = lib.mkIf cfg.wireguard.enable {
+        enable = true;
+        port = ports.prometheus.exporters.wireguard;
+      };
     };
 
     virtualisation.oci-containers.containers.podman-exporter = lib.mkIf cfg.podman.enable {
@@ -73,7 +79,8 @@ in
           (lib.optional cfg.kea.enable ports.prometheus.exporters.kea)
           ++ (lib.optional cfg.nginx.enable ports.prometheus.exporters.nginx)
           ++ (lib.optional cfg.node.enable ports.prometheus.exporters.node)
-          ++ (lib.optional cfg.podman.enable ports.prometheus.exporters.podman);
+          ++ (lib.optional cfg.podman.enable ports.prometheus.exporters.podman)
+          ++ (lib.optional cfg.wireguard.enable ports.prometheus.exporters.wireguard);
       in
       if cfg.interface != null then
         {

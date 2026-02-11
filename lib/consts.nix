@@ -99,7 +99,7 @@ rec {
       dhcp-max = "192.168.88.250";
       hosts = {
         vm-network = "192.168.88.1";
-        vm-security = "192.168.88.10";
+        vm-cyber = "192.168.88.10";
       };
     };
     vpn = {
@@ -124,7 +124,7 @@ rec {
     vm-network = "bc:24:11:b0:9b:27";
     vm-app = "bc:24:11:71:f8:9b";
     vm-monitor = "bc:24:11:93:b1:94";
-    vm-security = "bc:24:11:4b:5f:d4";
+    vm-cyber = "bc:24:11:4b:5f:d4";
     pi = "2c:cf:67:0e:c9:6b";
     pi-legacy = "b8:27:eb:af:a2:33";
   };
@@ -196,6 +196,7 @@ rec {
         nginx = 9113;
         node = 9100;
         podman = 9882;
+        wireguard = 9586;
       };
     };
     proxmox = 8006;

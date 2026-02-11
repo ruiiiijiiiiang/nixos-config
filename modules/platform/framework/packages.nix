@@ -74,6 +74,7 @@ in
       gnupg
       gh
       doxx
+      presenterm
       inputs.lazynmap.packages.${stdenv.system}.default
       inputs.agenix.packages.${stdenv.system}.default
 
@@ -102,6 +103,7 @@ in
       vlc
       opencloud-desktop
       remmina
+      kitty
 
       # --- Audio & Multimedia ---
       easyeffects

@@ -16,6 +16,10 @@ let
         ];
       }
       {
+        name = "kitty";
+        paths = [ ".config/kitty" ];
+      }
+      {
         name = "ncspot";
         paths = [ ".config/ncspot" ];
       }

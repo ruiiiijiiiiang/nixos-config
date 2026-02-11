@@ -43,7 +43,7 @@ in
       };
 
       atuin-server = {
-        image = "ghcr.io/atuinsh/atuin:latest";
+        image = "ghcr.io/atuinsh/atuin:18.8.0";
         user = "${toString oci-uids.atuin}:${toString oci-uids.atuin}";
         dependsOn = [ "atuin-postgres" ];
         networks = [ "container:atuin-postgres" ];

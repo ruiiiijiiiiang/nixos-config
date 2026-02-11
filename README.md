@@ -29,6 +29,48 @@ The `flake.nix` is the central cortex, orchestrating these modules to synthesize
 
 ## Network Architecture
 
+```ascii
+              +------------------+       +-----------------+       +---------------------+
+              |  The Internet    |       | Cloudflare Edge |       | Remote VPN Clients  |
+              +------------------+       +-----------------+       +---------------------+
+                       |                         |                           |
+                 (WAN / ens18)           (Cloudflare Tunnel)         (WireGuard Tunnel)
+                       |                         |                           |
+                       v                         v                           v
++------------------------------------------------------------------------------------------------------+
+| [vm-network] (Proxmox VM)                                                                            |
+| 4 vCPU, 4GB RAM                                                                                      |
+| Role: Router, Firewall (nftables), DHCP (Kea), DNS (Pi-hole/Unbound), VPN Gateway (WireGuard)        |
++------------------------------------------------|-----------------------------------------------------+
+                                                 |
+                                        (LAN Trunk / ens19)
+                                                 |
+             +-----------------------------------|----------------------------------------+
+             |                                   |                                        |
++------------|------------+    +-----------------|-------------------+    +---------------|------------+
+| LAN (Native/Untagged)   |    | VLA (Infra)                         |    | VLAN 88 (DMZ)              |
+| Network: 192.168.2.0/24 |    | Network: 192.168.20.0/24            |    | Network: 192.168.88.0/24   |
+| Desc: Trusted Clients   |    | Desc: Servers & Infrastructure      |    | Desc: Untrusted Workloads  |
++-------------------------+    +-------------------------------------+    +----------------------------+
+| +---------------------+ |    | +---------------------------------+ |    | +------------------------+ |
+| | [framework]         | |    | | [vm-app] (Proxmox VM)           | |    | | [vm-cyber] (Proxmox VM)| |
+| | (Laptop)            | |    | | 10 vCPU, 16GB, GPU Passthrough  | |    | | 4 vCPU, 4GB RAM        | |
+| +---------------------+ |    | | Hosts: Jellyfin, Immich, etc.   | |    | | For: Security Research | |
+|                         |    | +---------------------------------+ |    | +------------------------+ |
+| (Other clients...)      |    | +---------------------------------+ |    |                            |
+|                         |    | | [vm-monitor] (Proxmox VM)       | |    |                            |
+|                         |    | | 4 vCPU, 6GB RAM                 | |    |                            |
+|                         |    | | Hosts: Prometheus, Wazuh, etc.  | |    |                            |
+|                         |    | +---------------------------------+ |    |                            |
+|                         |    | +---------------------------------+ |    |                            |
+|                         |    | | [pi] (Raspberry Pi 4)           | |    |                            |
+|                         |    | | Hosts: Home Assistant, DNS slave| |    |                            |
+|                         |    | +---------------------------------+ |    |                            |
+|                         |    |                                     |    |                            |
+|                         |    | DNS VIP: 192.168.20.53 (HA Cluster) |    |                            |
++-------------------------+    +-------------------------------------+    +----------------------------+
+```
+
 ### The Cybernetic Nexus
 
 The `vm-network` VM serves as the nerve center of the home network. It replaces consumer-grade router firmware with a fully software-defined, hardened networking appliance that routes every packet, enforces strict firewall rules, and inspects traffic for threats.
@@ -43,7 +85,7 @@ The network is physically connected via two interfaces, but logically segmented 
     - _Routing:_ Unrestricted access to WAN, Infra, DMZ, and VPN.
   - **VLAN 20 (`infa0`):** Dedicated management lane for servers and critical infrastructure (e.g., `pi`, `vm-app`, `vm-monitor`).
     - _Routing:_ Access to WAN. Isolated from Home.
-  - **VLAN 88 (`dmz0`):** Isolated zone for untrusted workloads (e.g., `vm-security`).
+  - **VLAN 88 (`dmz0`):** Isolated zone for untrusted workloads (e.g., `vm-cyber`).
     - _Routing:_ Access to WAN. Restricted access to Infra for DNS (UDP/TCP 53) only. No access to Home.
 - **WireGuard (`wg0`):** Secure remote access tunnel.
   - _Routing:_ Authenticated peers get full access to Home, Infra, and DMZ networks.
@@ -69,6 +111,8 @@ Furthermore, all web-facing services are placed behind an **Nginx reverse proxy*
 
 ## The Fleet
 
+The homelab hardware consists of a Raspberry Pi 4 (2GB RAM) and a mini PC acting as a Proxmox host. The mini PC features a 6900hx 16-thread CPU and 32GB DDR5 RAM.
+
 ### `framework`
 
 - **The Command Center.** The primary development workstation, tailored for code, creativity, and control.
@@ -76,13 +120,14 @@ Furthermore, all web-facing services are placed behind an **Nginx reverse proxy*
 
 ### `pi`
 
-- **The Physical Bridge.** A Raspberry Pi 4 that bridges the digital and physical worlds. Armed with **Z-Wave and Zigbee** radios, it acts as the central brain for Home Asssistant while standing watch as a backup DNS node.
+- **The Physical Bridge.** Armed with **Z-Wave and Zigbee** radios, it acts as the smart hub running Home Asssistant while standing watch as a backup DNS node.
 - **Network:** Infra (VLAN 20)
 
 ### `vm-app`
 
 - **The Application Hub.** The workhorse running a suite of self-hosted services, including OpenCloud, Immich, Vaultwarden, and more.
-- **Hardware:** Equipped with **GPU Passthrough** from the Proxmox host. This hardware acceleration powers:
+- **Hardware**: 10 vCPU cores, 16GB RAM
+- **Extra Power:** Equipped with **GPU Passthrough** from the Proxmox host. This hardware acceleration powers:
   - **Media:** Transcoding for **Jellyfin**.
   - **AI:** Local LLM inference for **Ollama/Open WebUI**.
 - **Network:** Infra (VLAN 20)
@@ -90,16 +135,19 @@ Furthermore, all web-facing services are placed behind an **Nginx reverse proxy*
 ### `vm-network`
 
 - **The Sentinel.** The primary router, firewall, and DNS authority. It manages the Cloudflare Tunnels, WireGuard VPNs, and Suricata IDS/IPS.
+- **Hardware**: 4 vCPU cores, 4GB RAM
 - **Network:** Gateway (WAN, Home, Infra, DMZ)
 
 ### `vm-monitor`
 
 - **The Watchtower.** Dedicated to keeping the lights on. It hosts the **Beszel Hub**, **Prometheus**, **Grafana**, **Wazuh Server**, and **Gatus** to visualize the health and security of the entire infrastructure.
+- **Hardware**: 4 vCPU cores, 6GB RAM
 - **Network:** Infra (VLAN 20)
 
-### `vm-security`
+### `vm-cyber`
 
 - **The Armory.** A specialized, security-focused desktop environment loaded with tools for penetration testing, forensics, and reverse engineering.
+- **Hardware**: 4 vCPU cores, 4GB RAM
 - **Network:** DMZ (VLAN 88)
 - **Security:** **None.** This host is intentionally left vulnerable with no defenses to ensure maximum attack efficiency and unrestricted tool usage.
 

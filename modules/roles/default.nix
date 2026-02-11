@@ -1,7 +1,7 @@
 {
   imports = [
+    ./cyber
     ./headless
-    ./security
     ./workstation
   ];
 }

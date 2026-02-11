@@ -10,20 +10,19 @@ The project is structured to share common configurations across hosts while allo
 
 The repository is organized into several key directories:
 
-- `homes/`: Contains Home Manager configurations for users (e.g., `rui`, `vm-security`).
+- `homes/`: Contains Home Manager configurations for users (e.g., `rui`, `vm-cyber`).
 - `hosts/`: Defines host-specific NixOS configurations.
   - `framework/`: Configuration for a Framework laptop (GUI, physical).
   - `pi/`: Configuration for a Raspberry Pi (Server, physical).
   - `vm-app/`: Dedicated to application hosting (GPU Passthrough enabled).
   - `vm-network/`: Acts as the central software router (DHCP, DNS, VPN, IPS).
   - `vm-monitor/`: dedicated to system and security monitoring.
-  - `vm-security/`: Specialized security and forensics environment.
+  - `vm-cyber/`: Specialized security and forensics environment.
 - `modules/`: Custom NixOS modules organized by layer.
   - `core/`: Universal baselines shared across all systems (Hardware, Network, NixOS, Packages).
   - `platform/`: Hardware abstraction layer (Framework, Pi, VM).
   - `roles/`: Host personality definitions (Headless, Security, Workstation).
   - `services/`: Functional payloads categorized by domain (Apps, Networking, Observability).
-  
 - `lib/`: Utility functions and constants used throughout the configuration.
 - `secrets/`: Encrypted secrets managed by `agenix`.
 - `shells/`: Custom development shells (e.g., `rust`, `devops`, `forensics`).
