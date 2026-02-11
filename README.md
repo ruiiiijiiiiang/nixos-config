@@ -30,14 +30,14 @@ The `flake.nix` is the central cortex, orchestrating these modules to synthesize
 ## Network Architecture
 
 ```ascii
-               +------------------+       +-----------------+       +---------------------+
-               |  The Internet    |       | Cloudflare Edge |       | Remote VPN Clients  |
-               +------------------+       +-----------------+       +---------------------+
-                        ^                         ^                           ^
-                        |                         |                           |
-                  (WAN / ens18)           (Cloudflare Tunnel)         (WireGuard Tunnel)
-                        |                         |                           |
-                        |                         v                           v
+                  +--------------+        +-----------------+        +--------------------+
+                  | The Internet |        | Cloudflare Edge |        | Remote VPN Clients |
+                  +--------------+        +-----------------+        +--------------------+
+                         ^                         ^                           ^
+                         |                         |                           |
+                       (WAN)              (Cloudflare Tunnel)          (WireGuard Tunnel)
+                         |                         |                           |
+                         |                         v                           v
 +------------------------------------------------------------------------------------------------------+
 | [vm-network] (Proxmox VM)                                                                            |
 | 4 vCPU, 4GB RAM                                                                                      |
@@ -45,7 +45,7 @@ The `flake.nix` is the central cortex, orchestrating these modules to synthesize
 +-------------------------------------------------|----------------------------------------------------+
                                                   ^
                                                   |
-                                         (LAN Trunk / ens19)
+                                             (LAN Trunk)
                                                   |
              +------------------------------------|-------------------------------------+
              |                                    |                                     |
