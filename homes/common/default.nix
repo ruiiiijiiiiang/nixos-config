@@ -6,6 +6,7 @@ in
 {
   imports = [
     ./configs.nix
+    ./files
   ];
 
   home = {

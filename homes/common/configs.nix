@@ -42,12 +42,28 @@ let
         paths = [ ".config/helix" ];
       }
       {
+        name = "kitty";
+        paths = [ ".config/kitty" ];
+      }
+      {
         name = "lazygit";
         paths = [ ".config/lazygit" ];
       }
       {
         name = "lsd";
         paths = [ ".config/lsd" ];
+      }
+      {
+        name = "ncspot";
+        paths = [ ".config/ncspot" ];
+      }
+      {
+        name = "niri";
+        paths = [ ".config/niri" ];
+      }
+      {
+        name = "noxdir";
+        paths = [ ".noxdir" ];
       }
       {
         name = "nvim";
@@ -59,6 +75,10 @@ let
           ".config/posting"
           ".local/share/posting/themes"
         ];
+      }
+      {
+        name = "spicetify";
+        paths = [ ".config/spicetify/Themes/text" ];
       }
       {
         name = "starship";
