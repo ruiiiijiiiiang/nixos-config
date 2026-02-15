@@ -56,16 +56,6 @@ in
           dmzVlanId = 88;
         };
 
-        suricata = {
-          enable = true;
-          inherit
-            wanInterface
-            lanInterface
-            infraInterface
-            dmzInterface
-            wgInterface
-            ;
-        };
         wireguard.server = {
           enable = true;
           inherit
@@ -95,6 +85,7 @@ in
             }
           ];
         };
+
         dns = {
           enable = true;
           interface = infraInterface;

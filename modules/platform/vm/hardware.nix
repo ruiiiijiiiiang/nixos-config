@@ -31,6 +31,7 @@ in
           "sd_mod"
           "sr_mod"
         ]
+        ++ lib.optionals cfg.gpuPassthrough [ "amdgpu" ]
         ++ lib.optionals cfg.workstation [ "virtio_gpu" ];
 
         kernelModules =
@@ -43,9 +44,10 @@ in
         "console=ttyS0"
       ]
       ++ lib.optionals cfg.gpuPassthrough [
-        "amdgpu.noretry=0"
-        "amdgpu.gttsize=8192"
         "amdgpu.cwsr_enable=0"
+        "amdgpu.gpu_recovery=1"
+        "iommu=pt"
+        "pci=realloc"
       ];
     };
 
@@ -56,8 +58,10 @@ in
 
     hardware = lib.mkIf cfg.gpuPassthrough {
       enableRedistributableFirmware = true;
+      amdgpu.initrd.enable = true;
       graphics = {
         enable = true;
+        enable32Bit = true;
         extraPackages = with pkgs; [
           libva-utils
           rocmPackages.clr.icd

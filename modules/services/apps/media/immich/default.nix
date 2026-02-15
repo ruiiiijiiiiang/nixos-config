@@ -109,7 +109,7 @@ in
         "d /var/storage/immich 0755 ${toString oci-uids.immich} ${toString oci-uids.immich} - -"
       ];
 
-      services.podman-immich-postgres = mkNotifyService { timeout = 600; };
+      services.podman-immich-postgres = mkNotifyService { timeout = 900; };
     };
 
     services = {
