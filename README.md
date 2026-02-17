@@ -189,22 +189,19 @@ Deployment is atomic, consistent, and flexible.
 
 ### Local Binary Cache
 
-**Accelerated Builds. Guaranteed Availability.**
+**Pre-Built. Always Available.**
 
-To accelerate deployments and ensure build artifacts are always available even if external services are not, this infrastructure runs its own private binary cache powered by **Harmonia**. Every night, a scheduled job automatically builds the latest configurations for all major hosts and populates the cache. This means that subsequent deployments are lightning-fast, pulling pre-built packages directly from the local network instead of rebuilding them from source or downloading from public caches.
+A private **Harmonia** binary cache runs locally to accelerate deployments. A nightly job pre-builds all host configurations and populates the cache. Deployments pull pre-built packages from the local network instead of rebuilding from source or fetching from public caches.
 
-### `nixos-rebuild`
+### Deployment Workflows
 
-**The Surgical Strike.** For precise, single-host updates initiated directly from the dev machine:
+**Dual CI/CD. Local and Remote.**
 
-```bash
-nixos-rebuild switch --flake .#<hostname> --target-host <hostname>
-```
+Deployments can be triggered from two locations:
 
-### `colmena`
+- **Local (Forgejo @ `git.ruijiang.me`):** Runs directly on `vm-app` with Podman socket access. Deploys to VMs (`vm-app`, `vm-monitor`, `vm-network`) over SSH on the Infra VLAN. Fast, no VPN overhead.
+- **Remote (GitHub Actions):** Establishes WireGuard tunnel into homelab. Deploys to all hosts including `pi` using ARM runners. Accessible from anywhere.
 
-**The Fleet Commander.** For orchestrating complex, multi-host deployments or targeting specific groups (e.g., all servers) using tags:
+Both workflows execute `nixos-rebuild switch` over SSH. Forgejo handles rapid local iteration; GitHub enables remote management and ARM builds.
 
-```bash
-colmena apply -v --on @server
-```
+**Container Registry:** Forgejo also serves as a private OCI container registry. CI pipelines build and push container images for other personal projects, which are then pulled by services across the infrastructure.
