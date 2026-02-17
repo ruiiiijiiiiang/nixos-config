@@ -33,7 +33,7 @@ The `flake.nix` is the central cortex, orchestrating these modules to synthesize
                   +--------------+        +-----------------+        +--------------------+
                   | The Internet |        | Cloudflare Edge |        | Remote VPN Clients |
                   +--------------+        +-----------------+        +--------------------+
-                         ^                         |                           ^
+                         ^                         |                           |
                          |                         |                           |
                        (WAN)              (Cloudflare Tunnel)          (WireGuard Tunnel)
                          |                         |                           |
@@ -199,8 +199,8 @@ A private **Harmonia** binary cache runs locally to accelerate deployments. A ni
 
 Deployments can be triggered from two locations:
 
-- **Local (Forgejo @ `git.ruijiang.me`):** Runs directly on `vm-app` with Podman socket access. Deploys to VMs (`vm-app`, `vm-monitor`, `vm-network`) over SSH on the Infra VLAN. Fast, no VPN overhead.
-- **Remote (GitHub Actions):** Establishes WireGuard tunnel into homelab. Deploys to all hosts including `pi` using ARM runners. Accessible from anywhere.
+- **Local (Forgejo):** Runs directly on `vm-app` with Podman socket access. Deploys to VMs (`vm-app`, `vm-monitor`, `vm-network`) over SSH on the Infra VLAN. Artifacts are cached, and no VPN overhead.
+- **Remote (GitHub):** Establishes WireGuard tunnel into homelab. Deploys to all hosts including `pi` using ARM runners. Accessible from anywhere.
 
 Both workflows execute `nixos-rebuild switch` over SSH. Forgejo handles rapid local iteration; GitHub enables remote management and ARM builds.
 
