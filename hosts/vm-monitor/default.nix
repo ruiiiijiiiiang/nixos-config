@@ -1,16 +1,10 @@
-let
-  podmanInterface = "podman0";
-in
 {
   system.stateVersion = "25.11";
   networking.hostName = "vm-monitor";
 
   custom = {
     roles.headless = {
-      network = {
-        enable = true;
-        inherit podmanInterface;
-      };
+      network.enable = true;
       security.enable = true;
       services.enable = true;
     };

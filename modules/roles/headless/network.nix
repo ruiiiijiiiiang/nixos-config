@@ -12,11 +12,6 @@ in
 {
   options.custom.roles.headless.network = with lib; {
     enable = mkEnableOption "Custom network setup for servers";
-    podmanInterface = mkOption {
-      type = types.str;
-      default = "podman0";
-      description = "Interface for podman";
-    };
     trustedInterfaces = mkOption {
       type = types.listOf types.str;
       default = [ ];
@@ -32,8 +27,11 @@ in
       firewall = {
         enable = true;
         checkReversePath = "loose";
-        trustedInterfaces = [ cfg.podmanInterface ];
         logRefusedConnections = true;
+        extraInputRules = ''
+          iifname "podman*" accept
+          iifname "veth*" accept
+        '';
       }
       // (
         if cfg.trustedInterfaces != [ ] then
@@ -57,7 +55,7 @@ in
       );
       nat = {
         enable = true;
-        internalInterfaces = [ cfg.podmanInterface ];
+        internalInterfaces = [ "podman0" ];
       };
     };
 

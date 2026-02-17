@@ -1,16 +1,10 @@
-let
-  podmanInterface = "podman0";
-in
 {
   system.stateVersion = "25.11";
   networking.hostName = "vm-app";
 
   custom = {
     roles.headless = {
-      network = {
-        enable = true;
-        inherit podmanInterface;
-      };
+      network.enable = true;
       security.enable = true;
       services.enable = true;
     };
@@ -29,6 +23,10 @@ in
 
     services = {
       apps = {
+        development = {
+          bytestash.enable = true;
+          forgejo.enable = true;
+        };
         office = {
           memos.enable = true;
           opencloud.enable = true;
@@ -37,8 +35,6 @@ in
         tools = {
           arr.enable = true;
           atuin.enable = true;
-          bytestash.enable = true;
-          forgejo.enable = true;
           karakeep.enable = true;
           harmonia.enable = true;
           llm.enable = true;

@@ -33,14 +33,14 @@ The `flake.nix` is the central cortex, orchestrating these modules to synthesize
                   +--------------+        +-----------------+        +--------------------+
                   | The Internet |        | Cloudflare Edge |        | Remote VPN Clients |
                   +--------------+        +-----------------+        +--------------------+
-                         ^                         ^                           ^
+                         ^                         |                           ^
                          |                         |                           |
                        (WAN)              (Cloudflare Tunnel)          (WireGuard Tunnel)
                          |                         |                           |
                          |                         v                           v
 +------------------------------------------------------------------------------------------------------+
 | [vm-network] (Proxmox VM)                                                                            |
-| 4 vCPU, 4GB RAM                                                                                      |
+| 4 vCPU, 2GB RAM                                                                                      |
 | Role: Router, Firewall (nftables), DHCP (Kea), DNS master (Pi-hole/Unbound), VPN Gateway (WireGuard) |
 +-------------------------------------------------|----------------------------------------------------+
                                                   ^
@@ -57,7 +57,7 @@ The `flake.nix` is the central cortex, orchestrating these modules to synthesize
 +-------------------------+    +-------------------------------------+    +----------------------------+
 | +---------------------+ |    | +---------------------------------+ |    | +------------------------+ |
 | | [framework]         | |    | | [vm-app] (Proxmox VM)           | |    | | [vm-cyber] (Proxmox VM)| |
-| | (Laptop)            | |    | | 10 vCPU, 16GB, GPU Passthrough  | |    | | 4 vCPU, 4GB RAM        | |
+| | (Laptop)            | |    | | 10 vCPU, 16GB RAM, GPU Passthru | |    | | 4 vCPU, 4GB RAM        | |
 | +---------------------+ |    | | Hosts: Jellyfin, Immich, etc.   | |    | | For: Security Research | |
 |                         |    | +---------------------------------+ |    | +------------------------+ |
 | (Other clients...)      |    | +---------------------------------+ |    |                            |
@@ -104,7 +104,7 @@ Powered by **NFTables**, the firewall enforces a strict "default drop" policy fo
 
 ### High-Availability DNS
 
-Redundancy is the only Reality. The network relies on a high-availability DNS cluster spanning `vm-network`, `pi`, and `pi-legacy` to ensure that ad-blocking and name resolution never sleep.
+Redundancy is the only reliability. The network relies on a high-availability DNS cluster spanning `vm-network`, `pi`, and `pi-legacy` to ensure that ad-blocking and name resolution never sleep.
 
 - **The Stack:** **Pi-hole** for network-wide ad-blocking + **Unbound** for recursive, privacy-respecting DNS-over-TLS resolution.
 - **The Redundancy:** **Keepalived** manages a Virtual IP (VIP) that floats across the cluster. If the master node blinks, the VIP instantly migrates to a backup, keeping the network online without a hiccup.
@@ -141,7 +141,7 @@ The homelab hardware consists of a Raspberry Pi 4 (2GB RAM) and a mini PC acting
 ### `vm-network`
 
 - **The Sentinel.** The primary router, firewall, and DNS authority. It manages the Cloudflare Tunnels, WireGuard VPNs, and Suricata IDS/IPS.
-- **Hardware**: 4 vCPU cores, 4GB RAM
+- **Hardware**: 4 vCPU cores, 2GB RAM
 - **Network:** Gateway (WAN, Home, Infra, DMZ)
 
 ### `vm-monitor`

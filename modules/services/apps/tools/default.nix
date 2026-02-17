@@ -2,15 +2,12 @@
   imports = [
     ./arr
     ./atuin
-    ./bytestash
     ./dawarich
-    ./forgejo
     ./harmonia
     ./homeassistant
     ./karakeep
     ./llm
     ./microbin
-    ./portainer
     ./reitti
     ./searxng
     ./syncthing

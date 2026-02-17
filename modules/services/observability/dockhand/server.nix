@@ -11,6 +11,7 @@ let
     domains
     subdomains
     ports
+    oci-uids
     ;
   inherit (helpers) mkVirtualHost;
   cfg = config.custom.services.observability.dockhand.server;
@@ -27,17 +28,26 @@ in
         image = "docker.io/fnsys/dockhand:latest";
         ports = [ "${addresses.localhost}:${toString ports.dockhand.server}:3000" ];
         volumes = [
-          "/run/docker.sock:/var/run/docker.sock"
-          "dockhand_data:/app/data"
+          "/run/podman/podman.sock:/var/run/docker.sock"
+          "/var/lib/dockhand:/app/data"
         ];
         environment = {
+          PUID = toString oci-uids.dockhand;
+          PGID = toString oci-uids.dockhand;
           NODE_TLS_REJECT_UNAUTHORIZED = "0";
         };
         labels = {
           "io.containers.autoupdate" = "registry";
         };
+        extraOptions = [
+          "--group-add=${toString oci-uids.podman}"
+        ];
       };
     };
+
+    systemd.tmpfiles.rules = [
+      "d /var/lib/dockhand 0700 ${toString oci-uids.dockhand} ${toString oci-uids.dockhand} - -"
+    ];
 
     services.nginx.virtualHosts."${fqdn}" = mkVirtualHost {
       inherit fqdn;

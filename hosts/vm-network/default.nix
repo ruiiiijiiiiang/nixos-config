@@ -23,7 +23,6 @@ in
     roles.headless = {
       network = {
         enable = true;
-        inherit podmanInterface;
         trustedInterfaces = [
           lanInterface
           infraInterface
@@ -49,6 +48,7 @@ in
           inherit
             wanInterface
             lanInterface
+            podmanInterface
             infraInterface
             dmzInterface
             ;

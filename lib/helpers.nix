@@ -114,10 +114,10 @@ rec {
         atuin = config.custom.services.apps.tools.atuin.enable;
         beszel = config.custom.services.observability.beszel.hub.enable;
         bentopdf = config.custom.services.apps.office.bentopdf.enable;
-        bytestash = config.custom.services.apps.tools.bytestash.enable;
+        bytestash = config.custom.services.apps.development.bytestash.enable;
         dawarich = config.custom.services.apps.tools.dawarich.enable;
         dockhand = config.custom.services.observability.dockhand.server.enable;
-        forgejo = config.custom.services.apps.tools.forgejo.enable;
+        forgejo = config.custom.services.apps.development.forgejo.enable;
         gatus = config.custom.services.observability.gatus.enable;
         grafana = config.custom.services.observability.prometheus.server.enable;
         harmonia = config.custom.services.apps.tools.harmonia.enable;
@@ -136,7 +136,7 @@ rec {
         paperless = config.custom.services.apps.office.paperless.enable;
         pihole = config.custom.services.networking.dns.enable;
         pocketid = config.custom.services.apps.security.pocketid.enable;
-        portainer = config.custom.services.apps.tools.portainer.enable;
+        portainer = config.custom.services.observability.portainer.enable;
         prometheus = config.custom.services.observability.prometheus.server.enable;
         public = config.custom.services.apps.web.website.enable;
         qbittorrent = config.custom.services.networking.torrent.enable;

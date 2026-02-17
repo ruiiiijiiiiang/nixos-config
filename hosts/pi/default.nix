@@ -2,7 +2,6 @@
 let
   lanInterface = "end0";
   wlanInterface = "wlan0";
-  podmanInterface = "podman0";
   vlanId = 20;
 in
 {
@@ -24,10 +23,7 @@ in
     };
 
     roles.headless = {
-      network = {
-        enable = true;
-        inherit podmanInterface;
-      };
+      network.enable = true;
       security.enable = true;
       services.enable = true;
     };

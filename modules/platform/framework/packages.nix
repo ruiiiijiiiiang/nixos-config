@@ -139,8 +139,7 @@ in
       rustup
 
       # Lua
-      lua51Packages.luarocks
-      lua54Packages.luarocks
+      lua55Packages.luarocks
       stylua
       lua-language-server
 

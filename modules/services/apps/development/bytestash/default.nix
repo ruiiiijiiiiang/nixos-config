@@ -16,11 +16,11 @@ let
     oidc-issuer
     ;
   inherit (helpers) mkOciUser mkVirtualHost;
-  cfg = config.custom.services.apps.tools.bytestash;
+  cfg = config.custom.services.apps.development.bytestash;
   fqdn = "${subdomains.${config.networking.hostName}.bytestash}.${domains.home}";
 in
 {
-  options.custom.services.apps.tools.bytestash = with lib; {
+  options.custom.services.apps.development.bytestash = with lib; {
     enable = mkEnableOption "ByteStash code snippet stash";
   };
 

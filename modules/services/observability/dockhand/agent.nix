@@ -37,26 +37,28 @@ in
     virtualisation.oci-containers.containers = {
       dockhand-agent = {
         image = "ghcr.io/finsys/hawser:latest";
-        user = "${toString oci-uids.dockhand}:${toString oci-uids.podman}";
+        user = "${toString oci-uids.dockhand}:${toString oci-uids.dockhand}";
         ports = [
           "${
             addresses.infra.hosts.${config.networking.hostName}
           }:${toString ports.dockhand.agent}:${toString ports.dockhand.agent}"
         ];
         volumes = [
-          "/run/docker.sock:/var/run/docker.sock"
+          "/run/podman/podman.sock:/var/run/docker.sock"
           "${config.age.secrets.dockhand-agent-crt.path}:/certs/server.crt:ro"
           "${config.age.secrets.dockhand-agent-key.path}:/certs/server.key:ro"
         ];
         environment = {
           TLS_CERT = "/certs/server.crt";
           TLS_KEY = "/certs/server.key";
+          AGENT_NAME = config.networking.hostName;
         };
         labels = {
           "io.containers.autoupdate" = "registry";
         };
         extraOptions = [
           "--health-cmd=wget -q --spider --no-check-certificate https://localhost:${toString ports.dockhand.agent}/_hawser/health || exit 1"
+          "--group-add=${toString oci-uids.podman}"
         ];
       };
     };

@@ -5,6 +5,7 @@
     ./gatus
     ./monit
     ./myspeed
+    ./portainer
     ./prometheus
     ./scanopy
     ./wazuh

@@ -45,11 +45,9 @@ in
         appendHttpConfig = ''
           allow ${addresses.localhost};
           allow ${addresses.localhost-v6};
-          allow ${addresses.home.network};
-          allow ${addresses.infra.network};
-          allow ${addresses.dmz.network};
-          allow ${addresses.vpn.network};
-          allow ${addresses.podman.network};
+          allow 10.0.0.0/8;
+          allow 172.16.0.0/12;
+          allow 192.168.0.0/16;
           deny all;
 
           ${optionalString config.custom.services.observability.prometheus.exporters.nginx.enable ''

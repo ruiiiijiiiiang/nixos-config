@@ -13,11 +13,11 @@ let
     ports
     ;
   inherit (helpers) mkVirtualHost;
-  cfg = config.custom.services.apps.tools.portainer;
+  cfg = config.custom.services.observability.portainer;
   fqdn = "${subdomains.${config.networking.hostName}.portainer}.${domains.home}";
 in
 {
-  options.custom.services.apps.tools.portainer = with lib; {
+  options.custom.services.observability.portainer = with lib; {
     enable = mkEnableOption "Portainer container management";
   };
 
@@ -30,7 +30,7 @@ in
           "${addresses.localhost}:${toString ports.portainer.edge}:${toString ports.portainer.edge}"
         ];
         volumes = [
-          "/run/docker.sock:/var/run/docker.sock:ro"
+          "/run/podman/podman.sock:/var/run/docker.sock"
           "portainer_data:/data"
         ];
         labels = {
