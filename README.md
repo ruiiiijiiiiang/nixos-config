@@ -51,7 +51,7 @@ The `flake.nix` is the central cortex, orchestrating these modules to synthesize
              |                                    |                                     |
              v                                    v                                     v
 +-------------------------+    +-------------------------------------+    +----------------------------+
-| LAN (Native/Untagged)   |    | VLA (Infra)                         |    | VLAN 88 (DMZ)              |
+| LAN (Native/Untagged)   |    | VLAN 20 (Infra)                     |    | VLAN 88 (DMZ)              |
 | Network: 192.168.2.0/24 |    | Network: 192.168.20.0/24            |    | Network: 192.168.88.0/24   |
 | Desc: Trusted Clients   |    | Desc: Servers & Infrastructure      |    | Desc: Untrusted Workloads  |
 +-------------------------+    +-------------------------------------+    +----------------------------+
@@ -85,7 +85,7 @@ The `vm-network` VM serves as the nerve center of the home network. It replaces 
 
 The network is physically connected via two interfaces, but logically segmented into distinct security zones using VLANs and virtual interfaces:
 
-- **WAN (`ens18`):** The shield against the public internet. Default policy is **DROP**.
+- **WAN (`ens18`):** The shield against the public internet.
 - **LAN (`ens19`):** The physical trunk carrying multiple logical networks:
   - **Home (Native):** Trusted user devices (e.g., `framework`).
     - _Routing:_ Unrestricted access to WAN, Infra, DMZ, and VPN.
@@ -117,7 +117,7 @@ Furthermore, all web-facing services are placed behind an **Nginx reverse proxy*
 
 ## The Fleet
 
-The homelab hardware consists of a Raspberry Pi 4 (2GB RAM) and a mini PC acting as a Proxmox host. The mini PC features a 6900hx 16-thread CPU and 32GB DDR5 RAM.
+The homelab hardware consists of a Raspberry Pi 4 (2GB RAM) and a mini PC acting as a Proxmox host. The mini PC features a 6900HX 16-thread CPU and 32GB DDR5 RAM.
 
 ### `framework`
 
@@ -126,7 +126,7 @@ The homelab hardware consists of a Raspberry Pi 4 (2GB RAM) and a mini PC acting
 
 ### `pi`
 
-- **The Physical Bridge.** Armed with **Z-Wave and Zigbee** radios, it acts as the smart hub running Home Asssistant while standing watch as a backup DNS node.
+- **The Physical Bridge.** Armed with **Z-Wave** and **Zigbee** radios, it acts as the smart hub running Home Assistant while standing watch as a backup DNS node.
 - **Network:** Infra (VLAN 20)
 
 ### `vm-app`
