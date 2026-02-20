@@ -1,9 +1,9 @@
 {
   imports = [
+    ./authentication
     ./development
     ./media
     ./office
-    ./security
     ./tools
     ./web
   ];

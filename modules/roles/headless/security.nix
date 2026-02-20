@@ -1,11 +1,5 @@
-{
-  lib,
-  config,
-  consts,
-  ...
-}:
+{ lib, config, ... }:
 let
-  inherit (consts) addresses;
   cfg = config.custom.roles.headless.security;
 in
 {
@@ -50,43 +44,6 @@ in
           value = "0";
         }
       ];
-    };
-
-    services.fail2ban = {
-      enable = true;
-      bantime = "1h";
-      maxretry = 5;
-      ignoreIP = [
-        addresses.home.network
-        addresses.infra.network
-        addresses.vpn.network
-      ];
-
-      jails = {
-        DEFAULT = {
-          settings = {
-            findtime = "10m";
-          };
-        };
-
-        sshd = {
-          settings = {
-            mode = "aggressive";
-            port = "ssh";
-          };
-        };
-
-        recidive = {
-          settings = {
-            enabled = true;
-            logpath = "/var/log/fail2ban.log";
-            banaction = "iptables-allports";
-            maxretry = 5;
-            findtime = "1d";
-            bantime = "1w";
-          };
-        };
-      };
     };
 
     systemd.coredump.enable = false;

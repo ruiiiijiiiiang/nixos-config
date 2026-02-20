@@ -101,6 +101,8 @@ in
         nginx.enable = true;
       };
 
+      security.fail2ban.enable = true;
+
       observability = {
         beszel.agent = {
           enable = true;

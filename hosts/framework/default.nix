@@ -1,9 +1,19 @@
-{ config, consts, ... }:
+{
+  config,
+  consts,
+  inputs,
+  ...
+}:
 let
   inherit (consts) addresses;
   wgInterface = "wg0";
 in
 {
+  imports = [
+    inputs.dankMaterialShell.nixosModules.dank-material-shell
+    inputs.dankMaterialShell.nixosModules.greeter
+  ];
+
   system.stateVersion = "25.05";
   networking.hostName = "framework";
 

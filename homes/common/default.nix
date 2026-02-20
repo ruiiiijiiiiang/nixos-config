@@ -15,13 +15,15 @@ in
     stateVersion = "25.05";
   };
 
-  programs.home-manager.enable = true;
-  programs.nh = {
-    enable = true;
-    flake = flakePath;
-    clean = {
+  programs = {
+    home-manager.enable = true;
+    nh = {
       enable = true;
-      dates = "weekly";
+      flake = flakePath;
+      clean = {
+        enable = true;
+        dates = "weekly";
+      };
     };
   };
 }

@@ -78,7 +78,7 @@ in
         };
       };
 
-      "forgejo-runner" = {
+      forgejo-runner = {
         image = "docker.io/gitea/act_runner:latest";
         user = "${toString oci-uids.forgejo}:${toString oci-uids.forgejo}";
         volumes = [

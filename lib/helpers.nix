@@ -135,7 +135,7 @@ rec {
         openwebui = config.custom.services.apps.tools.llm.enable;
         paperless = config.custom.services.apps.office.paperless.enable;
         pihole = config.custom.services.networking.dns.enable;
-        pocketid = config.custom.services.apps.security.pocketid.enable;
+        pocketid = config.custom.services.apps.authentication.pocketid.enable;
         portainer = config.custom.services.observability.portainer.enable;
         prometheus = config.custom.services.observability.prometheus.server.enable;
         public = config.custom.services.apps.web.website.enable;
@@ -145,7 +145,7 @@ rec {
         searxng = config.custom.services.apps.tools.searxng.enable;
         stirlingpdf = config.custom.services.apps.office.stirlingpdf.enable;
         syncthing = config.custom.services.apps.tools.syncthing.enable;
-        vaultwarden = config.custom.services.apps.security.vaultwarden.enable;
+        vaultwarden = config.custom.services.apps.authentication.vaultwarden.enable;
         wazuh = config.custom.services.observability.wazuh.server.enable;
         yourls = config.custom.services.apps.tools.yourls.enable;
         zwave = config.custom.services.apps.tools.homeassistant.enable;

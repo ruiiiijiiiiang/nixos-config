@@ -42,7 +42,11 @@ in
     publicKeys = ssh.vm-network ++ ssh.vm-app ++ ssh.vm-monitor;
     armor = true;
   };
-  "harmonia.age" = {
+  "grafana-secret-key.age" = {
+    publicKeys = ssh.vm-monitor;
+    armor = true;
+  };
+  "harmonia-sign-key.age" = {
     publicKeys = ssh.vm-app;
     armor = true;
   };

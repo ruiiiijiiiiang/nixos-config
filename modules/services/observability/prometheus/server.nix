@@ -21,6 +21,7 @@ let
   grafana-fqdn = "${subdomains.${config.networking.hostName}.grafana}.${domains.home}";
   monitoredExporters = {
     inherit (ports.prometheus.exporters)
+      # crowdsec
       kea
       nginx
       node
@@ -48,6 +49,12 @@ let
   };
 
   # Generate the hash by running: nix-prefetch-url <url>
+  crowdsec-dashboard = pkgs.fetchurl {
+    name = "crowdsec-dashboard.json";
+    url = "https://grafana.com/api/dashboards/21419/revisions/6/download";
+    sha256 = "1dggzvx2ircakkv1whb2yzvnxsfy7a2iy5jxq42a2q9hlnzx5xp1";
+  };
+
   kea-exporter-dashboard = pkgs.fetchurl {
     name = "kea-exporter.json";
     url = "https://grafana.com/api/dashboards/12688/revisions/4/download";
@@ -89,6 +96,7 @@ let
       "$1" > "$out/$2"
     }
 
+    # install_dash ${crowdsec-dashboard} "crowdsec-dashboard.json"
     install_dash ${kea-exporter-dashboard} "kea-exporter.json"
     install_dash ${nginx-exporter-dashboard} "nginx-exporter.json"
     install_dash ${node-exporter-dashboard} "node-exporter.json"
@@ -103,6 +111,15 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    age.secrets = {
+      grafana-secret-key = {
+        file = ../../../../secrets/grafana-secret-key.age;
+        mode = "440";
+        owner = "grafana";
+        group = "grafana";
+      };
+    };
+
     services = {
       prometheus = {
         enable = true;
@@ -119,6 +136,7 @@ in
             http_port = ports.grafana;
             domain = addresses.localhost;
           };
+          security.secret_key = "$__file{${config.age.secrets.grafana-secret-key.path}}";
           auth = {
             oauth_allow_insecure_email_lookup = true;
           };

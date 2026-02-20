@@ -20,6 +20,8 @@
     services = {
       networking.nginx.enable = true;
 
+      security.fail2ban.enable = true;
+
       observability = {
         beszel = {
           hub.enable = true;
@@ -31,6 +33,7 @@
         prometheus = {
           server.enable = true;
           exporters = {
+            crowdsec.enable = true;
             nginx.enable = true;
             node.enable = true;
             podman.enable = true;

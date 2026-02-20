@@ -38,8 +38,12 @@ in
           priority = 90;
         };
       };
+
       apps.tools.homeassistant.enable = true;
+
       networking.nginx.enable = true;
+
+      security.fail2ban.enable = true;
 
       observability = {
         beszel.agent.enable = true;

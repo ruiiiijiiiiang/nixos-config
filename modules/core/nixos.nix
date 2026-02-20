@@ -15,6 +15,7 @@
       trusted-users = [
         "root"
         "@wheel"
+        "forgejo"
       ];
 
       substituters = [

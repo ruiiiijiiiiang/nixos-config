@@ -23,6 +23,10 @@
 
     services = {
       apps = {
+        authentication = {
+          pocketid.enable = true;
+          vaultwarden.enable = true;
+        };
         development = {
           bytestash.enable = true;
           forgejo.enable = true;
@@ -50,10 +54,6 @@
           immich.enable = true;
           jellyfin.enable = true;
         };
-        security = {
-          pocketid.enable = true;
-          vaultwarden.enable = true;
-        };
         web = {
           homepage.enable = true;
           website.enable = true;
@@ -65,6 +65,8 @@
         nginx.enable = true;
         torrent.enable = true;
       };
+
+      security.fail2ban.enable = true;
 
       observability = {
         beszel.agent.enable = true;

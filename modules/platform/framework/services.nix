@@ -16,16 +16,17 @@ in
 
   config = lib.mkIf cfg.enable {
     services = {
-      power-profiles-daemon.enable = true;
-
       xserver.enable = true;
-      displayManager.sddm = {
-        enable = true;
-        wayland.enable = true;
-      };
-      displayManager.dms-greeter = {
-        enable = true;
-        compositor.name = "niri";
+      displayManager = {
+        sddm = {
+          enable = true;
+          wayland.enable = true;
+        };
+
+        dms-greeter = {
+          enable = true;
+          compositor.name = "niri";
+        };
       };
       desktopManager.plasma6.enable = true;
 
@@ -46,6 +47,8 @@ in
           driver = pkgs.libfprint-2-tod1-goodix;
         };
       };
+
+      power-profiles-daemon.enable = true;
     };
 
     security.pam.services = {

@@ -5,11 +5,6 @@
   ...
 }:
 let
-  inherit (lib)
-    mkIf
-    optionalString
-    genAttrs
-    ;
   inherit (import ../../../../lib/consts.nix)
     addresses
     domains
@@ -24,7 +19,7 @@ in
     enable = mkEnableOption "Nginx reverse proxy";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     age.secrets = {
       cloudflare-token = {
         file = ../../../../secrets/cloudflare-token.age;
@@ -50,7 +45,7 @@ in
           allow 192.168.0.0/16;
           deny all;
 
-          ${optionalString config.custom.services.observability.prometheus.exporters.nginx.enable ''
+          ${lib.optionalString config.custom.services.observability.prometheus.exporters.nginx.enable ''
             server {
               listen ${addresses.localhost}:${toString ports.nginx.stub};
               server_name localhost;
@@ -63,12 +58,12 @@ in
             }
           ''}
 
-          ${optionalString config.custom.services.apps.tools.microbin.enable ''
+          ${lib.optionalString config.custom.services.apps.tools.microbin.enable ''
             limit_req_zone $binary_remote_addr zone=microbin_req_limit:10m rate=1r/s;
             limit_conn_zone $binary_remote_addr zone=microbin_conn_limit:10m;
           ''}
 
-          ${optionalString config.custom.services.apps.web.website.enable ''
+          ${lib.optionalString config.custom.services.apps.web.website.enable ''
             limit_req_zone $binary_remote_addr zone=website_req_limit:10m rate=1r/s;
             limit_conn_zone $binary_remote_addr zone=website_conn_limit:10m;
           ''}
@@ -91,7 +86,7 @@ in
     security.acme = {
       acceptTerms = true;
       defaults.email = "me@ruijiang.me";
-      certs = genAttrs (map (name: "${name}.${domains.home}") subdomainList) (fqdn: {
+      certs = lib.genAttrs (map (name: "${name}.${domains.home}") subdomainList) (fqdn: {
         domain = fqdn;
         dnsProvider = "cloudflare";
         dnsResolver = "1.1.1.1:53";
@@ -101,7 +96,7 @@ in
       });
     };
 
-    systemd.services = genAttrs (map (name: "acme-${name}.${domains.home}") subdomainList) (fqdn: {
+    systemd.services = lib.genAttrs (map (name: "acme-${name}.${domains.home}") subdomainList) (fqdn: {
       environment = {
         LEGO_DISABLE_CNAME_SUPPORT = "true";
       };

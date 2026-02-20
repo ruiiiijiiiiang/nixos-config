@@ -19,12 +19,16 @@
       url = "github:catppuccin/nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    dgop = {
-      url = "github:AvengeMedia/dgop";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     dankMaterialShell = {
       url = "github:AvengeMedia/DankMaterialShell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    danksearch = {
+      url = "github:AvengeMedia/danksearch";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    dgop = {
+      url = "github:AvengeMedia/dgop";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     zen-browser.url = "github:0xc000022070/zen-browser-flake";
@@ -244,6 +248,7 @@
         framework = homeManagerConfiguration {
           inherit pkgs;
           extraSpecialArgs = {
+            inherit inputs;
             inherit consts;
             inherit helpers;
           };
@@ -255,6 +260,7 @@
         arch = homeManagerConfiguration {
           inherit pkgs;
           extraSpecialArgs = {
+            inherit inputs;
             inherit consts;
             inherit helpers;
           };
@@ -266,6 +272,7 @@
         vm-cyber = homeManagerConfiguration {
           inherit pkgs;
           extraSpecialArgs = {
+            inherit inputs;
             inherit consts;
             inherit helpers;
           };

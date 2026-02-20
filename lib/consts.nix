@@ -147,6 +147,9 @@ rec {
     atuin = 8888;
     bentopdf = 8080;
     bytestash = 5000;
+    crowdsec = {
+      lapi = 8093;
+    };
     forgejo = {
       ssh = 2222;
       server = 3004;
@@ -192,6 +195,7 @@ rec {
     prometheus = {
       server = 9090;
       exporters = {
+        crowdsec = 6060;
         kea = 9547;
         nginx = 9113;
         node = 9100;

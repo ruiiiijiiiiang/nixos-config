@@ -34,8 +34,8 @@ in
 
   config = lib.mkIf cfg.enable {
     age.secrets = {
-      harmonia = {
-        file = ../../../../../secrets/harmonia.age;
+      harmonia-sign-key = {
+        file = ../../../../../secrets/harmonia-sign-key.age;
         mode = "440";
         owner = "harmonia";
         group = "harmonia";
@@ -47,7 +47,7 @@ in
         enable = true;
         settings = {
           bind = "[::]:${toString ports.harmonia}";
-          sign_key_path = config.age.secrets.harmonia.path;
+          sign_key_path = config.age.secrets.harmonia-sign-key.path;
         };
       };
 

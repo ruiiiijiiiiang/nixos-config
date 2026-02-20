@@ -10,6 +10,7 @@ let
 in
 {
   options.custom.services.observability.prometheus.exporters = with lib; {
+    crowdsec.enable = mkEnableOption "Prometheus CrowdSec exporter";
     kea.enable = mkEnableOption "Prometheus Kea exporter";
     nginx.enable = mkEnableOption "Prometheus Nginx exporter";
     node.enable = mkEnableOption "Prometheus Node exporter";
@@ -23,33 +24,41 @@ in
   };
 
   config = {
-    services.prometheus.exporters = {
-      kea = lib.mkIf cfg.kea.enable {
-        enable = true;
-        listenAddress = addresses.any;
-        port = ports.prometheus.exporters.kea;
-        targets = [ "http://${addresses.localhost}:${toString ports.kea.ctrl-agent}" ];
+    services = {
+      prometheus.exporters = {
+        kea = lib.mkIf cfg.kea.enable {
+          enable = true;
+          listenAddress = addresses.any;
+          port = ports.prometheus.exporters.kea;
+          targets = [ "http://${addresses.localhost}:${toString ports.kea.ctrl-agent}" ];
+        };
+
+        nginx = lib.mkIf cfg.nginx.enable {
+          enable = true;
+          port = ports.prometheus.exporters.nginx;
+          scrapeUri = "http://${addresses.localhost}:${toString ports.nginx.stub}/stub_status";
+        };
+
+        node = lib.mkIf cfg.node.enable {
+          enable = true;
+          port = ports.prometheus.exporters.node;
+          enabledCollectors = [
+            "systemd"
+            "processes"
+            "tcpstat"
+          ];
+        };
+
+        wireguard = lib.mkIf cfg.wireguard.enable {
+          enable = true;
+          port = ports.prometheus.exporters.wireguard;
+        };
       };
 
-      nginx = lib.mkIf cfg.nginx.enable {
-        enable = true;
-        port = ports.prometheus.exporters.nginx;
-        scrapeUri = "http://${addresses.localhost}:${toString ports.nginx.stub}/stub_status";
-      };
-
-      node = lib.mkIf cfg.node.enable {
-        enable = true;
-        port = ports.prometheus.exporters.node;
-        enabledCollectors = [
-          "systemd"
-          "processes"
-          "tcpstat"
-        ];
-      };
-
-      wireguard = lib.mkIf cfg.wireguard.enable {
-        enable = true;
-        port = ports.prometheus.exporters.wireguard;
+      crowdsec.settings.general.prometheus = lib.mkIf cfg.crowdsec.enable {
+        enabled = true;
+        listen_addr = addresses.localhost;
+        listen_port = toString ports.prometheus.exporters.crowdsec;
       };
     };
 
@@ -76,7 +85,8 @@ in
     networking.firewall =
       let
         exporterPorts =
-          (lib.optional cfg.kea.enable ports.prometheus.exporters.kea)
+          (lib.optional cfg.crowdsec.enable ports.prometheus.exporters.crowdsec)
+          ++ (lib.optional cfg.kea.enable ports.prometheus.exporters.kea)
           ++ (lib.optional cfg.nginx.enable ports.prometheus.exporters.nginx)
           ++ (lib.optional cfg.node.enable ports.prometheus.exporters.node)
           ++ (lib.optional cfg.podman.enable ports.prometheus.exporters.podman)

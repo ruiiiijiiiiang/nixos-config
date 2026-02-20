@@ -3,5 +3,6 @@
     ./apps
     ./networking
     ./observability
+    ./security
   ];
 }

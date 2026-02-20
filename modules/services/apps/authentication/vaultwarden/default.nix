@@ -6,11 +6,11 @@ let
     subdomains
     ports
     ;
-  cfg = config.custom.services.apps.security.vaultwarden;
+  cfg = config.custom.services.apps.authentication.vaultwarden;
   fqdn = "${subdomains.${config.networking.hostName}.vaultwarden}.${domains.home}";
 in
 {
-  options.custom.services.apps.security.vaultwarden = with lib; {
+  options.custom.services.apps.authentication.vaultwarden = with lib; {
     enable = mkEnableOption "Vaultwarden password manager";
   };
 

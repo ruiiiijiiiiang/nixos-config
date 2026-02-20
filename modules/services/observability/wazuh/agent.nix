@@ -25,12 +25,8 @@ let
   '';
 
   extraLocalfiles = lib.concatStringsSep "\n" [
-    (if config.custom.services.networking.suricata.enable
-    then suricataXml
-    else "")
-    (if config.custom.services.networking.nginx.enable
-    then nginxXml
-    else "")
+    (if config.custom.services.networking.nginx.enable then nginxXml else "")
+    (if config.custom.services.security.suricata.enable then suricataXml else "")
   ];
 
   ossecTemplate = import ./ossec.conf.nix;

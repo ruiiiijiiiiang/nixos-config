@@ -7,10 +7,10 @@
 }:
 let
   inherit (consts) addresses;
-  cfg = config.custom.services.networking.suricata;
+  cfg = config.custom.services.security.suricata;
 in
 {
-  options.custom.services.networking.suricata = with lib; {
+  options.custom.services.security.suricata = with lib; {
     enable = mkEnableOption "Suricata IDS/IPS";
     wanInterface = mkOption {
       type = types.nullOr types.str;

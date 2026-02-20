@@ -13,10 +13,6 @@ in
     enable = mkEnableOption "Framework-specific packages";
   };
 
-  imports = [
-    inputs.dankMaterialShell.nixosModules.dank-material-shell
-  ];
-
   config = lib.mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
       # --- System Information & Diagnostics ---
@@ -53,7 +49,6 @@ in
 
       # --- Desktop Environment: Niri ---
       networkmanagerapplet
-      vicinae
       xwayland-satellite
       catppuccin-cursors.frappeLavender
       wl-clipboard
@@ -186,6 +181,7 @@ in
 
     programs = {
       dms-shell.enable = true;
+      dsearch.enable = true;
       nix-index.enable = true;
       command-not-found.enable = false;
       htop.enable = true;

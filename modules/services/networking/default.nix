@@ -6,7 +6,6 @@
     ./geoipupdate
     ./nginx
     ./router
-    ./suricata
     ./torrent
     ./wireguard
   ];
