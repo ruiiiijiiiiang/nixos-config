@@ -11,7 +11,7 @@ let
 in
 {
   options.custom.roles.headless.network = with lib; {
-    enable = mkEnableOption "Custom network setup for servers";
+    enable = mkEnableOption "Custom networking setup for servers";
     trustedInterfaces = mkOption {
       type = types.listOf types.str;
       default = [ ];

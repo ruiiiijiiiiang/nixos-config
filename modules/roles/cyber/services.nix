@@ -7,11 +7,11 @@
 }:
 let
   inherit (consts) username;
-  cfg = config.custom.roles.security.services;
+  cfg = config.custom.roles.cyber.services;
 in
 {
-  options.custom.roles.security.services = with lib; {
-    enable = mkEnableOption "Security role services";
+  options.custom.roles.cyber.services = with lib; {
+    enable = mkEnableOption "Cyber role services";
   };
 
   config = lib.mkIf cfg.enable {

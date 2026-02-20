@@ -43,7 +43,7 @@ let
       }
       {
         name = "kitty";
-        paths = [ ".config/kitty" ];
+        paths = [ ".config/kitty/kitty.conf" ];
       }
       {
         name = "lazygit";

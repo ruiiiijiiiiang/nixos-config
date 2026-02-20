@@ -21,7 +21,7 @@ in
 
   custom = {
     roles.headless = {
-      network = {
+      networking = {
         enable = true;
         trustedInterfaces = [
           lanInterface

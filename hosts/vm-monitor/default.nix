@@ -4,7 +4,7 @@
 
   custom = {
     roles.headless = {
-      network.enable = true;
+      networking.enable = true;
       security.enable = true;
       services.enable = true;
     };

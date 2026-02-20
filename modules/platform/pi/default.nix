@@ -1,7 +1,7 @@
 {
   imports = [
     ./hardware.nix
-    ./network.nix
+    ./networking.nix
     ./packages.nix
   ];
 }

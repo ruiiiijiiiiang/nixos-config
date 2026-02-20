@@ -8,11 +8,11 @@
 let
   inherit (import ../../../lib/keys.nix) ssh;
   inherit (consts) username home;
-  cfg = config.custom.roles.security.network;
+  cfg = config.custom.roles.cyber.networking;
 in
 {
-  options.custom.roles.security.network = with lib; {
-    enable = mkEnableOption "Security role network config";
+  options.custom.roles.cyber.networking = with lib; {
+    enable = mkEnableOption "Cyber role networking config";
   };
 
   config = lib.mkIf cfg.enable {

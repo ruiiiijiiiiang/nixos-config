@@ -15,7 +15,7 @@ in
   custom = {
     platform.pi = {
       hardware.enable = true;
-      network = {
+      networking = {
         enable = true;
         inherit lanInterface wlanInterface vlanId;
       };
@@ -23,7 +23,7 @@ in
     };
 
     roles.headless = {
-      network.enable = true;
+      networking.enable = true;
       security.enable = true;
       services.enable = true;
     };

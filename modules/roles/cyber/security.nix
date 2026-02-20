@@ -4,10 +4,10 @@
   ...
 }:
 let
-  cfg = config.custom.roles.security.services;
+  cfg = config.custom.roles.cyber.services;
 in
 {
-  options.custom.roles.security.security = with lib; {
+  options.custom.roles.cyber.security = with lib; {
     enable = mkEnableOption "Relax security configs for attack box";
   };
 

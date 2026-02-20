@@ -6,11 +6,11 @@
   ...
 }:
 let
-  cfg = config.custom.roles.security.packages;
+  cfg = config.custom.roles.cyber.packages;
 in
 {
-  options.custom.roles.security.packages = with lib; {
-    enable = mkEnableOption "Security role packages";
+  options.custom.roles.cyber.packages = with lib; {
+    enable = mkEnableOption "Cyber role packages";
   };
 
   config = lib.mkIf cfg.enable {

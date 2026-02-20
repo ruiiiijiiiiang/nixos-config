@@ -8,7 +8,7 @@ let
 in
 {
   options.custom.platform.pi.network = with lib; {
-    enable = mkEnableOption "Raspberry Pi 4 network config";
+    enable = mkEnableOption "Raspberry Pi 4 networking config";
     lanInterface = mkOption {
       type = types.str;
       default = "end0";

@@ -5,7 +5,7 @@ in
 {
   imports = [
     ./hardware.nix
-    ./network.nix
+    ./networking.nix
     ./nixos.nix
     ./packages.nix
     ./services.nix
