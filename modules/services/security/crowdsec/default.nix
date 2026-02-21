@@ -1,3 +1,7 @@
+# Unusable at the moment. There's a massive crowdsec module refactor pr on nixpkgs right now:
+# https://github.com/NixOS/nixpkgs/pull/446307
+# Will finish setting this up once the pr is merged.
+
 {
   lib,
   config,

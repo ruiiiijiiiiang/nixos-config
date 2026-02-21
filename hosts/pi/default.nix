@@ -1,5 +1,6 @@
-{ inputs, ... }:
+{ consts, inputs, ... }:
 let
+  inherit (consts) addresses;
   lanInterface = "end0";
   wlanInterface = "wlan0";
   vlanId = 20;
@@ -48,6 +49,10 @@ in
       observability = {
         beszel.agent.enable = true;
         dockhand.agent.enable = true;
+        loki.agent = {
+          enable = true;
+          serverAddress = addresses.infra.hosts.vm-monitor;
+        };
         prometheus.exporters = {
           nginx.enable = true;
           node.enable = true;

@@ -7,6 +7,7 @@
 }:
 let
   inherit (consts)
+    username
     home
     domains
     subdomains
@@ -26,8 +27,8 @@ in
     services = {
       syncthing = {
         enable = true;
-        user = "rui";
-        group = "rui";
+        user = username;
+        group = username;
         dataDir = "${home}/Syncthing";
         settings = {
           devices = {

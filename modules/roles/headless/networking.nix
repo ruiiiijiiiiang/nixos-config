@@ -7,10 +7,10 @@
 let
   inherit (import ../../../lib/keys.nix) ssh;
   inherit (consts) username ports;
-  cfg = config.custom.roles.headless.network;
+  cfg = config.custom.roles.headless.networking;
 in
 {
-  options.custom.roles.headless.network = with lib; {
+  options.custom.roles.headless.networking = with lib; {
     enable = mkEnableOption "Custom networking setup for servers";
     trustedInterfaces = mkOption {
       type = types.listOf types.str;

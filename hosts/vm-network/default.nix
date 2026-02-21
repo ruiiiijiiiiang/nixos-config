@@ -1,5 +1,6 @@
-{ config, ... }:
+{ config, consts, ... }:
 let
+  inherit (consts) addresses;
   wanInterface = "ens18";
   lanInterface = "ens19";
   podmanInterface = "podman0";
@@ -101,8 +102,6 @@ in
         nginx.enable = true;
       };
 
-      security.fail2ban.enable = true;
-
       observability = {
         beszel.agent = {
           enable = true;
@@ -112,6 +111,10 @@ in
           enable = true;
           interface = infraInterface;
         };
+        loki.agent = {
+          enable = true;
+          serverAddress = addresses.infra.hosts.vm-monitor;
+        };
         prometheus.exporters = {
           kea.enable = true;
           nginx.enable = true;
@@ -120,6 +123,10 @@ in
           wireguard.enable = true;
           interface = infraInterface;
         };
+      };
+
+      security = {
+        fail2ban.enable = true;
         wazuh.agent = {
           enable = true;
           interface = infraInterface;

@@ -174,6 +174,10 @@ rec {
     };
     immich = 2283;
     jellyfin = 8096;
+    loki = {
+      server = 3100;
+      agent = 3031;
+    };
     memos = 5230;
     microbin = 8088;
     monit = 2812;

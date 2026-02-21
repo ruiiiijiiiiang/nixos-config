@@ -60,7 +60,7 @@ in
     systemd = {
       tmpfiles.rules = [
         "d ${gcRootStr} 0755 ${toString oci-uids.user} ${toString oci-uids.user} - -"
-        "L+ /nix/var/nix/gcroots/per-user/rui/daily-builds - - - - ${gcRootStr}"
+        "L+ /nix/var/nix/gcroots/per-user/${username}/daily-builds - - - - ${gcRootStr}"
       ];
 
       timers.daily-nix-build = {

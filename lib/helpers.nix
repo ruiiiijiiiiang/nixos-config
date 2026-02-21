@@ -119,7 +119,7 @@ rec {
         dockhand = config.custom.services.observability.dockhand.server.enable;
         forgejo = config.custom.services.apps.development.forgejo.enable;
         gatus = config.custom.services.observability.gatus.enable;
-        grafana = config.custom.services.observability.prometheus.server.enable;
+        grafana = config.custom.services.observability.grafana.enable;
         harmonia = config.custom.services.apps.tools.harmonia.enable;
         homeassistant = config.custom.services.apps.tools.homeassistant.enable;
         homepage = config.custom.services.apps.web.homepage.enable;
@@ -146,7 +146,7 @@ rec {
         stirlingpdf = config.custom.services.apps.office.stirlingpdf.enable;
         syncthing = config.custom.services.apps.tools.syncthing.enable;
         vaultwarden = config.custom.services.apps.authentication.vaultwarden.enable;
-        wazuh = config.custom.services.observability.wazuh.server.enable;
+        wazuh = config.custom.services.security.wazuh.server.enable;
         yourls = config.custom.services.apps.tools.yourls.enable;
         zwave = config.custom.services.apps.tools.homeassistant.enable;
       };

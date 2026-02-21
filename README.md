@@ -2,9 +2,9 @@
 
 **Welcome to the future of homelabbing.**
 
-This repository isn't just a collection of config files; it is a **fully declarative, reproducible, and fortified infrastructure** definition for my personal homelab. Built on the bedrock of **NixOS** and **Nix Flakes**, this project represents a complete paradigm shift from fragile, imperative sysadmin tasks to a robust, code-driven ecosystem.
+This repository isn't just a collection of config files; it is a **fully declarative, reproducible, and fortified infrastructure** definition for my personal homelab. Built on the bedrock of **NixOS** and **Nix Flakes**, this project represents a complete paradigm shift from fragile, imperative sysadmin tasks to a robust, code-driven ecosystem that extracts every ounce of potential from modest hardware: a mini PC and a Raspberry Pi.
 
-Every single aspect of this infrastructure—from the kernel hardening flags and vlan routing rules to the complex web of containerized microservices and their secret management—is defined in code. Version controlled and GitOps-friendly, it emphasizes **stability** through atomic rollbacks, **observability** via a comprehensive monitoring stack, and **security** with hardened kernels and isolated networking.
+Every single aspect of this infrastructure — from the network layout and vlan routing rules to the complex web of containerized microservices and their secret management — is defined in code. Version controlled and GitOps-friendly, it emphasizes **stability** through atomic rollbacks, **observability** via a comprehensive monitoring stack, and **security** with hardened kernels and isolated networking.
 
 We're way past infrastructure-as-code. It's time for infrastructure/network/configuration/security/pipeline all-rolled-into-one-as-code.
 
@@ -104,7 +104,7 @@ Powered by **NFTables**, the firewall enforces a strict "default drop" policy fo
 
 ### High-Availability DNS
 
-Redundancy is the only reliability. The network relies on a high-availability DNS cluster spanning `vm-network`, `pi`, and `pi-legacy` to ensure that ad-blocking and name resolution never sleep.
+Redundancy is the only reliability. The network relies on a high-availability DNS cluster between `vm-network` and `pi` to ensure that ad-blocking and name resolution never sleep.
 
 - **The Stack:** **Pi-hole** for network-wide ad-blocking + **Unbound** for recursive, privacy-respecting DNS-over-TLS resolution.
 - **The Redundancy:** **Keepalived** manages a Virtual IP (VIP) that floats across the cluster. If the master node blinks, the VIP instantly migrates to a backup, keeping the network online without a hiccup.
@@ -116,8 +116,6 @@ To maintain a zero-exposure posture, all external access is brokered by **Cloudf
 Furthermore, all web-facing services are placed behind an **Nginx reverse proxy**, which acts as a unified gateway. SSL/TLS certificates are automatically provisioned and managed by **ACME (Let's Encrypt)**, leveraging Cloudflare for DNS challenges, ensuring robust, always-on encryption without manual intervention.
 
 ## The Fleet
-
-The homelab hardware consists of a Raspberry Pi 4 (2GB RAM) and a mini PC acting as a Proxmox host. The mini PC features a 6900HX 16-thread CPU and 32GB DDR5 RAM.
 
 ### `framework`
 
@@ -146,7 +144,7 @@ The homelab hardware consists of a Raspberry Pi 4 (2GB RAM) and a mini PC acting
 
 ### `vm-monitor`
 
-- **The Watchtower.** Dedicated to keeping the lights on. It hosts the **Beszel Hub**, **Prometheus**, **Grafana**, **Wazuh Server**, and **Gatus** to visualize the health and security of the entire infrastructure.
+- **The Watchtower.** Dedicated to keeping the lights on. It hosts the **Beszel Hub**, **Prometheus**, **Loki**, **Grafana**, **Wazuh Server**, and **Gatus** to visualize the health and security of the entire infrastructure.
 - **Hardware**: 4 vCPU cores, 6GB RAM
 - **Network:** Infra (VLAN 20)
 
@@ -161,8 +159,10 @@ The homelab hardware consists of a Raspberry Pi 4 (2GB RAM) and a mini PC acting
 
 Every server host (`pi`, `vm-app`, `vm-network`, `vm-monitor`) comes equipped with a standard observability and security sidecar:
 
-- **Beszel & Dockhand Agents:** Real-time system and container metrics.
-- **Prometheus Exporters:** Granular telemetry for Nginx, Node, and Podman.
+- **Prometheus Exporters:** Granular telemetry for Nginx, Node, Podman, etc.
+- **Promtail:** Grafana Loki agent for collecting `systemd-journal` logs.
+- **Beszel Agent:** Custom monitoring agent for real-time insights and control.
+- **Dockhand Agent (Hawser):** Lightweight container agent for OCI container monitoring and management.
 - **Wazuh Agent:** Enterprise-grade security monitoring and intrusion detection.
 
 ## Security Configuration

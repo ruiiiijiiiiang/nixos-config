@@ -38,7 +38,6 @@ in
 
     services = {
       apps.tools.syncthing.enable = true;
-      observability.wazuh.agent.enable = true;
 
       networking.wireguard.client = {
         enable = true;
@@ -47,6 +46,8 @@ in
         privateKeyFile = config.age.secrets.wireguard-framework-private-key.path;
         presharedKeyFile = config.age.secrets.wireguard-framework-preshared-key.path;
       };
+
+      security.wazuh.agent.enable = true;
     };
   };
 }

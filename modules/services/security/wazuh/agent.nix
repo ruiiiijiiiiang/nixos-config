@@ -8,7 +8,7 @@
 let
   inherit (import ../../../../lib/consts.nix) addresses ports;
   inherit (helpers) ensureFile;
-  cfg = config.custom.services.observability.wazuh.agent;
+  cfg = config.custom.services.security.wazuh.agent;
 
   nginxXml = ''
     <localfile>
@@ -41,7 +41,7 @@ let
   keysFile = "/var/wazuh/client.keys";
 in
 {
-  options.custom.services.observability.wazuh.agent = with lib; {
+  options.custom.services.security.wazuh.agent = with lib; {
     enable = mkEnableOption "Wazuh security monitoring agent";
     interface = mkOption {
       type = types.nullOr types.str;
@@ -53,7 +53,7 @@ in
   config = lib.mkIf cfg.enable {
     virtualisation.oci-containers.containers = {
       wazuh-agent = {
-        image = "wazuh/wazuh-agent:${config.custom.services.observability.wazuh.version}";
+        image = "wazuh/wazuh-agent:${config.custom.services.security.wazuh.version}";
         volumes = [
           "/var/wazuh/ossec.conf:/wazuh-config-mount/etc/ossec.conf"
           "/var/wazuh/client.keys:/var/ossec/etc/client.keys"

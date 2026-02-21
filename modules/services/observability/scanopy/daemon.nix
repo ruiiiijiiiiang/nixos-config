@@ -11,6 +11,11 @@ in
 {
   options.custom.services.observability.scanopy.daemon = with lib; {
     enable = mkEnableOption "Scanopy daemon";
+    serverAddress = mkOption {
+      type = types.str;
+      default = addresses.localhost;
+      description = "Address of the Scanopy server";
+    };
     envFile = mkOption {
       type = types.nullOr types.path;
       default = null;
@@ -39,7 +44,7 @@ in
         environmentFiles = [ cfg.envFile ];
         environment = {
           HOME = "/tmp";
-          SCANOPY_SERVER_URL = "http://${addresses.infra.hosts.vm-monitor}:${toString ports.scanopy.server}";
+          SCANOPY_SERVER_URL = "http://${cfg.serverAddress}:${toString ports.scanopy.server}";
           SCANOPY_NAME = "${config.networking.hostName}-daemon";
           SCANOPY_MODE = "Pull";
           SCANOPY_CONCURRENT_SCANS = "10";

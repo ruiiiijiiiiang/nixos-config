@@ -14,14 +14,14 @@ let
     ports
     ;
   inherit (helpers) ensureFile mkVirtualHost mkNotifyService;
-  cfg = config.custom.services.observability.wazuh.server;
+  cfg = config.custom.services.security.wazuh.server;
   fqdn = "${subdomains.${config.networking.hostName}.wazuh}.${domains.home}";
   dashboardsContent = import ./opensearch_dashboards.yml.nix;
   initialFile = pkgs.writeText "opensearch_dashboards.yml" dashboardsContent;
   dashboardsFile = "/var/wazuh/opensearch_dashboards.yml";
 in
 {
-  options.custom.services.observability.wazuh.server = with lib; {
+  options.custom.services.security.wazuh.server = with lib; {
     enable = mkEnableOption "Wazuh security monitoring server";
   };
 
@@ -34,7 +34,7 @@ in
 
     virtualisation.oci-containers.containers = {
       wazuh-indexer = {
-        image = "wazuh/wazuh-indexer:${config.custom.services.observability.wazuh.version}";
+        image = "wazuh/wazuh-indexer:${config.custom.services.security.wazuh.version}";
         environment = {
           OPENSEARCH_JAVA_OPTS = "-Xms512m -Xmx512m";
         };
@@ -58,7 +58,7 @@ in
       };
 
       wazuh-manager = {
-        image = "wazuh/wazuh-manager:${config.custom.services.observability.wazuh.version}";
+        image = "wazuh/wazuh-manager:${config.custom.services.security.wazuh.version}";
         dependsOn = [ "wazuh-indexer" ];
         networks = [ "container:wazuh-indexer" ];
         environment = {
@@ -84,7 +84,7 @@ in
       };
 
       wazuh-dashboard = {
-        image = "wazuh/wazuh-dashboard:${config.custom.services.observability.wazuh.version}";
+        image = "wazuh/wazuh-dashboard:${config.custom.services.security.wazuh.version}";
         dependsOn = [ "wazuh-indexer" ];
         environment = {
           INDEXER_URL = "https://${addresses.localhost}";

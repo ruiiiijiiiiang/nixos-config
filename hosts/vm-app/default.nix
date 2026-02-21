@@ -1,3 +1,7 @@
+{ consts, ... }:
+let
+  inherit (consts) addresses;
+in
 {
   system.stateVersion = "25.11";
   networking.hostName = "vm-app";
@@ -66,16 +70,22 @@
         torrent.enable = true;
       };
 
-      security.fail2ban.enable = true;
-
       observability = {
         beszel.agent.enable = true;
         dockhand.agent.enable = true;
+        loki.agent = {
+          enable = true;
+          serverAddress = addresses.infra.hosts.vm-monitor;
+        };
         prometheus.exporters = {
           nginx.enable = true;
           node.enable = true;
           podman.enable = true;
         };
+      };
+
+      security = {
+        fail2ban.enable = true;
         wazuh.agent.enable = true;
       };
     };

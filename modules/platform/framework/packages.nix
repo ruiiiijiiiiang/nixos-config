@@ -152,6 +152,7 @@ in
 
       # Nix
       nil
+      nixfmt
       statix
 
       # Shell Scripting
