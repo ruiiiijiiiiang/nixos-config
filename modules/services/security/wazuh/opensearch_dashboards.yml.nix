@@ -1,4 +1,4 @@
-''
+/* yaml */ ''
   server.host: "0.0.0.0"
   server.ssl.certificate: "/usr/share/wazuh-dashboard/config/certs/dashboard.pem"
   server.ssl.key: "/usr/share/wazuh-dashboard/config/certs/dashboard-key.pem"

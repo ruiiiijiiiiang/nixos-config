@@ -45,7 +45,6 @@ in
           atuin.enable = true;
           karakeep.enable = true;
           harmonia.enable = true;
-          llm.enable = true;
           microbin.enable = true;
           reitti.enable = true;
           searxng.enable = true;

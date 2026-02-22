@@ -40,9 +40,9 @@ in
         LIBVA_DRIVER_NAME = "radeonsi";
       };
       devices = [
-        "/dev/dri/renderD128:/dev/dri/renderD128"
         "/dev/dri/card0:/dev/dri/card0"
-      ];
+      ]
+      ++ lib.optional config.custom.platform.vm.hardware.gpuPassthrough "/dev/dri/renderD128:/dev/dri/renderD128";
       labels = {
         "io.containers.autoupdate" = "registry";
       };

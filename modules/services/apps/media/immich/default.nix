@@ -17,7 +17,7 @@ let
   inherit (helpers) mkOciUser mkVirtualHost mkNotifyService;
   cfg = config.custom.services.apps.media.immich;
   fqdn = "${subdomains.${config.networking.hostName}.immich}.${domains.home}";
-  immich-version = "v2.5.5";
+  immich-version = "v2.5.6";
 in
 {
   options.custom.services.apps.media.immich = with lib; {
@@ -90,13 +90,20 @@ in
       };
 
       immich-machine-learning = {
-        image = "ghcr.io/immich-app/immich-machine-learning:${immich-version}";
+        image = "ghcr.io/immich-app/immich-machine-learning:${immich-version}-rocm";
         user = "${toString oci-uids.immich}:${toString oci-uids.immich}";
         dependsOn = [ "immich-postgres" ];
         networks = [ "container:immich-postgres" ];
+        environment = {
+          HSA_OVERRIDE_GFX_VERSION = "10.3.0";
+        };
         volumes = [
           "/var/lib/immich/model-cache:/cache"
         ];
+        devices = [
+          "/dev/kfd:/dev/kfd"
+        ]
+        ++ lib.optional config.custom.platform.vm.hardware.gpuPassthrough "/dev/dri/renderD128:/dev/dri/renderD128";
       };
     };
 

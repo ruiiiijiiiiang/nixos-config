@@ -50,10 +50,10 @@ in
           "/dev/dri:/dev/dri:ro"
         ];
         devices = [
-          "/dev/dri/renderD128:/dev/dri/renderD128"
           "/dev/kfd:/dev/kfd"
           "/dev/dri:/dev/dri"
-        ];
+        ]
+        ++ lib.optional config.custom.platform.vm.hardware.gpuPassthrough "/dev/dri/renderD128:/dev/dri/renderD128";
         labels = {
           "io.containers.autoupdate" = "registry";
         };
@@ -87,7 +87,10 @@ in
     users = lib.mkMerge [
       (mkOciUser "llm")
       {
-        users.llm.extraGroups = [ "video" "render" ];
+        users.llm.extraGroups = [
+          "video"
+          "render"
+        ];
       }
     ];
 

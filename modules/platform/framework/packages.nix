@@ -82,7 +82,6 @@ in
       # --- GUI Applications ---
       inputs.zen-browser.packages.${stdenv.system}.default
       vivaldi
-      libreoffice-qt
       mission-center
       kdePackages.kate
       kdePackages.kcalc
@@ -99,6 +98,7 @@ in
       opencloud-desktop
       remmina
       kitty
+      onlyoffice-desktopeditors
 
       # --- Audio & Multimedia ---
       easyeffects

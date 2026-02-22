@@ -2,9 +2,11 @@
 
 **Welcome to the future of homelabbing.**
 
-This repository isn't just a collection of config files; it is a **fully declarative, reproducible, and fortified infrastructure** definition for my personal homelab. Built on the bedrock of **NixOS** and **Nix Flakes**, this project represents a complete paradigm shift from fragile, imperative sysadmin tasks to a robust, code-driven ecosystem that extracts every ounce of potential from modest hardware: a mini PC and a Raspberry Pi.
+This repository isn't just a collection of config files; it is a **fully declarative, reproducible, and fortified infrastructure** definition for my personal homelab. Built on the bedrock of **NixOS** and **Nix Flakes**, this project represents a complete paradigm shift from fragile, imperative sysadmin tasks to a robust, code-driven ecosystem.
 
 Every single aspect of this infrastructure — from the network layout and vlan routing rules to the complex web of containerized microservices and their secret management — is defined in code. Version controlled and GitOps-friendly, it emphasizes **stability** through atomic rollbacks, **observability** via a comprehensive monitoring stack, and **security** with hardened kernels and isolated networking.
+
+My homelab isn't running on expensive, power-hungry enterprise-grade racks. This entire infrastructure runs on a single mini PC (hosting Proxmox VMs) and a Raspberry Pi. I work with what I have, and my goal is **maximum software correctness**: proving that proper architecture, declarative configuration, and disciplined engineering matter far more than raw hardware specs.
 
 We're way past infrastructure-as-code. It's time for infrastructure/network/configuration/security/pipeline all-rolled-into-one-as-code.
 
@@ -201,7 +203,5 @@ Deployments can be triggered from two locations:
 
 - **Local (Forgejo):** Runs directly on `vm-app` with Podman socket access. Deploys to VMs (`vm-app`, `vm-monitor`, `vm-network`) over SSH on the Infra VLAN. Artifacts are cached, and no VPN overhead.
 - **Remote (GitHub):** Establishes WireGuard tunnel into homelab. Deploys to all hosts including `pi` using ARM runners. Accessible from anywhere.
-
-Both workflows execute `nixos-rebuild switch` over SSH. Forgejo handles rapid local iteration; GitHub enables remote management and ARM builds.
 
 **Container Registry:** Forgejo also serves as a private OCI container registry. CI pipelines build and push container images for other personal projects, which are then pulled by services across the infrastructure.

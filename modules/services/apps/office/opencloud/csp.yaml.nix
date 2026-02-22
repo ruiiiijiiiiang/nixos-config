@@ -1,4 +1,4 @@
-''
+/* yaml */ ''
   directives:
   default-src:
     - "'self'"

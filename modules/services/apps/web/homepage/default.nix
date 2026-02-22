@@ -289,13 +289,6 @@ in
                 };
               }
               {
-                "Open WebUI" = {
-                  icon = "open-webui";
-                  href = "https://${subdomains.vm-app.openwebui}.${domains.home}";
-                  description = "WebUI for AI";
-                };
-              }
-              {
                 "SearXNG" = {
                   icon = "searxng";
                   href = "https://${subdomains.vm-app.searxng}.${domains.home}";

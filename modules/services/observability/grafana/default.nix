@@ -54,7 +54,7 @@ let
     sha256 = "13qganba7c3b9vahxfc059iingzq5dw46vhl3bzvr7jfp3m8dh7s";
   };
 
-  systemd-logs-dashboard = pkgs.writeText "systemd-logs.json" ''
+  systemd-logs-dashboard = pkgs.writeText "systemd-logs.json" /* json */ ''
     {
       "uid": "systemd-logs-viewer",
       "title": "Systemd Logs Viewer",
