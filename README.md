@@ -6,7 +6,7 @@ This repository isn't just a collection of config files; it is a **fully declara
 
 Every single aspect of this infrastructure — from the network layout and vlan routing rules to the complex web of containerized microservices and their secret management — is defined in code. Version controlled and GitOps-friendly, it emphasizes **stability** through atomic rollbacks, **observability** via a comprehensive monitoring stack, and **security** with hardened kernels and isolated networking.
 
-My homelab isn't running on expensive, power-hungry enterprise-grade racks. This entire infrastructure runs on a single mini PC (hosting Proxmox VMs) and a Raspberry Pi. I work with what I have, and my goal is **maximum software correctness**: proving that proper architecture, declarative configuration, and disciplined engineering matter far more than raw hardware specs.
+My homelab isn't running on expensive, power-hungry enterprise-grade racks. This entire infrastructure is powered by a single mini PC (hosting Proxmox VMs) and a Raspberry Pi. I work with what I have, and my goal is **maximum software correctness**: proving that proper architecture, deliberate design, and disciplined engineering matter far more than raw hardware specs.
 
 We're way past infrastructure-as-code. It's time for infrastructure/network/configuration/security/pipeline all-rolled-into-one-as-code.
 
@@ -22,6 +22,7 @@ This infrastructure is engineered following a rigorous **Domain-Driven Design** 
 4.  **Services (`modules/services`):** The functional payload. Granular, plug-and-play applications categorized by domain:
     - **Networking:** The mesh that connects it all (DNS, Routing, VPNs).
     - **Observability:** The eyes and ears (Monitoring, Logging, Security Agents).
+    - **Security:** The active defense perimeter (Fail2Ban, Wazuh, Suricata, CrowdSec).
     - **Apps:** The user experience, grouped by function (Office, Tools, Media, Authentication, Web).
 
 The `flake.nix` is the central cortex, orchestrating these modules to synthesize specific host configurations. A **hybrid deployment strategy** is employed to balance raw performance with operational stability:
@@ -146,7 +147,7 @@ Furthermore, all web-facing services are placed behind an **Nginx reverse proxy*
 
 ### `vm-monitor`
 
-- **The Watchtower.** Dedicated to keeping the lights on. It hosts the **Beszel Hub**, **Prometheus**, **Loki**, **Grafana**, **Wazuh Server**, and **Gatus** to visualize the health and security of the entire infrastructure.
+- **The Watchtower.** Dedicated to keeping the lights on. It hosts the **Beszel Hub**, **Prometheus**, **Loki**, **Wazuh Server**, and **Gatus** to visualize the health and security of the entire infrastructure.
 - **Hardware**: 4 vCPU cores, 6GB RAM
 - **Network:** Infra (VLAN 20)
 
@@ -185,23 +186,23 @@ No more `.env` files leaking in git history. Sensitive data is encrypted at rest
 
 ## Build & Deployment
 
-**Deploy Anywhere, Anytime.**
+**Atomic. Reproducible. Zero Downtime.**
 
-Deployment is atomic, consistent, and flexible.
+Deployment isn't a manual process — it's an orchestrated, deterministic pipeline. Every build is atomic, every rollback is instantaneous, and every deployment is idempotent.
 
 ### Local Binary Cache
 
-**Pre-Built. Always Available.**
+**Pre-Built Artifacts. Always Available.**
 
-A private **Harmonia** binary cache runs locally to accelerate deployments. A nightly job pre-builds all host configurations and populates the cache. Deployments pull pre-built packages from the local network instead of rebuilding from source or fetching from public caches.
+A private **Harmonia** binary cache runs on the Infra VLAN, serving as the fleet's internal package repository. A nightly job pre-builds all host configurations and populates the cache with compiled derivations. Deployments pull pre-built packages directly from the local network instead of rebuilding from source or downloading from public caches. This eliminates compilation overhead and guarantees consistent deployment artifacts across the infrastructure.
 
 ### Deployment Workflows
 
-**Dual CI/CD. Local and Remote.**
+**Dual-Pipeline Architecture.**
 
-Deployments can be triggered from two locations:
+The infrastructure employs a dual CI/CD strategy, enabling both local-first and remote fallback deployments:
 
-- **Local (Forgejo):** Runs directly on `vm-app` with Podman socket access. Deploys to VMs (`vm-app`, `vm-monitor`, `vm-network`) over SSH on the Infra VLAN. Artifacts are cached, and no VPN overhead.
-- **Remote (GitHub):** Establishes WireGuard tunnel into homelab. Deploys to all hosts including `pi` using ARM runners. Accessible from anywhere.
+- **Local Pipeline (Forgejo):** Executes directly on `vm-app` with native Podman socket access. Deploys to all virtual machines (`vm-app`, `vm-monitor`, `vm-network`) over SSH via the Infra VLAN. Zero overhead. Maximum performance.
+- **Remote Pipeline (GitHub Actions):** Establishes a WireGuard tunnel into the homelab for external access. Deploys to all hosts including `pi` using ARM-native runners. Accessible from anywhere. Environment independence.
 
-**Container Registry:** Forgejo also serves as a private OCI container registry. CI pipelines build and push container images for other personal projects, which are then pulled by services across the infrastructure.
+The local Forgejo instance doubles as a private **OCI container registry**. CI pipelines build, push, and version container images for personal projects, creating a self-contained artifact ecosystem consumed across the entire infrastructure.

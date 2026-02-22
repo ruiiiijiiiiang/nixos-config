@@ -23,7 +23,7 @@ in
     interface = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "The network interface for DNS and VIP.";
+      description = "The network interface for DNS and VIP";
     };
 
     vrrp = {
@@ -34,12 +34,12 @@ in
           "BACKUP"
         ];
         default = "BACKUP";
-        description = "The initial VRRP state for this node. Must be MASTER or BACKUP.";
+        description = "The initial VRRP state for this node, MASTER or BACKUP";
       };
       priority = mkOption {
         type = types.int;
         default = 90;
-        description = "VRRP Priority (Higher wins). Recommended: Master=100, Backup=90/80.";
+        description = "VRRP priority (higher wins); Recommended: Master=100, Backup=90/80";
       };
     };
   };
@@ -48,7 +48,7 @@ in
     assertions = [
       {
         assertion = cfg.interface != null;
-        message = "Interface for DNS is missing.";
+        message = "Interface for DNS is missing";
       }
     ];
 
@@ -57,6 +57,8 @@ in
       extraHosts = mkFullExtraHosts;
 
       firewall = {
+        # This rule can be replaced by `services.keepalived.openFirewall = true;` once the following PR is merged:
+        # https://github.com/NixOS/nixpkgs/pull/457523
         extraInputRules = lib.mkIf cfg.vrrp.enable ''
           ip protocol vrrp accept
         '';

@@ -25,7 +25,7 @@ in
   config = lib.mkIf cfg.enable {
     virtualisation.oci-containers.containers.website = {
       image = "git.ruijiang.me/rui/website:latest";
-      user = "${toString oci-uids.nobody}:${toString oci-uids.nobody}";
+      user = "${toString oci-uids.user}:${toString oci-uids.user}";
       ports = [ "${addresses.localhost}:${toString ports.website}:${toString ports.website}" ];
       volumes = [ "/var/lib/blog:/app/blog:ro" ];
       labels = {

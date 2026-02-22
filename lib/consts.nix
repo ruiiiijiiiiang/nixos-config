@@ -233,7 +233,7 @@ rec {
         enrollment = 1515;
       };
     };
-    website = 8964;
+    website = 6969;
     wireguard = 51820;
     yourls = 8081;
     zwave = 8091;
