@@ -8,7 +8,7 @@ Every single aspect of this infrastructure — from the network layout and vlan 
 
 My homelab isn't running on expensive, power-hungry enterprise-grade racks. This entire infrastructure is powered by a single mini PC (hosting Proxmox VMs) and a Raspberry Pi. I work with what I have, and my goal is **maximum software correctness**: proving that proper architecture, deliberate design, and disciplined engineering matter far more than raw hardware specs.
 
-We're way past infrastructure-as-code. It's time for infrastructure/network/configuration/security/pipeline all-rolled-into-one-as-code.
+We're way past infrastructure-as-code. It's time for infrastructure/networking/configuration/security/pipeline all-rolled-into-one-as-code.
 
 ## Project Structure
 
@@ -194,7 +194,7 @@ Deployment isn't a manual process — it's an orchestrated, deterministic pipeli
 
 **Pre-Built Artifacts. Always Available.**
 
-A private **Harmonia** binary cache runs on the Infra VLAN, serving as the fleet's internal package repository. A nightly job pre-builds all host configurations and populates the cache with compiled derivations. Deployments pull pre-built packages directly from the local network instead of rebuilding from source or downloading from public caches. This eliminates compilation overhead and guarantees consistent deployment artifacts across the infrastructure.
+A private **Harmonia** binary cache runs on `vm-app`, serving as the fleet's internal package repository. A nightly job pre-builds all host configurations and populates the cache with compiled derivations. Deployments pull pre-built packages directly from the local network instead of rebuilding from source or downloading from public caches. This eliminates compilation overhead and guarantees consistent deployment artifacts across the infrastructure.
 
 ### Deployment Workflows
 

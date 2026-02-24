@@ -20,7 +20,6 @@ in
       masscan
       netcat
       socat
-      openvas-scanner
       wireshark
 
       # Web security
@@ -72,7 +71,10 @@ in
       remmina
     ];
 
-    programs.tcpdump.enable = true;
-    programs.wireshark.enable = true;
+    programs = {
+      nix-ld.enable = true;
+      tcpdump.enable = true;
+      wireshark.enable = true;
+    };
   };
 }

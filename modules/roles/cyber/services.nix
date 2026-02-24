@@ -32,15 +32,18 @@ in
 
       postgresql = {
         enable = true;
-        package = pkgs.postgresql;
-        authentication = pkgs.lib.mkForce ''
-          local all all trust
-          host all all 127.0.0.1/32 trust
-          host all all ::1/128 trust
+        ensureDatabases = [ "msf" ];
+        ensureUsers = [
+          {
+            name = "msf";
+            ensureDBOwnership = true;
+          }
+        ];
+        identMap = ''
+          msf_map ${username} msf
         '';
-        initialScript = pkgs.writeText "backend-initScript" ''
-          CREATE ROLE msf WITH LOGIN PASSWORD 'msf' CREATEDB;
-          CREATE DATABASE msf OWNER msf;
+        authentication = pkgs.lib.mkOverride 10 ''
+          local all all peer map=msf_map
         '';
       };
 

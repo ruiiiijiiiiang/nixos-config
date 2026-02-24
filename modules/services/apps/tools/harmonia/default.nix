@@ -18,6 +18,7 @@ let
   inherit (helpers) mkVirtualHost;
   cfg = config.custom.services.apps.tools.harmonia;
   fqdn = "${subdomains.${config.networking.hostName}.harmonia}.${domains.home}";
+
   hostsToBuild = [
     "framework"
     "vm-network"
@@ -26,6 +27,26 @@ let
     "vm-cyber"
   ];
   gcRootStr = "/var/lib/nix-cache-roots";
+
+  dailyBuildScript = pkgs.writeShellScriptBin "daily-nix-build" ''
+    set -euo pipefail
+
+    export PATH="${
+      pkgs.lib.makeBinPath [
+        pkgs.nix
+        pkgs.git
+      ]
+    }:$PATH"
+
+    nix flake update
+
+    for host in ${toString hostsToBuild}; do
+      echo "=========================================="
+      echo "Building system closure for: $host"
+      echo "=========================================="
+      nix build ".#nixosConfigurations.$host.config.system.build.toplevel" --out-link "${gcRootStr}/$host" || true
+    done
+  '';
 in
 {
   options.custom.services.apps.tools.harmonia = with lib; {
@@ -78,24 +99,8 @@ in
           Type = "oneshot";
           User = username;
           WorkingDirectory = "${home}/nixos-config";
+          ExecStart = "${dailyBuildScript}/bin/daily-nix-build";
         };
-
-        path = with pkgs; [
-          nix
-          git
-        ];
-
-        script = ''
-          set -e
-          nix flake update
-
-          for host in ${toString hostsToBuild}; do
-            echo "=========================================="
-            echo "Building system closure for: $host"
-            echo "=========================================="
-            nix build ".#nixosConfigurations.$host.config.system.build.toplevel" --out-link "${gcRootStr}/$host"
-          done
-        '';
       };
     };
   };

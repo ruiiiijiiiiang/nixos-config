@@ -31,7 +31,6 @@ in
       nmap
       dig
       mtr
-      wget
       rustscan
 
       # --- Disk & Filesystem Utilities ---

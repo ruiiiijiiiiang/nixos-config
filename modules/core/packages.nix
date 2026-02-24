@@ -14,6 +14,7 @@
     lsof
     ripgrep
     fd
+    wget
     inputs.witr.packages.${stdenv.system}.default
   ];
 
