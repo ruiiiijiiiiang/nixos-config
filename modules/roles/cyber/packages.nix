@@ -76,5 +76,9 @@ in
       tcpdump.enable = true;
       wireshark.enable = true;
     };
+
+    environment.variables = {
+      ZED_ALLOW_EMULATED_GPU = "1";
+    };
   };
 }

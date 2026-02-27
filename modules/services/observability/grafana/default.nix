@@ -99,7 +99,7 @@ let
     }
   '';
 
-  grafana-dashboards = pkgs.runCommand "grafana-dashboards" { } ''
+  grafana-dashboards = pkgs.runCommand "grafana-dashboards" { } /* bash */ ''
     mkdir -p $out
 
     # Sanitize the json data sources

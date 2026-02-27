@@ -7,30 +7,12 @@
 let
   inherit (consts)
     addresses
-    domains
     subdomains
     oci-uids
     home
     ;
-  vlans = [ "infra" ];
 in
-rec {
-  mkVirtualHost =
-    {
-      fqdn,
-      port,
-      extraConfig ? "",
-    }:
-    {
-      useACMEHost = fqdn;
-      forceSSL = true;
-      locations."/" = {
-        proxyPass = "http://${addresses.localhost}:${toString port}";
-        proxyWebsockets = true;
-        inherit extraConfig;
-      };
-    };
-
+{
   ensureFile =
     {
       source,
@@ -39,7 +21,7 @@ rec {
       group ? "root",
       mode ? "640",
     }:
-    ''
+    /* bash */ ''
       mkdir -p "$(dirname "${destination}")"
 
       if [ ! -f "${destination}" ] || ! ${pkgs.diffutils}/bin/cmp -s "${source}" "${destination}"; then
@@ -52,54 +34,6 @@ rec {
       chown ${user}:${group} "${destination}"
       chmod ${mode} "${destination}"
     '';
-
-  getHostAddress =
-    { config, hostname }:
-    let
-      inherit (lib) findFirst;
-      hasHost = net: addresses.${net}.hosts ? ${hostname};
-      foundVlan = findFirst hasHost null vlans;
-    in
-    if foundVlan != null then
-      addresses.${foundVlan}.hosts.${hostname}
-    else
-      throw "Host '${hostname}' not found in address lists: ${toString vlans}";
-
-  mkHostFqdns =
-    hostName:
-    let
-      inherit (lib) attrValues;
-      hostSubdomainsSet = subdomains.${hostName} or { };
-      hostSubdomainList = attrValues hostSubdomainsSet;
-    in
-    map (sub: "${sub}.${domains.home}") hostSubdomainList;
-
-  mkExtraHosts =
-    let
-      inherit (lib) concatStringsSep mapAttrsToList concatMap;
-      makeHostEntry = hostName: ip: "${ip} ${hostName}";
-      getEntries = network: mapAttrsToList makeHostEntry addresses.${network}.hosts;
-    in
-    concatStringsSep "\n" (concatMap getEntries vlans);
-
-  mkFullExtraHosts =
-    let
-      inherit (lib)
-        concatStringsSep
-        mapAttrsToList
-        concatMap
-        filter
-        ;
-      makeFullHostEntry =
-        hostName: ip:
-        let
-          fqdns = mkHostFqdns hostName;
-        in
-        if fqdns == [ ] then "" else "${ip} ${concatStringsSep " " fqdns}";
-      getEntries = network: mapAttrsToList makeFullHostEntry addresses.${network}.hosts;
-      allEntries = concatMap getEntries vlans;
-    in
-    concatStringsSep "\n" (filter (s: s != "") allEntries);
 
   getEnabledServices =
     { config }:
@@ -154,28 +88,6 @@ rec {
     in
     filterAttrs (key: value: serviceEnabled.${key} or false) subdomainSet;
 
-  getEnabledSubdomains =
-    { config }:
-    let
-      inherit (lib) unique attrValues;
-    in
-    unique (
-      attrValues (getEnabledServices {
-        inherit config;
-      })
-    );
-
-  mkOciUser = app: {
-    groups.${app} = {
-      gid = oci-uids.${app};
-    };
-    users.${app} = {
-      uid = oci-uids.${app};
-      group = "${app}";
-      isSystemUser = true;
-    };
-  };
-
   mkNotifyService =
     {
       timeout ? 300,
@@ -188,19 +100,47 @@ rec {
       };
     };
 
-  mkOutOfStoreSymlink =
-    path:
-    let
-      pathStr = toString path;
-      name = baseNameOf pathStr;
-    in
-    pkgs.runCommandLocal name { } "ln -s ${lib.escapeShellArg pathStr} $out";
+  mkOciUser = app: {
+    groups.${app} = {
+      gid = oci-uids.${app};
+    };
+    users.${app} = {
+      uid = oci-uids.${app};
+      group = "${app}";
+      isSystemUser = true;
+    };
+  };
+
+  mkVirtualHost =
+    {
+      fqdn,
+      port,
+      extraConfig ? "",
+    }:
+    {
+      useACMEHost = fqdn;
+      forceSSL = true;
+      locations."/" = {
+        proxyPass = "http://${addresses.localhost}:${toString port}";
+        proxyWebsockets = true;
+        inherit extraConfig;
+      };
+    };
 
   linkConfig =
     {
       name,
       paths,
     }:
+    let
+      mkOutOfStoreSymlink =
+        path:
+        let
+          pathStr = toString path;
+          name = baseNameOf pathStr;
+        in
+        pkgs.runCommandLocal name { } "ln -s ${lib.escapeShellArg pathStr} $out";
+    in
     builtins.listToAttrs (
       map (
         item:

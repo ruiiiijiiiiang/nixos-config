@@ -86,7 +86,7 @@ in
           ];
         };
 
-    system.activationScripts.wazuh-agent-init = ''
+    system.activationScripts.wazuh-agent-init = /* bash */ ''
       ${ensureFile {
         source = initialFile;
         destination = ossecFile;

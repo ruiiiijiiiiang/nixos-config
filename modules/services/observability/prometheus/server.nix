@@ -8,11 +8,12 @@
 }:
 let
   inherit (consts)
+    addresses
     domains
     subdomains
     ports
     ;
-  inherit (helpers) mkVirtualHost getHostAddress;
+  inherit (helpers) mkVirtualHost;
   inherit (inputs.self) nixosConfigurations;
   cfg = config.custom.services.observability.prometheus.server;
   fqdn = "${subdomains.${config.networking.hostName}.prometheus}.${domains.home}";
@@ -37,9 +38,7 @@ let
             _: hostConfig:
             hostConfig.config.custom.services.observability.prometheus.exporters.${exporterName}.enable or false
           ))
-          (lib.mapAttrsToList (
-            hostname: _: "${getHostAddress { inherit config hostname; }}:${toString port}"
-          ))
+          (lib.mapAttrsToList (hostname: _: "${addresses.infra.hosts.${hostname}}:${toString port}"))
         ];
       }
     ];

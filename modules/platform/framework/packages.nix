@@ -71,6 +71,7 @@ in
       presenterm
       inputs.lazynmap.packages.${stdenv.system}.default
       inputs.agenix.packages.${stdenv.system}.default
+      screen
 
       # --- File & Text Search/Manipulation CLI Tools ---
       jq

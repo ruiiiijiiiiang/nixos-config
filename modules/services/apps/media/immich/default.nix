@@ -90,7 +90,7 @@ in
       };
 
       immich-machine-learning = {
-        image = "ghcr.io/immich-app/immich-machine-learning:${immich-version}-rocm";
+        image = "ghcr.io/immich-app/immich-machine-learning:${immich-version}${lib.optional config.custom.platform.vm.hardware.gpuPassthrough "-rocm"}";
         user = "${toString oci-uids.immich}:${toString oci-uids.immich}";
         dependsOn = [ "immich-postgres" ];
         networks = [ "container:immich-postgres" ];

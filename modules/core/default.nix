@@ -1,7 +1,3 @@
-{ consts, ... }:
-let
-  inherit (consts) home;
-in
 {
   imports = [
     ./hardware.nix
@@ -11,10 +7,4 @@ in
     ./services.nix
     ./users.nix
   ];
-
-  environment.variables = {
-    OS = "nixos";
-    EDITOR = "nvim";
-    NH_FLAKE = "${home}/nixos-config/";
-  };
 }

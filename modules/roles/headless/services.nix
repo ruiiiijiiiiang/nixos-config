@@ -18,10 +18,10 @@ in
   config = lib.mkIf cfg.enable {
     environment = {
       variables = {
-        EDITOR = lib.mkForce "vim";
+        EDITOR = "vim";
       };
 
-      interactiveShellInit = ''
+      interactiveShellInit = /* bash */ ''
         stats() {
           systemctl status "$1" | tspin
         }

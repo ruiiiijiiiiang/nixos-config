@@ -13,9 +13,30 @@ let
     subdomains
     ports
     ;
-  inherit (helpers) mkFullExtraHosts mkVirtualHost;
+  inherit (helpers) mkVirtualHost;
   cfg = config.custom.services.networking.dns;
   fqdn = "${subdomains.${config.networking.hostName}.pihole}.${domains.home}";
+
+  getFullExtraHosts =
+    let
+      inherit (lib)
+        concatStringsSep
+        mapAttrsToList
+        concatMap
+        filter
+        attrValues
+        ;
+      hostFqdns =
+        hostName: map (sub: "${sub}.${domains.home}") (attrValues (subdomains.${hostName} or { }));
+      hostEntry =
+        hostName: ip:
+        let
+          fqdns = hostFqdns hostName;
+        in
+        if fqdns == [ ] then "" else "${ip} ${concatStringsSep " " fqdns}";
+      allEntries = concatMap (network: mapAttrsToList hostEntry addresses.${network}.hosts) [ "infra" ];
+    in
+    concatStringsSep "\n" (filter (s: s != "") allEntries);
 in
 {
   options.custom.services.networking.dns = with lib; {
@@ -54,7 +75,7 @@ in
 
     networking = {
       nameservers = [ addresses.localhost ];
-      extraHosts = mkFullExtraHosts;
+      extraHosts = getFullExtraHosts;
 
       firewall = {
         # This rule can be replaced by `services.keepalived.openFirewall = true;` once the following PR is merged:

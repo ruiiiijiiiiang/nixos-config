@@ -86,7 +86,7 @@ in
         cmd = [
           "sh"
           "-c"
-          ''
+          /* bash */ ''
             mkdir -p /var/cache/nginx/tiles
             cat > /etc/nginx/nginx.conf << 'EOF'
             events {

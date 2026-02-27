@@ -10,9 +10,17 @@ let
     domains
     ports
     ;
-  inherit (helpers) getEnabledSubdomains;
+  inherit (helpers) getEnabledServices;
   cfg = config.custom.services.networking.nginx;
-  subdomainList = getEnabledSubdomains { inherit config; };
+  subdomainList =
+    let
+      inherit (lib) unique attrValues;
+    in
+    unique (
+      attrValues (getEnabledServices {
+        inherit config;
+      })
+    );
 in
 {
   options.custom.services.networking.nginx = with lib; {

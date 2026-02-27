@@ -26,4 +26,10 @@ in
       };
     };
   };
+
+  environment.variables = {
+    OS = "nixos";
+    EDITOR = "nvim";
+    NH_FLAKE = flakePath;
+  };
 }

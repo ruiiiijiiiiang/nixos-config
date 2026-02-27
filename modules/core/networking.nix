@@ -1,13 +1,23 @@
-{ consts, lib, helpers, ... }:
+{ consts, lib, ... }:
 let
-  inherit (consts) username;
+  inherit (consts) addresses username;
   inherit (lib) mkDefault;
-  inherit (helpers) mkExtraHosts;
+  getExtraHosts =
+    let
+      inherit (lib) concatStringsSep mapAttrsToList;
+      mergedHosts = builtins.foldl' (acc: net: addresses.${net}.hosts // acc) { } [
+        "infra"
+        "home"
+        "dmz"
+      ];
+      makeHostEntry = hostName: ip: "${ip} ${hostName}";
+    in
+    concatStringsSep "\n" (mapAttrsToList makeHostEntry mergedHosts);
 in
 {
   networking = {
     nftables.enable = mkDefault true;
-    extraHosts = mkExtraHosts;
+    extraHosts = getExtraHosts;
     useDHCP = mkDefault true;
     networkmanager.enable = mkDefault true;
 
