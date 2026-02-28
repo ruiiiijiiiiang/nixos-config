@@ -8,14 +8,14 @@
 let
   inherit (consts)
     addresses
-    domains
+    domain
     subdomains
     ports
     oci-uids
     ;
   inherit (helpers) mkOciUser mkVirtualHost;
   cfg = config.custom.services.apps.tools.searxng;
-  fqdn = "${subdomains.${config.networking.hostName}.searxng}.${domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.searxng}.${domain}";
 in
 {
   options.custom.services.apps.tools.searxng = with lib; {

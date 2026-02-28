@@ -9,14 +9,14 @@ let
   inherit (consts)
     timeZone
     addresses
-    domains
+    domain
     subdomains
     ports
     oci-uids
     ;
   inherit (helpers) mkOciUser mkVirtualHost mkNotifyService;
   cfg = config.custom.services.apps.media.immich;
-  fqdn = "${subdomains.${config.networking.hostName}.immich}.${domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.immich}.${domain}";
   immich-version = "v2.5.6";
 in
 {
@@ -90,7 +90,7 @@ in
       };
 
       immich-machine-learning = {
-        image = "ghcr.io/immich-app/immich-machine-learning:${immich-version}${lib.optional config.custom.platform.vm.hardware.gpuPassthrough "-rocm"}";
+        image = "ghcr.io/immich-app/immich-machine-learning:${immich-version}${lib.optionalString config.custom.platform.vm.hardware.gpuPassthrough "-rocm"}";
         user = "${toString oci-uids.immich}:${toString oci-uids.immich}";
         dependsOn = [ "immich-postgres" ];
         networks = [ "container:immich-postgres" ];

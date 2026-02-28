@@ -9,13 +9,13 @@
 let
   inherit (consts)
     addresses
-    domains
+    domain
     subdomains
     ports
     ;
   inherit (helpers) mkVirtualHost;
   cfg = config.custom.services.observability.grafana;
-  fqdn = "${subdomains.${config.networking.hostName}.grafana}.${domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.grafana}.${domain}";
 
   # Generate the hash by running: nix-prefetch-url <url>
   crowdsec-dashboard = pkgs.fetchurl {

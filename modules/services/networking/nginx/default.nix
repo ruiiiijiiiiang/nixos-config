@@ -7,7 +7,7 @@
 let
   inherit (import ../../../../lib/consts.nix)
     addresses
-    domains
+    domain
     ports
     ;
   inherit (helpers) getEnabledServices;
@@ -94,7 +94,7 @@ in
     security.acme = {
       acceptTerms = true;
       defaults.email = "me@ruijiang.me";
-      certs = lib.genAttrs (map (name: "${name}.${domains.home}") subdomainList) (fqdn: {
+      certs = lib.genAttrs (map (name: "${name}.${domain}") subdomainList) (fqdn: {
         domain = fqdn;
         dnsProvider = "cloudflare";
         dnsResolver = "1.1.1.1:53";
@@ -104,7 +104,7 @@ in
       });
     };
 
-    systemd.services = lib.genAttrs (map (name: "acme-${name}.${domains.home}") subdomainList) (fqdn: {
+    systemd.services = lib.genAttrs (map (name: "acme-${name}.${domain}") subdomainList) (fqdn: {
       environment = {
         LEGO_DISABLE_CNAME_SUPPORT = "true";
       };

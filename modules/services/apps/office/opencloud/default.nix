@@ -9,7 +9,7 @@
 let
   inherit (consts)
     addresses
-    domains
+    domain
     subdomains
     ports
     oidc-issuer
@@ -22,8 +22,8 @@ let
     mkNotifyService
     ;
   cfg = config.custom.services.apps.office.opencloud;
-  opencloud-fqdn = "${subdomains.${config.networking.hostName}.opencloud}.${domains.home}";
-  onlyoffice-fqdn = "${subdomains.${config.networking.hostName}.onlyoffice}.${domains.home}";
+  opencloud-fqdn = "${subdomains.${config.networking.hostName}.opencloud}.${domain}";
+  onlyoffice-fqdn = "${subdomains.${config.networking.hostName}.onlyoffice}.${domain}";
   cspTemplate = import ./csp.yaml.nix;
   cspContent =
     builtins.replaceStrings [ "@OFFICE_FQDN@" "@ID_FQDN@" ] [ onlyoffice-fqdn oidc-issuer ]

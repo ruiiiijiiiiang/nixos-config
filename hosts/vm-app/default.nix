@@ -7,13 +7,7 @@ in
   networking.hostName = "vm-app";
 
   custom = {
-    roles.headless = {
-      networking.enable = true;
-      security.enable = true;
-      services.enable = true;
-    };
-
-    platform.vm = {
+    platforms.vm = {
       hardware = {
         enable = true;
         gpuPassthrough = true;
@@ -23,6 +17,12 @@ in
         enableStorage = true;
         enableScratch = true;
       };
+    };
+
+    roles.headless = {
+      networking.enable = true;
+      security.enable = true;
+      services.enable = true;
     };
 
     services = {

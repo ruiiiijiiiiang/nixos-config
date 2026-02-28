@@ -25,7 +25,6 @@ in
         wifi.powersave = false;
       };
       firewall = {
-        enable = true;
         checkReversePath = "loose";
         logRefusedConnections = true;
         extraInputRules = ''

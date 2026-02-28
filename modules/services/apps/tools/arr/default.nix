@@ -9,18 +9,18 @@ let
   inherit (consts)
     timeZone
     addresses
-    domains
+    domain
     subdomains
     ports
     oci-uids
     ;
   inherit (helpers) mkOciUser mkVirtualHost;
   cfg = config.custom.services.apps.tools.arr;
-  lidarr-fqdn = "${subdomains.${config.networking.hostName}.lidarr}.${domains.home}";
-  radarr-fqdn = "${subdomains.${config.networking.hostName}.radarr}.${domains.home}";
-  sonarr-fqdn = "${subdomains.${config.networking.hostName}.sonarr}.${domains.home}";
-  prowlarr-fqdn = "${subdomains.${config.networking.hostName}.prowlarr}.${domains.home}";
-  bazarr-fqdn = "${subdomains.${config.networking.hostName}.bazarr}.${domains.home}";
+  lidarr-fqdn = "${subdomains.${config.networking.hostName}.lidarr}.${domain}";
+  radarr-fqdn = "${subdomains.${config.networking.hostName}.radarr}.${domain}";
+  sonarr-fqdn = "${subdomains.${config.networking.hostName}.sonarr}.${domain}";
+  prowlarr-fqdn = "${subdomains.${config.networking.hostName}.prowlarr}.${domain}";
+  bazarr-fqdn = "${subdomains.${config.networking.hostName}.bazarr}.${domain}";
 in
 {
   options.custom.services.apps.tools.arr = with lib; {

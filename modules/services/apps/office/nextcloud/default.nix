@@ -6,10 +6,10 @@
   ...
 }:
 let
-  inherit (consts) domains subdomains ports;
+  inherit (consts) domain subdomains ports;
   cfg = config.custom.services.apps.office.nextcloud;
-  nextcloud-fqdn = "${subdomains.${config.networking.hostName}.nextcloud}.${domains.home}";
-  office-fqdn = "${subdomains.${config.networking.hostName}.onlyoffice}.${domains.home}";
+  nextcloud-fqdn = "${subdomains.${config.networking.hostName}.nextcloud}.${domain}";
+  office-fqdn = "${subdomains.${config.networking.hostName}.onlyoffice}.${domain}";
 in
 {
   options.custom.services.apps.office.nextcloud = with lib; {

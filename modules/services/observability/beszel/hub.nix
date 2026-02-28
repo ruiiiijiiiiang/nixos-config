@@ -6,10 +6,10 @@
   ...
 }:
 let
-  inherit (consts) domains subdomains ports;
+  inherit (consts) domain subdomains ports;
   inherit (helpers) mkVirtualHost;
   cfg = config.custom.services.observability.beszel.hub;
-  fqdn = "${subdomains.${config.networking.hostName}.beszel}.${domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.beszel}.${domain}";
 in
 {
   options.custom.services.observability.beszel.hub = with lib; {

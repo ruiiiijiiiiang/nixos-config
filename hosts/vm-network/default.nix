@@ -21,6 +21,14 @@ in
   };
 
   custom = {
+    platforms.vm = {
+      hardware.enable = true;
+      disks = {
+        enableMain = true;
+        enableStorage = true;
+      };
+    };
+
     roles.headless = {
       networking = {
         enable = true;
@@ -32,14 +40,6 @@ in
       };
       security.enable = true;
       services.enable = true;
-    };
-
-    platform.vm = {
-      hardware.enable = true;
-      disks = {
-        enableMain = true;
-        enableStorage = true;
-      };
     };
 
     services = {

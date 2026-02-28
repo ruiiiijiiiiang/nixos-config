@@ -3,18 +3,18 @@
   networking.hostName = "vm-monitor";
 
   custom = {
-    roles.headless = {
-      networking.enable = true;
-      security.enable = true;
-      services.enable = true;
-    };
-
-    platform.vm = {
+    platforms.vm = {
       hardware.enable = true;
       disks = {
         enableMain = true;
         enableStorage = true;
       };
+    };
+
+    roles.headless = {
+      networking.enable = true;
+      security.enable = true;
+      services.enable = true;
     };
 
     services = {

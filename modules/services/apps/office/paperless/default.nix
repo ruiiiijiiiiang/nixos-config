@@ -9,14 +9,14 @@ let
   inherit (consts)
     timeZone
     addresses
-    domains
+    domain
     subdomains
     ports
     oci-uids
     ;
   inherit (helpers) mkOciUser mkVirtualHost mkNotifyService;
   cfg = config.custom.services.apps.office.paperless;
-  fqdn = "${subdomains.${config.networking.hostName}.paperless}.${domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.paperless}.${domain}";
 in
 {
   options.custom.services.apps.office.paperless = with lib; {

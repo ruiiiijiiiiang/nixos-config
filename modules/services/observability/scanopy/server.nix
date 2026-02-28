@@ -7,14 +7,14 @@
 }:
 let
   inherit (consts)
-    domains
+    domain
     subdomains
     ports
     oci-uids
     ;
   inherit (helpers) mkVirtualHost mkOciUser mkNotifyService;
   cfg = config.custom.services.observability.scanopy.server;
-  fqdn = "${subdomains.${config.networking.hostName}.scanopy}.${domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.scanopy}.${domain}";
 in
 {
   options.custom.services.observability.scanopy.server = with lib; {

@@ -23,17 +23,17 @@ in
   };
 
   custom = {
-    platform.framework = {
-      hardware.enable = true;
-      nixos.enable = true;
-      packages.enable = true;
-      services.enable = true;
-    };
+    platforms.framework.hardware.enable = true;
 
     roles.workstation = {
       catppuccin.enable = true;
-      flatpak.enable = true;
       packages.enable = true;
+      laptop = {
+        flatpak.enable = true;
+        nixos.enable = true;
+        packages.enable = true;
+        services.enable = true;
+      };
     };
 
     services = {

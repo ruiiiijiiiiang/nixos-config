@@ -8,14 +8,14 @@
 let
   inherit (consts)
     addresses
-    domains
+    domain
     subdomains
     ports
     oci-uids
     ;
   inherit (helpers) mkOciUser mkVirtualHost mkNotifyService;
   cfg = config.custom.services.apps.tools.atuin;
-  fqdn = "${subdomains.${config.networking.hostName}.atuin}.${domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.atuin}.${domain}";
 in
 {
   options.custom.services.apps.tools.atuin = with lib; {

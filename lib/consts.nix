@@ -3,10 +3,7 @@ rec {
   defaultLocale = "en_US.UTF-8";
   username = "rui";
   home = "/home/${username}";
-
-  domains = {
-    home = "ruijiang.me";
-  };
+  domain = "ruijiang.me";
 
   subdomains = {
     pi = {
@@ -88,6 +85,7 @@ rec {
         pi = "192.168.20.51";
         pi-legacy = "192.168.20.52";
         proxmox = "192.168.20.254";
+        hypervisor = "192.168.20.254";
       };
       vip = {
         dns = "192.168.20.53";
@@ -265,6 +263,15 @@ rec {
     postgres-alpine = 70;
   };
 
-  oidc-issuer = "${subdomains.vm-app.pocketid}.${domains.home}";
-  vpn-endpoint = "vpn.${domains.home}";
+  oidc-issuer = "${subdomains.vm-app.pocketid}.${domain}";
+  vpn-endpoint = "vpn.${domain}";
+
+  hardware-ids = {
+    zigbee-radio = "usb-1a86_USB_Serial-if00-port0";
+    zwave-radio = "usb-Silicon_Labs_CP2102N_USB_to_UART_Bridge_Controller_80edec297b57ed1193f12ef21c62bc44-if00-port0";
+    nvme-ssd-0 = "";
+    nvme-ssd-1 = "nvme-Netac_NVMe_SSD_256GB_AA20251013256G327033";
+    usb-hdd-0 = "ata-WDC_WD30PURX-64AKYY0_WD-WX22DB1D35NH";
+    usb-hdd-1 = "ata-WDC_WD20NMVW-11EDZS7_WD-WXA1A77H0315";
+  };
 }

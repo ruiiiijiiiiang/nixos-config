@@ -3,7 +3,7 @@
   networking.hostName = "vm-cyber";
 
   custom = {
-    platform.vm = {
+    platforms.vm = {
       hardware = {
         enable = true;
         workstation = true;
@@ -15,13 +15,13 @@
       workstation = {
         catppuccin.enable = true;
         packages.enable = true;
-      };
 
-      cyber = {
-        networking.enable = true;
-        packages.enable = true;
-        services.enable = true;
-        security.enable = true;
+        cyber = {
+          networking.enable = true;
+          packages.enable = true;
+          services.enable = true;
+          security.enable = true;
+        };
       };
     };
   };

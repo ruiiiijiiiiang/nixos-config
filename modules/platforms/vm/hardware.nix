@@ -5,10 +5,10 @@
   ...
 }:
 let
-  cfg = config.custom.platform.vm.hardware;
+  cfg = config.custom.platforms.vm.hardware;
 in
 {
-  options.custom.platform.vm.hardware = with lib; {
+  options.custom.platforms.vm.hardware = with lib; {
     enable = mkEnableOption "Custom hardware config for vm";
     gpuPassthrough = mkEnableOption "Allow PIC GPU passthrough";
     workstation = mkEnableOption "Enable workstation features";

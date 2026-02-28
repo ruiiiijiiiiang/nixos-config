@@ -5,10 +5,10 @@
   ...
 }:
 let
-  cfg = config.custom.platform.pi.hardware;
+  cfg = config.custom.platforms.pi.hardware;
 in
 {
-  options.custom.platform.pi.hardware = with lib; {
+  options.custom.platforms.pi.hardware = with lib; {
     enable = mkEnableOption "Raspberry Pi 4 hardware config";
   };
 

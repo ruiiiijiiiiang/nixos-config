@@ -9,13 +9,13 @@
 let
   inherit (consts)
     addresses
-    domains
+    domain
     subdomains
     ports
     ;
   inherit (helpers) ensureFile mkVirtualHost mkNotifyService;
   cfg = config.custom.services.security.wazuh.server;
-  fqdn = "${subdomains.${config.networking.hostName}.wazuh}.${domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.wazuh}.${domain}";
   dashboardsContent = import ./opensearch_dashboards.yml.nix;
   initialFile = pkgs.writeText "opensearch_dashboards.yml" dashboardsContent;
   dashboardsFile = "/var/wazuh/opensearch_dashboards.yml";

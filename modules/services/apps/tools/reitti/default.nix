@@ -7,14 +7,15 @@
 let
   inherit (import ../../../../../lib/consts.nix)
     addresses
-    domains
+    domain
     subdomains
     ports
     oci-uids
+    oidc-issuer
     ;
   inherit (helpers) mkOciUser mkVirtualHost mkNotifyService;
   cfg = config.custom.services.apps.tools.reitti;
-  fqdn = "${subdomains.${config.networking.hostName}.reitti}.${domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.reitti}.${domain}";
 in
 {
   options.custom.services.apps.tools.reitti = with lib; {
@@ -127,7 +128,7 @@ in
           REDIS_HOST = addresses.localhost;
           TILES_CACHE = "http://${addresses.localhost}";
           OIDC_ENABLED = "true";
-          OIDC_ISSUER_URI = "https://id.${domains.home}";
+          OIDC_ISSUER_URI = "https://${oidc-issuer}";
           APP_UID = toString oci-uids.reitti;
           APP_GID = toString oci-uids.reitti;
         };

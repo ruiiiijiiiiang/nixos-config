@@ -9,14 +9,14 @@ let
   inherit (consts)
     timeZone
     addresses
-    domains
+    domain
     subdomains
     ports
     oci-uids
     ;
   inherit (helpers) mkVirtualHost;
   cfg = config.custom.services.apps.media.jellyfin;
-  fqdn = "${subdomains.${config.networking.hostName}.jellyfin}.${domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.jellyfin}.${domain}";
 in
 {
   options.custom.services.apps.media.jellyfin = with lib; {

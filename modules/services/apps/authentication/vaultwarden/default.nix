@@ -2,12 +2,12 @@
 let
   inherit (import ../../../../../lib/consts.nix)
     addresses
-    domains
+    domain
     subdomains
     ports
     ;
   cfg = config.custom.services.apps.authentication.vaultwarden;
-  fqdn = "${subdomains.${config.networking.hostName}.vaultwarden}.${domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.vaultwarden}.${domain}";
 in
 {
   options.custom.services.apps.authentication.vaultwarden = with lib; {

@@ -85,6 +85,19 @@
           ];
         };
 
+        hypervisor = nixosSystem {
+          inherit system;
+          specialArgs = {
+            inherit inputs;
+            inherit consts;
+            inherit helpers;
+          };
+          modules = [
+            ./modules
+            ./hosts/hypervisor
+          ];
+        };
+
         vm-network = nixosSystem {
           inherit system;
           specialArgs = {

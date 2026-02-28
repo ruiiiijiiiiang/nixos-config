@@ -7,14 +7,14 @@
 let
   inherit (import ../../../../../lib/consts.nix)
     addresses
-    domains
+    domain
     subdomains
     ports
     oci-uids
     ;
   inherit (helpers) mkVirtualHost;
   cfg = config.custom.services.apps.office.bentopdf;
-  fqdn = "${subdomains.${config.networking.hostName}.bentopdf}.${domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.bentopdf}.${domain}";
 in
 {
   options.custom.services.apps.office.bentopdf = with lib; {

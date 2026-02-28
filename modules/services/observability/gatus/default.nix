@@ -7,10 +7,10 @@
   ...
 }:
 let
-  inherit (consts) domains subdomains ports;
+  inherit (consts) domain subdomains ports;
   inherit (helpers) mkVirtualHost getEnabledServices;
   cfg = config.custom.services.observability.gatus;
-  fqdn = "${subdomains.${config.networking.hostName}.gatus}.${domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.gatus}.${domain}";
 
   mkGatusEndpoints =
     { inputs, hostName }:
@@ -20,7 +20,7 @@ let
     in
     lib.mapAttrsToList (service: subdomain: {
       name = service;
-      url = "https://${subdomain}.${domains.home}";
+      url = "https://${subdomain}.${domain}";
       group = hostName;
       interval = "1m";
       conditions = [ "[STATUS] == 200" ];

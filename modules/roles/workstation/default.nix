@@ -1,7 +1,9 @@
 {
   imports = [
+    ./cyber
+    ./laptop
     ./catppuccin.nix
-    ./flatpak.nix
     ./packages.nix
   ];
 }
+

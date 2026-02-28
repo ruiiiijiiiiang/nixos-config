@@ -8,13 +8,13 @@
 let
   inherit (consts)
     addresses
-    domains
+    domain
     subdomains
     ports
     ;
   inherit (helpers) mkVirtualHost mkNotifyService;
   cfg = config.custom.services.apps.tools.yourls;
-  fqdn = "${subdomains.${config.networking.hostName}.yourls}.${domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.yourls}.${domain}";
 in
 {
   options.custom.services.apps.tools.yourls = with lib; {

@@ -1,7 +1,7 @@
 {
   imports = [
     ./core
-    ./platform
+    ./platforms
     ./roles
     ./services
   ];

@@ -8,14 +8,14 @@
 let
   inherit (consts)
     addresses
-    domains
+    domain
     subdomains
     ports
     oci-uids
     ;
   inherit (helpers) mkVirtualHost;
   cfg = config.custom.services.apps.office.stirlingpdf;
-  fqdn = "${subdomains.${config.networking.hostName}.stirlingpdf}.${domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.stirlingpdf}.${domain}";
 in
 {
   options.custom.services.apps.office.stirlingpdf = with lib; {

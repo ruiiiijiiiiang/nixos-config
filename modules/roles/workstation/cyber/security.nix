@@ -6,10 +6,10 @@
 }:
 let
   inherit (consts) username;
-  cfg = config.custom.roles.cyber.services;
+  cfg = config.custom.roles.workstation.cyber.services;
 in
 {
-  options.custom.roles.cyber.security = with lib; {
+  options.custom.roles.workstation.cyber.security = with lib; {
     enable = mkEnableOption "Relax security configs for attack box";
   };
 

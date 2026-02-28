@@ -7,10 +7,10 @@
 }:
 let
   inherit (consts) username;
-  cfg = config.custom.roles.cyber.services;
+  cfg = config.custom.roles.workstation.cyber.services;
 in
 {
-  options.custom.roles.cyber.services = with lib; {
+  options.custom.roles.workstation.cyber.services = with lib; {
     enable = mkEnableOption "Cyber role services";
   };
 

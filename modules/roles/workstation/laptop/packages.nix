@@ -6,11 +6,11 @@
   ...
 }:
 let
-  cfg = config.custom.platform.framework.packages;
+  cfg = config.custom.roles.workstation.laptop.packages;
 in
 {
-  options.custom.platform.framework.packages = with lib; {
-    enable = mkEnableOption "Framework-specific packages";
+  options.custom.roles.workstation.laptop.packages = with lib; {
+    enable = mkEnableOption "Laptop specific packages";
   };
 
   config = lib.mkIf cfg.enable {
@@ -117,6 +117,7 @@ in
       # AI
       gemini-cli
       github-copilot-cli
+      codex
 
       # Web Development
       deno

@@ -1,6 +1,6 @@
 {
   imports = [
-    ./hardware.nix
+    ./flatpak.nix
     ./nixos.nix
     ./packages.nix
     ./services.nix

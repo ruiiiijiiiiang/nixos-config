@@ -1,7 +1,7 @@
 { config, lib, ... }:
 let
   inherit (lib) mkIf mkForce;
-  inherit (import ../../../../lib/consts.nix) domains ports;
+  inherit (import ../../../../lib/consts.nix) domain ports;
   inherit (import ../../../../lib/keys.nix) ssh;
   cfg = config.custom.services.observability.beszel.agent;
 in
@@ -21,7 +21,7 @@ in
         enable = true;
         environment = {
           KEY = ssh.beszel;
-          HUB_URL = "https://beszel.${domains.home}";
+          HUB_URL = "https://beszel.${domain}";
         };
       };
     };

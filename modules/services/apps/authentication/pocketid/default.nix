@@ -6,10 +6,10 @@
   ...
 }:
 let
-  inherit (consts) domains subdomains ports;
+  inherit (consts) domain subdomains ports;
   inherit (helpers) mkVirtualHost;
   cfg = config.custom.services.apps.authentication.pocketid;
-  fqdn = "${subdomains.${config.networking.hostName}.pocketid}.${domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.pocketid}.${domain}";
 in
 {
   options.custom.services.apps.authentication.pocketid = with lib; {

@@ -8,14 +8,14 @@
 let
   inherit (consts)
     addresses
-    domains
+    domain
     subdomains
     ports
     oci-uids
     ;
   inherit (helpers) mkOciUser mkVirtualHost mkNotifyService;
   cfg = config.custom.services.apps.office.memos;
-  fqdn = "${subdomains.${config.networking.hostName}.memos}.${domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.memos}.${domain}";
 in
 {
   options.custom.services.apps.office.memos = with lib; {

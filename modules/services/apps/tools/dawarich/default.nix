@@ -9,7 +9,7 @@ let
   inherit (consts)
     timeZone
     addresses
-    domains
+    domain
     subdomains
     ports
     oci-uids
@@ -17,7 +17,7 @@ let
     ;
   inherit (helpers) mkOciUser mkVirtualHost mkNotifyService;
   cfg = config.custom.services.apps.tools.dawarich;
-  fqdn = "${subdomains.${config.networking.hostName}.dawarich}.${domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.dawarich}.${domain}";
 in
 {
   options.custom.services.apps.tools.dawarich = with lib; {

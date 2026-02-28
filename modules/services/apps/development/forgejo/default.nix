@@ -8,14 +8,14 @@
 let
   inherit (consts)
     addresses
-    domains
+    domain
     subdomains
     ports
     oci-uids
     ;
   inherit (helpers) mkOciUser mkVirtualHost mkNotifyService;
   cfg = config.custom.services.apps.development.forgejo;
-  fqdn = "${subdomains.${config.networking.hostName}.forgejo}.${domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.forgejo}.${domain}";
 in
 {
   options.custom.services.apps.development.forgejo = with lib; {

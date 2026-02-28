@@ -9,13 +9,13 @@
 let
   inherit (consts)
     addresses
-    domains
+    domain
     subdomains
     ports
     ;
   inherit (helpers) mkVirtualHost;
   cfg = config.custom.services.networking.dns;
-  fqdn = "${subdomains.${config.networking.hostName}.pihole}.${domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.pihole}.${domain}";
 
   getFullExtraHosts =
     let
@@ -26,8 +26,7 @@ let
         filter
         attrValues
         ;
-      hostFqdns =
-        hostName: map (sub: "${sub}.${domains.home}") (attrValues (subdomains.${hostName} or { }));
+      hostFqdns = hostName: map (sub: "${sub}.${domain}") (attrValues (subdomains.${hostName} or { }));
       hostEntry =
         hostName: ip:
         let
@@ -108,8 +107,8 @@ in
             hide-identity = true;
             hide-version = true;
 
-            private-domain = [ domains.home ];
-            domain-insecure = [ domains.home ];
+            private-domain = [ domain ];
+            domain-insecure = [ domain ];
           };
 
           forward-zone = [

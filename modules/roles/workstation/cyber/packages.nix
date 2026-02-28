@@ -6,10 +6,10 @@
   ...
 }:
 let
-  cfg = config.custom.roles.cyber.packages;
+  cfg = config.custom.roles.workstation.cyber.packages;
 in
 {
-  options.custom.roles.cyber.packages = with lib; {
+  options.custom.roles.workstation.cyber.packages = with lib; {
     enable = mkEnableOption "Cyber role packages";
   };
 

@@ -60,7 +60,7 @@ in
     extraForwardRules = mkOption {
       type = types.lines;
       default = "";
-      description = "Extra rules to append to the router forward chain.";
+      description = "Extra rules to append to the router forward chain";
     };
   };
 
@@ -172,7 +172,6 @@ in
       };
 
       nftables = {
-        enable = true;
         tables.router-flow = {
           family = "ip";
           content = ''

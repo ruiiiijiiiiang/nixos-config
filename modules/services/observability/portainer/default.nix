@@ -8,13 +8,13 @@
 let
   inherit (consts)
     addresses
-    domains
+    domain
     subdomains
     ports
     ;
   inherit (helpers) mkVirtualHost;
   cfg = config.custom.services.observability.portainer;
-  fqdn = "${subdomains.${config.networking.hostName}.portainer}.${domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.portainer}.${domain}";
 in
 {
   options.custom.services.observability.portainer = with lib; {

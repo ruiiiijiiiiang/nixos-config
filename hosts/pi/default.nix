@@ -14,7 +14,7 @@ in
   networking.hostName = "pi";
 
   custom = {
-    platform.pi = {
+    platforms.pi = {
       hardware.enable = true;
       networking = {
         enable = true;

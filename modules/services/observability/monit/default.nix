@@ -2,12 +2,12 @@
 let
   inherit (import ../../../../lib/consts.nix)
     addresses
-    domains
+    domain
     subdomains
     ports
     ;
   cfg = config.custom.services.observability.monit;
-  fqdn = "${subdomains.${config.networking.hostName}.monit}.${domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.monit}.${domain}";
 in
 {
   options.custom.services.observability.monit = with lib; {

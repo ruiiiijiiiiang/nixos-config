@@ -10,14 +10,14 @@ let
   inherit (consts)
     username
     home
-    domains
+    domain
     subdomains
     ports
     oci-uids
     ;
   inherit (helpers) mkVirtualHost;
   cfg = config.custom.services.apps.tools.harmonia;
-  fqdn = "${subdomains.${config.networking.hostName}.harmonia}.${domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.harmonia}.${domain}";
 
   hostsToBuild = [
     "framework"

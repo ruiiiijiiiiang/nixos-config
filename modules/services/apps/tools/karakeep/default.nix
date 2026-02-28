@@ -7,7 +7,7 @@
 let
   inherit (import ../../../../../lib/consts.nix)
     addresses
-    domains
+    domain
     subdomains
     ports
     oidc-issuer
@@ -15,7 +15,7 @@ let
     ;
   inherit (helpers) mkOciUser mkVirtualHost mkNotifyService;
   cfg = config.custom.services.apps.tools.karakeep;
-  fqdn = "${subdomains.${config.networking.hostName}.karakeep}.${domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.karakeep}.${domain}";
 in
 {
   options.custom.services.apps.tools.karakeep = with lib; {

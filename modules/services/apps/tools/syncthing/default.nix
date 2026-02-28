@@ -9,13 +9,13 @@ let
   inherit (consts)
     username
     home
-    domains
+    domain
     subdomains
     ports
     ;
   inherit (helpers) mkVirtualHost;
   cfg = config.custom.services.apps.tools.syncthing;
-  fqdn = "${subdomains.${config.networking.hostName}.syncthing}.${domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.syncthing}.${domain}";
 in
 {
   options.custom.services.apps.tools.syncthing = with lib; {
@@ -78,7 +78,7 @@ in
           };
 
           gui = {
-            address = "${domains.home}:${toString ports.syncthing}";
+            address = "${domain}:${toString ports.syncthing}";
             insecureSkipHostcheck = true;
           };
         };

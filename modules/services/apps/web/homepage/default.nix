@@ -8,13 +8,13 @@
 let
   inherit (consts)
     addresses
-    domains
+    domain
     subdomains
     ports
     ;
   inherit (helpers) mkVirtualHost;
   cfg = config.custom.services.apps.web.homepage;
-  fqdn = "${subdomains.${config.networking.hostName}.homepage}.${domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.homepage}.${domain}";
 in
 {
   options.custom.services.apps.web.homepage = with lib; {
@@ -117,14 +117,14 @@ in
               {
                 "Immich" = {
                   icon = "immich";
-                  href = "https://${subdomains.vm-app.immich}.${domains.home}";
+                  href = "https://${subdomains.vm-app.immich}.${domain}";
                   description = "Photos & Video";
                 };
               }
               {
                 "Jellyfin" = {
                   icon = "jellyfin";
-                  href = "https://${subdomains.vm-app.jellyfin}.${domains.home}";
+                  href = "https://${subdomains.vm-app.jellyfin}.${domain}";
                   description = "Media Server";
                 };
               }
@@ -135,14 +135,14 @@ in
               {
                 "ByteStash" = {
                   icon = "bytestash";
-                  href = "https://${subdomains.vm-app.bytestash}.${domains.home}";
+                  href = "https://${subdomains.vm-app.bytestash}.${domain}";
                   description = "Code Snippets";
                 };
               }
               {
                 "Forgejo" = {
                   icon = "forgejo";
-                  href = "https://${subdomains.vm-app.forgejo}.${domains.home}";
+                  href = "https://${subdomains.vm-app.forgejo}.${domain}";
                   description = "Version Control";
                 };
               }
@@ -153,42 +153,42 @@ in
               {
                 "Sonarr" = {
                   icon = "sonarr";
-                  href = "https://${subdomains.vm-app.sonarr}.${domains.home}";
+                  href = "https://${subdomains.vm-app.sonarr}.${domain}";
                   description = "TV Series Management";
                 };
               }
               {
                 "Radarr" = {
                   icon = "radarr";
-                  href = "https://${subdomains.vm-app.radarr}.${domains.home}";
+                  href = "https://${subdomains.vm-app.radarr}.${domain}";
                   description = "Movie Management";
                 };
               }
               {
                 "Lidarr" = {
                   icon = "lidarr";
-                  href = "https://${subdomains.vm-app.lidarr}.${domains.home}";
+                  href = "https://${subdomains.vm-app.lidarr}.${domain}";
                   description = "Music Management";
                 };
               }
               {
                 "Prowlarr" = {
                   icon = "prowlarr";
-                  href = "https://${subdomains.vm-app.prowlarr}.${domains.home}";
+                  href = "https://${subdomains.vm-app.prowlarr}.${domain}";
                   description = "Indexer Management";
                 };
               }
               {
                 "Bazarr" = {
                   icon = "bazarr";
-                  href = "https://${subdomains.vm-app.bazarr}.${domains.home}";
+                  href = "https://${subdomains.vm-app.bazarr}.${domain}";
                   description = "Subtitle Management";
                 };
               }
               {
                 "qBittorrent" = {
                   icon = "qbittorrent";
-                  href = "https://${subdomains.vm-app.qbittorrent}.${domains.home}";
+                  href = "https://${subdomains.vm-app.qbittorrent}.${domain}";
                   description = "Torrent Client";
                 };
               }
@@ -199,21 +199,21 @@ in
               {
                 "Opencloud" = {
                   icon = "open-cloud";
-                  href = "https://${subdomains.vm-app.opencloud}.${domains.home}";
+                  href = "https://${subdomains.vm-app.opencloud}.${domain}";
                   description = "Cloud Storage";
                 };
               }
               {
                 "Paperless" = {
                   icon = "paperless";
-                  href = "https://${subdomains.vm-app.paperless}.${domains.home}";
+                  href = "https://${subdomains.vm-app.paperless}.${domain}";
                   description = "Document Archive";
                 };
               }
               {
                 "Memos" = {
                   icon = "memos";
-                  href = "https://${subdomains.vm-app.memos}.${domains.home}";
+                  href = "https://${subdomains.vm-app.memos}.${domain}";
                   description = "Note Taking";
                 };
               }
@@ -234,18 +234,18 @@ in
             ];
           }
           {
-            "Security" = [
+            "Authentication" = [
               {
                 "Pocket ID" = {
                   icon = "pocket-id";
-                  href = "https://${subdomains.vm-app.pocketid}.${domains.home}";
+                  href = "https://${subdomains.vm-app.pocketid}.${domain}";
                   description = "Identity Provider";
                 };
               }
               {
                 "Vaultwarden" = {
                   icon = "vaultwarden";
-                  href = "https://${subdomains.vm-app.vaultwarden}.${domains.home}";
+                  href = "https://${subdomains.vm-app.vaultwarden}.${domain}";
                   description = "Password Manager";
                 };
               }
@@ -256,42 +256,42 @@ in
               {
                 "Home Assistant" = {
                   icon = "home-assistant";
-                  href = "https://${subdomains.pi.homeassistant}.${domains.home}";
+                  href = "https://${subdomains.pi.homeassistant}.${domain}";
                   description = "Home Automation System";
                 };
               }
               {
                 "Zwave" = {
                   icon = "z-wave-js-ui";
-                  href = "https://${subdomains.pi.zwave}.${domains.home}";
+                  href = "https://${subdomains.pi.zwave}.${domain}";
                   description = "Zwave Device Manager";
                 };
               }
               {
                 "Microbin" = {
                   icon = "microbin";
-                  href = "https://${subdomains.vm-app.microbin}.${domains.home}";
+                  href = "https://${subdomains.vm-app.microbin}.${domain}";
                   description = "Pastebin";
                 };
               }
               {
                 "Karakeep" = {
                   icon = "karakeep";
-                  href = "https://${subdomains.vm-app.karakeep}.${domains.home}";
+                  href = "https://${subdomains.vm-app.karakeep}.${domain}";
                   description = "Bookmark";
                 };
               }
               {
                 "Reitti" = {
                   icon = "https://cdn.jsdelivr.net/gh/selfhst/icons@main/png/reitti.png";
-                  href = "https://${subdomains.vm-app.reitti}.${domains.home}";
+                  href = "https://${subdomains.vm-app.reitti}.${domain}";
                   description = "Location Tracking";
                 };
               }
               {
                 "SearXNG" = {
                   icon = "searxng";
-                  href = "https://${subdomains.vm-app.searxng}.${domains.home}";
+                  href = "https://${subdomains.vm-app.searxng}.${domain}";
                   description = "Search engine";
                 };
               }
@@ -312,7 +312,7 @@ in
               {
                 "Syncthing" = {
                   icon = "syncthing";
-                  href = "https://${subdomains.vm-app.syncthing}.${domains.home}";
+                  href = "https://${subdomains.vm-app.syncthing}.${domain}";
                   description = "File Sync Tool";
                 };
               }
@@ -323,21 +323,21 @@ in
               {
                 "Myspeed" = {
                   icon = "myspeed";
-                  href = "https://${subdomains.vm-monitor.myspeed}.${domains.home}";
+                  href = "https://${subdomains.vm-monitor.myspeed}.${domain}";
                   description = "Speed Test Analysis";
                 };
               }
               {
                 "Pihole" = {
                   icon = "pi-hole";
-                  href = "https://${subdomains.vm-network.pihole}.${domains.home}";
+                  href = "https://${subdomains.vm-network.pihole}.${domain}";
                   description = "DNS Ad Blocker";
                 };
               }
               {
                 "Pihole Backup 1" = {
                   icon = "pi-hole";
-                  href = "https://${subdomains.pi.pihole}.${domains.home}";
+                  href = "https://${subdomains.pi.pihole}.${domain}";
                   description = "DNS Ad Blocker";
                 };
               }
@@ -362,42 +362,42 @@ in
               {
                 "Gatus" = {
                   icon = "gatus";
-                  href = "https://${subdomains.vm-monitor.gatus}.${domains.home}";
+                  href = "https://${subdomains.vm-monitor.gatus}.${domain}";
                   description = "Server Health Monitoring";
                 };
               }
               {
                 "Dockhand" = {
                   icon = "https://cdn.jsdelivr.net/gh/selfhst/icons@main/png/dockhand.png";
-                  href = "https://${subdomains.vm-monitor.dockhand}.${domains.home}";
+                  href = "https://${subdomains.vm-monitor.dockhand}.${domain}";
                   description = "Container Management Dashboard";
                 };
               }
               {
                 "Beszel" = {
                   icon = "beszel";
-                  href = "https://${subdomains.vm-monitor.beszel}.${domains.home}";
+                  href = "https://${subdomains.vm-monitor.beszel}.${domain}";
                   description = "Server Monitoring";
                 };
               }
               {
                 "Prometheus" = {
                   icon = "prometheus";
-                  href = "https://${subdomains.vm-monitor.prometheus}.${domains.home}";
+                  href = "https://${subdomains.vm-monitor.prometheus}.${domain}";
                   description = "Metrics Monitoring";
                 };
               }
               {
                 "Grafana" = {
                   icon = "grafana";
-                  href = "https://${subdomains.vm-monitor.grafana}.${domains.home}";
+                  href = "https://${subdomains.vm-monitor.grafana}.${domain}";
                   description = "Metrics Visualization";
                 };
               }
               {
                 "Wazuh" = {
                   icon = "wazuh";
-                  href = "https://${subdomains.vm-monitor.wazuh}.${domains.home}";
+                  href = "https://${subdomains.vm-monitor.wazuh}.${domain}";
                   description = "Security Monitoring";
                 };
               }

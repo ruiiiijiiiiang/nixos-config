@@ -5,10 +5,10 @@
   ...
 }:
 let
-  cfg = config.custom.platform.pi.packages;
+  cfg = config.custom.platforms.pi.packages;
 in
 {
-  options.custom.platform.pi.packages = with lib; {
+  options.custom.platforms.pi.packages = with lib; {
     enable = mkEnableOption "Raspberry Pi-specific packages";
   };
 

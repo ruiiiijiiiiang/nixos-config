@@ -1,6 +1,6 @@
 { config, lib, ... }:
 let
-  inherit (import ../../../../lib/consts.nix) addresses domains;
+  inherit (import ../../../../lib/consts.nix) addresses domain;
   cfg = config.custom.services.networking.cloudflared;
 in
 {
@@ -21,16 +21,16 @@ in
           default = "http_status:404";
           credentialsFile = config.age.secrets.cloudflare-tunnel-token.path;
           ingress = {
-            "public.${domains.home}" = {
+            "public.${domain}" = {
               service = "https://${addresses.infra.hosts.vm-app}:443";
               originRequest = {
-                originServerName = "public.${domains.home}";
+                originServerName = "public.${domain}";
               };
             };
-            "bin.${domains.home}" = {
+            "bin.${domain}" = {
               service = "https://${addresses.infra.hosts.vm-app}:443";
               originRequest = {
-                originServerName = "bin.${domains.home}";
+                originServerName = "bin.${domain}";
               };
             };
             service = "http_status:404";

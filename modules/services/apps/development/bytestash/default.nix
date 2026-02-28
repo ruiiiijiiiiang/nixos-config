@@ -9,7 +9,7 @@ let
   inherit (consts)
     username
     addresses
-    domains
+    domain
     subdomains
     ports
     oci-uids
@@ -17,7 +17,7 @@ let
     ;
   inherit (helpers) mkOciUser mkVirtualHost;
   cfg = config.custom.services.apps.development.bytestash;
-  fqdn = "${subdomains.${config.networking.hostName}.bytestash}.${domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.bytestash}.${domain}";
 in
 {
   options.custom.services.apps.development.bytestash = with lib; {

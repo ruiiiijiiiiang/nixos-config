@@ -8,13 +8,13 @@
 let
   inherit (consts)
     addresses
-    domains
+    domain
     subdomains
     ports
     ;
   inherit (helpers) mkVirtualHost;
   cfg = config.custom.services.apps.tools.microbin;
-  fqdn = "${subdomains.${config.networking.hostName}.microbin}.${domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.microbin}.${domain}";
 in
 {
   options.custom.services.apps.tools.microbin = with lib; {

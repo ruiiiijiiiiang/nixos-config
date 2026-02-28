@@ -9,14 +9,14 @@
 let
   inherit (consts)
     addresses
-    domains
+    domain
     subdomains
     ports
     ;
   inherit (helpers) mkVirtualHost;
   inherit (inputs.self) nixosConfigurations;
   cfg = config.custom.services.observability.prometheus.server;
-  fqdn = "${subdomains.${config.networking.hostName}.prometheus}.${domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.prometheus}.${domain}";
   monitoredExporters = {
     inherit (ports.prometheus.exporters)
       # crowdsec

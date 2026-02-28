@@ -8,14 +8,14 @@
 let
   inherit (consts)
     addresses
-    domains
+    domain
     subdomains
     ports
     oci-uids
     ;
   inherit (helpers) mkVirtualHost;
   cfg = config.custom.services.observability.dockhand.server;
-  fqdn = "${subdomains.${config.networking.hostName}.dockhand}.${domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.dockhand}.${domain}";
 in
 {
   options.custom.services.observability.dockhand.server = with lib; {

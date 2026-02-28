@@ -1,12 +1,12 @@
 {
-  inputs,
   config,
+  inputs,
   lib,
   ...
 }:
 let
   inherit (lib) mkIf;
-  cfg = config.custom.platform.vm.disks;
+  cfg = config.custom.platforms.vm.disks;
 
   diskLayout = mountpoint: {
     type = "gpt";
@@ -31,7 +31,7 @@ in
     inputs.disko.nixosModules.disko
   ];
 
-  options.custom.platform.vm.disks = with lib; {
+  options.custom.platforms.vm.disks = with lib; {
     enableMain = mkEnableOption "Enable main drive (scsi0)";
     enableStorage = mkEnableOption "Enable storage drive (scsi1)";
     enableScratch = mkEnableOption "Enable scratch drive (scsi2)";

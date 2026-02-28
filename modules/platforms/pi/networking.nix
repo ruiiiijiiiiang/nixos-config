@@ -4,10 +4,10 @@
   ...
 }:
 let
-  cfg = config.custom.platform.pi.networking;
+  cfg = config.custom.platforms.pi.networking;
 in
 {
-  options.custom.platform.pi.networking = with lib; {
+  options.custom.platforms.pi.networking = with lib; {
     enable = mkEnableOption "Raspberry Pi 4 networking config";
     lanInterface = mkOption {
       type = types.str;

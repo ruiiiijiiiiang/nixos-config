@@ -8,7 +8,7 @@
 let
   inherit (consts)
     addresses
-    domains
+    domain
     subdomains
     ports
     oci-uids
@@ -16,7 +16,7 @@ let
     ;
   inherit (helpers) mkOciUser mkVirtualHost mkNotifyService;
   cfg = config.custom.services.apps.tools.llm;
-  fqdn = "${subdomains.${config.networking.hostName}.openwebui}.${domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.openwebui}.${domain}";
 in
 {
   options.custom.services.apps.tools.llm = with lib; {

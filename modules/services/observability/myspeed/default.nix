@@ -6,10 +6,10 @@
   ...
 }:
 let
-  inherit (consts) domains subdomains ports;
+  inherit (consts) domain subdomains ports;
   inherit (helpers) mkVirtualHost;
   cfg = config.custom.services.observability.myspeed;
-  fqdn = "${subdomains.${config.networking.hostName}.myspeed}.${domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.myspeed}.${domain}";
 in
 {
   options.custom.services.observability.myspeed = with lib; {

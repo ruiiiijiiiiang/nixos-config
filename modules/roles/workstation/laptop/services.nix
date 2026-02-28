@@ -7,11 +7,11 @@
 }:
 let
   inherit (consts) username;
-  cfg = config.custom.platform.framework.services;
+  cfg = config.custom.roles.workstation.laptop.services;
 in
 {
-  options.custom.platform.framework.services = with lib; {
-    enable = mkEnableOption "Framework-specific services";
+  options.custom.roles.workstation.laptop.services = with lib; {
+    enable = mkEnableOption "Laptop specific services";
   };
 
   config = lib.mkIf cfg.enable {
@@ -63,7 +63,5 @@ in
         pkgs.kdePackages.xdg-desktop-portal-kde
       ];
     };
-
-    virtualisation.vmware.host.enable = true;
   };
 }

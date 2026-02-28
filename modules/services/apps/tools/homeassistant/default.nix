@@ -9,14 +9,15 @@ let
   inherit (consts)
     timeZone
     addresses
-    domains
+    domain
     subdomains
     ports
+    hardware-ids
     ;
   inherit (helpers) mkVirtualHost mkNotifyService;
   cfg = config.custom.services.apps.tools.homeassistant;
-  ha-fqdn = "${subdomains.${config.networking.hostName}.homeassistant}.${domains.home}";
-  zwave-fqdn = "${subdomains.${config.networking.hostName}.zwave}.${domains.home}";
+  ha-fqdn = "${subdomains.${config.networking.hostName}.homeassistant}.${domain}";
+  zwave-fqdn = "${subdomains.${config.networking.hostName}.zwave}.${domain}";
 in
 {
   options.custom.services.apps.tools.homeassistant = with lib; {
@@ -36,7 +37,7 @@ in
         ];
         volumes = [ "/var/lib/home-assistant:/config" ];
         environment.TZ = timeZone;
-        devices = [ "/dev/serial/by-id/usb-1a86_USB_Serial-if00-port0:/dev/zigbee" ];
+        devices = [ "/dev/serial/by-id/${hardware-ids.zigbee-radio}:/dev/zigbee" ];
         labels = {
           "io.containers.autoupdate" = "registry";
         };
@@ -48,7 +49,7 @@ in
         volumes = [ "/var/lib/zwave-js-ui:/usr/src/app/store" ];
         networks = [ "container:homeassistant" ];
         devices = [
-          "/dev/serial/by-id/usb-Silicon_Labs_CP2102N_USB_to_UART_Bridge_Controller_80edec297b57ed1193f12ef21c62bc44-if00-port0:/dev/zwave"
+          "/dev/serial/by-id/${hardware-ids.zwave-radio}:/dev/zwave"
         ];
         labels = {
           "io.containers.autoupdate" = "registry";

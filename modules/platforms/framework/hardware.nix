@@ -5,10 +5,10 @@
   ...
 }:
 let
-  cfg = config.custom.platform.framework.hardware;
+  cfg = config.custom.platforms.framework.hardware;
 in
 {
-  options.custom.platform.framework.hardware = with lib; {
+  options.custom.platforms.framework.hardware = with lib; {
     enable = mkEnableOption "Framework laptop hardware config";
   };
 

@@ -8,7 +8,7 @@
 let
   inherit (consts)
     addresses
-    domains
+    domain
     subdomains
     ports
     timeZone
@@ -16,7 +16,7 @@ let
     ;
   inherit (helpers) mkVirtualHost mkNotifyService;
   cfg = config.custom.services.networking.torrent;
-  fqdn = "${subdomains.${config.networking.hostName}.qbittorrent}.${domains.home}";
+  fqdn = "${subdomains.${config.networking.hostName}.qbittorrent}.${domain}";
 in
 {
   options.custom.services.networking.torrent = with lib; {
