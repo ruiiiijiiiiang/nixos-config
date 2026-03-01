@@ -9,13 +9,14 @@
 let
   inherit (consts) domain subdomains ports;
   inherit (helpers) mkVirtualHost getEnabledServices;
+  inherit (inputs.self) nixosConfigurations;
   cfg = config.custom.services.observability.gatus;
   fqdn = "${subdomains.${config.networking.hostName}.gatus}.${domain}";
 
   mkGatusEndpoints =
     { inputs, hostName }:
     let
-      inherit (inputs.self.nixosConfigurations.${hostName}) config;
+      inherit (nixosConfigurations.${hostName}) config;
       enabledServices = getEnabledServices { inherit config; };
     in
     lib.mapAttrsToList (service: subdomain: {
@@ -31,7 +32,7 @@ let
     mkGatusEndpoints {
       inherit inputs hostName;
     }
-  ) (builtins.attrNames inputs.self.nixosConfigurations);
+  ) (builtins.attrNames nixosConfigurations);
 in
 {
   options.custom.services.observability.gatus = with lib; {

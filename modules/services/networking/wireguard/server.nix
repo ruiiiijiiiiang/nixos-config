@@ -106,7 +106,7 @@ in
       };
     };
 
-    custom.services.networking.router.extraForwardRules = ''
+    custom.services.networking.router.extraForwardRules = /* bash */ ''
       iifname "${cfg.wgInterface}" oifname "${cfg.lanInterface}" accept
       iifname "${cfg.wgInterface}" oifname "${cfg.infraInterface}" accept
       iifname "${cfg.wgInterface}" oifname "${cfg.dmzInterface}" accept

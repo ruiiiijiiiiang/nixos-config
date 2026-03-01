@@ -2,10 +2,11 @@
   config,
   consts,
   lib,
+  pkgs,
   ...
 }:
 let
-  inherit (consts) addresses ports;
+  inherit (consts) addresses ports vlan-ids;
   cfg = config.custom.roles.hypervisor.networking;
 in
 {
@@ -21,9 +22,19 @@ in
       default = null;
       description = "Interface for LAN";
     };
-    infraVlanId = mkOption {
+    wanBridge = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = "Network bridge for WAN";
+    };
+    lanBridge = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = "Network bridge for LAN";
+    };
+    vlanId = mkOption {
       type = types.int;
-      default = 20;
+      default = vlan-ids.infra;
       description = "VLAN tag ID for infra";
     };
   };
@@ -31,22 +42,29 @@ in
   config = lib.mkIf cfg.enable {
     assertions = [
       {
-        assertion = cfg.wanInterface != null && cfg.lanInterface != null;
+        assertion =
+          cfg.wanInterface != null
+          && cfg.lanInterface != null
+          && cfg.wanBridge != null
+          && cfg.lanBridge != null;
         message = "Hypervisor networking is enabled but required interfaces are missing.";
       }
     ];
 
     networking = {
       useDHCP = false;
+      localCommands = /* bash */ ''
+        ${pkgs.iproute2}/bin/ip link set dev ${cfg.lanBridge} type bridge vlan_filtering 1
+      '';
 
       interfaces = {
         "${cfg.wanInterface}".useDHCP = false;
         "${cfg.lanInterface}".useDHCP = false;
 
-        "vmbr0".useDHCP = false;
-        "vmbr1".useDHCP = false;
+        "${cfg.wanBridge}".useDHCP = false;
+        "${cfg.lanBridge}".useDHCP = false;
 
-        "vmbr1.${toString cfg.infraVlanId}" = {
+        "${cfg.lanBridge}.${toString cfg.vlanId}" = {
           ipv4.addresses = [
             {
               address = addresses.infra.hosts.hypervisor;
@@ -57,24 +75,24 @@ in
       };
 
       bridges = {
-        "vmbr0" = {
+        ${cfg.wanBridge} = {
           interfaces = [ cfg.wanInterface ];
         };
-        "vmbr1" = {
+        ${cfg.lanBridge} = {
           interfaces = [ cfg.lanInterface ];
         };
       };
 
       vlans = {
-        "vmbr1.${toString cfg.infraVlanId}" = {
-          id = cfg.infraVlanId;
-          interface = "vmbr1";
+        "${cfg.lanBridge}.${toString cfg.vlanId}" = {
+          id = cfg.vlanId;
+          interface = cfg.lanBridge;
         };
       };
 
       defaultGateway = {
         address = addresses.infra.hosts.vm-network;
-        interface = "vmbr1.${toString cfg.infraVlanId}";
+        interface = "${cfg.lanBridge}.${toString cfg.vlanId}";
       };
 
       firewall = {

@@ -1,16 +1,66 @@
-{ consts, ... }:
+{
+  config,
+  consts,
+  lib,
+  ...
+}:
 let
-  inherit (consts) addresses;
+  inherit (consts) addresses hardware;
 in
 {
   system.stateVersion = "25.11";
   networking.hostName = "vm-app";
 
   custom = {
+    libvirtGuest = {
+      enable = true;
+      config = {
+        memory = {
+          count = 12288;
+          unit = "MiB";
+        };
+        currentMemory = {
+          count = 12288;
+          unit = "MiB";
+        };
+
+        vcpu = {
+          count = 10;
+        };
+
+        devices = {
+          hostdev = lib.mkIf config.custom.libvirtGuest.gpuPassthrough [
+            {
+              mode = "subsystem";
+              type = "pci";
+              managed = true;
+              source = {
+                inherit (hardware.gpu) address;
+              };
+            }
+          ];
+        };
+      };
+      disks = {
+        primary = {
+          size = "200GB";
+        };
+        storage = {
+          enable = true;
+          size = "1000GB";
+        };
+        scratch = {
+          enable = true;
+          size = "1000GB";
+        };
+      };
+      gpuPassthrough = true;
+    };
+
     platforms.vm = {
       hardware = {
         enable = true;
-        gpuPassthrough = true;
+        inherit (config.custom.libvirtGuest) gpuPassthrough;
       };
       disks = {
         enableMain = true;

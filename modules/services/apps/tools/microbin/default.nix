@@ -34,7 +34,7 @@ in
       nginx.virtualHosts."${fqdn}" = mkVirtualHost {
         inherit fqdn;
         port = ports.microbin;
-        extraConfig = ''
+        extraConfig = /* nginx */ ''
           allow all;
           limit_req zone=microbin_req_limit burst=10 nodelay;
           limit_conn microbin_conn_limit 20;

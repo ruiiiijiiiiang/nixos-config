@@ -1,9 +1,11 @@
 {
   config,
+  consts,
   lib,
   ...
 }:
 let
+  inherit (consts) vlan-ids;
   cfg = config.custom.platforms.pi.networking;
 in
 {
@@ -21,7 +23,7 @@ in
     };
     vlanId = mkOption {
       type = types.int;
-      default = 20;
+      default = vlan-ids.infra;
       description = "VLAN tag ID";
     };
   };

@@ -83,14 +83,15 @@ in
     };
 
     networking.firewall =
+      with lib;
       let
         exporterPorts =
-          (lib.optional cfg.crowdsec.enable ports.prometheus.exporters.crowdsec)
-          ++ (lib.optional cfg.kea.enable ports.prometheus.exporters.kea)
-          ++ (lib.optional cfg.nginx.enable ports.prometheus.exporters.nginx)
-          ++ (lib.optional cfg.node.enable ports.prometheus.exporters.node)
-          ++ (lib.optional cfg.podman.enable ports.prometheus.exporters.podman)
-          ++ (lib.optional cfg.wireguard.enable ports.prometheus.exporters.wireguard);
+          (optional cfg.crowdsec.enable ports.prometheus.exporters.crowdsec)
+          ++ (optional cfg.kea.enable ports.prometheus.exporters.kea)
+          ++ (optional cfg.nginx.enable ports.prometheus.exporters.nginx)
+          ++ (optional cfg.node.enable ports.prometheus.exporters.node)
+          ++ (optional cfg.podman.enable ports.prometheus.exporters.podman)
+          ++ (optional cfg.wireguard.enable ports.prometheus.exporters.wireguard);
       in
       if cfg.interface != null then
         {

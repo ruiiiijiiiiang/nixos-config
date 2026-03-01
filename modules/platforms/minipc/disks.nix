@@ -6,7 +6,7 @@
   ...
 }:
 let
-  inherit (consts) hardware-ids;
+  inherit (consts) hardware;
   cfg = config.custom.platforms.minipc.disks;
 in
 {
@@ -23,7 +23,7 @@ in
       disk = {
         main = {
           type = "disk";
-          device = "/dev/disk/by-id/${hardware-ids.nvme-ssd-0}";
+          device = "/dev/disk/by-id/${hardware.storage.nvme-ssd-0}";
           content = {
             type = "gpt";
             partitions = {
@@ -73,7 +73,7 @@ in
 
         storage = {
           type = "disk";
-          device = "/dev/disk/by-id/${hardware-ids.usb-hdd-0}";
+          device = "/dev/disk/by-id/${hardware.storage.usb-hdd-0}";
           content = {
             type = "gpt";
             partitions = {
@@ -100,7 +100,7 @@ in
 
         backup = {
           type = "disk";
-          device = "/dev/disk/by-id/${hardware-ids.usb-hdd-1}";
+          device = "/dev/disk/by-id/${hardware.storage.usb-hdd-1}";
           content = {
             type = "gpt";
             partitions = {

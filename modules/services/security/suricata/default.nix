@@ -50,7 +50,7 @@ in
     environment.systemPackages = [ pkgs.ethtool ];
 
     networking = {
-      localCommands = ''
+      localCommands = /* bash */ ''
         ${pkgs.ethtool}/bin/ethtool -K ${cfg.wanInterface} gro off lro off || true
         ${pkgs.ethtool}/bin/ethtool -K ${cfg.lanInterface} gro off lro off || true
       '';
@@ -58,7 +58,7 @@ in
       nftables.tables = {
         "suricata-ips" = {
           family = "inet";
-          content = ''
+          content = /* bash */ ''
             chain forward {
               type filter hook forward priority -10; policy accept;
 

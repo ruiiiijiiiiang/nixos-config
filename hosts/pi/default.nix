@@ -1,9 +1,9 @@
 { consts, inputs, ... }:
 let
-  inherit (consts) addresses;
+  inherit (consts) addresses vlan-ids;
   lanInterface = "end0";
   wlanInterface = "wlan0";
-  vlanId = 20;
+  vlanId = vlan-ids.infra;
 in
 {
   imports = [

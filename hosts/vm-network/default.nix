@@ -1,12 +1,19 @@
-{ config, consts, ... }:
+{
+  config,
+  consts,
+  inputs,
+  ...
+}:
 let
-  inherit (consts) addresses;
+  inherit (consts) addresses hardware;
+  inherit (inputs.self) nixosConfigurations;
   wanInterface = "ens18";
   lanInterface = "ens19";
   podmanInterface = "podman0";
   infraInterface = "infra0";
   dmzInterface = "dmz0";
   wgInterface = "wg0";
+  wanMac = "bc:24:11:97:f8:42";
 in
 {
   system.stateVersion = "25.11";
@@ -21,6 +28,63 @@ in
   };
 
   custom = {
+    libvirtGuest = {
+      enable = true;
+      config = {
+        memory = {
+          count = 4096;
+          unit = "MiB";
+        };
+        currentMemory = {
+          count = 2048;
+          unit = "MiB";
+        };
+
+        vcpu = {
+          count = 4;
+        };
+
+        devices =
+          let
+            inherit (nixosConfigurations.hypervisor.config.custom.roles.hypervisor) networking;
+          in
+          {
+            interface = [
+              {
+                type = "bridge";
+                mac = {
+                  address = wanMac;
+                };
+                source = {
+                  bridge = networking.wanBridge;
+                };
+                model = {
+                  type = "virtio";
+                };
+              }
+              {
+                type = "bridge";
+                mac = {
+                  address = hardware.macs.vm-network;
+                };
+                source = {
+                  bridge = networking.lanBridge;
+                };
+                model = {
+                  type = "virtio";
+                };
+              }
+            ];
+          };
+      };
+
+      disks = {
+        primaryDisk = {
+          size = "40GB";
+        };
+      };
+    };
+
     platforms.vm = {
       hardware.enable = true;
       disks = {
@@ -53,8 +117,6 @@ in
             infraInterface
             dmzInterface
             ;
-          infraVlanId = 20;
-          dmzVlanId = 88;
         };
 
         wireguard.server = {

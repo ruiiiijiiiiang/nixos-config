@@ -3,6 +3,29 @@
   networking.hostName = "vm-monitor";
 
   custom = {
+    libvirtGuest = {
+      enable = true;
+      config = {
+        memory = {
+          count = 6144;
+          unit = "MiB";
+        };
+        currentMemory = {
+          count = 4096;
+          unit = "MiB";
+        };
+
+        vcpu = {
+          count = 4;
+        };
+      };
+      disks = {
+        primary = {
+          size = "100GB";
+        };
+      };
+    };
+
     platforms.vm = {
       hardware.enable = true;
       disks = {

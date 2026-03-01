@@ -5,19 +5,40 @@
   ...
 }:
 let
-  inherit (consts) addresses ports macs;
+  inherit (consts)
+    addresses
+    ports
+    hardware
+    vlan-ids
+    ;
   cfg = config.custom.services.networking.router;
 
-  getReservations =
+  mkSubnet =
     network:
     let
       inherit (addresses.${network}) hosts;
+      reservations = builtins.map (hostname: {
+        hw-address = hardware.macs.${hostname};
+        ip-address = hosts.${hostname};
+        inherit hostname;
+      }) (builtins.filter (hostname: builtins.hasAttr hostname hosts) (builtins.attrNames hardware.macs));
     in
-    builtins.map (hostname: {
-      hw-address = macs.${hostname};
-      ip-address = hosts.${hostname};
-      inherit hostname;
-    }) (builtins.filter (hostname: builtins.hasAttr hostname hosts) (builtins.attrNames macs));
+    {
+      id = vlan-ids.${network};
+      subnet = addresses.${network}.network;
+      pools = [ { pool = "${addresses.${network}.dhcp-min} - ${addresses.${network}.dhcp-max}"; } ];
+      inherit reservations;
+      option-data = [
+        {
+          name = "routers";
+          data = addresses.${network}.hosts.${config.networking.hostName};
+        }
+        {
+          name = "domain-name-servers";
+          data = addresses.infra.vip.dns;
+        }
+      ];
+    };
 in
 {
   options.custom.services.networking.router = with lib; {
@@ -37,20 +58,10 @@ in
       default = "podman0";
       description = "Interface for podman";
     };
-    infraVlanId = mkOption {
-      type = types.int;
-      default = 20;
-      description = "VLAN tag ID for infra";
-    };
     infraInterface = mkOption {
       type = types.str;
       default = "infra0";
       description = "Interface for infra VLAN";
-    };
-    dmzVlanId = mkOption {
-      type = types.int;
-      default = 88;
-      description = "VLAN tag ID for DMZ";
     };
     dmzInterface = mkOption {
       type = types.str;
@@ -153,7 +164,7 @@ in
           };
         };
 
-        extraInputRules = ''
+        extraInputRules = /* bash */ ''
           iifname "${cfg.dmzInterface}" ip daddr ${addresses.infra.vip.dns} udp dport ${toString ports.dns} accept
           iifname "${cfg.dmzInterface}" ip daddr ${addresses.infra.vip.dns} tcp dport ${toString ports.dns} accept
         '';
@@ -161,12 +172,12 @@ in
 
       vlans = {
         ${cfg.infraInterface} = {
-          id = cfg.infraVlanId;
+          id = vlan-ids.infra;
           interface = cfg.lanInterface;
         };
 
         ${cfg.dmzInterface} = {
-          id = cfg.dmzVlanId;
+          id = vlan-ids.dmz;
           interface = cfg.lanInterface;
         };
       };
@@ -174,7 +185,7 @@ in
       nftables = {
         tables.router-flow = {
           family = "ip";
-          content = ''
+          content = /* bash */ ''
             chain forward {
               type filter hook forward priority 0; policy drop;
               ct state established,related accept
@@ -209,57 +220,10 @@ in
             ];
           };
           valid-lifetime = 86400;
-          subnet4 = [
-            {
-              id = 2;
-              subnet = addresses.home.network;
-              pools = [ { pool = "${addresses.home.dhcp-min} - ${addresses.home.dhcp-max}"; } ];
-              reservations = getReservations "home";
-              option-data = [
-                {
-                  name = "routers";
-                  data = addresses.home.hosts.${config.networking.hostName};
-                }
-                {
-                  name = "domain-name-servers";
-                  data = addresses.infra.vip.dns;
-                }
-              ];
-            }
-
-            {
-              id = cfg.infraVlanId;
-              subnet = addresses.infra.network;
-              pools = [ { pool = "${addresses.infra.dhcp-min} - ${addresses.infra.dhcp-max}"; } ];
-              reservations = getReservations "infra";
-              option-data = [
-                {
-                  name = "routers";
-                  data = addresses.infra.hosts.${config.networking.hostName};
-                }
-                {
-                  name = "domain-name-servers";
-                  data = addresses.infra.vip.dns;
-                }
-              ];
-            }
-
-            {
-              id = cfg.dmzVlanId;
-              subnet = addresses.dmz.network;
-              pools = [ { pool = "${addresses.dmz.dhcp-min} - ${addresses.dmz.dhcp-max}"; } ];
-              reservations = getReservations "dmz";
-              option-data = [
-                {
-                  name = "routers";
-                  data = addresses.dmz.hosts.${config.networking.hostName};
-                }
-                {
-                  name = "domain-name-servers";
-                  data = addresses.infra.vip.dns;
-                }
-              ];
-            }
+          subnet4 = map mkSubnet [
+            "home"
+            "infra"
+            "dmz"
           ];
 
           control-socket = {

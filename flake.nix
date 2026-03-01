@@ -12,8 +12,11 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    NixVirt = {
+      url = "https://flakehub.com/f/AshleyYakeley/NixVirt/*.tar.gz";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     agenix.url = "github:ryantm/agenix";
-    colmena.url = "github:zhaofengli/colmena";
     nix-flatpak.url = "github:gmodena/nix-flatpak";
     catppuccin = {
       url = "github:catppuccin/nix";
@@ -145,106 +148,6 @@
             inherit helpers;
           };
           modules = [
-            ./modules
-            ./hosts/vm-cyber
-          ];
-        };
-      };
-
-      colmenaHive = inputs.colmena.lib.makeHive self.outputs.colmena;
-      colmena = with consts; {
-        meta = {
-          nixpkgs = import nixpkgs {
-            inherit system;
-          };
-          specialArgs = {
-            inherit inputs;
-            inherit consts;
-            inherit helpers;
-          };
-        };
-
-        framework = {
-          deployment = {
-            targetHost = null;
-            allowLocalDeployment = true;
-            tags = [
-              "physical"
-              "workstation"
-            ];
-          };
-          imports = [
-            ./modules
-            ./hosts/framework
-          ];
-        };
-
-        pi = {
-          nixpkgs.system = "aarch64-linux";
-          deployment = {
-            targetHost = addresses.infra.hosts.pi;
-            tags = [
-              "physical"
-              "server"
-            ];
-          };
-          imports = [
-            ./modules
-            ./hosts/pi
-          ];
-        };
-
-        vm-network = {
-          deployment = {
-            targetHost = addresses.infra.hosts.vm-network;
-            tags = [
-              "vm"
-              "server"
-            ];
-          };
-          imports = [
-            ./modules
-            ./hosts/vm-network
-          ];
-        };
-
-        vm-app = {
-          deployment = {
-            targetHost = addresses.infra.hosts.vm-app;
-            tags = [
-              "vm"
-              "server"
-            ];
-          };
-          imports = [
-            ./modules
-            ./hosts/vm-app
-          ];
-        };
-
-        vm-monitor = {
-          deployment = {
-            targetHost = addresses.infra.hosts.vm-monitor;
-            tags = [
-              "vm"
-              "server"
-            ];
-          };
-          imports = [
-            ./modules
-            ./hosts/vm-monitor
-          ];
-        };
-
-        vm-cyber = {
-          deployment = {
-            targetHost = addresses.dmz.hosts.vm-cyber;
-            tags = [
-              "vm"
-              "workstation"
-            ];
-          };
-          imports = [
             ./modules
             ./hosts/vm-cyber
           ];

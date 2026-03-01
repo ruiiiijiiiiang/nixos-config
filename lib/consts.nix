@@ -4,6 +4,8 @@ rec {
   username = "rui";
   home = "/home/${username}";
   domain = "ruijiang.me";
+  oidc-issuer = "${subdomains.vm-app.pocketid}.${domain}";
+  vpn-endpoint = "vpn.${domain}";
 
   subdomains = {
     pi = {
@@ -113,18 +115,6 @@ rec {
     podman = {
       network = "10.88.0.0/16";
     };
-  };
-
-  macs = {
-    arch = "28:0c:50:9c:03:2e";
-    framework = "ac:f2:3c:63:d9:f3";
-    proxmox = "c8:a3:62:bf:0b:b3";
-    vm-network = "bc:24:11:b0:9b:27";
-    vm-app = "bc:24:11:71:f8:9b";
-    vm-monitor = "bc:24:11:93:b1:94";
-    vm-cyber = "bc:24:11:4b:5f:d4";
-    pi = "2c:cf:67:0e:c9:6b";
-    pi-legacy = "b8:27:eb:af:a2:33";
   };
 
   ports = {
@@ -263,15 +253,53 @@ rec {
     postgres-alpine = 70;
   };
 
-  oidc-issuer = "${subdomains.vm-app.pocketid}.${domain}";
-  vpn-endpoint = "vpn.${domain}";
+  hardware = {
+    uuids = {
+      vm-app = "532ea825-4ca3-46a2-b15d-ba8af70ba733";
+      vm-monitor = "26a3e5f9-5c4a-4956-8ee4-b680f507d3cc";
+      vm-network = "2b7de5db-e0e6-4f81-b5f4-4efc928ee475";
+      vm-cyber = "008d571b-aa7c-4050-96d8-7185f5ea2a95";
+    };
 
-  hardware-ids = {
-    zigbee-radio = "usb-1a86_USB_Serial-if00-port0";
-    zwave-radio = "usb-Silicon_Labs_CP2102N_USB_to_UART_Bridge_Controller_80edec297b57ed1193f12ef21c62bc44-if00-port0";
-    nvme-ssd-0 = "";
-    nvme-ssd-1 = "nvme-Netac_NVMe_SSD_256GB_AA20251013256G327033";
-    usb-hdd-0 = "ata-WDC_WD30PURX-64AKYY0_WD-WX22DB1D35NH";
-    usb-hdd-1 = "ata-WDC_WD20NMVW-11EDZS7_WD-WXA1A77H0315";
+    gpu = {
+      pci = "1002:1682";
+      controller = "0000:e5:00.0";
+      address = {
+        domain = "0x0000";
+        bus = "0xe5";
+        slot = "0x00";
+        function = "0x0";
+      };
+    };
+
+    storage = {
+      nvme-ssd-0 = "";
+      nvme-ssd-1 = "nvme-Netac_NVMe_SSD_256GB_AA20251013256G327033";
+      usb-hdd-0 = "ata-WDC_WD30PURX-64AKYY0_WD-WX22DB1D35NH";
+      usb-hdd-1 = "ata-WDC_WD20NMVW-11EDZS7_WD-WXA1A77H0315";
+    };
+
+    macs = {
+      arch = "28:0c:50:9c:03:2e";
+      framework = "ac:f2:3c:63:d9:f3";
+      proxmox = "c8:a3:62:bf:0b:b3";
+      vm-network = "bc:24:11:b0:9b:27";
+      vm-app = "bc:24:11:71:f8:9b";
+      vm-monitor = "bc:24:11:93:b1:94";
+      vm-cyber = "bc:24:11:4b:5f:d4";
+      pi = "2c:cf:67:0e:c9:6b";
+      pi-legacy = "b8:27:eb:af:a2:33";
+    };
+
+    radios = {
+      zigbee = "usb-1a86_USB_Serial-if00-port0";
+      zwave = "usb-Silicon_Labs_CP2102N_USB_to_UART_Bridge_Controller_80edec297b57ed1193f12ef21c62bc44-if00-port0";
+    };
+  };
+
+  vlan-ids = {
+    home = 2;
+    infra = 20;
+    dmz = 88;
   };
 }

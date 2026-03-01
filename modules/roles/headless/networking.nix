@@ -27,7 +27,7 @@ in
       firewall = {
         checkReversePath = "loose";
         logRefusedConnections = true;
-        extraInputRules = ''
+        extraInputRules = /* bash */ ''
           iifname "podman*" accept
           iifname "veth*" accept
         '';

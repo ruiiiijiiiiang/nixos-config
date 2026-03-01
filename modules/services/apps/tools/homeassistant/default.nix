@@ -12,7 +12,7 @@ let
     domain
     subdomains
     ports
-    hardware-ids
+    hardware
     ;
   inherit (helpers) mkVirtualHost mkNotifyService;
   cfg = config.custom.services.apps.tools.homeassistant;
@@ -37,7 +37,7 @@ in
         ];
         volumes = [ "/var/lib/home-assistant:/config" ];
         environment.TZ = timeZone;
-        devices = [ "/dev/serial/by-id/${hardware-ids.zigbee-radio}:/dev/zigbee" ];
+        devices = [ "/dev/serial/by-id/${hardware.radios.zigbee}:/dev/zigbee" ];
         labels = {
           "io.containers.autoupdate" = "registry";
         };
@@ -49,7 +49,7 @@ in
         volumes = [ "/var/lib/zwave-js-ui:/usr/src/app/store" ];
         networks = [ "container:homeassistant" ];
         devices = [
-          "/dev/serial/by-id/${hardware-ids.zwave-radio}:/dev/zwave"
+          "/dev/serial/by-id/${hardware.radios.zwave}:/dev/zwave"
         ];
         labels = {
           "io.containers.autoupdate" = "registry";

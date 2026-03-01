@@ -40,7 +40,7 @@ in
     services.nginx.virtualHosts."${fqdn}" = mkVirtualHost {
       inherit fqdn;
       port = ports.website;
-      extraConfig = ''
+      extraConfig = /* nginx */ ''
         allow all;
         limit_req zone=website_req_limit burst=10 nodelay;
         limit_conn website_conn_limit 20;
@@ -48,6 +48,10 @@ in
         keepalive_timeout 10;
         send_timeout 10;
         server_tokens off;
+
+        location ~* \.php$ { return 404; }
+        location ~* ^/wp- { return 404; }
+        location = /xmlrpc.php { return 404; }
       '';
     };
   };
