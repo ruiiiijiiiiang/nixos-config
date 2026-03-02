@@ -1,7 +1,6 @@
 {
   imports = [
     ./networking.nix
-    ./libvirtd.nix
-    ./provisioning.nix
+    ./libvirt.nix
   ];
 }

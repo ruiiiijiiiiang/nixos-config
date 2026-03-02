@@ -1,10 +1,10 @@
 { config, lib, ... }:
 let
-  cfg = config.custom.platforms.minipc.hardware;
+  cfg = config.custom.platforms.minipc.kernel;
 in
 {
-  options.custom.platforms.minipc.hardware = with lib; {
-    enable = mkEnableOption "Minipc hardware config";
+  options.custom.platforms.minipc.kernel = with lib; {
+    enable = mkEnableOption "Minipc kernel config";
   };
 
   config = lib.mkIf cfg.enable {

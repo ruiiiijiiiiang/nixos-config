@@ -7,11 +7,11 @@
 }:
 let
   inherit (consts) home;
-  cfg = config.custom.roles.workstation.laptop.nixos;
+  cfg = config.custom.roles.workstation.development.nixos;
 in
 {
-  options.custom.roles.workstation.laptop.nixos = with lib; {
-    enable = mkEnableOption "Laptop-specific NixOS settings";
+  options.custom.roles.workstation.development.nixos = with lib; {
+    enable = mkEnableOption "Development-specific NixOS settings";
   };
 
   config = lib.mkIf cfg.enable {

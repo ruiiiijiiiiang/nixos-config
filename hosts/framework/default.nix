@@ -23,12 +23,15 @@ in
   };
 
   custom = {
-    platforms.framework.hardware.enable = true;
+    platforms.framework = {
+      disks.enable = true;
+      kernel.enable = true;
+    };
 
     roles.workstation = {
       catppuccin.enable = true;
       packages.enable = true;
-      laptop = {
+      development = {
         flatpak.enable = true;
         nixos.enable = true;
         packages.enable = true;

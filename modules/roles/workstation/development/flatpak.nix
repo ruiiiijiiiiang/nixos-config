@@ -5,14 +5,14 @@
   ...
 }:
 let
-  cfg = config.custom.roles.workstation.laptop.flatpak;
+  cfg = config.custom.roles.workstation.development.flatpak;
 in
 {
   imports = [
     inputs.nix-flatpak.nixosModules.nix-flatpak
   ];
 
-  options.custom.roles.workstation.laptop.flatpak = with lib; {
+  options.custom.roles.workstation.development.flatpak = with lib; {
     enable = mkEnableOption "Custom flatpak service and packages";
   };
 
@@ -38,4 +38,3 @@ in
     };
   };
 }
-

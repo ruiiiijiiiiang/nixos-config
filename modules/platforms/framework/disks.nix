@@ -1,51 +1,17 @@
 {
   config,
   lib,
-  modulesPath,
   ...
 }:
 let
-  cfg = config.custom.platforms.framework.hardware;
+  cfg = config.custom.platforms.framework.disks;
 in
 {
-  options.custom.platforms.framework.hardware = with lib; {
-    enable = mkEnableOption "Framework laptop hardware config";
+  options.custom.platforms.framework.disks = with lib; {
+    enable = mkEnableOption "Framework laptop disks config";
   };
 
-  imports = [
-    (modulesPath + "/installer/scan/not-detected.nix")
-  ];
-
   config = lib.mkIf cfg.enable {
-    boot = {
-      loader.systemd-boot.enable = true;
-      loader.efi.canTouchEfiVariables = true;
-
-      binfmt.emulatedSystems = [ "aarch64-linux" ]; # to build aarch64 kernel for pi
-
-      initrd.availableKernelModules = [
-        "nvme"
-        "xhci_pci"
-        "thunderbolt"
-        "usb_storage"
-        "sd_mod"
-      ];
-      initrd.kernelModules = [
-        "amdgpu"
-        "mt7921e"
-      ];
-      kernelModules = [
-        "mt7921e"
-      ];
-      extraModulePackages = [ ];
-
-      kernelParams = [
-        "quiet"
-        "splash"
-        "resume=/dev/disk/by-label/NIXSWAP"
-      ];
-    };
-
     fileSystems = {
       "/boot" = {
         device = "/dev/disk/by-label/NIXBOOT";
@@ -117,12 +83,5 @@ in
     swapDevices = [
       { device = "/dev/disk/by-label/NIXSWAP"; }
     ];
-
-    hardware = {
-      cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
-      bluetooth.enable = true;
-    };
-
-    services.fwupd.enable = true;
   };
 }

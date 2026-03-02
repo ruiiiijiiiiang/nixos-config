@@ -7,7 +7,18 @@
 }:
 let
   inherit (consts) hardware;
+  inherit (inputs.self) nixosConfigurations;
   cfg = config.custom.platforms.minipc.disks;
+  volumeGroupCfg = config.custom.roles.hypervisor.libvirt.volumeGroup;
+
+  guestLVs =
+    lib.mapAttrs
+      (name: sys: {
+        inherit (sys.config.custom.platforms.vm.disks) size;
+      })
+      lib.filterAttrs
+      (name: sys: sys.config.custom.platforms.vm.libvirt.enable or false)
+      nixosConfigurations;
 in
 {
   imports = [
@@ -21,17 +32,16 @@ in
   config = lib.mkIf cfg.enable {
     disko.devices = {
       disk = {
-        main = {
+        nvme0 = {
           type = "disk";
-          device = "/dev/disk/by-id/${hardware.storage.nvme-ssd-0}";
+          device = "/dev/disk/by-id/${hardware.storage.internal.nvme-ssd-0.id}";
           content = {
             type = "gpt";
             partitions = {
               ESP = {
                 priority = 1;
                 name = "ESP";
-                start = "1M";
-                end = "512M";
+                size = "512M";
                 type = "EF00";
                 content = {
                   type = "filesystem";
@@ -40,91 +50,59 @@ in
                   mountOptions = [ "umask=0077" ];
                 };
               };
-              root = {
+              lvm = lib.mkIf volumeGroupCfg.enable {
                 size = "100%";
                 content = {
-                  type = "btrfs";
-                  extraArgs = [ "-f" ];
-                  subvolumes = {
-                    "/root" = {
-                      mountpoint = "/";
-                      mountOptions = [ "compress=zstd" ];
-                    };
-                    "/nix" = {
-                      mountpoint = "/nix";
-                      mountOptions = [
-                        "compress=zstd"
-                        "noatime"
-                      ];
-                    };
-                    "/vm_images" = {
-                      mountpoint = "/var/lib/libvirt/images";
-                      mountOptions = [
-                        "nodatacow"
-                        "noatime"
-                      ];
-                    };
-                  };
+                  type = "lvm_pv";
+                  vg = volumeGroupCfg.name;
                 };
               };
             };
           };
         };
 
-        storage = {
+        nvme1 = {
           type = "disk";
-          device = "/dev/disk/by-id/${hardware.storage.usb-hdd-0}";
+          device = "/dev/disk/by-id/${hardware.storage.internal.nvme-ssd-1.id}";
           content = {
             type = "gpt";
             partitions = {
-              data = {
+              lvm = lib.mkIf volumeGroupCfg.enable {
                 size = "100%";
                 content = {
-                  type = "btrfs";
-                  extraArgs = [ "-f" ];
-                  subvolumes = {
-                    "/guest_data" = {
-                      mountpoint = "/mnt/storage";
-                      mountOptions = [
-                        "compress=zstd"
-                        "noatime"
-                        "nofail"
-                      ];
-                    };
-                  };
-                };
-              };
-            };
-          };
-        };
-
-        backup = {
-          type = "disk";
-          device = "/dev/disk/by-id/${hardware.storage.usb-hdd-1}";
-          content = {
-            type = "gpt";
-            partitions = {
-              data = {
-                size = "100%";
-                content = {
-                  type = "btrfs";
-                  extraArgs = [ "-f" ];
-                  subvolumes = {
-                    "/backups" = {
-                      mountpoint = "/mnt/backups";
-                      mountOptions = [
-                        "compress=zstd"
-                        "noatime"
-                        "nofail"
-                      ];
-                    };
-                  };
+                  type = "lvm_pv";
+                  vg = volumeGroupCfg.name;
                 };
               };
             };
           };
         };
       };
+
+      lvm_vg = lib.mkIf volumeGroupCfg.enable {
+        ${volumeGroupCfg.name} = {
+          type = "lvm_vg";
+          lvs = {
+            root = {
+              size = "50G";
+              content = {
+                type = "filesystem";
+                format = "ext4";
+                mountpoint = "/";
+              };
+            };
+          }
+          // guestLVs;
+        };
+      };
     };
+
+    fileSystems = lib.mapAttrs' (
+      name: device:
+      lib.nameValuePair device.path {
+        device = device.id;
+        fsType = "ext4";
+      }
+    ) hardware.storage.external;
   };
 }

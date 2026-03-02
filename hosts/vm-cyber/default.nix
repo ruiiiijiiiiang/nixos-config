@@ -4,11 +4,11 @@
 
   custom = {
     platforms.vm = {
-      hardware = {
+      kernel = {
         enable = true;
         workstation = true;
       };
-      disks.enableMain = true;
+      disks.enable = true;
     };
 
     roles = {

@@ -6,11 +6,11 @@
   ...
 }:
 let
-  cfg = config.custom.roles.workstation.laptop.packages;
+  cfg = config.custom.roles.workstation.development.packages;
 in
 {
-  options.custom.roles.workstation.laptop.packages = with lib; {
-    enable = mkEnableOption "Laptop specific packages";
+  options.custom.roles.workstation.development.packages = with lib; {
+    enable = mkEnableOption "Development-specific packages";
   };
 
   config = lib.mkIf cfg.enable {

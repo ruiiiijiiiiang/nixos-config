@@ -1,9 +1,8 @@
 {
   imports = [
     ./cyber
-    ./laptop
+    ./development
     ./catppuccin.nix
     ./packages.nix
   ];
 }
-

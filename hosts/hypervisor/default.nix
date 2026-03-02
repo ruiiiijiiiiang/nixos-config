@@ -12,7 +12,8 @@ in
 
   custom = {
     platforms.minipc = {
-      hardware = true;
+      kernel.enable = true;
+      disks.enable = true;
     };
 
     roles.hypervisor = {
@@ -26,9 +27,13 @@ in
           ;
         vlanId = vlan-ids.infra;
       };
-      provisioning = {
+
+      libvirt = {
         enable = true;
-        inherit lanBridge;
+        volumeGroup = {
+          enable = true;
+          name = "vg-0";
+        };
       };
     };
   };

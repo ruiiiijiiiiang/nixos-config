@@ -7,11 +7,11 @@
 }:
 let
   inherit (consts) username;
-  cfg = config.custom.roles.workstation.laptop.services;
+  cfg = config.custom.roles.workstation.development.services;
 in
 {
-  options.custom.roles.workstation.laptop.services = with lib; {
-    enable = mkEnableOption "Laptop specific services";
+  options.custom.roles.workstation.development.services = with lib; {
+    enable = mkEnableOption "Development-specific services";
   };
 
   config = lib.mkIf cfg.enable {
@@ -29,26 +29,6 @@ in
         };
       };
       desktopManager.plasma6.enable = true;
-
-      blueman.enable = true;
-
-      pipewire = {
-        enable = true;
-        alsa.enable = true;
-        alsa.support32Bit = true;
-        pulse.enable = true;
-        jack.enable = true;
-      };
-
-      fprintd = {
-        enable = true;
-        tod = {
-          enable = true;
-          driver = pkgs.libfprint-2-tod1-goodix;
-        };
-      };
-
-      power-profiles-daemon.enable = true;
     };
 
     security.pam.services = {

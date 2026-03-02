@@ -273,10 +273,26 @@ rec {
     };
 
     storage = {
-      nvme-ssd-0 = "";
-      nvme-ssd-1 = "nvme-Netac_NVMe_SSD_256GB_AA20251013256G327033";
-      usb-hdd-0 = "ata-WDC_WD30PURX-64AKYY0_WD-WX22DB1D35NH";
-      usb-hdd-1 = "ata-WDC_WD20NMVW-11EDZS7_WD-WXA1A77H0315";
+      internal = {
+        nvme-ssd-0 = {
+          id = "";
+        };
+        nvme-ssd-1 = {
+          id = "nvme-Netac_NVMe_SSD_256GB_AA20251013256G327033";
+        };
+      };
+      external = {
+        usb-hdd-0 = {
+          id = "ata-WDC_WD30PURX-64AKYY0_WD-WX22DB1D35NH";
+          path = "/mnt/storage";
+          virtio-tag = "storage_share";
+        };
+        usb-hdd-1 = {
+          id = "ata-WDC_WD20NMVW-11EDZS7_WD-WXA1A77H0315";
+          path = "/mnt/scratch";
+          virtio-tag = "scratch_share";
+        };
+      };
     };
 
     macs = {

@@ -1,71 +1,35 @@
-{
-  config,
-  consts,
-  lib,
-  ...
-}:
+{ consts, ... }:
 let
-  inherit (consts) addresses hardware;
+  inherit (consts) addresses;
 in
 {
   system.stateVersion = "25.11";
   networking.hostName = "vm-app";
 
   custom = {
-    libvirtGuest = {
-      enable = true;
-      config = {
-        memory = {
-          count = 12288;
-          unit = "MiB";
-        };
-        currentMemory = {
-          count = 12288;
-          unit = "MiB";
-        };
-
-        vcpu = {
-          count = 10;
-        };
-
-        devices = {
-          hostdev = lib.mkIf config.custom.libvirtGuest.gpuPassthrough [
-            {
-              mode = "subsystem";
-              type = "pci";
-              managed = true;
-              source = {
-                inherit (hardware.gpu) address;
-              };
-            }
-          ];
-        };
-      };
-      disks = {
-        primary = {
-          size = "200GB";
-        };
-        storage = {
-          enable = true;
-          size = "1000GB";
-        };
-        scratch = {
-          enable = true;
-          size = "1000GB";
-        };
-      };
-      gpuPassthrough = true;
-    };
-
     platforms.vm = {
-      hardware = {
+      kernel.enable = true;
+
+      libvirt = {
         enable = true;
-        inherit (config.custom.libvirtGuest) gpuPassthrough;
+        config = {
+          vcpu = {
+            count = 10;
+          };
+          memory = {
+            count = 12288;
+            unit = "MiB";
+          };
+          currentMemory = {
+            count = 12288;
+            unit = "MiB";
+          };
+        };
       };
+
       disks = {
-        enableMain = true;
-        enableStorage = true;
-        enableScratch = true;
+        enable = true;
+        size = "250GB";
       };
     };
 
@@ -93,8 +57,8 @@ in
         tools = {
           arr.enable = true;
           atuin.enable = true;
+          harmonia = true;
           karakeep.enable = true;
-          harmonia.enable = true;
           microbin.enable = true;
           reitti.enable = true;
           searxng.enable = true;
