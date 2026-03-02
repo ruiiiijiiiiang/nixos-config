@@ -1,0 +1,6 @@
+{
+  imports = [
+    ./harmonia
+    ./cockpit
+  ];
+}

@@ -1,15 +1,15 @@
 { config, lib, ... }:
 let
-  cfg = config.custom.services.networking.geoipupdate;
+  cfg = config.custom.services.apps.location.geoipupdate;
 in
 {
-  options.custom.services.networking.geoipupdate = with lib; {
+  options.custom.services.apps.location.geoipupdate = with lib; {
     enable = mkEnableOption "GeoIP update by Maxmind";
   };
 
   config = lib.mkIf cfg.enable {
     age.secrets = {
-      geoip-key.file = ../../../../secrets/geoip-key.age;
+      geoip-key.file = ../../../../../secrets/geoip-key.age;
     };
 
     services.geoipupdate = {

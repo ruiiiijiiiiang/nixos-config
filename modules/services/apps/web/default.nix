@@ -2,5 +2,6 @@
   imports = [
     ./homepage
     ./website
+    ./yourls
   ];
 }

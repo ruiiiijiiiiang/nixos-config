@@ -3,7 +3,6 @@
     ./cloudflared
     ./dns
     ./dyndns
-    ./geoipupdate
     ./nginx
     ./router
     ./torrent

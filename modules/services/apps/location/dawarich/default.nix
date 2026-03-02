@@ -16,11 +16,11 @@ let
     oidc-issuer
     ;
   inherit (helpers) mkOciUser mkVirtualHost mkNotifyService;
-  cfg = config.custom.services.apps.tools.dawarich;
+  cfg = config.custom.services.apps.location.dawarich;
   fqdn = "${subdomains.${config.networking.hostName}.dawarich}.${domain}";
 in
 {
-  options.custom.services.apps.tools.dawarich = with lib; {
+  options.custom.services.apps.location.dawarich = with lib; {
     enable = mkEnableOption "Dawarich GPS tracking service";
   };
 

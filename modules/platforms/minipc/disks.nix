@@ -9,16 +9,11 @@ let
   inherit (consts) hardware;
   inherit (inputs.self) nixosConfigurations;
   cfg = config.custom.platforms.minipc.disks;
-  volumeGroupCfg = config.custom.roles.hypervisor.libvirt.volumeGroup;
+  libvirtCfg = config.custom.roles.headless.hypervisor.libvirt;
 
-  guestLVs =
-    lib.mapAttrs
-      (name: sys: {
-        inherit (sys.config.custom.platforms.vm.disks) size;
-      })
-      lib.filterAttrs
-      (name: sys: sys.config.custom.platforms.vm.libvirt.enable or false)
-      nixosConfigurations;
+  guestLVs = lib.genAttrs libvirtCfg.guests (guest: {
+    size = nixosConfigurations.${guest}.config.custom.platforms.vm.disks.main.size;
+  });
 in
 {
   imports = [
@@ -34,27 +29,16 @@ in
       disk = {
         nvme0 = {
           type = "disk";
-          device = "/dev/disk/by-id/${hardware.storage.internal.nvme-ssd-0.id}";
+          device = "/dev/disk/by-id/${hardware.storage.internal.nvme-ssd-0}";
           content = {
             type = "gpt";
             partitions = {
-              ESP = {
-                priority = 1;
-                name = "ESP";
-                size = "512M";
-                type = "EF00";
-                content = {
-                  type = "filesystem";
-                  format = "vfat";
-                  mountpoint = "/boot";
-                  mountOptions = [ "umask=0077" ];
-                };
-              };
-              lvm = lib.mkIf volumeGroupCfg.enable {
+              ESP = hardware.partitions.esp;
+              lvm = {
                 size = "100%";
                 content = {
                   type = "lvm_pv";
-                  vg = volumeGroupCfg.name;
+                  vg = libvirtCfg.volumeGroup;
                 };
               };
             };
@@ -63,15 +47,15 @@ in
 
         nvme1 = {
           type = "disk";
-          device = "/dev/disk/by-id/${hardware.storage.internal.nvme-ssd-1.id}";
+          device = "/dev/disk/by-id/${hardware.storage.internal.nvme-ssd-1}";
           content = {
             type = "gpt";
             partitions = {
-              lvm = lib.mkIf volumeGroupCfg.enable {
+              lvm = {
                 size = "100%";
                 content = {
                   type = "lvm_pv";
-                  vg = volumeGroupCfg.name;
+                  vg = libvirtCfg.volumeGroup;
                 };
               };
             };
@@ -79,17 +63,12 @@ in
         };
       };
 
-      lvm_vg = lib.mkIf volumeGroupCfg.enable {
-        ${volumeGroupCfg.name} = {
+      lvm_vg = {
+        ${libvirtCfg.volumeGroup} = {
           type = "lvm_vg";
           lvs = {
-            root = {
+            root = hardware.partitions.root // {
               size = "50G";
-              content = {
-                type = "filesystem";
-                format = "ext4";
-                mountpoint = "/";
-              };
             };
           }
           // guestLVs;
@@ -99,8 +78,8 @@ in
 
     fileSystems = lib.mapAttrs' (
       name: device:
-      lib.nameValuePair device.path {
-        device = device.id;
+      lib.nameValuePair "/mnt/${name}" {
+        inherit device;
         fsType = "ext4";
       }
     ) hardware.storage.external;

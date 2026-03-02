@@ -1,7 +1,8 @@
 {
   imports = [
-    ./authentication
+    ./auth
     ./development
+    ./location
     ./media
     ./office
     ./tools

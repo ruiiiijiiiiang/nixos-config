@@ -1,7 +1,6 @@
 {
   imports = [
     ./headless
-    ./hypervisor
     ./workstation
   ];
 }

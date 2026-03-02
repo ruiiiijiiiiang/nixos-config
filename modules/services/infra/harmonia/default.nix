@@ -16,7 +16,7 @@ let
     oci-uids
     ;
   inherit (helpers) mkVirtualHost;
-  cfg = config.custom.services.apps.tools.harmonia;
+  cfg = config.custom.services.infra.harmonia;
   fqdn = "${subdomains.${config.networking.hostName}.harmonia}.${domain}";
 
   hostsToBuild = [
@@ -49,7 +49,7 @@ let
   '';
 in
 {
-  options.custom.services.apps.tools.harmonia = with lib; {
+  options.custom.services.infra.harmonia = with lib; {
     enable = mkEnableOption "Harmonia nix binary cache";
   };
 

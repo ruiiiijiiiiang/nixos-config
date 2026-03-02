@@ -17,12 +17,10 @@ in
             count = 10;
           };
           memory = {
-            count = 12288;
-            unit = "MiB";
+            count = 12;
           };
           currentMemory = {
-            count = 12288;
-            unit = "MiB";
+            count = 12;
           };
         };
       };
@@ -37,17 +35,23 @@ in
       networking.enable = true;
       security.enable = true;
       services.enable = true;
+      server = {
+        podman.enable = true;
+      };
     };
 
     services = {
       apps = {
-        authentication = {
+        auth = {
           pocketid.enable = true;
           vaultwarden.enable = true;
         };
         development = {
           bytestash.enable = true;
           forgejo.enable = true;
+        };
+        location = {
+          reitti.enable = true;
         };
         office = {
           memos.enable = true;
@@ -57,10 +61,8 @@ in
         tools = {
           arr.enable = true;
           atuin.enable = true;
-          harmonia = true;
           karakeep.enable = true;
           microbin.enable = true;
-          reitti.enable = true;
           searxng.enable = true;
           syncthing = {
             enable = true;
@@ -77,8 +79,11 @@ in
         };
       };
 
+      infra = {
+        harmonia.enable = true;
+      };
+
       networking = {
-        cloudflared.enable = false;
         nginx.enable = true;
         torrent.enable = true;
       };

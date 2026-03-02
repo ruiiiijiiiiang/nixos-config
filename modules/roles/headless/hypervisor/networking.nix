@@ -7,10 +7,10 @@
 }:
 let
   inherit (consts) addresses ports vlan-ids;
-  cfg = config.custom.roles.hypervisor.networking;
+  cfg = config.custom.roles.headless.hypervisor.networking;
 in
 {
-  options.custom.roles.hypervisor.networking = with lib; {
+  options.custom.roles.headless.hypervisor.networking = with lib; {
     enable = mkEnableOption "Hypervisor networking config";
     wanInterface = mkOption {
       type = types.nullOr types.str;

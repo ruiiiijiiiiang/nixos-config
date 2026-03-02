@@ -13,7 +13,7 @@
 
     roles = {
       workstation = {
-        catppuccin.enable = true;
+        # catppuccin.enable = true;
         packages.enable = true;
 
         cyber = {

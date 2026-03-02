@@ -1,18 +1,16 @@
 {
   config,
-  consts,
   inputs,
   lib,
   pkgs,
   ...
 }:
 let
-  inherit (consts) username oci-uids;
   cfg = config.custom.roles.headless.services;
 in
 {
   options.custom.roles.headless.services = with lib; {
-    enable = mkEnableOption "Custom services setup for servers";
+    enable = mkEnableOption "Custom services setup for headless instances";
   };
 
   config = lib.mkIf cfg.enable {
@@ -34,34 +32,6 @@ in
           fi
         }
       '';
-    };
-
-    virtualisation = {
-      oci-containers = {
-        backend = "podman";
-      };
-      podman = {
-        enable = true;
-        dockerCompat = true;
-        dockerSocket.enable = true;
-        autoPrune = {
-          enable = true;
-          dates = "weekly";
-          flags = [ "--all" ];
-        };
-      };
-    };
-
-    users = {
-      users.${username}.extraGroups = [
-        "podman"
-      ];
-      groups.podman.gid = oci-uids.podman;
-    };
-
-    systemd.timers.podman-auto-update = {
-      wantedBy = [ "timers.target" ];
-      enable = true;
     };
 
     services = {

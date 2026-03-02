@@ -6,7 +6,7 @@
   ...
 }:
 let
-  inherit (import ../../../lib/keys.nix) ssh;
+  inherit (import ../../../../lib/keys.nix) ssh;
   inherit (consts) username home;
   cfg = config.custom.roles.workstation.cyber.networking;
 in

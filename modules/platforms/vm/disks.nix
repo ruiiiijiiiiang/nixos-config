@@ -34,26 +34,8 @@ in
         content = {
           type = "gpt";
           partitions = {
-            ESP = {
-              priority = 1;
-              name = "ESP";
-              size = "512M";
-              type = "EF00";
-              content = {
-                type = "filesystem";
-                format = "vfat";
-                mountpoint = "/boot";
-                mountOptions = [ "umask=0077" ];
-              };
-            };
-            root = {
-              size = "100%";
-              content = {
-                type = "filesystem";
-                format = "ext4";
-                mountpoint = "/";
-              };
-            };
+            ESP = hardware.partitions.esp;
+            root = hardware.partitions.root;
           };
         };
       };
@@ -61,8 +43,8 @@ in
 
     fileSystems = lib.mapAttrs' (
       name: device:
-      lib.nameValuePair device.path {
-        device = device.virtio-tag;
+      lib.nameValuePair "/mnt/${name}" {
+        device = name;
         fsType = "virtiofs";
         options = [
           "defaults"

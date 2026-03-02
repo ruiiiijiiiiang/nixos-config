@@ -8,6 +8,9 @@ rec {
   vpn-endpoint = "vpn.${domain}";
 
   subdomains = {
+    hypervisor = {
+      cockpit = "cockpit";
+    };
     pi = {
       homeassistant = "ha";
       pihole = "pi-pihole";
@@ -135,6 +138,7 @@ rec {
     atuin = 8888;
     bentopdf = 8080;
     bytestash = 5000;
+    cockpit = 9091;
     crowdsec = {
       lapi = 8093;
     };
@@ -274,24 +278,12 @@ rec {
 
     storage = {
       internal = {
-        nvme-ssd-0 = {
-          id = "";
-        };
-        nvme-ssd-1 = {
-          id = "nvme-Netac_NVMe_SSD_256GB_AA20251013256G327033";
-        };
+        nvme-ssd-0 = "";
+        nvme-ssd-1 = "nvme-Netac_NVMe_SSD_256GB_AA20251013256G327033";
       };
       external = {
-        usb-hdd-0 = {
-          id = "ata-WDC_WD30PURX-64AKYY0_WD-WX22DB1D35NH";
-          path = "/mnt/storage";
-          virtio-tag = "storage_share";
-        };
-        usb-hdd-1 = {
-          id = "ata-WDC_WD20NMVW-11EDZS7_WD-WXA1A77H0315";
-          path = "/mnt/scratch";
-          virtio-tag = "scratch_share";
-        };
+        usb-hdd-0 = "ata-WDC_WD30PURX-64AKYY0_WD-WX22DB1D35NH";
+        usb-hdd-1 = "ata-WDC_WD20NMVW-11EDZS7_WD-WXA1A77H0315";
       };
     };
 
@@ -310,6 +302,30 @@ rec {
     radios = {
       zigbee = "usb-1a86_USB_Serial-if00-port0";
       zwave = "usb-Silicon_Labs_CP2102N_USB_to_UART_Bridge_Controller_80edec297b57ed1193f12ef21c62bc44-if00-port0";
+    };
+
+    partitions = {
+      esp = {
+        priority = 1;
+        name = "ESP";
+        size = "512M";
+        type = "EF00";
+        content = {
+          type = "filesystem";
+          format = "vfat";
+          mountpoint = "/boot";
+          mountOptions = [ "umask=0077" ];
+        };
+      };
+
+      root = {
+        size = "100%";
+        content = {
+          type = "filesystem";
+          format = "ext4";
+          mountpoint = "/";
+        };
+      };
     };
   };
 

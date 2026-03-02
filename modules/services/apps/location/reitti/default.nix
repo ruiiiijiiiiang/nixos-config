@@ -14,11 +14,11 @@ let
     oidc-issuer
     ;
   inherit (helpers) mkOciUser mkVirtualHost mkNotifyService;
-  cfg = config.custom.services.apps.tools.reitti;
+  cfg = config.custom.services.apps.location.reitti;
   fqdn = "${subdomains.${config.networking.hostName}.reitti}.${domain}";
 in
 {
-  options.custom.services.apps.tools.reitti = with lib; {
+  options.custom.services.apps.location.reitti = with lib; {
     enable = mkEnableOption "Reitti location record";
   };
 

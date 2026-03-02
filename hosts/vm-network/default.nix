@@ -38,16 +38,14 @@ in
             count = 4;
           };
           memory = {
-            count = 4096;
-            unit = "MiB";
+            count = 4;
           };
           currentMemory = {
-            count = 2048;
-            unit = "MiB";
+            count = 2;
           };
           devices =
             let
-              inherit (nixosConfigurations.hypervisor.config.custom.roles.hypervisor) networking;
+              inherit (nixosConfigurations.hypervisor.config.custom.roles.headless.hypervisor) networking;
             in
             {
               interface = [
@@ -94,6 +92,9 @@ in
       };
       security.enable = true;
       services.enable = true;
+      server = {
+        podman.enable = true;
+      };
     };
 
     services = {
@@ -150,7 +151,6 @@ in
         };
         dyndns.enable = true;
         cloudflared.enable = true;
-        geoipupdate.enable = true;
         nginx.enable = true;
       };
 

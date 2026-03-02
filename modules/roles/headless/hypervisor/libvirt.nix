@@ -9,16 +9,14 @@
 let
   inherit (consts) hardware vlan-ids;
   inherit (inputs.self) nixosConfigurations;
-  cfg = config.custom.roles.hypervisor.libvirt;
+  cfg = config.custom.roles.headless.hypervisor.libvirt;
 
-  guestGpuPassthrough =
-    nixosConfiguration: nixosConfiguration.config.custom.platforms.vm.hardware.gpuPassthrough or false;
-
-  gpuPassthroughEnabled = builtins.any guestGpuPassthrough (builtins.attrValues nixosConfigurations);
+  guestHasGpuPassthrough =
+    nixosConfiguration: nixosConfiguration.config.custom.platforms.vm.kernel.gpuPassthrough or false;
 
   gpuPassthroughGuest =
     let
-      matching = lib.filterAttrs (name: guestGpuPassthrough) nixosConfigurations;
+      matching = lib.filterAttrs (name: guestHasGpuPassthrough) nixosConfigurations;
     in
     if matching == { } then null else (lib.head (lib.attrNames matching));
 
@@ -27,16 +25,15 @@ let
       mode = "host-passthrough";
     };
 
-    os = {
-      loader = {
-        readonly = true;
-        type = "pflash";
-        path = "${pkgs.OVMFFull.fd}/FV/OVMF_CODE.fd";
-      };
-      nvram = {
-        template = "${pkgs.OVMFFull.fd}/FV/OVMF_VARS.fd";
-      };
-      boot = [ { dev = "hd"; } ];
+    vcpu = {
+      placement = "static";
+    };
+
+    memory = {
+      unit = "GiB";
+    };
+    currentMemory = {
+      unit = "GiB";
     };
 
     memoryBacking = {
@@ -45,8 +42,6 @@ let
     };
 
     devices = {
-      emulator = "${pkgs.qemu_kvm}/bin/qemu-kvm";
-
       disk = [
         {
           type = "block";
@@ -57,7 +52,7 @@ let
             cache = "none";
             io = "native";
           };
-          source.dev = "/dev/${cfg.volumeGroup.name}/${guest}";
+          source.dev = "/dev/${cfg.volumeGroup}/${guest}";
           target = {
             dev = "vda";
             bus = "virtio";
@@ -69,8 +64,8 @@ let
         type = "mount";
         accessmode = "passthrough";
         driver.type = "virtiofs";
-        source.dir = device.path;
-        target.dir = device.virtio-tag;
+        source.dir = "/mnt/${name}";
+        target.dir = name;
       }) hardware.storage.external;
 
       interface = [
@@ -80,7 +75,7 @@ let
             address = hardware.macs.${guest};
           };
           source = {
-            bridge = config.custom.roles.hypervisor.networking.lanBridge;
+            bridge = config.custom.roles.headless.hypervisor.networking.lanBridge;
           };
           vlan = {
             tag = [ { id = vlan-ids.infra; } ];
@@ -91,11 +86,11 @@ let
         }
       ];
 
-      hostdev = lib.mkIf guestGpuPassthrough nixosConfigurations.${guest} [
+      hostdev = lib.optionals (guestHasGpuPassthrough nixosConfigurations.${guest}) [
         {
           mode = "subsystem";
           type = "pci";
-          managed = true;
+          managed = "yes";
           source = {
             inherit (hardware.gpu) address;
           };
@@ -103,6 +98,15 @@ let
       ];
     };
 
+    channel = [
+      {
+        type = "unix";
+        target = {
+          type = "virtio";
+          name = "org.qemu.guest_agent.0";
+        };
+      }
+    ];
     serial = [
       {
         type = "pty";
@@ -121,15 +125,6 @@ let
         };
       }
     ];
-    channel = [
-      {
-        type = "unix";
-        target = {
-          type = "virtio";
-          name = "org.qemu.guest_agent.0";
-        };
-      }
-    ];
   };
 in
 {
@@ -137,15 +132,17 @@ in
     inputs.NixVirt.nixosModules.default
   ];
 
-  options.custom.roles.hypervisor.libvirt = with lib; {
+  options.custom.roles.headless.hypervisor.libvirt = with lib; {
     enable = mkEnableOption "Hypervisor host";
-    volumeGroup = {
-      enable = mkEnableOption "LVM volume group config";
-      name = mkOption {
-        type = types.str;
-        default = "vg-0";
-        description = "LVM volume group name";
-      };
+    guests = mkOption {
+      type = types.listOf types.str;
+      default = [ ];
+      description = "List of guest VM's";
+    };
+    volumeGroup = mkOption {
+      type = types.str;
+      default = "vg-nvme";
+      description = "LVM volume group name";
     };
   };
 
@@ -161,41 +158,35 @@ in
       libvirtd.qemu = {
         runAsRoot = true;
         swtpm.enable = true;
-        ovmf.enable = true;
       };
 
       libvirt = {
         enable = true;
         connections."qemu:///system" = {
-          domains =
-            map
-              (
-                guest:
-                let
-                  inherit (nixosConfigurations.${guest}) config;
-                in
-                {
-                  active = true;
-                  definition = inputs.nixvirt.lib.domain.writeXML (
-                    lib.foldl' lib.recursiveUpdate { } [
-                      (inputs.nixvirt.lib.domain.templates.linux {
-                        name = guest;
-                        uuid = hardware.uuids.${guest};
-                      })
-                      (mkLibvirtBase guest)
-                      config.custom.platforms.vm.libvirt.config
-                    ]
-                  );
-                }
-              )
-              lib.filterAttrs
-              (hostname: nixosConfiguration: nixosConfiguration.config.custom.platforms.vm.libvirt.enable)
-              nixosConfigurations;
+          domains = map (
+            guest:
+            let
+              inherit (nixosConfigurations.${guest}) config;
+            in
+            {
+              active = true;
+              definition = inputs.NixVirt.lib.domain.writeXML (
+                lib.foldl' lib.recursiveUpdate { } [
+                  (inputs.NixVirt.lib.domain.templates.linux {
+                    name = guest;
+                    uuid = hardware.uuids.${guest};
+                  })
+                  (mkLibvirtBase guest)
+                  config.custom.platforms.vm.libvirt.config
+                ]
+              );
+            }
+          ) cfg.guests;
         };
       };
     };
 
-    boot = lib.mkIf gpuPassthroughEnabled {
+    boot = lib.mkIf (gpuPassthroughGuest != null) {
       kernelParams = [
         "amd_iommu=on"
         "iommu=pt"
@@ -209,7 +200,8 @@ in
       ];
     };
 
-    environment.etc = lib.mkIf gpuPassthroughEnabled {
+    environment.etc = lib.mkIf (gpuPassthroughGuest != null) {
+      # needed to handle AMD GPU reset bug when the guest doesn't shut down correctly
       "libvirt/hooks/qemu" = {
         mode = "0755";
         text = /* bash */ ''

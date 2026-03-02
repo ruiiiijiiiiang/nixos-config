@@ -13,12 +13,10 @@
             count = 4;
           };
           memory = {
-            count = 6144;
-            unit = "MiB";
+            count = 6;
           };
           currentMemory = {
-            count = 4096;
-            unit = "MiB";
+            count = 4;
           };
         };
       };
@@ -33,6 +31,9 @@
       networking.enable = true;
       security.enable = true;
       services.enable = true;
+      server = {
+        podman.enable = true;
+      };
     };
 
     services = {

@@ -13,11 +13,11 @@ let
     ports
     ;
   inherit (helpers) mkVirtualHost mkNotifyService;
-  cfg = config.custom.services.apps.tools.yourls;
+  cfg = config.custom.services.apps.web.yourls;
   fqdn = "${subdomains.${config.networking.hostName}.yourls}.${domain}";
 in
 {
-  options.custom.services.apps.tools.yourls = with lib; {
+  options.custom.services.apps.web.yourls = with lib; {
     enable = mkEnableOption "YOURLS URL shortener";
   };
 

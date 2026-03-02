@@ -4,7 +4,7 @@ let
 in
 {
   options.custom.roles.headless.security = with lib; {
-    enable = mkEnableOption "Custom security setup for servers";
+    enable = mkEnableOption "Custom security setup for headless instances";
   };
 
   config = lib.mkIf cfg.enable {

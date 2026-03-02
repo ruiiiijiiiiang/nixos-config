@@ -8,11 +8,11 @@
 let
   inherit (consts) domain subdomains ports;
   inherit (helpers) mkVirtualHost;
-  cfg = config.custom.services.apps.authentication.pocketid;
+  cfg = config.custom.services.apps.auth.pocketid;
   fqdn = "${subdomains.${config.networking.hostName}.pocketid}.${domain}";
 in
 {
-  options.custom.services.apps.authentication.pocketid = with lib; {
+  options.custom.services.apps.auth.pocketid = with lib; {
     enable = mkEnableOption "PocketID authentication service";
   };
 

@@ -53,7 +53,7 @@ in
           "/dev/kfd:/dev/kfd"
           "/dev/dri:/dev/dri"
         ]
-        ++ lib.optional config.custom.platform.vm.hardware.gpuPassthrough "/dev/dri/renderD128:/dev/dri/renderD128";
+        ++ lib.optional config.custom.platforms.vm.kernel.gpuPassthrough "/dev/dri/renderD128:/dev/dri/renderD128";
         labels = {
           "io.containers.autoupdate" = "registry";
         };
