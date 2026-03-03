@@ -32,6 +32,7 @@ in
       dig
       mtr
       rustscan
+      traceroute
 
       # --- Disk & Filesystem Utilities ---
       tree

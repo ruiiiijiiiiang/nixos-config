@@ -13,9 +13,6 @@
             count = 4;
           };
           memory = {
-            count = 6;
-          };
-          currentMemory = {
             count = 4;
           };
         };
@@ -29,11 +26,9 @@
 
     roles.headless = {
       networking.enable = true;
+      podman.enable = true;
       security.enable = true;
       services.enable = true;
-      server = {
-        podman.enable = true;
-      };
     };
 
     services = {

@@ -36,6 +36,8 @@ in
       ${username}.kwallet.enable = true;
     };
 
+    system.autoUpgrade.enable = true;
+
     xdg.portal = {
       enable = true;
       config.common.default-portal = "kde";

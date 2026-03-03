@@ -8,6 +8,19 @@
         enable = true;
         workstation = true;
       };
+
+      libvirt = {
+        enable = true;
+        config = {
+          vcpu = {
+            count = 4;
+          };
+          memory = {
+            count = 4;
+          };
+        };
+      };
+
       disks.enable = true;
     };
 

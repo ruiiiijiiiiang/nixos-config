@@ -13,6 +13,12 @@ in
     inherit username;
     homeDirectory = home;
     stateVersion = "25.05";
+
+    sessionVariables = {
+      OS = "nixos";
+      EDITOR = "nvim";
+      NH_FLAKE = flakePath;
+    };
   };
 
   programs = {
@@ -25,11 +31,5 @@ in
         dates = "weekly";
       };
     };
-  };
-
-  environment.variables = {
-    OS = "nixos";
-    EDITOR = "nvim";
-    NH_FLAKE = flakePath;
   };
 }

@@ -10,8 +10,6 @@
   ];
   age.identityPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
 
-  system.autoUpgrade.enable = true;
-
   security = {
     protectKernelImage = true;
     apparmor = {

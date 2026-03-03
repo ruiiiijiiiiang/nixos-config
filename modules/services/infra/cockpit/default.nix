@@ -20,7 +20,7 @@ in
   config = lib.mkIf cfg.enable {
     assertions = [
       {
-        assertion = config.custom.roles.headless.hypervisor.libvirt.enable;
+        assertion = config.roles.hypervisor.libvirt.enable;
         message = "Cockpit can only be enabled on the hypervisor";
       }
     ];

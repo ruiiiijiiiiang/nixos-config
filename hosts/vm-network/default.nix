@@ -38,9 +38,6 @@ in
             count = 4;
           };
           memory = {
-            count = 4;
-          };
-          currentMemory = {
             count = 2;
           };
           devices =
@@ -90,11 +87,9 @@ in
           wgInterface
         ];
       };
+      podman.enable = true;
       security.enable = true;
       services.enable = true;
-      server = {
-        podman.enable = true;
-      };
     };
 
     services = {

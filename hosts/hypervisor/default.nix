@@ -17,7 +17,11 @@ in
     };
 
     roles.headless = {
-      networking.enable = true;
+      networking = {
+        enable = true;
+        trustedInterfaces = [ lanInterface ];
+      };
+      podman.enable = true;
       security.enable = true;
       services.enable = true;
 
@@ -51,7 +55,14 @@ in
       infra.cockpit.enable = true;
 
       observability = {
-        beszel.agent.enable = true;
+        beszel.agent = {
+          enable = true;
+          interface = lanInterface;
+        };
+        dockhand.agent = {
+          enable = true;
+          interface = lanInterface;
+        };
         loki.agent = {
           enable = true;
           serverAddress = addresses.infra.hosts.vm-monitor;
@@ -59,12 +70,17 @@ in
         prometheus.exporters = {
           nginx.enable = true;
           node.enable = true;
+          podman.enable = true;
+          interface = lanInterface;
         };
       };
 
       security = {
         fail2ban.enable = true;
-        wazuh.agent.enable = true;
+        wazuh.agent = {
+          enable = true;
+          interface = lanInterface;
+        };
       };
     };
   };

@@ -8,18 +8,18 @@ in
 
   custom = {
     platforms.vm = {
-      kernel.enable = true;
+      kernel = {
+        enable = true;
+        gpuPassthrough = true;
+      };
 
       libvirt = {
         enable = true;
         config = {
           vcpu = {
-            count = 10;
+            count = 8;
           };
           memory = {
-            count = 12;
-          };
-          currentMemory = {
             count = 12;
           };
         };
@@ -27,17 +27,15 @@ in
 
       disks = {
         enable = true;
-        size = "250GB";
+        size = "300GB";
       };
     };
 
     roles.headless = {
       networking.enable = true;
+      podman.enable = true;
       security.enable = true;
       services.enable = true;
-      server = {
-        podman.enable = true;
-      };
     };
 
     services = {

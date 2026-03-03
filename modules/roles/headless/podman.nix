@@ -6,11 +6,11 @@
 }:
 let
   inherit (consts) username oci-uids;
-  cfg = config.custom.roles.headless.server.podman;
+  cfg = config.custom.roles.headless.podman;
 in
 {
-  options.custom.roles.headless.server.podman = with lib; {
-    enable = mkEnableOption "Custom podman for servers";
+  options.custom.roles.headless.podman = with lib; {
+    enable = mkEnableOption "Custom podman for headless instances";
   };
 
   config = lib.mkIf cfg.enable {

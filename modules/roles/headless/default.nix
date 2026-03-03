@@ -1,8 +1,8 @@
 {
   imports = [
     ./hypervisor
-    ./server
     ./networking.nix
+    ./podman.nix
     ./security.nix
     ./services.nix
   ];
