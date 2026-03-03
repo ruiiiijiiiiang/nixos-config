@@ -3,7 +3,6 @@
   consts,
   inputs,
   lib,
-  pkgs,
   ...
 }:
 let
@@ -25,8 +24,6 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    environment.systemPackages = [ pkgs.virtiofsd ];
-
     disko.devices.disk = {
       primary = {
         type = "disk";

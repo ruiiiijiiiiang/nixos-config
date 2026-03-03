@@ -23,10 +23,10 @@ in
 
       initrd = {
         availableKernelModules = [
-          "ata_piix"
-          "uhci_hcd"
           "virtio_pci"
-          "virtio_scsi"
+          "virtio_blk"
+          "virtio_net"
+          "virtio_fs"
           "sd_mod"
           "sr_mod"
         ]
@@ -38,7 +38,6 @@ in
       };
       kernelModules = [ "kvm-amd" ];
       kernelParams = [
-        "rootdelay=5"
         "console=tty1"
         "console=ttyS0"
       ]

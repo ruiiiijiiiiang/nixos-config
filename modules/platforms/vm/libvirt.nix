@@ -1,4 +1,7 @@
-{ lib, ... }:
+{ consts, lib, ... }:
+let
+  inherit (consts) vlan-ids;
+in
 {
   options.custom.platforms.vm.libvirt = with lib; {
     enable = mkEnableOption "Guest VM managed by libvirt";
@@ -11,6 +14,11 @@
       type = types.int;
       default = 4;
       description = "Amount of memory (unit in GiB)";
+    };
+    vlanId = mkOption {
+      type = types.int;
+      default = vlan-ids.infra;
+      description = "VLAN ID for the guest interface";
     };
     autoStart = mkEnableOption "Start the VM automatically";
     extraConfigs = mkOption {

@@ -87,7 +87,7 @@ in
     fileSystems = lib.mapAttrs' (
       name: device:
       lib.nameValuePair "/mnt/${name}" {
-        inherit device;
+        device = "/dev/disk/by-id/${device}";
         fsType = "ext4";
       }
     ) hardware.storage.external;

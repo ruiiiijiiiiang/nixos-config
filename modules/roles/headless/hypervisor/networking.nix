@@ -6,7 +6,7 @@
   ...
 }:
 let
-  inherit (consts) addresses ports vlan-ids;
+  inherit (consts) addresses vlan-ids;
   cfg = config.custom.roles.headless.hypervisor.networking;
 in
 {
@@ -93,12 +93,6 @@ in
       defaultGateway = {
         address = addresses.infra.hosts.vm-network;
         interface = "${cfg.lanBridge}.${toString cfg.vlanId}";
-      };
-
-      firewall = {
-        interfaces."${cfg.lanInterface}".allowedTCPPorts = [
-          ports.ssh
-        ];
       };
     };
   };

@@ -13,7 +13,11 @@ in
         systemd-boot.enable = true;
         efi.canTouchEfiVariables = true;
       };
-      kernelModules = [ "kvm-amd" ];
+      kernelModules = [
+        "kvm-amd"
+        "vhost_net"
+        "vhost_vsock"
+      ];
     };
     hardware.cpu.amd.updateMicrocode = true;
   };

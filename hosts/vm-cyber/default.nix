@@ -1,3 +1,7 @@
+{ consts, ... }:
+let
+  inherit (consts) vlan-ids;
+in
 {
   system.stateVersion = "25.11";
   networking.hostName = "vm-cyber";
@@ -13,6 +17,7 @@
         enable = true;
         cpu = 4;
         memory = 4;
+        vlanId = vlan-ids.dmz;
       };
 
       disks.enable = true;
@@ -20,7 +25,7 @@
 
     roles = {
       workstation = {
-        # catppuccin.enable = true;
+        catppuccin.enable = true;
         packages.enable = true;
 
         cyber = {

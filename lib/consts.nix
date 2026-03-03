@@ -272,18 +272,12 @@ rec {
 
     gpu = {
       pci = "1002:1682";
-      controller = "0000:e5:00.0";
-      address = {
-        domain = 0;
-        bus = 229;
-        slot = 0;
-        function = 0;
-      };
+      address = "0000:e5:00.0";
     };
 
     storage = {
       internal = {
-        nvme-ssd-0 = "";
+        nvme-ssd-0 = ""; # TODO: get device id
         nvme-ssd-1 = "nvme-Netac_NVMe_SSD_256GB_AA20251013256G327033";
       };
       external = {

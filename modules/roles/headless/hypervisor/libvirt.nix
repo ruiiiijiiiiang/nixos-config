@@ -1,13 +1,15 @@
 {
   config,
   consts,
-  lib,
+  helpers,
   inputs,
+  lib,
   pkgs,
   ...
 }:
 let
-  inherit (consts) hardware vlan-ids;
+  inherit (consts) hardware;
+  inherit (helpers) parsePciAddress;
   inherit (inputs.self) nixosConfigurations;
   cfg = config.custom.roles.headless.hypervisor.libvirt;
 
@@ -80,7 +82,7 @@ let
               bridge = config.custom.roles.headless.hypervisor.networking.lanBridge;
             };
             vlan = {
-              tag = [ { id = vlan-ids.infra; } ];
+              tag = [ { id = libvirtCfg.vlanId; } ];
             };
             model = {
               type = "virtio";
@@ -94,39 +96,71 @@ let
             type = "pci";
             managed = true;
             source = {
-              inherit (hardware.gpu) address;
+              address = parsePciAddress hardware.gpu.address;
+            };
+          }
+        ];
+
+        rng = [
+          {
+            model = "virtio";
+            backend = {
+              model = "random";
+              source = "/dev/urandom";
+            };
+          }
+        ];
+
+        channel = [
+          {
+            type = "unix";
+            target = {
+              type = "virtio";
+              name = "org.qemu.guest_agent.0";
+            };
+          }
+        ];
+        serial = [
+          {
+            type = "pty";
+            target = {
+              type = "isa-serial";
+              port = 0;
+            };
+          }
+        ];
+        console = [
+          {
+            type = "pty";
+            target = {
+              type = "serial";
+              port = 0;
             };
           }
         ];
       };
 
-      channel = [
-        {
-          type = "unix";
-          target = {
-            type = "virtio";
-            name = "org.qemu.guest_agent.0";
-          };
-        }
-      ];
-      serial = [
-        {
-          type = "pty";
-          target = {
-            type = "isa-serial";
-            port = 0;
-          };
-        }
-      ];
-      console = [
-        {
-          type = "pty";
-          target = {
-            type = "serial";
-            port = 0;
-          };
-        }
-      ];
+      clock = {
+        offset = "utc";
+        timer = [
+          {
+            name = "rtc";
+            tickpolicy = "catchup";
+          }
+          {
+            name = "pit";
+            tickpolicy = "delay";
+          }
+          {
+            name = "hpet";
+            present = false;
+          }
+          {
+            name = "kvmclock";
+            present = true;
+          }
+        ];
+      };
     };
 in
 {
@@ -149,6 +183,7 @@ in
       pciutils
       usbutils
       virt-manager
+      virtiofsd
     ];
 
     virtualisation = {
@@ -192,12 +227,15 @@ in
       kernelParams = [
         "amd_iommu=on"
         "iommu=pt"
+        "vfio"
+        "vfio_pci"
         "vfio-pci.ids=${hardware.gpu.pci}"
+        "vfio_iommu_type1"
         "video=efifb:off"
       ];
       initrd.kernelModules = [
-        "vfio_pci"
         "vfio"
+        "vfio_pci"
         "vfio_iommu_type1"
       ];
     };
@@ -206,27 +244,25 @@ in
       # needed to handle AMD GPU reset bug when the guest doesn't shut down correctly
       "libvirt/hooks/qemu" = {
         mode = "0755";
-        text = /* bash */ ''
-          #!/run/current-system/sw/bin/bash
-
+        source = pkgs.writeShellScript "qemu-hook" /* bash */ ''
           GUEST_NAME="$1"
           OPERATION="$2"
           SUB_OPERATION="$3"
 
-          GPU_CONTROLLER="${hardware.gpu.controller}"
+          GPU_PCI="${hardware.gpu.address}"
           TARGET_VM="${gpuPassthroughGuest}"
 
           if [ "$GUEST_NAME" == "$TARGET_VM" ]; then
             if [ "$OPERATION" == "release" ]; then
-              if [ -e "/sys/bus/pci/devices/$GPU_CONTROLLER/remove" ]; then
-                echo "libvirt-qemu-hook: Removing AMD APU $GPU_CONTROLLER from bus..." | systemd-cat -t libvirt-qemu-hook
-                echo 1 > "/sys/bus/pci/devices/$GPU_CONTROLLER/remove"
-                sleep 1
+              if [ -e "/sys/bus/pci/devices/$GPU_PCI/remove" ]; then
+                echo "libvirt-qemu-hook: Removing AMD APU $GPU_PCI from bus..." | ${pkgs.systemd}/bin/systemd-cat -t libvirt-qemu-hook
+                echo 1 > "/sys/bus/pci/devices/$GPU_PCI/remove"
+                ${pkgs.coreutils}/bin/sleep 1
                 echo 1 > /sys/bus/pci/rescan
-                sleep 1
-                echo "libvirt-qemu-hook: PCIe rescan complete for $TARGET_VM." | systemd-cat -t libvirt-qemu-hook
+                ${pkgs.coreutils}/bin/sleep 1
+                echo "libvirt-qemu-hook: PCIe rescan complete for $TARGET_VM." | ${pkgs.systemd}/bin/systemd-cat -t libvirt-qemu-hook
               else
-                echo "libvirt-qemu-hook: Device $GPU_CONTROLLER not found on bus, skipping reset." | systemd-cat -t libvirt-qemu-hook
+                echo "libvirt-qemu-hook: Device $GPU_PCI not found on bus, skipping reset." | ${pkgs.systemd}/bin/systemd-cat -t libvirt-qemu-hook
               fi
             fi
           fi

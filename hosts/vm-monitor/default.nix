@@ -1,3 +1,7 @@
+{ consts, ... }:
+let
+  inherit (consts) vlan-ids;
+in
 {
   system.stateVersion = "25.11";
   networking.hostName = "vm-monitor";
@@ -10,6 +14,7 @@
         enable = true;
         cpu = 4;
         memory = 4;
+        vlanId = vlan-ids.infra;
         autoStart = true;
       };
 
@@ -45,7 +50,6 @@
         prometheus = {
           server.enable = true;
           exporters = {
-            # crowdsec.enable = true;
             nginx.enable = true;
             node.enable = true;
             podman.enable = true;

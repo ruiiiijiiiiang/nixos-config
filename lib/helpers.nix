@@ -128,6 +128,21 @@ in
       };
     };
 
+  parsePciAddress =
+    addrStr:
+    let
+      parts = builtins.match "([0-9a-fA-F]+):([0-9a-fA-F]+):([0-9a-fA-F]+)\\.([0-9a-fA-F]+)" addrStr;
+    in
+    if parts == null then
+      builtins.throw "Invalid PCI address: ${addrStr}. Expected format DDDD:BB:SS.F"
+    else
+      {
+        domain = lib.fromHexString (builtins.elemAt parts 0);
+        bus = lib.fromHexString (builtins.elemAt parts 1);
+        slot = lib.fromHexString (builtins.elemAt parts 2);
+        function = lib.fromHexString (builtins.elemAt parts 3);
+      };
+
   linkConfig =
     {
       name,
