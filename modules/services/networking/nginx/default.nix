@@ -48,9 +48,9 @@ in
         appendHttpConfig = ''
           allow ${addresses.localhost};
           allow ${addresses.localhost-v6};
-          allow 10.0.0.0/8;
-          allow 172.16.0.0/12;
-          allow 192.168.0.0/16;
+          allow ${addresses.private-blocks.class-a};
+          allow ${addresses.private-blocks.class-b};
+          allow ${addresses.private-blocks.class-c};
           deny all;
 
           ${lib.optionalString config.custom.services.observability.prometheus.exporters.nginx.enable ''

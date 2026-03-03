@@ -42,7 +42,7 @@ in
     };
 
     fileSystems = lib.mapAttrs' (
-      name: device:
+      name: _:
       lib.nameValuePair "/mnt/${name}" {
         device = name;
         fsType = "virtiofs";

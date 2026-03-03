@@ -16,7 +16,6 @@ in
 
   config = lib.mkIf cfg.enable {
     boot = {
-      tmp.useTmpfs = true;
       loader = {
         systemd-boot.enable = true;
         efi.canTouchEfiVariables = true;
@@ -35,7 +34,7 @@ in
         ++ lib.optionals cfg.workstation [ "virtio_gpu" ];
 
         kernelModules =
-          (lib.optionals cfg.gpuPassthrough [ "amdgpu" ]) ++ (lib.optionals cfg.workstation [ "virtio-gpu" ]);
+          (lib.optionals cfg.gpuPassthrough [ "amdgpu" ]) ++ (lib.optionals cfg.workstation [ "virtio_gpu" ]);
       };
       kernelModules = [ "kvm-amd" ];
       kernelParams = [
@@ -48,6 +47,7 @@ in
         "amdgpu.gpu_recovery=1"
         "iommu=pt"
         "pci=realloc"
+        "kvm.ignore_msrs=1"
       ];
     };
 

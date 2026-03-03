@@ -5,7 +5,7 @@
   ...
 }:
 let
-  inherit (consts) username oci-uids;
+  inherit (consts) username addresses oci-uids;
   cfg = config.custom.roles.headless.podman;
 in
 {
@@ -15,6 +15,13 @@ in
 
   config = lib.mkIf cfg.enable {
     virtualisation = {
+      containers.containersConf.settings = {
+        containers = {
+          dns_servers = [
+            addresses.infra.vip.dns
+          ];
+        };
+      };
       oci-containers = {
         backend = "podman";
       };
@@ -26,6 +33,9 @@ in
           enable = true;
           dates = "weekly";
           flags = [ "--all" ];
+        };
+        defaultNetwork.settings = {
+          dns_enable = true;
         };
       };
     };

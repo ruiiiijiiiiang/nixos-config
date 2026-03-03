@@ -26,6 +26,5 @@ in
       domains = [ vpn-endpoint ];
       proxied = false;
     };
-
   };
 }

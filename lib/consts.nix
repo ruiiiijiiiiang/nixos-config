@@ -69,6 +69,11 @@ rec {
     any = "0.0.0.0";
     localhost = "127.0.0.1";
     localhost-v6 = "::1";
+    private-blocks = {
+      class-a = "10.0.0.0/8";
+      class-b = "172.16.0.0/12";
+      class-c = "192.168.0.0/16";
+    };
     home = {
       network = "192.168.2.0/24";
       dhcp-min = "192.168.2.50";
@@ -269,10 +274,10 @@ rec {
       pci = "1002:1682";
       controller = "0000:e5:00.0";
       address = {
-        domain = "0x0000";
-        bus = "0xe5";
-        slot = "0x00";
-        function = "0x0";
+        domain = 0;
+        bus = 229;
+        slot = 0;
+        function = 0;
       };
     };
 

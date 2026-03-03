@@ -6,11 +6,14 @@ in
   boot = {
     initrd.allowMissingModules = true;
     kernelPackages = mkDefault pkgs.linuxPackages_latest;
-    tmp.cleanOnBoot = true;
+    tmp = {
+      useTmpfs = mkDefault true;
+      cleanOnBoot = mkDefault true;
+    };
   };
 
   zramSwap.enable = true;
   nixpkgs.hostPlatform = mkDefault "x86_64-linux";
 
-  services.fstrim.enable = true;
+  services.fstrim.enable = mkDefault true;
 }

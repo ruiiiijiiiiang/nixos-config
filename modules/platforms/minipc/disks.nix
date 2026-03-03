@@ -9,11 +9,14 @@ let
   inherit (consts) hardware;
   inherit (inputs.self) nixosConfigurations;
   cfg = config.custom.platforms.minipc.disks;
-  libvirtCfg = config.custom.roles.headless.hypervisor.libvirt;
 
-  guestLVs = lib.genAttrs libvirtCfg.guests (guest: {
-    size = nixosConfigurations.${guest}.config.custom.platforms.vm.disks.main.size;
-  });
+  guestLVs =
+    let
+      libvirtCfg = config.custom.roles.headless.hypervisor.libvirt;
+    in
+    lib.genAttrs libvirtCfg.guests (guest: {
+      size = nixosConfigurations.${guest}.config.custom.platforms.vm.disks.size;
+    });
 in
 {
   imports = [
@@ -22,6 +25,11 @@ in
 
   options.custom.platforms.minipc.disks = with lib; {
     enable = mkEnableOption "Minipc disks config";
+    volumeGroup = mkOption {
+      type = types.str;
+      default = "vg-nvme";
+      description = "LVM volume group name";
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -38,7 +46,7 @@ in
                 size = "100%";
                 content = {
                   type = "lvm_pv";
-                  vg = libvirtCfg.volumeGroup;
+                  vg = cfg.volumeGroup;
                 };
               };
             };
@@ -55,7 +63,7 @@ in
                 size = "100%";
                 content = {
                   type = "lvm_pv";
-                  vg = libvirtCfg.volumeGroup;
+                  vg = cfg.volumeGroup;
                 };
               };
             };
@@ -64,7 +72,7 @@ in
       };
 
       lvm_vg = {
-        ${libvirtCfg.volumeGroup} = {
+        ${cfg.volumeGroup} = {
           type = "lvm_vg";
           lvs = {
             root = hardware.partitions.root // {

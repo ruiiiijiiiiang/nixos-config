@@ -11,121 +11,123 @@ let
   inherit (inputs.self) nixosConfigurations;
   cfg = config.custom.roles.headless.hypervisor.libvirt;
 
-  guestHasGpuPassthrough =
+  hasGpuPassthrough =
     nixosConfiguration: nixosConfiguration.config.custom.platforms.vm.kernel.gpuPassthrough or false;
 
   gpuPassthroughGuest =
     let
-      matching = lib.filterAttrs (name: guestHasGpuPassthrough) nixosConfigurations;
+      guestConfigs = lib.filterAttrs (name: _: lib.elem name cfg.guests) nixosConfigurations;
+      matching = lib.filterAttrs (name: hasGpuPassthrough) guestConfigs;
     in
     if matching == { } then null else (lib.head (lib.attrNames matching));
 
-  mkLibvirtBase = guest: {
-    cpu = {
-      mode = "host-passthrough";
-    };
+  mkLibvirtBase =
+    { guest, libvirtCfg }:
+    {
+      cpu = {
+        mode = "host-passthrough";
+      };
 
-    vcpu = {
-      placement = "static";
-    };
+      vcpu = {
+        placement = "static";
+        count = libvirtCfg.cpu;
+      };
 
-    memory = {
-      unit = "GiB";
-    };
-    currentMemory = {
-      unit = "GiB";
-    };
+      memory = {
+        count = libvirtCfg.memory;
+        unit = "GiB";
+      };
 
-    memoryBacking = {
-      source.type = "memfd";
-      access.mode = "shared";
-    };
+      memoryBacking = {
+        source.type = "memfd";
+        access.mode = "shared";
+      };
 
-    devices = {
-      disk = [
+      devices = {
+        disk = [
+          {
+            type = "block";
+            device = "disk";
+            driver = {
+              name = "qemu";
+              type = "raw";
+              cache = "none";
+              io = "native";
+            };
+            source.dev = "/dev/${config.custom.platforms.minipc.disks.volumeGroup}/${guest}";
+            target = {
+              dev = "vda";
+              bus = "virtio";
+            };
+          }
+        ];
+
+        filesystem = lib.mapAttrsToList (name: _: {
+          type = "mount";
+          accessmode = "passthrough";
+          driver.type = "virtiofs";
+          source.dir = "/mnt/${name}";
+          target.dir = name;
+        }) hardware.storage.external;
+
+        interface = [
+          {
+            type = "bridge";
+            mac = {
+              address = hardware.macs.${guest};
+            };
+            source = {
+              bridge = config.custom.roles.headless.hypervisor.networking.lanBridge;
+            };
+            vlan = {
+              tag = [ { id = vlan-ids.infra; } ];
+            };
+            model = {
+              type = "virtio";
+            };
+          }
+        ];
+
+        hostdev = lib.optionals (hasGpuPassthrough nixosConfigurations.${guest}) [
+          {
+            mode = "subsystem";
+            type = "pci";
+            managed = true;
+            source = {
+              inherit (hardware.gpu) address;
+            };
+          }
+        ];
+      };
+
+      channel = [
         {
-          type = "block";
-          device = "disk";
-          driver = {
-            name = "qemu";
-            type = "raw";
-            cache = "none";
-            io = "native";
-          };
-          source.dev = "/dev/${cfg.volumeGroup}/${guest}";
+          type = "unix";
           target = {
-            dev = "vda";
-            bus = "virtio";
-          };
-        }
-      ];
-
-      filesystem = lib.mapAttrsToList (name: device: {
-        type = "mount";
-        accessmode = "passthrough";
-        driver.type = "virtiofs";
-        source.dir = "/mnt/${name}";
-        target.dir = name;
-      }) hardware.storage.external;
-
-      interface = [
-        {
-          type = "bridge";
-          mac = {
-            address = hardware.macs.${guest};
-          };
-          source = {
-            bridge = config.custom.roles.headless.hypervisor.networking.lanBridge;
-          };
-          vlan = {
-            tag = [ { id = vlan-ids.infra; } ];
-          };
-          model = {
             type = "virtio";
+            name = "org.qemu.guest_agent.0";
           };
         }
       ];
-
-      hostdev = lib.optionals (guestHasGpuPassthrough nixosConfigurations.${guest}) [
+      serial = [
         {
-          mode = "subsystem";
-          type = "pci";
-          managed = "yes";
-          source = {
-            inherit (hardware.gpu) address;
+          type = "pty";
+          target = {
+            type = "isa-serial";
+            port = 0;
+          };
+        }
+      ];
+      console = [
+        {
+          type = "pty";
+          target = {
+            type = "serial";
+            port = 0;
           };
         }
       ];
     };
-
-    channel = [
-      {
-        type = "unix";
-        target = {
-          type = "virtio";
-          name = "org.qemu.guest_agent.0";
-        };
-      }
-    ];
-    serial = [
-      {
-        type = "pty";
-        target = {
-          type = "isa-serial";
-          port = 0;
-        };
-      }
-    ];
-    console = [
-      {
-        type = "pty";
-        target = {
-          type = "serial";
-          port = 0;
-        };
-      }
-    ];
-  };
 in
 {
   imports = [
@@ -138,11 +140,6 @@ in
       type = types.listOf types.str;
       default = [ ];
       description = "List of guest VM's";
-    };
-    volumeGroup = mkOption {
-      type = types.str;
-      default = "vg-nvme";
-      description = "LVM volume group name";
     };
   };
 
@@ -158,6 +155,10 @@ in
       libvirtd.qemu = {
         runAsRoot = true;
         swtpm.enable = true;
+        verbatimConfig = ''
+          user = "root"
+          group = "root"
+        '';
       };
 
       libvirt = {
@@ -167,17 +168,18 @@ in
             guest:
             let
               inherit (nixosConfigurations.${guest}) config;
+              libvirtCfg = config.custom.platforms.vm.libvirt;
             in
             {
-              active = true;
+              active = libvirtCfg.autoStart;
               definition = inputs.NixVirt.lib.domain.writeXML (
                 lib.foldl' lib.recursiveUpdate { } [
                   (inputs.NixVirt.lib.domain.templates.linux {
                     name = guest;
                     uuid = hardware.uuids.${guest};
                   })
-                  (mkLibvirtBase guest)
-                  config.custom.platforms.vm.libvirt.config
+                  (mkLibvirtBase { inherit guest libvirtCfg; })
+                  libvirtCfg.extraConfigs
                 ]
               );
             }

@@ -10,10 +10,12 @@ in
     publicKeys = ssh.vm-app;
     armor = true;
   };
+  # TODO: regen
   "cloudflare-token.age" = {
     publicKeys = ssh.pi ++ ssh.vm-network ++ ssh.vm-app ++ ssh.vm-monitor;
     armor = true;
   };
+  # TODO: regen
   "cloudflare-dns-token.age" = {
     publicKeys = ssh.pi ++ ssh.vm-network ++ ssh.vm-app ++ ssh.vm-monitor;
     armor = true;
@@ -26,10 +28,12 @@ in
     publicKeys = ssh.vm-app;
     armor = true;
   };
+  # TODO: regen
   "dockhand/agent-crt.age" = {
     publicKeys = ssh.pi ++ ssh.vm-network ++ ssh.vm-app ++ ssh.vm-monitor;
     armor = true;
   };
+  # TODO: regen
   "dockhand/agent-key.age" = {
     publicKeys = ssh.pi ++ ssh.vm-network ++ ssh.vm-app ++ ssh.vm-monitor;
     armor = true;

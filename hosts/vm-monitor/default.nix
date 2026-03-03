@@ -8,14 +8,9 @@
 
       libvirt = {
         enable = true;
-        config = {
-          vcpu = {
-            count = 4;
-          };
-          memory = {
-            count = 4;
-          };
-        };
+        cpu = 4;
+        memory = 4;
+        autoStart = true;
       };
 
       disks = {

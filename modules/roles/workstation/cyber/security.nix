@@ -63,8 +63,6 @@ in
         "net.core.somaxconn" = 65535; # Maximize queue for incoming connections (C2/payload listeners)
         "net.ipv4.tcp_max_syn_backlog" = 65536; # Maximize queue for half-open inbound connections
       };
-
-      tmp.useTmpfs = true;
     };
 
     security = {

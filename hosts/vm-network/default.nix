@@ -33,13 +33,10 @@ in
 
       libvirt = {
         enable = true;
-        config = {
-          vcpu = {
-            count = 4;
-          };
-          memory = {
-            count = 2;
-          };
+        cpu = 4;
+        memory = 2;
+        autoStart = true;
+        extraConfigs = {
           devices =
             let
               inherit (nixosConfigurations.hypervisor.config.custom.roles.headless.hypervisor) networking;

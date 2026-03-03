@@ -13,13 +13,18 @@ in
   custom = {
     platforms.minipc = {
       kernel.enable = true;
-      disks.enable = true;
+      disks = {
+        enable = true;
+        volumeGroup = "vg-nvme";
+      };
     };
 
     roles.headless = {
       networking = {
         enable = true;
-        trustedInterfaces = [ lanInterface ];
+        trustedInterfaces = [
+          "${lanBridge}.${toString vlan-ids.infra}"
+        ];
       };
       podman.enable = true;
       security.enable = true;
@@ -43,8 +48,8 @@ in
             "vm-network"
             "vm-app"
             "vm-monitor"
+            "vm-cyber"
           ];
-          volumeGroup = "vg-nvme";
         };
       };
     };
@@ -57,11 +62,11 @@ in
       observability = {
         beszel.agent = {
           enable = true;
-          interface = lanInterface;
+          interface = "${lanBridge}.${toString vlan-ids.infra}";
         };
         dockhand.agent = {
           enable = true;
-          interface = lanInterface;
+          interface = "${lanBridge}.${toString vlan-ids.infra}";
         };
         loki.agent = {
           enable = true;
@@ -71,7 +76,7 @@ in
           nginx.enable = true;
           node.enable = true;
           podman.enable = true;
-          interface = lanInterface;
+          interface = "${lanBridge}.${toString vlan-ids.infra}";
         };
       };
 
@@ -79,7 +84,7 @@ in
         fail2ban.enable = true;
         wazuh.agent = {
           enable = true;
-          interface = lanInterface;
+          interface = "${lanBridge}.${toString vlan-ids.infra}";
         };
       };
     };

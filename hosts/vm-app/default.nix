@@ -15,14 +15,9 @@ in
 
       libvirt = {
         enable = true;
-        config = {
-          vcpu = {
-            count = 8;
-          };
-          memory = {
-            count = 12;
-          };
-        };
+        cpu = 8;
+        memory = 12;
+        autoStart = true;
       };
 
       disks = {
