@@ -14,11 +14,11 @@ let
     oci-uids
     ;
   inherit (helpers) mkOciUser mkVirtualHost;
-  cfg = config.custom.services.apps.tools.searxng;
+  cfg = config.custom.services.apps.web.searxng;
   fqdn = "${subdomains.${config.networking.hostName}.searxng}.${domain}";
 in
 {
-  options.custom.services.apps.tools.searxng = with lib; {
+  options.custom.services.apps.web.searxng = with lib; {
     enable = mkEnableOption "Enable SearXNG";
   };
 

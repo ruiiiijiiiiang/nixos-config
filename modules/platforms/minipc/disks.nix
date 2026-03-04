@@ -11,10 +11,9 @@ let
   cfg = config.custom.platforms.minipc.disks;
   libvirtCfg = config.custom.roles.headless.hypervisor.libvirt;
 
-  guestLVs =
-    lib.genAttrs libvirtCfg.guests (guest: {
-      inherit (nixosConfigurations.${guest}.config.custom.platforms.vm.disks) size;
-    });
+  guestLVs = lib.genAttrs libvirtCfg.guests (guest: {
+    size = "${toString nixosConfigurations.${guest}.config.custom.platforms.vm.disks.size}GB";
+  });
 in
 {
   imports = [

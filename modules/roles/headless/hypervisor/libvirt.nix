@@ -26,14 +26,10 @@ let
   mkLibvirtBase =
     { guest, libvirtCfg }:
     {
-      os.firmware = "efi";
-
       cpu.mode = "host-passthrough";
+      vcpu.placement = "static";
 
-      vcpu = {
-        placement = "static";
-        count = libvirtCfg.cpu;
-      };
+      os.firmware = "efi";
 
       memoryBacking = {
         source.type = "memfd";
@@ -229,7 +225,9 @@ in
                   (inputs.NixVirt.lib.domain.templates.linux {
                     name = guest;
                     uuid = hardware.uuids.${guest};
-                    inherit (libvirtCfg) memory;
+                    vcpu.count = libvirtCfg.cpu;
+                    memory.count = libvirtCfg.memory;
+                    virtio_video = config.custom.platforms.vm.kernel.workstation or false;
                   })
                   (mkLibvirtBase { inherit guest libvirtCfg; })
                   libvirtCfg.extraConfigs

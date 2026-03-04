@@ -17,9 +17,9 @@ in
   options.custom.platforms.vm.disks = with lib; {
     enable = mkEnableOption "Enable VM disk layout";
     size = mkOption {
-      type = types.str;
-      default = "50GB";
-      description = "Primary disk size for the guest VM.";
+      type = types.int;
+      default = 50;
+      description = "Primary disk size for the guest VM in GB.";
     };
   };
 
@@ -47,6 +47,7 @@ in
           "defaults"
           "nofail"
           "_netdev"
+          "cache=none"
         ];
       }
     ) hardware.storage.external;

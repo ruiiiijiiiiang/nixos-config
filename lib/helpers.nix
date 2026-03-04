@@ -60,7 +60,7 @@ in
         homepage = config.custom.services.apps.web.homepage.enable;
         immich = config.custom.services.apps.media.immich.enable;
         jellyfin = config.custom.services.apps.media.jellyfin.enable;
-        karakeep = config.custom.services.apps.tools.karakeep.enable;
+        karakeep = config.custom.services.apps.web.karakeep.enable;
         memos = config.custom.services.apps.office.memos.enable;
         microbin = config.custom.services.apps.tools.microbin.enable;
         myspeed = config.custom.services.observability.myspeed.enable;
@@ -77,7 +77,7 @@ in
         qbittorrent = config.custom.services.networking.torrent.enable;
         reitti = config.custom.services.apps.location.reitti.enable;
         scanopy = config.custom.services.observability.scanopy.server.enable;
-        searxng = config.custom.services.apps.tools.searxng.enable;
+        searxng = config.custom.services.apps.web.searxng.enable;
         stirlingpdf = config.custom.services.apps.office.stirlingpdf.enable;
         syncthing = config.custom.services.apps.tools.syncthing.enable;
         vaultwarden = config.custom.services.apps.auth.vaultwarden.enable;

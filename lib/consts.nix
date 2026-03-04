@@ -296,6 +296,7 @@ rec {
       vm-cyber = "bc:24:11:4b:5f:d4";
       pi = "2c:cf:67:0e:c9:6b";
       pi-legacy = "b8:27:eb:af:a2:33";
+      wan = "bc:24:11:97:f8:42";
     };
 
     radios = {

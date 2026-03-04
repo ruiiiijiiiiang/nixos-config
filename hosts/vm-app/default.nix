@@ -23,7 +23,7 @@ in
 
       disks = {
         enable = true;
-        size = "300GB";
+        size = 300;
       };
     };
 
@@ -55,9 +55,7 @@ in
         tools = {
           arr.enable = true;
           atuin.enable = true;
-          karakeep.enable = true;
           microbin.enable = true;
-          searxng.enable = true;
           syncthing = {
             enable = true;
             proxied = true;
@@ -69,6 +67,8 @@ in
         };
         web = {
           homepage.enable = true;
+          karakeep.enable = true;
+          searxng.enable = true;
           website.enable = true;
         };
       };

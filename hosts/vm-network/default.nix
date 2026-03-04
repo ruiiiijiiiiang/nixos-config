@@ -13,7 +13,6 @@ let
   infraInterface = "infra0";
   dmzInterface = "dmz0";
   wgInterface = "wg0";
-  wanMac = "bc:24:11:97:f8:42";
 in
 {
   system.stateVersion = "25.11";
@@ -46,7 +45,7 @@ in
                 {
                   type = "bridge";
                   mac = {
-                    address = wanMac;
+                    address = hardware.macs.wan;
                   };
                   source = {
                     bridge = networking.wanBridge;

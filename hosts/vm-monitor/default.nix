@@ -20,7 +20,7 @@ in
 
       disks = {
         enable = true;
-        size = "100GB";
+        size = 100;
       };
     };
 
