@@ -19,7 +19,7 @@ let
 in
 {
   options.custom.services.apps.office.memos = with lib; {
-    enable = mkEnableOption "Memos notes";
+    enable = mkEnableOption "Enable Memos";
   };
 
   config = lib.mkIf cfg.enable {

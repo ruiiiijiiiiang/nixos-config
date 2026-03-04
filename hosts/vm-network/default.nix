@@ -5,7 +5,7 @@
   ...
 }:
 let
-  inherit (consts) addresses hardware;
+  inherit (consts) addresses hardware vlan-ids;
   inherit (inputs.self) nixosConfigurations;
   wanInterface = "ens18";
   lanInterface = "ens19";
@@ -62,6 +62,17 @@ in
                   };
                   source = {
                     bridge = networking.lanBridge;
+                  };
+                  vlan = {
+                    trunk = "yes";
+                    tag = [
+                      {
+                        id = vlan-ids.home;
+                        nativeMode = "untagged";
+                      }
+                      { id = vlan-ids.infra; }
+                      { id = vlan-ids.dmz; }
+                    ];
                   };
                   model = {
                     type = "virtio";

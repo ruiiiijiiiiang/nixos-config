@@ -13,7 +13,7 @@ let
 in
 {
   options.custom.services.apps.office.nextcloud = with lib; {
-    enable = mkEnableOption "Nextcloud file sync and collaboration";
+    enable = mkEnableOption "Enable Nextcloud";
   };
 
   config = lib.mkIf cfg.enable {

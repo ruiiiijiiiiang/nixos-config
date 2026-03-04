@@ -28,7 +28,7 @@ let
   ];
   gcRootStr = "/var/lib/nix-cache-roots";
 
-  dailyBuildScript = pkgs.writeShellScriptBin "daily-nix-build" ''
+  dailyBuildScript = pkgs.writeShellScriptBin "daily-nix-build" /* bash */ ''
     set -euo pipefail
 
     export PATH="${
@@ -50,7 +50,7 @@ let
 in
 {
   options.custom.services.infra.harmonia = with lib; {
-    enable = mkEnableOption "Harmonia nix binary cache";
+    enable = mkEnableOption "Enable Harmonia binary cache";
   };
 
   config = lib.mkIf cfg.enable {

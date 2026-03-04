@@ -18,7 +18,7 @@ let
 in
 {
   options.custom.services.apps.web.homepage = with lib; {
-    enable = mkEnableOption "Homepage dashboard";
+    enable = mkEnableOption "Enable Homepage dashboard";
   };
 
   config = lib.mkIf cfg.enable {

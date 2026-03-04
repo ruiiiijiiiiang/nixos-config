@@ -10,7 +10,7 @@ let
 in
 {
   options.custom.platforms.framework.kernel = with lib; {
-    enable = mkEnableOption "Framework laptop kernel config";
+    enable = mkEnableOption "Enable Framework kernel settings";
   };
 
   imports = [

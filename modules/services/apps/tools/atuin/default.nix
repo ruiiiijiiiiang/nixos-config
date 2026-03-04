@@ -19,7 +19,7 @@ let
 in
 {
   options.custom.services.apps.tools.atuin = with lib; {
-    enable = mkEnableOption "Atuin shell history sync server";
+    enable = mkEnableOption "Enable Atuin";
   };
 
   config = lib.mkIf cfg.enable {

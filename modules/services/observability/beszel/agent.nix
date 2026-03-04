@@ -7,11 +7,11 @@ let
 in
 {
   options.custom.services.observability.beszel.agent = with lib; {
-    enable = mkEnableOption "Beszel monitoring agent";
+    enable = mkEnableOption "Enable Beszel agent";
     interface = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Interface to open ports";
+      description = "Interface allowed to access agent port.";
     };
   };
 

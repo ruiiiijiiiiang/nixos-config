@@ -18,7 +18,7 @@ let
 in
 {
   options.custom.services.apps.tools.microbin = with lib; {
-    enable = mkEnableOption "MicroBin pastebin service";
+    enable = mkEnableOption "Enable MicroBin";
   };
 
   config = lib.mkIf cfg.enable {

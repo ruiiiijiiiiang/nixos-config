@@ -12,7 +12,7 @@ let
 in
 {
   options.custom.roles.workstation.cyber.networking = with lib; {
-    enable = mkEnableOption "Cyber role networking config";
+    enable = mkEnableOption "Enable cyber role networking";
   };
 
   config = lib.mkIf cfg.enable {

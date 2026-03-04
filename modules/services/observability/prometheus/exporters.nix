@@ -10,16 +10,16 @@ let
 in
 {
   options.custom.services.observability.prometheus.exporters = with lib; {
-    crowdsec.enable = mkEnableOption "Prometheus CrowdSec exporter";
-    kea.enable = mkEnableOption "Prometheus Kea exporter";
-    nginx.enable = mkEnableOption "Prometheus Nginx exporter";
-    node.enable = mkEnableOption "Prometheus Node exporter";
-    podman.enable = mkEnableOption "Prometheus Podman exporter";
-    wireguard.enable = mkEnableOption "Prometheus Wireguard exporter";
+    crowdsec.enable = mkEnableOption "Enable Prometheus CrowdSec exporter";
+    kea.enable = mkEnableOption "Enable Prometheus Kea exporter";
+    nginx.enable = mkEnableOption "Enable Prometheus Nginx exporter";
+    node.enable = mkEnableOption "Enable Prometheus Node exporter";
+    podman.enable = mkEnableOption "Enable Prometheus Podman exporter";
+    wireguard.enable = mkEnableOption "Enable Prometheus WireGuard exporter";
     interface = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Interface to open ports";
+      description = "Interface allowed to access exporter ports.";
     };
   };
 

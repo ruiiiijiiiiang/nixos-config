@@ -11,11 +11,11 @@ let
 in
 {
   options.custom.roles.headless.networking = with lib; {
-    enable = mkEnableOption "Custom networking setup for headless instances";
+    enable = mkEnableOption "Enable headless networking role";
     trustedInterfaces = mkOption {
       type = types.listOf types.str;
       default = [ ];
-      description = "Interfaces to open ports; if empty, ports are open globally";
+      description = "Interfaces allowed to access exposed ports; empty means global.";
     };
   };
 

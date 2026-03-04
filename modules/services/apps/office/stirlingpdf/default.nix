@@ -19,7 +19,7 @@ let
 in
 {
   options.custom.services.apps.office.stirlingpdf = with lib; {
-    enable = mkEnableOption "Stirling-PDF document tools";
+    enable = mkEnableOption "Enable Stirling-PDF";
   };
 
   config = lib.mkIf cfg.enable {

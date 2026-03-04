@@ -34,7 +34,7 @@ let
 in
 {
   options.custom.services.apps.office.opencloud = with lib; {
-    enable = mkEnableOption "OpenCloud file server";
+    enable = mkEnableOption "Enable OpenCloud";
   };
 
   config = lib.mkIf cfg.enable {

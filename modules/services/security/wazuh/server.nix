@@ -22,7 +22,7 @@ let
 in
 {
   options.custom.services.security.wazuh.server = with lib; {
-    enable = mkEnableOption "Wazuh security monitoring server";
+    enable = mkEnableOption "Enable Wazuh server";
   };
 
   config = lib.mkIf cfg.enable {

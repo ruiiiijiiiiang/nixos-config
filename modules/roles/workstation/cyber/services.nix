@@ -11,7 +11,7 @@ let
 in
 {
   options.custom.roles.workstation.cyber.services = with lib; {
-    enable = mkEnableOption "Cyber role services";
+    enable = mkEnableOption "Enable cyber role services";
   };
 
   config = lib.mkIf cfg.enable {

@@ -24,7 +24,7 @@ let
 in
 {
   options.custom.services.networking.nginx = with lib; {
-    enable = mkEnableOption "Nginx reverse proxy";
+    enable = mkEnableOption "Enable Nginx reverse proxy";
   };
 
   config = lib.mkIf cfg.enable {

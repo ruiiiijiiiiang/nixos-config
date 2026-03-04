@@ -9,7 +9,7 @@ let
 in
 {
   options.custom.platforms.pi.hardware = with lib; {
-    enable = mkEnableOption "Raspberry Pi 4 hardware config";
+    enable = mkEnableOption "Enable Raspberry Pi 4 hardware settings";
   };
 
   config = lib.mkIf cfg.enable {

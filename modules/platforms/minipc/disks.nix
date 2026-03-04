@@ -9,13 +9,11 @@ let
   inherit (consts) hardware;
   inherit (inputs.self) nixosConfigurations;
   cfg = config.custom.platforms.minipc.disks;
+  libvirtCfg = config.custom.roles.headless.hypervisor.libvirt;
 
   guestLVs =
-    let
-      libvirtCfg = config.custom.roles.headless.hypervisor.libvirt;
-    in
     lib.genAttrs libvirtCfg.guests (guest: {
-      size = nixosConfigurations.${guest}.config.custom.platforms.vm.disks.size;
+      inherit (nixosConfigurations.${guest}.config.custom.platforms.vm.disks) size;
     });
 in
 {
@@ -24,15 +22,26 @@ in
   ];
 
   options.custom.platforms.minipc.disks = with lib; {
-    enable = mkEnableOption "Minipc disks config";
+    enable = mkEnableOption "Enable MiniPC disk layout";
     volumeGroup = mkOption {
       type = types.str;
       default = "vg-nvme";
-      description = "LVM volume group name";
+      description = "LVM volume group name.";
     };
   };
 
   config = lib.mkIf cfg.enable {
+    assertions = [
+      {
+        assertion =
+          let
+            missing = lib.filter (guest: !(lib.hasAttr guest nixosConfigurations)) libvirtCfg.guests;
+          in
+          missing == [ ];
+        message = "MiniPC disks: libvirt.guests contains unknown nixosConfigurations entries.";
+      }
+    ];
+
     disko.devices = {
       disk = {
         nvme0 = {

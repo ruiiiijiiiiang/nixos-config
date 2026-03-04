@@ -46,7 +46,7 @@ let
 in
 {
   options.custom.services.observability.prometheus.server = with lib; {
-    enable = mkEnableOption "Prometheus metrics server";
+    enable = mkEnableOption "Enable Prometheus server";
   };
 
   config = lib.mkIf cfg.enable {

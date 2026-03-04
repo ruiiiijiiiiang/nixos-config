@@ -15,11 +15,11 @@ in
   ];
 
   options.custom.platforms.vm.disks = with lib; {
-    enable = mkEnableOption "Enable disk config for VM";
+    enable = mkEnableOption "Enable VM disk layout";
     size = mkOption {
       type = types.str;
       default = "50GB";
-      description = "Size of guest VM's main disk";
+      description = "Primary disk size for the guest VM.";
     };
   };
 
@@ -32,7 +32,7 @@ in
           type = "gpt";
           partitions = {
             ESP = hardware.partitions.esp;
-            root = hardware.partitions.root;
+            inherit (hardware.partitions) root;
           };
         };
       };

@@ -5,7 +5,7 @@ let
 in
 {
   options.custom.services.security.fail2ban = with lib; {
-    enable = mkEnableOption "Fail2ban IPS";
+    enable = mkEnableOption "Enable Fail2ban";
   };
 
   config = lib.mkIf cfg.enable {

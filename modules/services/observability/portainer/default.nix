@@ -18,7 +18,7 @@ let
 in
 {
   options.custom.services.observability.portainer = with lib; {
-    enable = mkEnableOption "Portainer container management";
+    enable = mkEnableOption "Enable Portainer";
   };
 
   config = lib.mkIf cfg.enable {

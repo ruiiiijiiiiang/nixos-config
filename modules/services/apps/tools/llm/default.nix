@@ -20,7 +20,7 @@ let
 in
 {
   options.custom.services.apps.tools.llm = with lib; {
-    enable = mkEnableOption "Large language model";
+    enable = mkEnableOption "Enable LLM services";
   };
 
   config = lib.mkIf cfg.enable {

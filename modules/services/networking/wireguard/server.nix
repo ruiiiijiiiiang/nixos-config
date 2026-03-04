@@ -11,36 +11,36 @@ let
 in
 {
   options.custom.services.networking.wireguard.server = with lib; {
-    enable = mkEnableOption "WireGuard VPN server";
+    enable = mkEnableOption "Enable WireGuard server";
     privateKeyFile = mkOption {
       type = types.nullOr types.path;
       default = null;
-      description = "Path to WireGuard server private key";
+      description = "WireGuard server private key path.";
     };
     wanInterface = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Interface for WAN";
+      description = "WAN interface name.";
     };
     lanInterface = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Interface for LAN";
+      description = "LAN interface name.";
     };
     infraInterface = mkOption {
       type = types.str;
       default = "infra0";
-      description = "Interface for infra VLAN";
+      description = "Infra VLAN interface name.";
     };
     dmzInterface = mkOption {
       type = types.str;
       default = "dmz0";
-      description = "Interface for DMZ VLAN";
+      description = "DMZ VLAN interface name.";
     };
     wgInterface = mkOption {
       type = types.str;
       default = "wg0";
-      description = "Interface for WireGuard server";
+      description = "WireGuard interface name.";
     };
 
     peers = mkOption {
@@ -49,17 +49,17 @@ in
           options = {
             hostName = mkOption {
               type = types.str;
-              description = "Hostname of the peer";
+              description = "Peer hostname.";
             };
             presharedKeyFile = mkOption {
               type = types.path;
-              description = "Path to the preshared key file";
+              description = "Preshared key path.";
             };
           };
         }
       );
       default = [ ];
-      description = "List of WireGuard peers";
+      description = "WireGuard peers.";
     };
   };
 
@@ -67,11 +67,22 @@ in
     assertions = [
       {
         assertion = cfg.privateKeyFile != null;
-        message = "WireGuard server is enabled but required key is missing.";
+        message = "WireGuard server requires privateKeyFile.";
       }
       {
         assertion = cfg.wanInterface != null && cfg.lanInterface != null;
-        message = "WireGuard server is enabled but required interfaces are missing.";
+        message = "WireGuard server requires WAN and LAN interfaces.";
+      }
+      {
+        assertion =
+          let
+            invalid =
+              builtins.filter
+                (peer: !(builtins.hasAttr peer.hostName wg) || !(builtins.hasAttr peer.hostName addresses.vpn.hosts))
+                cfg.peers;
+          in
+          invalid == [ ];
+        message = "WireGuard server peers must exist in wg keys and addresses.vpn.hosts.";
       }
     ];
 

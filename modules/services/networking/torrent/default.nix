@@ -20,7 +20,7 @@ let
 in
 {
   options.custom.services.networking.torrent = with lib; {
-    enable = mkEnableOption "Qbittorrent service protected by gluetun";
+    enable = mkEnableOption "Enable qBittorrent via gluetun";
   };
 
   config = lib.mkIf cfg.enable {

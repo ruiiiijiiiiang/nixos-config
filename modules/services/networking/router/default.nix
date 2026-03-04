@@ -42,36 +42,36 @@ let
 in
 {
   options.custom.services.networking.router = with lib; {
-    enable = mkEnableOption "Network router";
+    enable = mkEnableOption "Enable router role";
     wanInterface = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Interface for WAN";
+      description = "WAN interface name.";
     };
     lanInterface = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Interface for LAN";
+      description = "LAN interface name.";
     };
     podmanInterface = mkOption {
       type = types.str;
       default = "podman0";
-      description = "Interface for podman";
+      description = "Podman interface name.";
     };
     infraInterface = mkOption {
       type = types.str;
       default = "infra0";
-      description = "Interface for infra VLAN";
+      description = "Infra VLAN interface name.";
     };
     dmzInterface = mkOption {
       type = types.str;
       default = "dmz0";
-      description = "Interface for DMZ VLAN";
+      description = "DMZ VLAN interface name.";
     };
     extraForwardRules = mkOption {
       type = types.lines;
       default = "";
-      description = "Extra rules to append to the router forward chain";
+      description = "Extra nftables forward-chain rules.";
     };
   };
 
@@ -79,7 +79,7 @@ in
     assertions = [
       {
         assertion = cfg.wanInterface != null && cfg.lanInterface != null;
-        message = "Router is enabled but required interfaces are missing.";
+        message = "Router requires WAN and LAN interfaces.";
       }
     ];
 

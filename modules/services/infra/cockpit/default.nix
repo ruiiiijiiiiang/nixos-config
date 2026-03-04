@@ -14,14 +14,14 @@ let
 in
 {
   options.custom.services.infra.cockpit = with lib; {
-    enable = mkEnableOption "Cockpit web-based interface for managing servers";
+    enable = mkEnableOption "Enable Cockpit web management";
   };
 
   config = lib.mkIf cfg.enable {
     assertions = [
       {
         assertion = config.custom.roles.headless.hypervisor.libvirt.enable;
-        message = "Cockpit can only be enabled on the hypervisor";
+        message = "Cockpit requires the hypervisor libvirt role.";
       }
     ];
 
@@ -32,7 +32,7 @@ in
         WebService = {
           AllowUnencrypted = true;
           ProtocolHeader = "X-Forwarded-Proto";
-          Origins = fqdn;
+          Origins = "https://${fqdn}";
         };
       };
     };

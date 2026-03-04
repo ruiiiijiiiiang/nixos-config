@@ -19,7 +19,7 @@ let
 in
 {
   options.custom.services.observability.dockhand.server = with lib; {
-    enable = mkEnableOption "Dockhand container management";
+    enable = mkEnableOption "Enable Dockhand server";
   };
 
   config = lib.mkIf cfg.enable {

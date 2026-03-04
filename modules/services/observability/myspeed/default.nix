@@ -13,7 +13,7 @@ let
 in
 {
   options.custom.services.observability.myspeed = with lib; {
-    enable = mkEnableOption "Speed test analysis";
+    enable = mkEnableOption "Enable MySpeed";
   };
 
   config = lib.mkIf cfg.enable {

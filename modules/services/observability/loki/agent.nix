@@ -5,11 +5,11 @@ let
 in
 {
   options.custom.services.observability.loki.agent = with lib; {
-    enable = mkEnableOption "Promtail log collection agent for Loki";
+    enable = mkEnableOption "Enable Loki log agent";
     serverAddress = mkOption {
       type = types.str;
       default = addresses.localhost;
-      description = "Address of the Loki server";
+      description = "Loki server address.";
     };
   };
 

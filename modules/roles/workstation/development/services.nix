@@ -11,7 +11,7 @@ let
 in
 {
   options.custom.roles.workstation.development.services = with lib; {
-    enable = mkEnableOption "Development-specific services";
+    enable = mkEnableOption "Enable development services";
   };
 
   config = lib.mkIf cfg.enable {

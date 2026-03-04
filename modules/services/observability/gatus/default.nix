@@ -36,7 +36,7 @@ let
 in
 {
   options.custom.services.observability.gatus = with lib; {
-    enable = mkEnableOption "Gatus monitoring dashboard";
+    enable = mkEnableOption "Enable Gatus";
   };
 
   config = lib.mkIf cfg.enable {

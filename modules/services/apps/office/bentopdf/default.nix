@@ -18,7 +18,7 @@ let
 in
 {
   options.custom.services.apps.office.bentopdf = with lib; {
-    enable = mkEnableOption "BentoPDF PDF service";
+    enable = mkEnableOption "Enable BentoPDF";
   };
 
   config = lib.mkIf cfg.enable {

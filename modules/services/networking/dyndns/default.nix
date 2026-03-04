@@ -10,7 +10,7 @@ let
 in
 {
   options.custom.services.networking.dyndns = with lib; {
-    enable = mkEnableOption "dynamic DNS service";
+    enable = mkEnableOption "Enable dynamic DNS";
   };
 
   config = lib.mkIf cfg.enable {

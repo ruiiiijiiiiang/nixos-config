@@ -10,11 +10,11 @@ let
 in
 {
   options.custom.services.observability.dockhand.agent = with lib; {
-    enable = mkEnableOption "Hawser container agent";
+    enable = mkEnableOption "Enable Dockhand agent";
     interface = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Interface to open ports";
+      description = "Interface allowed to access agent port.";
     };
   };
 

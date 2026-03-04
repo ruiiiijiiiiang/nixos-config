@@ -11,7 +11,7 @@ let
 in
 {
   options.custom.services.observability.monit = with lib; {
-    enable = mkEnableOption "Monit monitoring dashboard";
+    enable = mkEnableOption "Enable Monit";
   };
 
   config = lib.mkIf cfg.enable {

@@ -10,7 +10,7 @@ let
 in
 {
   options.custom.roles.workstation.cyber.packages = with lib; {
-    enable = mkEnableOption "Cyber role packages";
+    enable = mkEnableOption "Enable cyber role packages";
   };
 
   config = lib.mkIf cfg.enable {

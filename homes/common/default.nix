@@ -18,6 +18,7 @@ in
       OS = "nixos";
       EDITOR = "nvim";
       NH_FLAKE = flakePath;
+      NH_OS_FLAKE = flakePath;
     };
   };
 

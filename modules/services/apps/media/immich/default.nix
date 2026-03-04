@@ -21,7 +21,7 @@ let
 in
 {
   options.custom.services.apps.media.immich = with lib; {
-    enable = mkEnableOption "Immich photo and video storage";
+    enable = mkEnableOption "Enable Immich";
   };
 
   config = lib.mkIf cfg.enable {

@@ -19,7 +19,7 @@ let
 in
 {
   options.custom.services.apps.development.forgejo = with lib; {
-    enable = mkEnableOption "Forgejo version control";
+    enable = mkEnableOption "Enable Forgejo";
   };
 
   config = lib.mkIf cfg.enable {

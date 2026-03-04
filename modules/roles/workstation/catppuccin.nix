@@ -15,7 +15,7 @@ in
   ];
 
   options.custom.roles.workstation.catppuccin = with lib; {
-    enable = mkEnableOption "Custom catppuccin theme setup";
+    enable = mkEnableOption "Enable Catppuccin theming";
   };
 
   config = lib.mkIf cfg.enable {
@@ -32,4 +32,3 @@ in
     };
   };
 }
-

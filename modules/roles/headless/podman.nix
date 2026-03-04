@@ -10,7 +10,7 @@ let
 in
 {
   options.custom.roles.headless.podman = with lib; {
-    enable = mkEnableOption "Custom podman for headless instances";
+    enable = mkEnableOption "Enable headless Podman role";
   };
 
   config = lib.mkIf cfg.enable {

@@ -122,7 +122,7 @@ let
 in
 {
   options.custom.services.observability.grafana = with lib; {
-    enable = mkEnableOption "Grafana visualization platform";
+    enable = mkEnableOption "Enable Grafana";
   };
 
   config = lib.mkIf cfg.enable {

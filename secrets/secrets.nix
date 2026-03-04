@@ -1,5 +1,8 @@
 let
   inherit (import ../lib/keys.nix) ssh;
+  dockhand = import ./dockhand/secrets.nix;
+  scanopy = import ./scanopy/secrets.nix;
+  wireguard = import ./wireguard/secrets.nix;
 in
 {
   "atuin-env.age" = {
@@ -26,16 +29,6 @@ in
   };
   "dawarich-env.age" = {
     publicKeys = ssh.vm-app;
-    armor = true;
-  };
-  # TODO: regen
-  "dockhand/agent-crt.age" = {
-    publicKeys = ssh.pi ++ ssh.vm-network ++ ssh.vm-app ++ ssh.vm-monitor;
-    armor = true;
-  };
-  # TODO: regen
-  "dockhand/agent-key.age" = {
-    publicKeys = ssh.pi ++ ssh.vm-network ++ ssh.vm-app ++ ssh.vm-monitor;
     armor = true;
   };
   "forgejo-env.age" = {
@@ -94,55 +87,7 @@ in
     publicKeys = ssh.vm-app;
     armor = true;
   };
-  "scanopy/server-env.age" = {
-    publicKeys = ssh.vm-monitor;
-    armor = true;
-  };
-  "scanopy/daemon-pi-env.age" = {
-    publicKeys = ssh.pi;
-    armor = true;
-  };
-  "scanopy/daemon-vm-app-env.age" = {
-    publicKeys = ssh.vm-app;
-    armor = true;
-  };
-  "scanopy/daemon-vm-monitor-env.age" = {
-    publicKeys = ssh.vm-monitor;
-    armor = true;
-  };
-  "scanopy/daemon-vm-network-env.age" = {
-    publicKeys = ssh.vm-network;
-    armor = true;
-  };
   "vaultwarden-env.age" = {
-    publicKeys = ssh.vm-app;
-    armor = true;
-  };
-  "wireguard/server-private-key.age" = {
-    publicKeys = ssh.vm-network;
-    armor = true;
-  };
-  "wireguard/framework-preshared-key.age" = {
-    publicKeys = ssh.vm-network ++ ssh.framework;
-    armor = true;
-  };
-  "wireguard/framework-private-key.age" = {
-    publicKeys = ssh.framework;
-    armor = true;
-  };
-  "wireguard/iphone-16-preshared-key.age" = {
-    publicKeys = ssh.vm-network;
-    armor = true;
-  };
-  "wireguard/iphone-17-preshared-key.age" = {
-    publicKeys = ssh.vm-network;
-    armor = true;
-  };
-  "wireguard/github-action-preshared-key.age" = {
-    publicKeys = ssh.vm-network;
-    armor = true;
-  };
-  "wireguard/proton-private-key.age" = {
     publicKeys = ssh.vm-app;
     armor = true;
   };
@@ -155,3 +100,6 @@ in
     armor = true;
   };
 }
+// dockhand
+// scanopy
+// wireguard

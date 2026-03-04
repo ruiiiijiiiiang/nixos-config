@@ -42,11 +42,11 @@ let
 in
 {
   options.custom.services.security.wazuh.agent = with lib; {
-    enable = mkEnableOption "Wazuh security monitoring agent";
+    enable = mkEnableOption "Enable Wazuh agent";
     interface = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Interface to open ports";
+      description = "Interface allowed to access agent ports.";
     };
   };
 

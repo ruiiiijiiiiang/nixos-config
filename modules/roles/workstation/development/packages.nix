@@ -10,7 +10,7 @@ let
 in
 {
   options.custom.roles.workstation.development.packages = with lib; {
-    enable = mkEnableOption "Development-specific packages";
+    enable = mkEnableOption "Enable development packages";
   };
 
   config = lib.mkIf cfg.enable {
@@ -100,6 +100,7 @@ in
       remmina
       kitty
       onlyoffice-desktopeditors
+      cisco-packet-tracer_9
 
       # --- Audio & Multimedia ---
       easyeffects

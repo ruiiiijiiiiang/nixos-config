@@ -11,7 +11,7 @@ let
 in
 {
   options.custom.roles.workstation.development.nixos = with lib; {
-    enable = mkEnableOption "Development-specific NixOS settings";
+    enable = mkEnableOption "Enable development NixOS settings";
   };
 
   config = lib.mkIf cfg.enable {

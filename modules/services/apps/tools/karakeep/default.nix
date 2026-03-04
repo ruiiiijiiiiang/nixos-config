@@ -19,7 +19,7 @@ let
 in
 {
   options.custom.services.apps.tools.karakeep = with lib; {
-    enable = mkEnableOption "Karakeep bookmark manager";
+    enable = mkEnableOption "Enable Karakeep";
   };
 
   config = lib.mkIf cfg.enable {

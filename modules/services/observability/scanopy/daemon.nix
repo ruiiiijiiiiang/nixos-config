@@ -10,16 +10,16 @@ let
 in
 {
   options.custom.services.observability.scanopy.daemon = with lib; {
-    enable = mkEnableOption "Scanopy daemon";
+    enable = mkEnableOption "Enable Scanopy daemon";
     serverAddress = mkOption {
       type = types.str;
       default = addresses.localhost;
-      description = "Address of the Scanopy server";
+      description = "Scanopy server address.";
     };
     envFile = mkOption {
       type = types.nullOr types.path;
       default = null;
-      description = "Path to Scanopy daemon environment file";
+      description = "Environment file path.";
       # SCANOPY_DAEMON_API_KEY
       # SCANOPY_NETWORK_ID
     };
@@ -29,7 +29,7 @@ in
     assertions = [
       {
         assertion = cfg.envFile != null;
-        message = "Scanopy daemon is enabled but environment file is missing.";
+        message = "Scanopy daemon requires envFile.";
       }
     ];
 

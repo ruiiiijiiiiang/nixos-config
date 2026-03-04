@@ -1,30 +1,45 @@
-{ consts, lib, ... }:
+{
+  config,
+  consts,
+  lib,
+  ...
+}:
 let
   inherit (consts) vlan-ids;
+  cfg = config.custom.platforms.vm.libvirt;
 in
 {
   options.custom.platforms.vm.libvirt = with lib; {
-    enable = mkEnableOption "Guest VM managed by libvirt";
+    enable = mkEnableOption "Enable libvirt settings for a guest VM";
     cpu = mkOption {
       type = types.int;
       default = 4;
-      description = "Number of vCPU's";
+      description = "vCPU count.";
     };
     memory = mkOption {
       type = types.int;
       default = 4;
-      description = "Amount of memory (unit in GiB)";
+      description = "Memory in GiB.";
     };
     vlanId = mkOption {
       type = types.int;
       default = vlan-ids.infra;
-      description = "VLAN ID for the guest interface";
+      description = "VLAN ID for the guest NIC.";
     };
     autoStart = mkEnableOption "Start the VM automatically";
     extraConfigs = mkOption {
       type = types.attrs;
       default = { };
-      description = "Declarations directly merged into NixVirt";
+      description = "Extra NixVirt domain attributes to merge.";
     };
+  };
+
+  config = lib.mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = lib.elem cfg.vlanId (builtins.attrValues vlan-ids);
+        message = "VM libvirt VLAN ID must exist in consts.vlan-ids.";
+      }
+    ];
   };
 }

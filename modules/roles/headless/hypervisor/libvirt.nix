@@ -26,18 +26,13 @@ let
   mkLibvirtBase =
     { guest, libvirtCfg }:
     {
-      cpu = {
-        mode = "host-passthrough";
-      };
+      os.firmware = "efi";
+
+      cpu.mode = "host-passthrough";
 
       vcpu = {
         placement = "static";
         count = libvirtCfg.cpu;
-      };
-
-      memory = {
-        count = libvirtCfg.memory;
-        unit = "GiB";
       };
 
       memoryBacking = {
@@ -120,6 +115,7 @@ let
             };
           }
         ];
+
         serial = [
           {
             type = "pty";
@@ -129,6 +125,7 @@ let
             };
           }
         ];
+
         console = [
           {
             type = "pty";
@@ -169,15 +166,35 @@ in
   ];
 
   options.custom.roles.headless.hypervisor.libvirt = with lib; {
-    enable = mkEnableOption "Hypervisor host";
+    enable = mkEnableOption "Enable libvirt hypervisor host";
     guests = mkOption {
       type = types.listOf types.str;
       default = [ ];
-      description = "List of guest VM's";
+      description = "Guest VM names to define.";
     };
   };
 
   config = lib.mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = config.custom.roles.headless.hypervisor.networking.enable;
+        message = "Libvirt hypervisor requires the networking role (LAN bridge is referenced in domain XML).";
+      }
+      {
+        assertion = config.custom.roles.headless.hypervisor.networking.lanBridge != null;
+        message = "Libvirt hypervisor requires networking.lanBridge.";
+      }
+      {
+        assertion =
+          let
+            guestConfigs = lib.filterAttrs (name: _: lib.elem name cfg.guests) nixosConfigurations;
+            matching = lib.filterAttrs (name: hasGpuPassthrough) guestConfigs;
+          in
+          lib.length (lib.attrNames matching) <= 1;
+        message = "Libvirt hypervisor supports GPU passthrough for at most one guest.";
+      }
+    ];
+
     environment.systemPackages = with pkgs; [
       bridge-utils
       pciutils
@@ -212,6 +229,7 @@ in
                   (inputs.NixVirt.lib.domain.templates.linux {
                     name = guest;
                     uuid = hardware.uuids.${guest};
+                    inherit (libvirtCfg) memory;
                   })
                   (mkLibvirtBase { inherit guest libvirtCfg; })
                   libvirtCfg.extraConfigs

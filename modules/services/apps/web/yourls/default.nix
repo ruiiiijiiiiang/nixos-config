@@ -18,7 +18,7 @@ let
 in
 {
   options.custom.services.apps.web.yourls = with lib; {
-    enable = mkEnableOption "YOURLS URL shortener";
+    enable = mkEnableOption "Enable YOURLS";
   };
 
   config = lib.mkIf cfg.enable {

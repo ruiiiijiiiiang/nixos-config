@@ -21,7 +21,7 @@ let
 in
 {
   options.custom.services.apps.development.bytestash = with lib; {
-    enable = mkEnableOption "ByteStash code snippet stash";
+    enable = mkEnableOption "Enable ByteStash";
   };
 
   config = lib.mkIf cfg.enable {

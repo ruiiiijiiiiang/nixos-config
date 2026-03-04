@@ -10,7 +10,7 @@ let
 in
 {
   options.custom.services.observability.loki.server = with lib; {
-    enable = mkEnableOption "Loki log aggregation system";
+    enable = mkEnableOption "Enable Loki log aggregation";
   };
 
   config = lib.mkIf cfg.enable {

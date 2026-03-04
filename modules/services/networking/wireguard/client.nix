@@ -11,26 +11,26 @@ let
 in
 {
   options.custom.services.networking.wireguard.client = with lib; {
-    enable = mkEnableOption "WireGuard VPN client";
+    enable = mkEnableOption "Enable WireGuard client";
     wgInterface = mkOption {
       type = types.str;
-      description = "Interface to use for WireGuard client";
+      description = "WireGuard interface name.";
       default = "wg0";
     };
     address = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "WireGuard client address";
+      description = "WireGuard client address.";
     };
     privateKeyFile = mkOption {
       type = types.nullOr types.path;
       default = null;
-      description = "Path to WireGuard client private key";
+      description = "WireGuard client private key path.";
     };
     presharedKeyFile = mkOption {
       type = types.nullOr types.path;
       default = null;
-      description = "Path to WireGuard client preshared key";
+      description = "WireGuard client preshared key path.";
     };
   };
 
@@ -38,11 +38,11 @@ in
     assertions = [
       {
         assertion = cfg.address != null;
-        message = "WireGuard client is enabled but client address is missing.";
+        message = "WireGuard client requires address.";
       }
       {
         assertion = cfg.privateKeyFile != null && cfg.presharedKeyFile != null;
-        message = "WireGuard client is enabled but required keys are missing.";
+        message = "WireGuard client requires privateKeyFile and presharedKeyFile.";
       }
     ];
 

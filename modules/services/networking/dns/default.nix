@@ -39,27 +39,27 @@ let
 in
 {
   options.custom.services.networking.dns = with lib; {
-    enable = mkEnableOption "Unbound + Pi-hole DNS filtering";
+    enable = mkEnableOption "Enable Unbound + Pi-hole DNS";
     interface = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "The network interface for DNS and VIP";
+      description = "Interface name for DNS and VIP.";
     };
 
     vrrp = {
-      enable = mkEnableOption "VRRP High Availability";
+      enable = mkEnableOption "Enable VRRP high availability";
       state = mkOption {
         type = types.enum [
           "MASTER"
           "BACKUP"
         ];
         default = "BACKUP";
-        description = "The initial VRRP state for this node, MASTER or BACKUP";
+        description = "Initial VRRP state (MASTER or BACKUP).";
       };
       priority = mkOption {
         type = types.int;
         default = 90;
-        description = "VRRP priority (higher wins); Recommended: Master=100, Backup=90/80";
+        description = "VRRP priority (higher wins).";
       };
     };
   };
@@ -68,7 +68,7 @@ in
     assertions = [
       {
         assertion = cfg.interface != null;
-        message = "Interface for DNS is missing";
+        message = "DNS requires interface.";
       }
     ];
 
@@ -184,7 +184,7 @@ in
 
         vrrpScripts.check_dns_health = {
           script = toString (
-            pkgs.writeShellScript "check_dns_health" ''
+            pkgs.writeShellScriptBin "check_dns_health" /* bash */ ''
               export PATH="${pkgs.coreutils}/bin:${pkgs.gnugrep}/bin:${pkgs.dnsutils}/bin"
               DOMAINS=("google.com" "cloudflare.com" "microsoft.com" "amazon.com")
               for DOMAIN in "''${DOMAINS[@]}"; do

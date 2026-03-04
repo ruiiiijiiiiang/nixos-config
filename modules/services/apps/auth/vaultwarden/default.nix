@@ -11,7 +11,7 @@ let
 in
 {
   options.custom.services.apps.auth.vaultwarden = with lib; {
-    enable = mkEnableOption "Vaultwarden password manager";
+    enable = mkEnableOption "Enable Vaultwarden";
   };
 
   config = lib.mkIf cfg.enable {

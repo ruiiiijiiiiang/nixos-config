@@ -18,7 +18,7 @@ let
 in
 {
   options.custom.services.observability.scanopy.server = with lib; {
-    enable = mkEnableOption "Scanopy server";
+    enable = mkEnableOption "Enable Scanopy server";
   };
 
   config = lib.mkIf cfg.enable {

@@ -10,7 +10,7 @@ let
 in
 {
   options.custom.roles.workstation.cyber.security = with lib; {
-    enable = mkEnableOption "Relax security configs for attack box";
+    enable = mkEnableOption "Enable relaxed security for cyber role";
   };
 
   config = lib.mkIf cfg.enable {

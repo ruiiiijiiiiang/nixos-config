@@ -4,7 +4,7 @@ let
 in
 {
   options.custom.services.apps.location.geoipupdate = with lib; {
-    enable = mkEnableOption "GeoIP update by Maxmind";
+    enable = mkEnableOption "Enable GeoIP updates";
   };
 
   config = lib.mkIf cfg.enable {

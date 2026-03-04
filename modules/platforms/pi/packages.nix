@@ -9,7 +9,7 @@ let
 in
 {
   options.custom.platforms.pi.packages = with lib; {
-    enable = mkEnableOption "Raspberry Pi-specific packages";
+    enable = mkEnableOption "Enable Raspberry Pi packages";
   };
 
   config = lib.mkIf cfg.enable {

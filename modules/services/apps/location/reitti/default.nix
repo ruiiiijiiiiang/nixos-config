@@ -19,7 +19,7 @@ let
 in
 {
   options.custom.services.apps.location.reitti = with lib; {
-    enable = mkEnableOption "Reitti location record";
+    enable = mkEnableOption "Enable Reitti";
   };
 
   config = lib.mkIf cfg.enable {

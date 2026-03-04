@@ -13,7 +13,7 @@ in
   ];
 
   options.custom.roles.workstation.development.flatpak = with lib; {
-    enable = mkEnableOption "Custom flatpak service and packages";
+    enable = mkEnableOption "Enable Flatpak for development";
   };
 
   config = lib.mkIf cfg.enable {

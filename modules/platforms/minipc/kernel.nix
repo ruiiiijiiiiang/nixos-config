@@ -4,7 +4,7 @@ let
 in
 {
   options.custom.platforms.minipc.kernel = with lib; {
-    enable = mkEnableOption "Minipc kernel config";
+    enable = mkEnableOption "Enable MiniPC kernel settings";
   };
 
   config = lib.mkIf cfg.enable {

@@ -24,7 +24,7 @@ let
 in
 {
   options.custom.services.apps.tools.arr = with lib; {
-    enable = mkEnableOption "Arr stack";
+    enable = mkEnableOption "Enable Arr stack";
   };
 
   config = lib.mkIf cfg.enable {

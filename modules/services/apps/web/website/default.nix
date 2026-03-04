@@ -19,7 +19,7 @@ let
 in
 {
   options.custom.services.apps.web.website = with lib; {
-    enable = mkEnableOption "Personal website hosting";
+    enable = mkEnableOption "Enable website hosting";
   };
 
   config = lib.mkIf cfg.enable {

@@ -14,13 +14,13 @@ let
 in
 {
   options.custom.services.security.crowdsec = with lib; {
-    enable = mkEnableOption "CrowdSec agent";
-    isBouncer = mkEnableOption "Whether this host should run the nftables bouncer";
-    isServer = mkEnableOption "Whether this host is the LAPI server";
+    enable = mkEnableOption "Enable CrowdSec agent";
+    isBouncer = mkEnableOption "Enable nftables bouncer on this host";
+    isServer = mkEnableOption "Enable the LAPI server on this host";
     serverAddress = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "The IP address of the CrowdSec LAPI";
+      description = "CrowdSec LAPI server address.";
     };
   };
 
@@ -28,7 +28,7 @@ in
     assertions = lib.mkIf cfg.isBouncer [
       {
         assertion = cfg.serverAddress != null;
-        message = "CrowdSec bouncer needs to specify server address.";
+        message = "CrowdSec bouncer requires serverAddress.";
       }
     ];
 

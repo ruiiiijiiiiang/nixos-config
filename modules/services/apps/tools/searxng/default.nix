@@ -19,7 +19,7 @@ let
 in
 {
   options.custom.services.apps.tools.searxng = with lib; {
-    enable = mkEnableOption "SearXNG search engine";
+    enable = mkEnableOption "Enable SearXNG";
   };
 
   config = lib.mkIf cfg.enable {

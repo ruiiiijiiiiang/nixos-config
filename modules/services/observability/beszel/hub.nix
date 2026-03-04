@@ -13,7 +13,7 @@ let
 in
 {
   options.custom.services.observability.beszel.hub = with lib; {
-    enable = mkEnableOption "Beszel monitoring hub";
+    enable = mkEnableOption "Enable Beszel hub";
   };
 
   config = lib.mkIf cfg.enable {

@@ -13,7 +13,7 @@ let
 in
 {
   options.custom.services.apps.auth.pocketid = with lib; {
-    enable = mkEnableOption "PocketID authentication service";
+    enable = mkEnableOption "Enable PocketID";
   };
 
   config = lib.mkIf cfg.enable {

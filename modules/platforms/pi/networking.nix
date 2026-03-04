@@ -10,25 +10,32 @@ let
 in
 {
   options.custom.platforms.pi.networking = with lib; {
-    enable = mkEnableOption "Raspberry Pi 4 networking config";
+    enable = mkEnableOption "Enable Raspberry Pi 4 networking";
     lanInterface = mkOption {
       type = types.str;
       default = "end0";
-      description = "Ethernet interface";
+      description = "Ethernet interface name.";
     };
     wlanInterface = mkOption {
       type = types.str;
       default = "wlan0";
-      description = "Wifi interface";
+      description = "WiFi interface name.";
     };
     vlanId = mkOption {
       type = types.int;
       default = vlan-ids.infra;
-      description = "VLAN tag ID";
+      description = "VLAN ID for the LAN interface.";
     };
   };
 
   config = lib.mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = lib.elem cfg.vlanId (builtins.attrValues vlan-ids);
+        message = "Pi VLAN ID must exist in consts.vlan-ids.";
+      }
+    ];
+
     networking = {
       useDHCP = false;
 

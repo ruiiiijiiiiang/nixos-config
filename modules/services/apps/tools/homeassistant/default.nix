@@ -21,7 +21,7 @@ let
 in
 {
   options.custom.services.apps.tools.homeassistant = with lib; {
-    enable = mkEnableOption "Home Assistant with Z-Wave server";
+    enable = mkEnableOption "Enable Home Assistant";
   };
 
   config = lib.mkIf cfg.enable {

@@ -5,7 +5,7 @@ let
 in
 {
   options.custom.services.networking.cloudflared = with lib; {
-    enable = mkEnableOption "Cloudflare access tunnel";
+    enable = mkEnableOption "Enable Cloudflare tunnel";
   };
 
   config = lib.mkIf cfg.enable {

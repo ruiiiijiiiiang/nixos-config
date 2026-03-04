@@ -8,7 +8,7 @@ let
 in
 {
   options.custom.platforms.framework.disks = with lib; {
-    enable = mkEnableOption "Framework laptop disks config";
+    enable = mkEnableOption "Enable Framework disk layout";
   };
 
   config = lib.mkIf cfg.enable {

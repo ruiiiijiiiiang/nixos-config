@@ -11,31 +11,31 @@ let
 in
 {
   options.custom.roles.headless.hypervisor.networking = with lib; {
-    enable = mkEnableOption "Hypervisor networking config";
+    enable = mkEnableOption "Enable hypervisor networking";
     wanInterface = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Interface for WAN";
+      description = "WAN interface name.";
     };
     lanInterface = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Interface for LAN";
+      description = "LAN interface name.";
     };
     wanBridge = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Network bridge for WAN";
+      description = "WAN bridge name.";
     };
     lanBridge = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Network bridge for LAN";
+      description = "LAN bridge name.";
     };
     vlanId = mkOption {
       type = types.int;
       default = vlan-ids.infra;
-      description = "VLAN tag ID for infra";
+      description = "VLAN ID for infra.";
     };
   };
 
@@ -47,7 +47,11 @@ in
           && cfg.lanInterface != null
           && cfg.wanBridge != null
           && cfg.lanBridge != null;
-        message = "Hypervisor networking is enabled but required interfaces are missing.";
+        message = "Hypervisor networking requires WAN/LAN interfaces and bridges.";
+      }
+      {
+        assertion = lib.elem cfg.vlanId (builtins.attrValues vlan-ids);
+        message = "Hypervisor VLAN ID must exist in consts.vlan-ids.";
       }
     ];
 

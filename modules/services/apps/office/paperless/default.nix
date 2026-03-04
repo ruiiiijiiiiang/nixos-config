@@ -20,7 +20,7 @@ let
 in
 {
   options.custom.services.apps.office.paperless = with lib; {
-    enable = mkEnableOption "Paperless-ngx document management";
+    enable = mkEnableOption "Enable Paperless-ngx";
   };
 
   config = lib.mkIf cfg.enable {

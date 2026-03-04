@@ -21,7 +21,7 @@ let
 in
 {
   options.custom.services.apps.location.dawarich = with lib; {
-    enable = mkEnableOption "Dawarich GPS tracking service";
+    enable = mkEnableOption "Enable Dawarich";
   };
 
   config = lib.mkIf cfg.enable {

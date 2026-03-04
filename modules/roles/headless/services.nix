@@ -10,7 +10,7 @@ let
 in
 {
   options.custom.roles.headless.services = with lib; {
-    enable = mkEnableOption "Custom services setup for headless instances";
+    enable = mkEnableOption "Enable headless services role";
   };
 
   config = lib.mkIf cfg.enable {

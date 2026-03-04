@@ -10,7 +10,7 @@ let
 in
 {
   options.custom.roles.workstation.packages = with lib; {
-    enable = mkEnableOption "Custom gui packages";
+    enable = mkEnableOption "Enable workstation packages";
   };
 
   config = lib.mkIf cfg.enable {

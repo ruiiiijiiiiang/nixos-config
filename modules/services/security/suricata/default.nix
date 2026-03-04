@@ -11,31 +11,31 @@ let
 in
 {
   options.custom.services.security.suricata = with lib; {
-    enable = mkEnableOption "Suricata IDS/IPS";
+    enable = mkEnableOption "Enable Suricata IDS/IPS";
     wanInterface = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Interface for WAN";
+      description = "WAN interface name.";
     };
     lanInterface = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Interface for LAN";
+      description = "LAN interface name.";
     };
     infraInterface = mkOption {
       type = types.str;
       default = "infra0";
-      description = "Interface for infra VLAN";
+      description = "Infra VLAN interface name.";
     };
     dmzInterface = mkOption {
       type = types.str;
       default = "dmz0";
-      description = "Interface for DMZ VLAN";
+      description = "DMZ VLAN interface name.";
     };
     wgInterface = mkOption {
       type = types.str;
       default = "wg0";
-      description = "Interface for WireGuard server";
+      description = "WireGuard interface name.";
     };
   };
 
@@ -43,7 +43,7 @@ in
     assertions = [
       {
         assertion = cfg.wanInterface != null && cfg.lanInterface != null;
-        message = "Suricata is enabled but required interfaces are missing.";
+        message = "Suricata requires WAN and LAN interfaces.";
       }
     ];
 

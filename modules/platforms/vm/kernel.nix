@@ -9,8 +9,8 @@ let
 in
 {
   options.custom.platforms.vm.kernel = with lib; {
-    enable = mkEnableOption "Custom kernel config for vm";
-    gpuPassthrough = mkEnableOption "Allow PIC GPU passthrough";
+    enable = mkEnableOption "Enable VM kernel settings";
+    gpuPassthrough = mkEnableOption "Enable PCI GPU passthrough";
     workstation = mkEnableOption "Enable workstation features";
   };
 
@@ -36,7 +36,6 @@ in
         kernelModules =
           (lib.optionals cfg.gpuPassthrough [ "amdgpu" ]) ++ (lib.optionals cfg.workstation [ "virtio_gpu" ]);
       };
-      kernelModules = [ "kvm-amd" ];
       kernelParams = [
         "console=tty1"
         "console=ttyS0"
