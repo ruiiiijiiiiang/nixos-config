@@ -45,6 +45,23 @@ in
         assertion = cfg.wanInterface != null && cfg.lanInterface != null;
         message = "Suricata requires WAN and LAN interfaces.";
       }
+      {
+        assertion = config.custom.services.networking.router.enable;
+        message = "Suricata requires networking.router.enable.";
+      }
+      {
+        assertion =
+          lib.length (
+            lib.unique [
+              cfg.wanInterface
+              cfg.lanInterface
+              cfg.infraInterface
+              cfg.dmzInterface
+              cfg.wgInterface
+            ]
+          ) == 5;
+        message = "Suricata interface names must all be distinct.";
+      }
     ];
 
     environment.systemPackages = [ pkgs.ethtool ];

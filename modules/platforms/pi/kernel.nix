@@ -5,11 +5,11 @@
   ...
 }:
 let
-  cfg = config.custom.platforms.pi.hardware;
+  cfg = config.custom.platforms.pi.kernel;
 in
 {
-  options.custom.platforms.pi.hardware = with lib; {
-    enable = mkEnableOption "Enable Raspberry Pi 4 hardware settings";
+  options.custom.platforms.pi.kernel = with lib; {
+    enable = mkEnableOption "Enable Raspberry Pi 4 kernel settings";
   };
 
   config = lib.mkIf cfg.enable {

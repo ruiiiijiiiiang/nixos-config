@@ -24,6 +24,17 @@ in
   };
 
   config = {
+    assertions = [
+      {
+        assertion = cfg.interface == null || cfg.interface != "";
+        message = "Prometheus exporters interface must not be empty when set.";
+      }
+      {
+        assertion = (!cfg.kea.enable) || config.custom.services.networking.router.enable;
+        message = "Prometheus Kea exporter requires networking.router.enable.";
+      }
+    ];
+
     services = {
       prometheus.exporters = {
         kea = lib.mkIf cfg.kea.enable {

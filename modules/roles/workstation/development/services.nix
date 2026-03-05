@@ -15,6 +15,8 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    boot.binfmt.emulatedSystems = [ "aarch64-linux" ]; # to build aarch64 kernel for pi
+
     services = {
       xserver.enable = true;
       displayManager = {

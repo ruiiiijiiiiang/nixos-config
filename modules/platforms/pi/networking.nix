@@ -22,7 +22,7 @@ in
       description = "WiFi interface name.";
     };
     vlanId = mkOption {
-      type = types.int;
+      type = types.ints.positive;
       default = vlan-ids.infra;
       description = "VLAN ID for the LAN interface.";
     };
@@ -33,6 +33,10 @@ in
       {
         assertion = lib.elem cfg.vlanId (builtins.attrValues vlan-ids);
         message = "Pi VLAN ID must exist in consts.vlan-ids.";
+      }
+      {
+        assertion = cfg.lanInterface != cfg.wlanInterface;
+        message = "Pi LAN and WLAN interfaces must be different.";
       }
     ];
 

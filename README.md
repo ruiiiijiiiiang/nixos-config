@@ -16,10 +16,10 @@ We're way past infrastructure-as-code. It's time for infrastructure/networking/c
 
 This infrastructure is engineered following a rigorous **Domain-Driven Design** philosophy. The modules are organized into four distinct, composable layers:
 
-1.  **Core (`modules/core`):** The foundational DNA. Universal baselines shared across all systems, defining the essential "NixOS-ness" of the fleet.
-2.  **Platform (`modules/platform`):** The hardware abstraction layer. Whether it's a Raspberry Pi ARM chip or a virtualized x86 hypervisor, this layer handles the metal.
-3.  **Roles (`modules/roles`):** The personality injection. A host is defined by its mission: a hardened **Headless Server** guarding the network, or a feature-rich **Workstation** designed for development.
-4.  **Services (`modules/services`):** The functional payload. Granular, plug-and-play applications categorized by domain:
+1. **Core (`modules/core`):** The foundational DNA. Universal baselines shared across all systems, defining the essential "NixOS-ness" of the fleet.
+2. **Platform (`modules/platform`):** The hardware abstraction layer. Whether it's a Raspberry Pi ARM chip or a virtualized x86 hypervisor, this layer handles the metal.
+3. **Roles (`modules/roles`):** The personality injection. A host is defined by its mission: a hardened **Headless Server** guarding the network, or a feature-rich **Workstation** designed for development.
+4. **Services (`modules/services`):** The functional payload. Granular, plug-and-play applications categorized by domain:
     - **Networking:** The mesh that connects it all (DNS, Routing, VPNs).
     - **Observability:** The eyes and ears (Monitoring, Logging, Security Agents).
     - **Security:** The active defense perimeter (Fail2Ban, Wazuh, Suricata, CrowdSec).
@@ -45,14 +45,14 @@ The `flake.nix` is the central cortex, orchestrating these modules to synthesize
 | [vm-network] (Proxmox VM)                                                                            |
 | 4 vCPU, 2GB RAM                                                                                      |
 | Role: Router, Firewall (nftables), DHCP (Kea), DNS master (Pi-hole/Unbound), VPN Gateway (WireGuard) |
-+-------------------------------------------------|----------------------------------------------------+
-                                                  ^
-                                                  |
-                                             (LAN Trunk)
-                                                  |
-             +------------------------------------|-------------------------------------+
-             |                                    |                                     |
-             v                                    v                                     v
++------------------------------------------------------------------------------------------------------+
+                                                   ^
+                                                   |
+                                              (LAN Trunk)
+                                                   |
+             +-------------------------------------|-------------------------------------+
+             |                                     |                                     |
+             v                                     v                                     v
 +-------------------------+    +-------------------------------------+    +----------------------------+
 | LAN (Native/Untagged)   |    | VLAN 20 (Infra)                     |    | VLAN 88 (DMZ)              |
 | Network: 192.168.2.0/24 |    | Network: 192.168.20.0/24            |    | Network: 192.168.88.0/24   |
@@ -75,9 +75,9 @@ The `flake.nix` is the central cortex, orchestrating these modules to synthesize
 |                         |    |                                     |    |                            |
 |                         |    | DNS VIP: 192.168.20.53 (HA Cluster) |    |                            |
 +-------------------------+    +-------------------------------------+    +----------------------------+
-             |                                    ^                                     ^
-             |                                    |                                     |
-             +------------------------------------|-------------------------------------+
+             |                                     ^                                     ^
+             |                                     |                                     |
+             +-------------------------------------|-------------------------------------+
 ```
 
 ### The Cybernetic Nexus

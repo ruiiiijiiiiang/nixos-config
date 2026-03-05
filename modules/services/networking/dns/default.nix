@@ -70,6 +70,14 @@ in
         assertion = cfg.interface != null;
         message = "DNS requires interface.";
       }
+      {
+        assertion = (!cfg.vrrp.enable) || (cfg.vrrp.priority >= 1 && cfg.vrrp.priority <= 254);
+        message = "DNS VRRP priority must be between 1 and 254.";
+      }
+      {
+        assertion = (!cfg.vrrp.enable) || builtins.hasAttr config.networking.hostName addresses.infra.hosts;
+        message = "DNS VRRP requires hostName to exist in addresses.infra.hosts.";
+      }
     ];
 
     networking = {

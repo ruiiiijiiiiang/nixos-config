@@ -1,6 +1,7 @@
 {
   imports = [
     ./beszel
+    ./cockpit
     ./dockhand
     ./gatus
     ./grafana

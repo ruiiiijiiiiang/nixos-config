@@ -17,6 +17,7 @@ in
         "kvm-amd"
         "vhost_net"
         "vhost_vsock"
+        "tun"
       ];
     };
     hardware.cpu.amd.updateMicrocode = true;

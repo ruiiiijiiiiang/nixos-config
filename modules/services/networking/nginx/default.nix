@@ -6,6 +6,7 @@
 }:
 let
   inherit (import ../../../../lib/consts.nix)
+    email
     addresses
     domain
     ports
@@ -93,7 +94,7 @@ in
 
     security.acme = {
       acceptTerms = true;
-      defaults.email = "me@ruijiang.me";
+      defaults.email = email;
       certs = lib.genAttrs (map (name: "${name}.${domain}") subdomainList) (fqdn: {
         domain = fqdn;
         dnsProvider = "cloudflare";

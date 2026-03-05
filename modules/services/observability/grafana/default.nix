@@ -126,6 +126,17 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = config.custom.services.observability.prometheus.server.enable;
+        message = "Grafana requires observability.prometheus.server for the provisioned Prometheus datasource.";
+      }
+      {
+        assertion = config.custom.services.observability.loki.server.enable;
+        message = "Grafana requires observability.loki.server for the provisioned Loki datasource.";
+      }
+    ];
+
     age.secrets = {
       grafana-secret-key = {
         file = ../../../../secrets/grafana-secret-key.age;

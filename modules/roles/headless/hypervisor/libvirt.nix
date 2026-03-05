@@ -46,6 +46,7 @@ let
               type = "raw";
               cache = "none";
               io = "native";
+              discard = "unmap";
             };
             source.dev = "/dev/${config.custom.platforms.minipc.disks.volumeGroup}/${guest}";
             target = {
@@ -131,6 +132,12 @@ let
             };
           }
         ];
+
+        panic = [
+          {
+            model = "isa";
+          }
+        ];
       };
 
       clock = {
@@ -177,6 +184,10 @@ in
         message = "Libvirt hypervisor requires the networking role (LAN bridge is referenced in domain XML).";
       }
       {
+        assertion = config.custom.platforms.minipc.disks.enable;
+        message = "Libvirt hypervisor requires custom.platforms.minipc.disks.enable for guest block devices.";
+      }
+      {
         assertion = config.custom.roles.headless.hypervisor.networking.lanBridge != null;
         message = "Libvirt hypervisor requires networking.lanBridge.";
       }
@@ -189,20 +200,46 @@ in
           lib.length (lib.attrNames matching) <= 1;
         message = "Libvirt hypervisor supports GPU passthrough for at most one guest.";
       }
+      {
+        assertion = lib.all (guest: builtins.hasAttr guest nixosConfigurations) cfg.guests;
+        message = "Every libvirt guest must exist in inputs.self.nixosConfigurations.";
+      }
+      {
+        assertion = cfg.guests != [ ];
+        message = "Libvirt hypervisor requires at least one guest when enabled.";
+      }
+      {
+        assertion = lib.length cfg.guests == lib.length (lib.unique cfg.guests);
+        message = "Libvirt guest list must not contain duplicates.";
+      }
+      {
+        assertion = lib.all (guest: builtins.hasAttr guest hardware.macs) cfg.guests;
+        message = "Every libvirt guest must have a MAC address in consts.hardware.macs.";
+      }
+      {
+        assertion = lib.all (guest: builtins.hasAttr guest hardware.uuids) cfg.guests;
+        message = "Every libvirt guest must have a UUID in consts.hardware.uuids.";
+      }
+      {
+        assertion = lib.all (
+          guest:
+          (builtins.hasAttr guest nixosConfigurations)
+          && (nixosConfigurations.${guest}.config.custom.platforms.vm.libvirt.enable or false)
+        ) cfg.guests;
+        message = "Every libvirt guest must enable custom.platforms.vm.libvirt.";
+      }
     ];
 
     environment.systemPackages = with pkgs; [
-      bridge-utils
       pciutils
       usbutils
-      virt-manager
       virtiofsd
     ];
 
     virtualisation = {
       libvirtd.qemu = {
         runAsRoot = true;
-        swtpm.enable = true;
+        package = pkgs.qemu_kvm;
         verbatimConfig = ''
           user = "root"
           group = "root"

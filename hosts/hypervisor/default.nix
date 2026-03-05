@@ -57,13 +57,12 @@ in
     services = {
       networking.nginx.enable = true;
 
-      infra.cockpit.enable = true;
-
       observability = {
         beszel.agent = {
           enable = true;
           interface = "${lanBridge}.${toString vlan-ids.infra}";
         };
+        cockpit.enable = true;
         dockhand.agent = {
           enable = true;
           interface = "${lanBridge}.${toString vlan-ids.infra}";

@@ -44,6 +44,14 @@ in
         assertion = cfg.privateKeyFile != null && cfg.presharedKeyFile != null;
         message = "WireGuard client requires privateKeyFile and presharedKeyFile.";
       }
+      {
+        assertion = cfg.wgInterface != "";
+        message = "WireGuard client interface name must not be empty.";
+      }
+      {
+        assertion = cfg.address != null && !(lib.hasInfix "/" cfg.address);
+        message = "WireGuard client address must be a host IP without CIDR suffix (module appends /32).";
+      }
     ];
 
     networking.wg-quick.interfaces.${cfg.wgInterface} = {

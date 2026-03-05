@@ -1,6 +1,7 @@
 { consts, ... }:
 let
   inherit (consts) vlan-ids;
+  vlanId = vlan-ids.dmz;
 in
 {
   system.stateVersion = "25.11";
@@ -17,7 +18,7 @@ in
         enable = true;
         cpu = 4;
         memory = 4;
-        vlanId = vlan-ids.dmz;
+        inherit vlanId;
       };
 
       disks.enable = true;

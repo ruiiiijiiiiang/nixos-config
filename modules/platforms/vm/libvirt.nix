@@ -12,17 +12,17 @@ in
   options.custom.platforms.vm.libvirt = with lib; {
     enable = mkEnableOption "Enable libvirt settings for a guest VM";
     cpu = mkOption {
-      type = types.int;
+      type = types.ints.positive;
       default = 4;
       description = "vCPU count.";
     };
     memory = mkOption {
-      type = types.int;
+      type = types.ints.positive;
       default = 4;
       description = "Memory in GiB.";
     };
     vlanId = mkOption {
-      type = types.int;
+      type = types.ints.positive;
       default = vlan-ids.infra;
       description = "VLAN ID for the guest NIC.";
     };

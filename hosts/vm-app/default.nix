@@ -1,6 +1,7 @@
 { consts, ... }:
 let
   inherit (consts) addresses vlan-ids;
+  vlanId = vlan-ids.infra;
 in
 {
   system.stateVersion = "25.11";
@@ -17,7 +18,7 @@ in
         enable = true;
         cpu = 8;
         memory = 12;
-        vlanId = vlan-ids.infra;
+        inherit vlanId;
         autoStart = true;
       };
 

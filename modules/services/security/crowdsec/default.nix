@@ -25,12 +25,23 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    assertions = lib.mkIf cfg.isBouncer [
-      {
-        assertion = cfg.serverAddress != null;
-        message = "CrowdSec bouncer requires serverAddress.";
-      }
-    ];
+    assertions =
+      (lib.mkIf cfg.isBouncer [
+        {
+          assertion = cfg.serverAddress != null;
+          message = "CrowdSec bouncer requires serverAddress.";
+        }
+        {
+          assertion = cfg.serverAddress != "";
+          message = "CrowdSec bouncer serverAddress must not be empty.";
+        }
+      ])
+      ++ [
+        {
+          assertion = cfg.serverAddress == null || cfg.serverAddress != "";
+          message = "CrowdSec serverAddress must not be empty when set.";
+        }
+      ];
 
     services = {
       crowdsec = {

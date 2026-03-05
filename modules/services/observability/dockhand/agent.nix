@@ -19,6 +19,13 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = cfg.interface == null || cfg.interface != "";
+        message = "Dockhand agent interface must not be empty when set.";
+      }
+    ];
+
     age.secrets = {
       dockhand-agent-crt = {
         file = ../../../../secrets/dockhand/agent-crt.age;

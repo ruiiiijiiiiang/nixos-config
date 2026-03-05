@@ -49,7 +49,7 @@ in
         beszel = config.custom.services.observability.beszel.hub.enable;
         bentopdf = config.custom.services.apps.office.bentopdf.enable;
         bytestash = config.custom.services.apps.development.bytestash.enable;
-        cockpit = config.custom.services.infra.cockpit.enable;
+        cockpit = config.custom.services.observability.cockpit.enable;
         dawarich = config.custom.services.apps.location.dawarich.enable;
         dockhand = config.custom.services.observability.dockhand.server.enable;
         forgejo = config.custom.services.apps.development.forgejo.enable;

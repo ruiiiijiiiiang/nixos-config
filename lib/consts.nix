@@ -4,6 +4,7 @@ rec {
   username = "rui";
   home = "/home/${username}";
   domain = "ruijiang.me";
+  email = "me@${domain}";
   oidc-issuer = "${subdomains.vm-app.pocketid}.${domain}";
   vpn-endpoint = "vpn.${domain}";
 

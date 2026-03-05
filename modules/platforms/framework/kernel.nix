@@ -18,27 +18,34 @@ in
   ];
 
   config = lib.mkIf cfg.enable {
+    assertions = [
+      {
+        assertion =
+          let
+            hasResumeParam = lib.any (
+              param: lib.hasPrefix "resume=/dev/disk/by-label/NIXSWAP" param
+            ) config.boot.kernelParams;
+            hasSwapDevice = lib.any (
+              swap: (swap ? device) && swap.device == "/dev/disk/by-label/NIXSWAP"
+            ) config.swapDevices;
+          in
+          (!hasResumeParam) || hasSwapDevice;
+        message = "resume=/dev/disk/by-label/NIXSWAP requires a matching swapDevices entry.";
+      }
+    ];
+
     boot = {
       loader.systemd-boot.enable = true;
       loader.efi.canTouchEfiVariables = true;
 
-      binfmt.emulatedSystems = [ "aarch64-linux" ]; # to build aarch64 kernel for pi
-
       initrd.availableKernelModules = [
         "nvme"
         "xhci_pci"
-        "thunderbolt"
-        "usb_storage"
         "sd_mod"
       ];
       initrd.kernelModules = [
         "amdgpu"
-        "mt7921e"
       ];
-      kernelModules = [
-        "mt7921e"
-      ];
-      extraModulePackages = [ ];
 
       kernelParams = [
         "quiet"

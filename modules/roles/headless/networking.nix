@@ -20,6 +20,17 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = lib.all (iface: iface != "") cfg.trustedInterfaces;
+        message = "trustedInterfaces must not contain empty interface names.";
+      }
+      {
+        assertion = lib.length cfg.trustedInterfaces == lib.length (lib.unique cfg.trustedInterfaces);
+        message = "trustedInterfaces must not contain duplicates.";
+      }
+    ];
+
     networking = {
       networkmanager = {
         wifi.powersave = false;

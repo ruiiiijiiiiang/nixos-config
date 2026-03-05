@@ -84,6 +84,22 @@ in
           invalid == [ ];
         message = "WireGuard server peers must exist in wg keys and addresses.vpn.hosts.";
       }
+      {
+        assertion = lib.length cfg.peers == lib.length (lib.unique (map (peer: peer.hostName) cfg.peers));
+        message = "WireGuard server peers must not contain duplicate hostName entries.";
+      }
+      {
+        assertion =
+          cfg.wanInterface != cfg.lanInterface
+          && cfg.wgInterface != cfg.wanInterface
+          && cfg.wgInterface != cfg.lanInterface
+          && cfg.infraInterface != cfg.dmzInterface;
+        message = "WireGuard server interface names must not overlap.";
+      }
+      {
+        assertion = config.custom.services.networking.router.enable;
+        message = "WireGuard server requires networking.router.enable for forwarding rules.";
+      }
     ];
 
     networking = {

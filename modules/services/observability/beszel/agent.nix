@@ -16,6 +16,13 @@ in
   };
 
   config = mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = cfg.interface == null || cfg.interface != "";
+        message = "Beszel agent interface must not be empty when set.";
+      }
+    ];
+
     services = {
       beszel.agent = {
         enable = true;

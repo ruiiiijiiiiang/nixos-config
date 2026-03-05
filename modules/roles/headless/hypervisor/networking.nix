@@ -33,7 +33,7 @@ in
       description = "LAN bridge name.";
     };
     vlanId = mkOption {
-      type = types.int;
+      type = types.ints.positive;
       default = vlan-ids.infra;
       description = "VLAN ID for infra.";
     };
@@ -52,6 +52,16 @@ in
       {
         assertion = lib.elem cfg.vlanId (builtins.attrValues vlan-ids);
         message = "Hypervisor VLAN ID must exist in consts.vlan-ids.";
+      }
+      {
+        assertion =
+          cfg.wanInterface != cfg.lanInterface
+          && cfg.wanBridge != cfg.lanBridge
+          && cfg.wanInterface != cfg.wanBridge
+          && cfg.wanInterface != cfg.lanBridge
+          && cfg.lanInterface != cfg.wanBridge
+          && cfg.lanInterface != cfg.lanBridge;
+        message = "Hypervisor WAN/LAN interfaces and bridge names must be distinct.";
       }
     ];
 

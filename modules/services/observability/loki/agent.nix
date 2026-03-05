@@ -14,6 +14,13 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = cfg.serverAddress != "";
+        message = "Loki agent serverAddress must not be empty.";
+      }
+    ];
+
     services.promtail = {
       enable = true;
 

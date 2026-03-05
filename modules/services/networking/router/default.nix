@@ -81,6 +81,26 @@ in
         assertion = cfg.wanInterface != null && cfg.lanInterface != null;
         message = "Router requires WAN and LAN interfaces.";
       }
+      {
+        assertion =
+          lib.length (
+            lib.unique [
+              cfg.wanInterface
+              cfg.lanInterface
+              cfg.podmanInterface
+              cfg.infraInterface
+              cfg.dmzInterface
+            ]
+          ) == 5;
+        message = "Router interface names must all be distinct.";
+      }
+      {
+        assertion =
+          builtins.hasAttr config.networking.hostName addresses.home.hosts
+          && builtins.hasAttr config.networking.hostName addresses.infra.hosts
+          && builtins.hasAttr config.networking.hostName addresses.dmz.hosts;
+        message = "Router hostName must exist in addresses.home/infra/dmz host maps.";
+      }
     ];
 
     boot.kernel.sysctl = {

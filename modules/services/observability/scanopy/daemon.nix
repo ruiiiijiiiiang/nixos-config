@@ -31,6 +31,10 @@ in
         assertion = cfg.envFile != null;
         message = "Scanopy daemon requires envFile.";
       }
+      {
+        assertion = cfg.serverAddress != "";
+        message = "Scanopy daemon serverAddress must not be empty.";
+      }
     ];
 
     virtualisation.oci-containers.containers = {

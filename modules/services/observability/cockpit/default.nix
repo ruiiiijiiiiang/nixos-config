@@ -9,11 +9,11 @@
 let
   inherit (consts) domain subdomains ports;
   inherit (helpers) mkVirtualHost;
-  cfg = config.custom.services.infra.cockpit;
+  cfg = config.custom.services.observability.cockpit;
   fqdn = "${subdomains.${config.networking.hostName}.cockpit}.${domain}";
 in
 {
-  options.custom.services.infra.cockpit = with lib; {
+  options.custom.services.observability.cockpit = with lib; {
     enable = mkEnableOption "Enable Cockpit web management";
   };
 

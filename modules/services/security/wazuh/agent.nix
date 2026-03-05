@@ -51,6 +51,13 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = cfg.interface == null || cfg.interface != "";
+        message = "Wazuh agent interface must not be empty when set.";
+      }
+    ];
+
     virtualisation.oci-containers.containers = {
       wazuh-agent = {
         image = "wazuh/wazuh-agent:${config.custom.services.security.wazuh.version}";

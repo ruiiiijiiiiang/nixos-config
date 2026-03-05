@@ -37,7 +37,15 @@ in
             missing = lib.filter (guest: !(lib.hasAttr guest nixosConfigurations)) libvirtCfg.guests;
           in
           missing == [ ];
-        message = "MiniPC disks: libvirt.guests contains unknown nixosConfigurations entries.";
+        message = "Unknown nixosConfigurations entries found in libvirt.guests.";
+      }
+      {
+        assertion = lib.all (
+          guest:
+          (builtins.hasAttr guest nixosConfigurations)
+          && (nixosConfigurations.${guest}.config.custom.platforms.vm.disks.enable or false)
+        ) libvirtCfg.guests;
+        message = "Every libvirt guest must enable custom.platforms.vm.disks.";
       }
     ];
 

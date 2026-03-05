@@ -18,7 +18,6 @@ in
     boot = {
       loader = {
         systemd-boot.enable = true;
-        efi.canTouchEfiVariables = true;
       };
 
       initrd = {
@@ -43,9 +42,6 @@ in
       ++ lib.optionals cfg.gpuPassthrough [
         "amdgpu.cwsr_enable=0"
         "amdgpu.gpu_recovery=1"
-        "iommu=pt"
-        "pci=realloc"
-        "kvm.ignore_msrs=1"
       ];
     };
 
