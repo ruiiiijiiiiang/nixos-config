@@ -33,7 +33,7 @@ let
   ossecContent =
     builtins.replaceStrings
       [ "@AGENT_NAME@" "@SERVER_ADDRESS@" "@EXTRA_LOCALFILES@" ]
-      [ config.networking.hostName addresses.infra.hosts.vm-monitor extraLocalfiles ]
+      [ config.networking.hostName cfg.serverAddress extraLocalfiles ]
       ossecTemplate;
   initialFile = pkgs.writeText "ossec.conf" ossecContent;
 
@@ -43,6 +43,11 @@ in
 {
   options.custom.services.security.wazuh.agent = with lib; {
     enable = mkEnableOption "Enable Wazuh agent";
+    serverAddress = mkOption {
+      type = types.str;
+      default = addresses.infra.hosts.vm-monitor;
+      description = "Wazuh server address.";
+    };
     interface = mkOption {
       type = types.nullOr types.str;
       default = null;

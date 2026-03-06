@@ -278,7 +278,7 @@ rec {
 
     storage = {
       internal = {
-        nvme-ssd-0 = ""; # TODO: get device id
+        nvme-ssd-0 = "nvme-WD_PC_SN810_SDCPNRY-512G-1006_23302N805496";
         nvme-ssd-1 = "nvme-Netac_NVMe_SSD_256GB_AA20251013256G327033";
       };
       external = {

@@ -28,6 +28,13 @@ in
     enable = mkEnableOption "Enable Nginx reverse proxy";
   };
 
+  assertions = [
+    {
+      assertion = config.services.nginx.virtualHosts == { } || cfg.enable;
+      message = "Nginx virtual hosts are defined but custom.services.networking.nginx.enable is false.";
+    }
+  ];
+
   config = lib.mkIf cfg.enable {
     age.secrets = {
       cloudflare-token = {

@@ -99,7 +99,10 @@ in
 
       security = {
         fail2ban.enable = true;
-        wazuh.agent.enable = true;
+        wazuh.agent = {
+          enable = true;
+          serverAddress = addresses.infra.hosts.vm-monitor;
+        };
       };
     };
   };

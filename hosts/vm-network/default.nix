@@ -183,6 +183,7 @@ in
         fail2ban.enable = true;
         wazuh.agent = {
           enable = true;
+          serverAddress = addresses.infra.hosts.vm-monitor;
           interface = infraInterface;
         };
       };

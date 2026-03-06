@@ -35,6 +35,7 @@ in
           Origins = "https://${fqdn}";
         };
       };
+      showBanner = false;
     };
 
     environment.systemPackages = with pkgs; [

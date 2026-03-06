@@ -13,6 +13,13 @@ in
     enable = mkEnableOption "Enable headless Podman role";
   };
 
+  assertions = [
+    {
+      assertion = config.virtualisation.oci-containers.containers == { } || cfg.enable;
+      message = "OCI containers are defined but custom.roles.headless.podman.enable is false.";
+    }
+  ];
+
   config = lib.mkIf cfg.enable {
     virtualisation = {
       containers.containersConf.settings = {
