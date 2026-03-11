@@ -6,7 +6,7 @@ This repository isn't just a collection of config files; it is a **fully declara
 
 Every single aspect of this infrastructure — from hardware provisioning and vlan routing rules to the complex web of containerized microservices and their secret management — is defined in code. Version controlled and GitOps-friendly, it emphasizes **stability** through atomic rollbacks, **observability** via a comprehensive monitoring stack, and **security** with hardened kernels and isolated networking.
 
-My homelab isn't running on expensive, power-hungry enterprise-grade racks. This entire infrastructure is powered by a mini PC running NixOS with libvirt (hosting all VMs) and a Raspberry Pi (for Home Assistant and IoT). I work with what I have, and my goal is **maximum software correctness**: proving that proper architecture, deliberate design, and disciplined engineering matter far more than raw hardware specs.
+My homelab isn't running on expensive, power-hungry enterprise-grade racks. This entire infrastructure is powered by a mini PC running NixOS with libvirt, a Raspberry Pi 4, and a couple of old hard drives. I work with what I have, and my goal is **maximum software correctness**: proving that proper architecture, deliberate design, and disciplined engineering matter far more than raw hardware specs.
 
 The beauty of this setup? **Total vertical alignment.** The hypervisor, the guests, the network topology, the services — every single layer is declared in nix code. No hybrid imperative management, no XML sprawl, no clicking through web UIs. Just pure, plain-text infrastructure definitions that rebuild atomically and roll back instantly.
 
@@ -45,7 +45,7 @@ The `flake.nix` is the central cortex, orchestrating these modules to synthesize
                          |                         v                           v
 +------------------------------------------------------------------------------------------------------+
 | [vm-network] (libvirt VM)                                                                            |
-| 4 vCPU, 2GB RAM                                                                                      |
+| 4 vCPU, 2GB RAM, NIC Passthru                                                                        |
 | Role: Router, Firewall (nftables), DHCP (Kea), DNS master (Pi-hole/Unbound), VPN Gateway (WireGuard) |
 +------------------------------------------------------------------------------------------------------+
                                                    ^
@@ -131,13 +131,13 @@ This infrastructure comprises six distinct hosts. Here's the breakdown:
 
 ### `pi`
 
-- **The Physical Bridge.** This Raspberry Pi is armed with **Z-Wave** and **Zigbee** radios, acting as the smart hub running Home Assistant while standing watch as a backup DNS node.
-- **Hardware**: Raspberry Pi
+- **The Physical Bridge.** Armed with **Z-Wave** and **Zigbee** radios, acting as the smart hub running Home Assistant while standing watch as a backup DNS node.
+- **Hardware**: Raspberry Pi 4 with 2GB RAM
 - **Network:** Infra (VLAN 20)
 
 ### `hypervisor`
 
-- **The Foundation.** This mini PC runs **NixOS with libvirt** as a headless hypervisor host. It spawns and manages four virtual machines (`vm-network`, `vm-app`, `vm-monitor`, `vm-cyber`), all declared entirely in Nix code via the NixVirt module. The entire virtualization stack — from VLAN-filtered bridges to PCI passthrough to VM lifecycle management — is defined declaratively.
+- **The Bedrock.** This mini PC runs **NixOS with libvirt** as a headless hypervisor host. It spawns and manages four virtual machines (`vm-network`, `vm-app`, `vm-monitor`, `vm-cyber`), powered by the NixVirt module. The entire virtualization stack — from VLAN-filtered bridges to PCI passthrough to VM lifecycle management — is defined declaratively.
 - **Hardware**: AMD 6900HX, 32GB RAM
 - **Network:** Infra (VLAN 20)
 
@@ -149,7 +149,7 @@ This infrastructure comprises six distinct hosts. Here's the breakdown:
 
 ### `vm-app`
 
-- **The Powerhouse.** The main application server. AMD GPU passthrough via VFIO/PCI passthrough (declared in Nix) enables hardware-accelerated transcoding for Jellyfin. It runs my complete suite of user-facing services: Immich for photos, Paperless-ngx for documents, FreshRSS, n8n, Forgejo, and more. The VM definition, resource allocation, and hardware passthrough are all specified in the host's libvirt module.
+- **The Powerhouse.** The main application server. GPU passthrough enables hardware-accelerated transcoding for Jellyfin. It runs my complete suite of user-facing services: Immich for photos, Paperless-ngx for documents, Forgejo for version control, and more.
 - **Hardware**: 8 vCPU cores, 12GB RAM, GPU passthrough
 - **Network:** Infra (VLAN 20)
 
@@ -210,7 +210,7 @@ A private **Harmonia** binary cache runs on `vm-app`, serving as the fleet's int
 
 The infrastructure employs a dual CI/CD strategy, enabling both local-first and remote fallback deployments:
 
-- **Local Pipeline (Forgejo):** Executes directly on `vm-app` with native Podman socket access. Deploys to all virtual machines (`vm-app`, `vm-monitor`, `vm-network`) over SSH via the Infra VLAN. Rebuilds and activates NixOS configurations atomically. Zero overhead. Maximum performance.
+- **Local Pipeline (Forgejo):** Executes directly on `vm-app` with native Podman socket access. Deploys to all virtual machines over SSH via the Infra VLAN. Rebuilds and activates NixOS configurations atomically. Zero overhead. Maximum performance.
 - **Remote Pipeline (GitHub Actions):** Establishes a WireGuard tunnel into the homelab for external access. Deploys to all hosts including `hypervisor` (the host) and `pi` using ARM-native runners for the Pi. Accessible from anywhere. Environment independence.
 
 The local Forgejo instance doubles as a private **OCI container registry**. CI pipelines build, push, and version container images for personal projects, creating a self-contained artifact ecosystem consumed across the entire infrastructure.

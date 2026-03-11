@@ -25,32 +25,41 @@ in
       }
     ];
 
-    services.cockpit = {
-      enable = true;
-      port = ports.cockpit;
-      settings = {
-        WebService = {
-          AllowUnencrypted = true;
-          ProtocolHeader = "X-Forwarded-Proto";
-        };
-      };
-      allowed-origins = [ "https://${fqdn}" ];
-      showBanner = false;
-    };
-
-    environment = {
-      systemPackages = with pkgs; [
-        cockpit-machines
-        libvirt-dbus
-      ];
-      pathsToLink = [ "/share/cockpit" ];
-    };
-
     services = {
+      cockpit = {
+        enable = true;
+        port = ports.cockpit;
+        settings = {
+          WebService = {
+            AllowUnencrypted = true;
+            ProtocolHeader = "X-Forwarded-Proto";
+          };
+        };
+        allowed-origins = [ "https://${fqdn}" ];
+        showBanner = false;
+        plugins = with pkgs; [
+          cockpit-files
+          cockpit-machines
+        ];
+      };
+
       nginx.virtualHosts."${fqdn}" = mkVirtualHost {
         inherit fqdn;
         port = ports.cockpit;
       };
+
+      dbus.packages = with pkgs; [ libvirt-dbus ];
+    };
+
+    systemd.packages = with pkgs; [ libvirt-dbus ];
+
+    environment.systemPackages = with pkgs; [ libvirt-dbus ];
+
+    users.groups.libvirtdbus = { };
+    users.users.libvirtdbus = {
+      isSystemUser = true;
+      group = "libvirtdbus";
+      extraGroups = [ "libvirtd" ];
     };
   };
 }
