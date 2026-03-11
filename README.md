@@ -6,7 +6,7 @@ This repository isn't just a collection of config files; it is a **fully declara
 
 Every single aspect of this infrastructure — from hardware provisioning and vlan routing rules to the complex web of containerized microservices and their secret management — is defined in code. Version controlled and GitOps-friendly, it emphasizes **stability** through atomic rollbacks, **observability** via a comprehensive monitoring stack, and **security** with hardened kernels and isolated networking.
 
-My homelab isn't running on expensive, power-hungry enterprise-grade racks. This entire infrastructure is powered by a mini PC running NixOS with libvirt, a Raspberry Pi 4, and a couple of old hard drives. I work with what I have, and my goal is **maximum software correctness**: proving that proper architecture, deliberate design, and disciplined engineering matter far more than raw hardware specs.
+My homelab isn't running on expensive, power-hungry enterprise-grade racks. This entire infrastructure is powered by a mini PC, a Raspberry Pi 4, and a couple of old hard drives. I work with what I have, and my goal is **maximum software correctness**: proving that proper architecture, deliberate design, and disciplined engineering matter far more than raw hardware specs.
 
 The beauty of this setup? **Total vertical alignment.** The hypervisor, the guests, the network topology, the services — every single layer is declared in nix code. No hybrid imperative management, no XML sprawl, no clicking through web UIs. Just pure, plain-text infrastructure definitions that rebuild atomically and roll back instantly.
 
@@ -149,7 +149,7 @@ This infrastructure comprises six distinct hosts. Here's the breakdown:
 
 ### `vm-app`
 
-- **The Powerhouse.** The main application server. GPU passthrough enables hardware-accelerated transcoding for Jellyfin. It runs my complete suite of user-facing services: Immich for photos, Paperless-ngx for documents, Forgejo for version control, and more.
+- **The Powerhouse.** The main application server. GPU passthrough enables hardware-accelerated transcoding for Jellyfin. It runs my complete suite of user-facing services: Immich for photos, Paperless-ngx for documents, Forgejo for code, and more.
 - **Hardware**: 8 vCPU cores, 12GB RAM, GPU passthrough
 - **Network:** Infra (VLAN 20)
 
@@ -211,7 +211,7 @@ A private **Harmonia** binary cache runs on `vm-app`, serving as the fleet's int
 The infrastructure employs a dual CI/CD strategy, enabling both local-first and remote fallback deployments:
 
 - **Local Pipeline (Forgejo):** Executes directly on `vm-app` with native Podman socket access. Deploys to all virtual machines over SSH via the Infra VLAN. Rebuilds and activates NixOS configurations atomically. Zero overhead. Maximum performance.
-- **Remote Pipeline (GitHub Actions):** Establishes a WireGuard tunnel into the homelab for external access. Deploys to all hosts including `hypervisor` (the host) and `pi` using ARM-native runners for the Pi. Accessible from anywhere. Environment independence.
+- **Remote Pipeline (GitHub Actions):** Establishes a WireGuard tunnel into the homelab for external access. Deploys to all hosts including `pi` using ARM-native runners. Accessible from anywhere. Environment independence.
 
 The local Forgejo instance doubles as a private **OCI container registry**. CI pipelines build, push, and version container images for personal projects, creating a self-contained artifact ecosystem consumed across the entire infrastructure.
 
@@ -219,6 +219,6 @@ The local Forgejo instance doubles as a private **OCI container registry**. CI p
 
 **Vertical Integration. End to End.**
 
-The hypervisor layer itself is a masterclass in declarative infrastructure. Using the **NixVirt** module, every VM is defined as a Nix derivation — CPU allocation, memory size, disk backend (LVM logical volumes), network interfaces with VLAN tagging, PCI device passthrough, and even lifecycle hooks for GPU reset workarounds. The host bridge is configured via `systemd-networkd` with VLAN filtering, allowing guests to trunk into segregated networks without any imperative configuration.
+Using the **NixVirt** module, every VM is defined as a Nix derivation — CPU allocation, memory size, disk backend (LVM logical volumes), network interfaces with VLAN tagging, PCI device passthrough, and even lifecycle hooks for GPU reset workarounds. The host bridge is configured via `systemd-networkd` with VLAN filtering, allowing guests to trunk into segregated networks without any imperative configuration.
 
-What makes this truly powerful is the **vertical alignment**: the hypervisor host, the VM definitions, the guest OS configurations, and the services they run are all declared in the same Nix flake. Change a VM's VLAN assignment? Update one line in Nix, rebuild, and the entire networking stack reconfigures atomically. Need to passthrough a GPU? Declare it in the guest config, and the host automatically binds the right kernel modules and IOMMU groups. Everything is type-checked, reproducible, and instantly auditable in git history.
+What makes this truly powerful is the **vertical alignment**: the hypervisor host, the VM definitions, the guest OS configurations, and the services they run are all declared in the same Nix flake. Change a VM's VLAN assignment? Update one line in Nix, rebuild, and the entire networking stack reconfigures atomically. Need to passthrough a piece of hardware? Declare it in the guest config, and the host automatically binds the right kernel modules and IOMMU groups. Everything is type-checked, reproducible, and instantly auditable in git history.

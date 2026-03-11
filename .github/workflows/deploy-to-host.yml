@@ -9,7 +9,9 @@ on:
         default: vm-app
         options:
           - pi
+          - hypervisor
           - vm-app
+          - vm-cyber
           - vm-monitor
           - vm-network
 
@@ -27,8 +29,14 @@ jobs:
             "pi")
               echo "TARGET_IP=192.168.20.51" >> $GITHUB_ENV
               ;;
+            "hypervisor")
+              echo "TARGET_IP=192.168.20.254" >> $GITHUB_ENV
+              ;;
             "vm-app")
               echo "TARGET_IP=192.168.20.2" >> $GITHUB_ENV
+              ;;
+            "vm-cyber")
+              echo "TARGET_IP=192.168.88.10" >> $GITHUB_ENV
               ;;
             "vm-monitor")
               echo "TARGET_IP=192.168.20.3" >> $GITHUB_ENV

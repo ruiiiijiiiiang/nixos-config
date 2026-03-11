@@ -8,6 +8,7 @@ on:
         type: choice
         default: vm-app
         options:
+          - hypervisor
           - vm-app
           - vm-cyber
           - vm-monitor
@@ -24,6 +25,9 @@ jobs:
         id: config
         run: |
           case "${{ inputs.target_host }}" in
+            "hypervisor")
+              echo "TARGET_IP=192.168.20.254" >> $GITHUB_ENV
+              ;;
             "vm-app")
               echo "TARGET_IP=192.168.20.2" >> $GITHUB_ENV
               ;;

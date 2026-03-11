@@ -5,7 +5,7 @@
   ...
 }:
 let
-  inherit (consts) addresses vlan-ids;
+  inherit (consts) domain addresses vlan-ids;
   cfg = config.custom.roles.headless.hypervisor.networking;
   vlanInterface = "${cfg.lanBridge}.${toString cfg.vlanId}";
 in
@@ -103,6 +103,8 @@ in
           networkConfig = {
             Address = "${addresses.infra.hosts.hypervisor}/24";
             Gateway = addresses.infra.hosts.vm-network;
+            DNS = [ addresses.infra.vip.dns ];
+            Domains = [ domain ];
           };
           linkConfig.RequiredForOnline = "routable";
         };
