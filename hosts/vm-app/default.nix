@@ -1,6 +1,7 @@
 { consts, ... }:
 let
   inherit (consts) addresses vlan-ids;
+  lanInterface = "lan0";
   vlanId = vlan-ids.infra;
 in
 {
@@ -11,7 +12,7 @@ in
     platforms.vm = {
       kernel = {
         enable = true;
-        gpuPassthrough = true;
+        hardwarePassthrough = "gpu";
       };
 
       libvirt = {
@@ -26,11 +27,15 @@ in
         enable = true;
         size = 300;
       };
+
+      networking = {
+        enable = true;
+        inherit lanInterface;
+      };
     };
 
     roles.headless = {
       networking.enable = true;
-      podman.enable = true;
       security.enable = true;
       services.enable = true;
     };
@@ -76,6 +81,7 @@ in
 
       infra = {
         harmonia.enable = true;
+        podman.enable = true;
       };
 
       networking = {

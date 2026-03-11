@@ -28,6 +28,7 @@ in
       primary = {
         type = "disk";
         device = "/dev/vda";
+        imageSize = "50G";
         content = {
           type = "gpt";
           partitions = {

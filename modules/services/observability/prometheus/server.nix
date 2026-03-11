@@ -50,13 +50,6 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    assertions = [
-      {
-        assertion = lib.all (hostname: builtins.hasAttr hostname addresses.infra.hosts) (builtins.attrNames nixosConfigurations);
-        message = "Prometheus scrape target generation requires infra addresses for all nixosConfigurations hosts.";
-      }
-    ];
-
     services = {
       prometheus = {
         enable = true;

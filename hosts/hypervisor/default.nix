@@ -1,10 +1,9 @@
 { consts, ... }:
 let
   inherit (consts) addresses vlan-ids;
-  wanInterface = "eno1";
   lanInterface = "enxc8a362bf0bb3";
-  wanBridge = "vmbr0";
-  lanBridge = "vmbr1";
+  lanBridge = "br0";
+  vlanInterface = "${lanBridge}.${toString vlan-ids.infra}";
 in
 {
   system.stateVersion = "25.11";
@@ -22,11 +21,8 @@ in
     roles.headless = {
       networking = {
         enable = true;
-        trustedInterfaces = [
-          "${lanBridge}.${toString vlan-ids.infra}"
-        ];
+        trustedInterfaces = [ vlanInterface ];
       };
-      podman.enable = true;
       security.enable = true;
       services.enable = true;
 
@@ -34,9 +30,7 @@ in
         networking = {
           enable = true;
           inherit
-            wanInterface
             lanInterface
-            wanBridge
             lanBridge
             ;
           vlanId = vlan-ids.infra;
@@ -55,17 +49,19 @@ in
     };
 
     services = {
+      infra.podman.enable = true;
+
       networking.nginx.enable = true;
 
       observability = {
         beszel.agent = {
           enable = true;
-          interface = "${lanBridge}.${toString vlan-ids.infra}";
+          interface = vlanInterface;
         };
         cockpit.enable = true;
         dockhand.agent = {
           enable = true;
-          interface = "${lanBridge}.${toString vlan-ids.infra}";
+          interface = vlanInterface;
         };
         loki.agent = {
           enable = true;
@@ -75,7 +71,7 @@ in
           nginx.enable = true;
           node.enable = true;
           podman.enable = true;
-          interface = "${lanBridge}.${toString vlan-ids.infra}";
+          interface = vlanInterface;
         };
       };
 
@@ -83,7 +79,7 @@ in
         fail2ban.enable = true;
         wazuh.agent = {
           enable = true;
-          interface = "${lanBridge}.${toString vlan-ids.infra}";
+          interface = vlanInterface;
         };
       };
     };

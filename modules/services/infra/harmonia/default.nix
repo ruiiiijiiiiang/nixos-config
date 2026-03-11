@@ -21,6 +21,7 @@ let
 
   hostsToBuild = [
     "framework"
+    "hypervisor"
     "vm-network"
     "vm-app"
     "vm-monitor"
@@ -56,7 +57,7 @@ in
   config = lib.mkIf cfg.enable {
     age.secrets = {
       harmonia-sign-key = {
-        file = ../../../../../secrets/harmonia-sign-key.age;
+        file = ../../../../secrets/harmonia-sign-key.age;
         mode = "440";
         owner = "harmonia";
         group = "harmonia";
@@ -65,10 +66,12 @@ in
 
     services = {
       harmonia = {
-        enable = true;
-        settings = {
-          bind = "[::]:${toString ports.harmonia}";
-          sign_key_path = config.age.secrets.harmonia-sign-key.path;
+        cache = {
+          enable = true;
+          settings = {
+            bind = "[::]:${toString ports.harmonia}";
+            sign_key_path = config.age.secrets.harmonia-sign-key.path;
+          };
         };
       };
 

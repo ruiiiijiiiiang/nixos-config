@@ -90,7 +90,9 @@ in
       };
 
       immich-machine-learning = {
-        image = "ghcr.io/immich-app/immich-machine-learning:${immich-version}${lib.optionalString config.custom.platforms.vm.kernel.gpuPassthrough "-rocm"}";
+        image = "ghcr.io/immich-app/immich-machine-learning:${immich-version}${
+          lib.optionalString (config.custom.platforms.vm.kernel.hardwarePassthrough == "gpu") "-rocm"
+        }";
         user = "${toString oci-uids.immich}:${toString oci-uids.immich}";
         dependsOn = [ "immich-postgres" ];
         networks = [ "container:immich-postgres" ];
@@ -103,7 +105,9 @@ in
         devices = [
           "/dev/kfd:/dev/kfd"
         ]
-        ++ lib.optional config.custom.platforms.vm.kernel.gpuPassthrough "/dev/dri/renderD128:/dev/dri/renderD128";
+        ++ lib.optional (
+          config.custom.platforms.vm.kernel.hardwarePassthrough == "gpu"
+        ) "/dev/dri/renderD128:/dev/dri/renderD128";
       };
     };
 

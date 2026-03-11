@@ -4,9 +4,11 @@
 
 This repository isn't just a collection of config files; it is a **fully declarative, reproducible, and fortified infrastructure** definition for my personal homelab. Built on the bedrock of **NixOS** and **Nix Flakes**, this project represents a complete paradigm shift from fragile, imperative sysadmin tasks to a robust, code-driven ecosystem.
 
-Every single aspect of this infrastructure — from the network layout and vlan routing rules to the complex web of containerized microservices and their secret management — is defined in code. Version controlled and GitOps-friendly, it emphasizes **stability** through atomic rollbacks, **observability** via a comprehensive monitoring stack, and **security** with hardened kernels and isolated networking.
+Every single aspect of this infrastructure — from hardware provisioning and vlan routing rules to the complex web of containerized microservices and their secret management — is defined in code. Version controlled and GitOps-friendly, it emphasizes **stability** through atomic rollbacks, **observability** via a comprehensive monitoring stack, and **security** with hardened kernels and isolated networking.
 
-My homelab isn't running on expensive, power-hungry enterprise-grade racks. This entire infrastructure is powered by a single mini PC (hosting Proxmox VMs) and a Raspberry Pi. I work with what I have, and my goal is **maximum software correctness**: proving that proper architecture, deliberate design, and disciplined engineering matter far more than raw hardware specs.
+My homelab isn't running on expensive, power-hungry enterprise-grade racks. This entire infrastructure is powered by a mini PC running NixOS with libvirt (hosting all VMs) and a Raspberry Pi (for Home Assistant and IoT). I work with what I have, and my goal is **maximum software correctness**: proving that proper architecture, deliberate design, and disciplined engineering matter far more than raw hardware specs.
+
+The beauty of this setup? **Total vertical alignment.** The hypervisor, the guests, the network topology, the services — every single layer is declared in nix code. No hybrid imperative management, no XML sprawl, no clicking through web UIs. Just pure, plain-text infrastructure definitions that rebuild atomically and roll back instantly.
 
 We're way past infrastructure-as-code. It's time for infrastructure/networking/configuration/security/pipeline all-rolled-into-one-as-code.
 
@@ -20,10 +22,10 @@ This infrastructure is engineered following a rigorous **Domain-Driven Design** 
 2. **Platform (`modules/platform`):** The hardware abstraction layer. Whether it's a Raspberry Pi ARM chip or a virtualized x86 hypervisor, this layer handles the metal.
 3. **Roles (`modules/roles`):** The personality injection. A host is defined by its mission: a hardened **Headless Server** guarding the network, or a feature-rich **Workstation** designed for development.
 4. **Services (`modules/services`):** The functional payload. Granular, plug-and-play applications categorized by domain:
-    - **Networking:** The mesh that connects it all (DNS, Routing, VPNs).
-    - **Observability:** The eyes and ears (Monitoring, Logging, Security Agents).
-    - **Security:** The active defense perimeter (Fail2Ban, Wazuh, Suricata, CrowdSec).
-    - **Apps:** The user experience, grouped by function (Office, Tools, Media, Authentication, Web).
+   - **Networking:** The mesh that connects it all (DNS, Routing, VPNs).
+   - **Observability:** The eyes and ears (Monitoring, Logging, Security Agents).
+   - **Security:** The active defense perimeter (Fail2Ban, Wazuh, Suricata, CrowdSec).
+   - **Apps:** The user experience, grouped by function (Office, Tools, Media, Authentication, Web).
 
 The `flake.nix` is the central cortex, orchestrating these modules to synthesize specific host configurations. A **hybrid deployment strategy** is employed to balance raw performance with operational stability:
 
@@ -42,7 +44,7 @@ The `flake.nix` is the central cortex, orchestrating these modules to synthesize
                          |                         |                           |
                          |                         v                           v
 +------------------------------------------------------------------------------------------------------+
-| [vm-network] (Proxmox VM)                                                                            |
+| [vm-network] (libvirt VM)                                                                            |
 | 4 vCPU, 2GB RAM                                                                                      |
 | Role: Router, Firewall (nftables), DHCP (Kea), DNS master (Pi-hole/Unbound), VPN Gateway (WireGuard) |
 +------------------------------------------------------------------------------------------------------+
@@ -59,13 +61,13 @@ The `flake.nix` is the central cortex, orchestrating these modules to synthesize
 | Desc: Trusted Clients   |    | Desc: Servers & Infrastructure      |    | Desc: Untrusted Workloads  |
 +-------------------------+    +-------------------------------------+    +----------------------------+
 | +---------------------+ |    | +---------------------------------+ |    | +------------------------+ |
-| | [framework]         | |    | | [vm-app] (Proxmox VM)           | |    | | [vm-cyber] (Proxmox VM)| |
-| | (Laptop)            | |    | | 10 vCPU, 16GB RAM, GPU Passthru | |    | | 4 vCPU, 4GB RAM        | |
+| | [framework]         | |    | | [vm-app] (libvirt VM)           | |    | | [vm-cyber] (libvirt VM)| |
+| | (Laptop)            | |    | | 8 vCPU, 12GB RAM, GPU Passthru  | |    | | 4 vCPU, 4GB RAM        | |
 | +---------------------+ |    | | Hosts: Jellyfin, Immich, etc.   | |    | | For: Security Research | |
 |                         |    | +---------------------------------+ |    | +------------------------+ |
 | (Other clients...)      |    | +---------------------------------+ |    |                            |
-|                         |    | | [vm-monitor] (Proxmox VM)       | |    |                            |
-|                         |    | | 4 vCPU, 6GB RAM                 | |    |                            |
+|                         |    | | [vm-monitor] (libvirt VM)       | |    |                            |
+|                         |    | | 4 vCPU, 4GB RAM                 | |    |                            |
 |                         |    | | Hosts: Prometheus, Wazuh, etc.  | |    |                            |
 |                         |    | +---------------------------------+ |    |                            |
 |                         |    | +---------------------------------+ |    |                            |
@@ -120,6 +122,8 @@ Furthermore, all web-facing services are placed behind an **Nginx reverse proxy*
 
 ## The Fleet
 
+This infrastructure comprises six distinct hosts. Here's the breakdown:
+
 ### `framework`
 
 - **The Command Center.** The primary development workstation, tailored for code, creativity, and control.
@@ -127,28 +131,32 @@ Furthermore, all web-facing services are placed behind an **Nginx reverse proxy*
 
 ### `pi`
 
-- **The Physical Bridge.** Armed with **Z-Wave** and **Zigbee** radios, it acts as the smart hub running Home Assistant while standing watch as a backup DNS node.
+- **The Physical Bridge.** This Raspberry Pi is armed with **Z-Wave** and **Zigbee** radios, acting as the smart hub running Home Assistant while standing watch as a backup DNS node.
+- **Hardware**: Raspberry Pi
 - **Network:** Infra (VLAN 20)
 
-### `vm-app`
+### `hypervisor`
 
-- **The Application Hub.** The workhorse running a suite of self-hosted services, including OpenCloud, Immich, Vaultwarden, and more.
-- **Hardware**: 10 vCPU cores, 16GB RAM
-- **Extra Power:** Equipped with **GPU Passthrough** from the Proxmox host. This hardware acceleration powers:
-  - **Media:** Transcoding for **Jellyfin**.
-  - **AI:** Local LLM inference for **Ollama/Open WebUI**.
+- **The Foundation.** This mini PC runs **NixOS with libvirt** as a headless hypervisor host. It spawns and manages four virtual machines (`vm-network`, `vm-app`, `vm-monitor`, `vm-cyber`), all declared entirely in Nix code via the NixVirt module. The entire virtualization stack — from VLAN-filtered bridges to PCI passthrough to VM lifecycle management — is defined declaratively.
+- **Hardware**: AMD 6900HX, 32GB RAM
 - **Network:** Infra (VLAN 20)
 
 ### `vm-network`
 
-- **The Sentinel.** The primary router, firewall, and DNS authority. It manages the Cloudflare Tunnels, WireGuard VPNs, and Suricata IDS/IPS.
-- **Hardware**: 4 vCPU cores, 2GB RAM
+- **The Sentinel.** The primary router, firewall, and DNS authority. It manages the Cloudflare Tunnels, WireGuard VPNs, and Suricata IDS/IPS. A physical NIC is passed through from the hypervisor to serve as the WAN interface, providing direct hardware access for maximum throughput and security.
+- **Hardware**: 4 vCPU cores, 2GB RAM, NIC passthrough (WAN)
 - **Network:** Gateway (WAN, Home, Infra, DMZ)
+
+### `vm-app`
+
+- **The Powerhouse.** The main application server. AMD GPU passthrough via VFIO/PCI passthrough (declared in Nix) enables hardware-accelerated transcoding for Jellyfin. It runs my complete suite of user-facing services: Immich for photos, Paperless-ngx for documents, FreshRSS, n8n, Forgejo, and more. The VM definition, resource allocation, and hardware passthrough are all specified in the host's libvirt module.
+- **Hardware**: 8 vCPU cores, 12GB RAM, GPU passthrough
+- **Network:** Infra (VLAN 20)
 
 ### `vm-monitor`
 
 - **The Watchtower.** Dedicated to keeping the lights on. It hosts the **Beszel Hub**, **Prometheus**, **Loki**, **Wazuh Server**, and **Gatus** to visualize the health and security of the entire infrastructure.
-- **Hardware**: 4 vCPU cores, 6GB RAM
+- **Hardware**: 4 vCPU cores, 4GB RAM
 - **Network:** Infra (VLAN 20)
 
 ### `vm-cyber`
@@ -160,7 +168,7 @@ Furthermore, all web-facing services are placed behind an **Nginx reverse proxy*
 
 ### Shared Services
 
-Every server host (`pi`, `vm-app`, `vm-network`, `vm-monitor`) comes equipped with a standard observability and security sidecar:
+Every server host (`pi`, `vm-network`, `vm-app`, `vm-monitor`) comes equipped with a standard observability and security sidecar:
 
 - **Prometheus Exporters:** Granular telemetry for Nginx, Node, Podman, etc.
 - **Promtail:** Grafana Loki agent for collecting `systemd-journal` logs.
@@ -202,7 +210,15 @@ A private **Harmonia** binary cache runs on `vm-app`, serving as the fleet's int
 
 The infrastructure employs a dual CI/CD strategy, enabling both local-first and remote fallback deployments:
 
-- **Local Pipeline (Forgejo):** Executes directly on `vm-app` with native Podman socket access. Deploys to all virtual machines (`vm-app`, `vm-monitor`, `vm-network`) over SSH via the Infra VLAN. Zero overhead. Maximum performance.
-- **Remote Pipeline (GitHub Actions):** Establishes a WireGuard tunnel into the homelab for external access. Deploys to all hosts including `pi` using ARM-native runners. Accessible from anywhere. Environment independence.
+- **Local Pipeline (Forgejo):** Executes directly on `vm-app` with native Podman socket access. Deploys to all virtual machines (`vm-app`, `vm-monitor`, `vm-network`) over SSH via the Infra VLAN. Rebuilds and activates NixOS configurations atomically. Zero overhead. Maximum performance.
+- **Remote Pipeline (GitHub Actions):** Establishes a WireGuard tunnel into the homelab for external access. Deploys to all hosts including `hypervisor` (the host) and `pi` using ARM-native runners for the Pi. Accessible from anywhere. Environment independence.
 
 The local Forgejo instance doubles as a private **OCI container registry**. CI pipelines build, push, and version container images for personal projects, creating a self-contained artifact ecosystem consumed across the entire infrastructure.
+
+### Hypervisor Architecture
+
+**Vertical Integration. End to End.**
+
+The hypervisor layer itself is a masterclass in declarative infrastructure. Using the **NixVirt** module, every VM is defined as a Nix derivation — CPU allocation, memory size, disk backend (LVM logical volumes), network interfaces with VLAN tagging, PCI device passthrough, and even lifecycle hooks for GPU reset workarounds. The host bridge is configured via `systemd-networkd` with VLAN filtering, allowing guests to trunk into segregated networks without any imperative configuration.
+
+What makes this truly powerful is the **vertical alignment**: the hypervisor host, the VM definitions, the guest OS configurations, and the services they run are all declared in the same Nix flake. Change a VM's VLAN assignment? Update one line in Nix, rebuild, and the entire networking stack reconfigures atomically. Need to passthrough a GPU? Declare it in the guest config, and the host automatically binds the right kernel modules and IOMMU groups. Everything is type-checked, reproducible, and instantly auditable in git history.

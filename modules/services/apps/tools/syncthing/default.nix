@@ -15,7 +15,8 @@ let
     ;
   inherit (helpers) mkVirtualHost;
   cfg = config.custom.services.apps.tools.syncthing;
-  fqdn = "${subdomains.${config.networking.hostName}.syncthing}.${domain}";
+  fqdn =
+    if cfg.proxied then "${subdomains.${config.networking.hostName}.syncthing}.${domain}" else "";
 in
 {
   options.custom.services.apps.tools.syncthing = with lib; {

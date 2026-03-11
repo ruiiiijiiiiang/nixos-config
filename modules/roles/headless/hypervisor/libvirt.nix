@@ -8,28 +8,43 @@
   ...
 }:
 let
-  inherit (consts) hardware;
+  inherit (consts) username hardware;
   inherit (helpers) parsePciAddress;
   inherit (inputs.self) nixosConfigurations;
   cfg = config.custom.roles.headless.hypervisor.libvirt;
 
-  hasGpuPassthrough =
-    nixosConfiguration: nixosConfiguration.config.custom.platforms.vm.kernel.gpuPassthrough or false;
-
-  gpuPassthroughGuest =
+  getPassthroughGuest =
+    hw:
     let
       guestConfigs = lib.filterAttrs (name: _: lib.elem name cfg.guests) nixosConfigurations;
-      matching = lib.filterAttrs (name: hasGpuPassthrough) guestConfigs;
+      matching = lib.filterAttrs (
+        _: c: c.config.custom.platforms.vm.kernel.hardwarePassthrough == hw
+      ) guestConfigs;
     in
-    if matching == { } then null else (lib.head (lib.attrNames matching));
+    if matching == { } then null else lib.head (lib.attrNames matching);
+
+  passthroughIds =
+    lib.concatMap (hw: lib.optional (getPassthroughGuest hw != null) hardware.${hw}.id)
+      [
+        "gpu"
+        "nic"
+      ];
 
   mkLibvirtBase =
     { guest, libvirtCfg }:
     {
-      cpu.mode = "host-passthrough";
       vcpu.placement = "static";
 
-      os.firmware = "efi";
+      os = {
+        loader = {
+          readonly = true;
+          secure = false;
+          type = "pflash";
+          # This path needs to be hardcoded otherwise it defaults to edk2-x86_64-secure-code.fd and enables secure boot.
+          # I've tried other methods to disable secure boot and setting this path is the only way that worked.
+          path = "/run/libvirt/nix-ovmf/edk2-x86_64-code.fd";
+        };
+      };
 
       memoryBacking = {
         source.type = "memfd";
@@ -56,13 +71,15 @@ let
           }
         ];
 
-        filesystem = lib.mapAttrsToList (name: _: {
-          type = "mount";
-          accessmode = "passthrough";
-          driver.type = "virtiofs";
-          source.dir = "/mnt/${name}";
-          target.dir = name;
-        }) hardware.storage.external;
+        filesystem = [
+          {
+            type = "mount";
+            accessmode = "passthrough";
+            driver.type = "virtiofs";
+            source.dir = "/mnt/external";
+            target.dir = "usb_hdd";
+          }
+        ];
 
         interface = [
           {
@@ -82,36 +99,20 @@ let
           }
         ];
 
-        hostdev = lib.optionals (hasGpuPassthrough nixosConfigurations.${guest}) [
-          {
-            mode = "subsystem";
-            type = "pci";
-            managed = true;
-            source = {
-              address = parsePciAddress hardware.gpu.address;
-            };
-          }
-        ];
-
-        rng = [
-          {
-            model = "virtio";
-            backend = {
-              model = "random";
-              source = "/dev/urandom";
-            };
-          }
-        ];
-
-        channel = [
-          {
-            type = "unix";
-            target = {
-              type = "virtio";
-              name = "org.qemu.guest_agent.0";
-            };
-          }
-        ];
+        hostdev =
+          let
+            inherit (nixosConfigurations.${guest}.config.custom.platforms.vm.kernel) hardwarePassthrough;
+          in
+          lib.optionals (hardwarePassthrough != null) [
+            {
+              mode = "subsystem";
+              type = "pci";
+              managed = true;
+              source = {
+                address = parsePciAddress hardware.${hardwarePassthrough}.address;
+              };
+            }
+          ];
 
         serial = [
           {
@@ -138,26 +139,12 @@ let
             model = "isa";
           }
         ];
-      };
 
-      clock = {
-        offset = "utc";
-        timer = [
+        video = [
           {
-            name = "rtc";
-            tickpolicy = "catchup";
-          }
-          {
-            name = "pit";
-            tickpolicy = "delay";
-          }
-          {
-            name = "hpet";
-            present = false;
-          }
-          {
-            name = "kvmclock";
-            present = true;
+            model = {
+              type = "virtio";
+            };
           }
         ];
       };
@@ -178,58 +165,6 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    assertions = [
-      {
-        assertion = config.custom.roles.headless.hypervisor.networking.enable;
-        message = "Libvirt hypervisor requires the networking role (LAN bridge is referenced in domain XML).";
-      }
-      {
-        assertion = config.custom.platforms.minipc.disks.enable;
-        message = "Libvirt hypervisor requires custom.platforms.minipc.disks.enable for guest block devices.";
-      }
-      {
-        assertion = config.custom.roles.headless.hypervisor.networking.lanBridge != null;
-        message = "Libvirt hypervisor requires networking.lanBridge.";
-      }
-      {
-        assertion =
-          let
-            guestConfigs = lib.filterAttrs (name: _: lib.elem name cfg.guests) nixosConfigurations;
-            matching = lib.filterAttrs (name: hasGpuPassthrough) guestConfigs;
-          in
-          lib.length (lib.attrNames matching) <= 1;
-        message = "Libvirt hypervisor supports GPU passthrough for at most one guest.";
-      }
-      {
-        assertion = lib.all (guest: builtins.hasAttr guest nixosConfigurations) cfg.guests;
-        message = "Every libvirt guest must exist in inputs.self.nixosConfigurations.";
-      }
-      {
-        assertion = cfg.guests != [ ];
-        message = "Libvirt hypervisor requires at least one guest when enabled.";
-      }
-      {
-        assertion = lib.length cfg.guests == lib.length (lib.unique cfg.guests);
-        message = "Libvirt guest list must not contain duplicates.";
-      }
-      {
-        assertion = lib.all (guest: builtins.hasAttr guest hardware.macs) cfg.guests;
-        message = "Every libvirt guest must have a MAC address in consts.hardware.macs.";
-      }
-      {
-        assertion = lib.all (guest: builtins.hasAttr guest hardware.uuids) cfg.guests;
-        message = "Every libvirt guest must have a UUID in consts.hardware.uuids.";
-      }
-      {
-        assertion = lib.all (
-          guest:
-          (builtins.hasAttr guest nixosConfigurations)
-          && (nixosConfigurations.${guest}.config.custom.platforms.vm.libvirt.enable or false)
-        ) cfg.guests;
-        message = "Every libvirt guest must enable custom.platforms.vm.libvirt.";
-      }
-    ];
-
     environment.systemPackages = with pkgs; [
       pciutils
       usbutils
@@ -240,6 +175,7 @@ in
       libvirtd.qemu = {
         runAsRoot = true;
         package = pkgs.qemu_kvm;
+        vhostUserPackages = with pkgs; [ virtiofsd ];
         verbatimConfig = ''
           user = "root"
           group = "root"
@@ -263,8 +199,11 @@ in
                     name = guest;
                     uuid = hardware.uuids.${guest};
                     vcpu.count = libvirtCfg.cpu;
-                    memory.count = libvirtCfg.memory;
-                    virtio_video = config.custom.platforms.vm.kernel.workstation or false;
+                    memory = {
+                      count = libvirtCfg.memory;
+                      unit = "GiB";
+                    };
+                    virtio_video = false;
                   })
                   (mkLibvirtBase { inherit guest libvirtCfg; })
                   libvirtCfg.extraConfigs
@@ -276,13 +215,31 @@ in
       };
     };
 
-    boot = lib.mkIf (gpuPassthroughGuest != null) {
+    # Temporary fix
+    systemd.services."virt-secret-init-encryption" = {
+      preStart = ''
+        mkdir -p /var/lib/libvirt/secrets
+        chmod 0711 /var/lib/libvirt
+        chmod 0700 /var/lib/libvirt/secrets
+      '';
+
+      serviceConfig = {
+        ExecStart = lib.mkForce [
+          ""
+          "${pkgs.bash}/bin/sh -c '${pkgs.coreutils}/bin/head -c 32 /dev/random | ${pkgs.systemd}/bin/systemd-creds encrypt --name=secrets-encryption-key - /var/lib/libvirt/secrets/secrets-encryption-key'"
+        ];
+      };
+
+      path = [ pkgs.systemd ];
+    };
+
+    boot = lib.mkIf (passthroughIds != [ ]) {
       kernelParams = [
         "amd_iommu=on"
         "iommu=pt"
         "vfio"
         "vfio_pci"
-        "vfio-pci.ids=${hardware.gpu.pci}"
+        "vfio-pci.ids=${lib.concatStringsSep "," passthroughIds}"
         "vfio_iommu_type1"
         "video=efifb:off"
       ];
@@ -293,34 +250,40 @@ in
       ];
     };
 
-    environment.etc = lib.mkIf (gpuPassthroughGuest != null) {
-      # needed to handle AMD GPU reset bug when the guest doesn't shut down correctly
-      "libvirt/hooks/qemu" = {
-        mode = "0755";
-        source = pkgs.writeShellScript "qemu-hook" /* bash */ ''
-          GUEST_NAME="$1"
-          OPERATION="$2"
-          SUB_OPERATION="$3"
+    environment.etc =
+      let
+        gpuPassthroughGuest = getPassthroughGuest "gpu";
+      in
+      lib.mkIf (gpuPassthroughGuest != null) {
+        # This is needed to handle AMD GPU reset bug when the guest doesn't shut down correctly.
+        "libvirt/hooks/qemu" = {
+          mode = "0755";
+          source = pkgs.writeShellScript "qemu-hook" /* bash */ ''
+            GUEST_NAME="$1"
+            OPERATION="$2"
+            SUB_OPERATION="$3"
 
-          GPU_PCI="${hardware.gpu.address}"
-          TARGET_VM="${gpuPassthroughGuest}"
+            GPU_PCI="${hardware.gpu.address}"
+            TARGET_VM="${gpuPassthroughGuest}"
 
-          if [ "$GUEST_NAME" == "$TARGET_VM" ]; then
-            if [ "$OPERATION" == "release" ]; then
-              if [ -e "/sys/bus/pci/devices/$GPU_PCI/remove" ]; then
-                echo "libvirt-qemu-hook: Removing AMD APU $GPU_PCI from bus..." | ${pkgs.systemd}/bin/systemd-cat -t libvirt-qemu-hook
-                echo 1 > "/sys/bus/pci/devices/$GPU_PCI/remove"
-                ${pkgs.coreutils}/bin/sleep 1
-                echo 1 > /sys/bus/pci/rescan
-                ${pkgs.coreutils}/bin/sleep 1
-                echo "libvirt-qemu-hook: PCIe rescan complete for $TARGET_VM." | ${pkgs.systemd}/bin/systemd-cat -t libvirt-qemu-hook
-              else
-                echo "libvirt-qemu-hook: Device $GPU_PCI not found on bus, skipping reset." | ${pkgs.systemd}/bin/systemd-cat -t libvirt-qemu-hook
+            if [ "$GUEST_NAME" == "$TARGET_VM" ]; then
+              if [ "$OPERATION" == "release" ]; then
+                if [ -e "/sys/bus/pci/devices/$GPU_PCI/remove" ]; then
+                  echo "libvirt-qemu-hook: Removing AMD APU $GPU_PCI from bus..." | ${pkgs.systemd}/bin/systemd-cat -t libvirt-qemu-hook
+                  echo 1 > "/sys/bus/pci/devices/$GPU_PCI/remove"
+                  ${pkgs.coreutils}/bin/sleep 1
+                  echo 1 > /sys/bus/pci/rescan
+                  ${pkgs.coreutils}/bin/sleep 1
+                  echo "libvirt-qemu-hook: PCIe rescan complete for $TARGET_VM." | ${pkgs.systemd}/bin/systemd-cat -t libvirt-qemu-hook
+                else
+                  echo "libvirt-qemu-hook: Device $GPU_PCI not found on bus, skipping reset." | ${pkgs.systemd}/bin/systemd-cat -t libvirt-qemu-hook
+                fi
               fi
             fi
-          fi
-        '';
+          '';
+        };
       };
-    };
+
+    users.users.${username}.extraGroups = [ "libvirtd" ];
   };
 }

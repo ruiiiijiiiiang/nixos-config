@@ -42,6 +42,8 @@ in
 
       apps.tools.homeassistant.enable = true;
 
+      infra.podman.enable = true;
+
       networking.nginx.enable = true;
 
       security.fail2ban.enable = true;

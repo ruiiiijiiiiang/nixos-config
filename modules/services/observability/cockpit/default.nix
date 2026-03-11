@@ -32,16 +32,19 @@ in
         WebService = {
           AllowUnencrypted = true;
           ProtocolHeader = "X-Forwarded-Proto";
-          Origins = "https://${fqdn}";
         };
       };
+      allowed-origins = [ "https://${fqdn}" ];
       showBanner = false;
     };
 
-    environment.systemPackages = with pkgs; [
-      cockpit-machines
-      libvirt-dbus
-    ];
+    environment = {
+      systemPackages = with pkgs; [
+        cockpit-machines
+        libvirt-dbus
+      ];
+      pathsToLink = [ "/share/cockpit" ];
+    };
 
     services = {
       nginx.virtualHosts."${fqdn}" = mkVirtualHost {

@@ -7,8 +7,8 @@
 let
   inherit (consts) addresses hardware vlan-ids;
   inherit (inputs.self) nixosConfigurations;
-  wanInterface = "ens18";
-  lanInterface = "ens19";
+  wanInterface = "wan0";
+  lanInterface = "lan0";
   podmanInterface = "podman0";
   infraInterface = "infra0";
   dmzInterface = "dmz0";
@@ -28,7 +28,10 @@ in
 
   custom = {
     platforms.vm = {
-      kernel.enable = true;
+      kernel = {
+        enable = true;
+        hardwarePassthrough = "nic";
+      };
 
       libvirt = {
         enable = true;
@@ -36,53 +39,43 @@ in
         memory = 2;
         autoStart = true;
         extraConfigs = {
-          devices =
-            let
-              inherit (nixosConfigurations.hypervisor.config.custom.roles.headless.hypervisor) networking;
-            in
-            {
-              interface = [
-                {
-                  type = "bridge";
-                  mac = {
-                    address = hardware.macs.wan;
-                  };
-                  source = {
-                    bridge = networking.wanBridge;
-                  };
-                  model = {
-                    type = "virtio";
-                  };
-                }
-                {
-                  type = "bridge";
-                  mac = {
-                    address = hardware.macs.vm-network;
-                  };
-                  source = {
-                    bridge = networking.lanBridge;
-                  };
-                  vlan = {
-                    trunk = "yes";
-                    tag = [
-                      {
-                        id = vlan-ids.home;
-                        nativeMode = "untagged";
-                      }
-                      { id = vlan-ids.infra; }
-                      { id = vlan-ids.dmz; }
-                    ];
-                  };
-                  model = {
-                    type = "virtio";
-                  };
-                }
-              ];
-            };
+          devices = {
+            interface = [
+              {
+                type = "bridge";
+                mac = {
+                  address = hardware.macs.vm-network;
+                };
+                source = {
+                  bridge =
+                    nixosConfigurations.hypervisor.config.custom.roles.headless.hypervisor.networking.lanBridge;
+                };
+                vlan = {
+                  trunk = true;
+                  tag = [
+                    {
+                      id = vlan-ids.home;
+                      nativeMode = "untagged";
+                    }
+                    { id = vlan-ids.infra; }
+                    { id = vlan-ids.dmz; }
+                  ];
+                };
+                model = {
+                  type = "virtio";
+                };
+              }
+            ];
+          };
         };
       };
 
       disks.enable = true;
+
+      networking = {
+        enable = true;
+        inherit wanInterface lanInterface;
+      };
     };
 
     roles.headless = {
@@ -94,12 +87,13 @@ in
           wgInterface
         ];
       };
-      podman.enable = true;
       security.enable = true;
       services.enable = true;
     };
 
     services = {
+      infra.podman.enable = true;
+
       networking = {
         router = {
           enable = true;

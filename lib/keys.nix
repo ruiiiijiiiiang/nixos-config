@@ -11,6 +11,10 @@
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMIJNc2DNOvGnp388Mr2WNYa4/pUq/kbyrpTJkc5Q8Oe rui@pi"
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK4UQIyLo0sqjKZjBAPD/G3xHy/qT4DlbF34J5krTKBn root@pi"
     ];
+    hypervisor = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOqX2mtbIbYIMGd2hbmKGCp1NKks819CnGd8iVMrpFUg rui@hypervisor"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMI2zVUmUzYvL2HXoaDi/UvatrIwEyb0KhNpLZkXweam root@hypervisor"
+    ];
     vm-network = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAZBzyGnYs0UkG7IxaAM1hvaFQ5XH736AHSGBkLWFa2n rui@vm-network"
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB7ngRbvBzXV7amObcv4d/Cv0wzaZSBUGAyN1v1TqbRf root@vm-network"

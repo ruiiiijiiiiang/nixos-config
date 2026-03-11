@@ -95,7 +95,6 @@ rec {
         vm-monitor = "192.168.20.3";
         pi = "192.168.20.51";
         pi-legacy = "192.168.20.52";
-        proxmox = "192.168.20.254";
         hypervisor = "192.168.20.254";
       };
       vip = {
@@ -205,7 +204,6 @@ rec {
         wireguard = 9586;
       };
     };
-    proxmox = 8006;
     qbittorrent = 8086;
     redis = 6379;
     reitti = 8085;
@@ -272,8 +270,13 @@ rec {
     };
 
     gpu = {
-      pci = "1002:1682";
+      id = "1002:1682";
       address = "0000:e5:00.0";
+    };
+
+    nic = {
+      id = "10ec:8125";
+      address = "0000:02:00.0";
     };
 
     storage = {
@@ -290,14 +293,14 @@ rec {
     macs = {
       arch = "28:0c:50:9c:03:2e";
       framework = "ac:f2:3c:63:d9:f3";
-      proxmox = "c8:a3:62:bf:0b:b3";
-      vm-network = "bc:24:11:b0:9b:27";
-      vm-app = "bc:24:11:71:f8:9b";
-      vm-monitor = "bc:24:11:93:b1:94";
-      vm-cyber = "bc:24:11:4b:5f:d4";
       pi = "2c:cf:67:0e:c9:6b";
       pi-legacy = "b8:27:eb:af:a2:33";
-      wan = "bc:24:11:97:f8:42";
+      wan = "58:47:ca:78:a0:7c";
+
+      vm-network = "52:54:00:00:00:00";
+      vm-app = "52:54:00:00:00:01";
+      vm-monitor = "52:54:00:00:00:02";
+      vm-cyber = "52:54:00:00:00:03";
     };
 
     radios = {

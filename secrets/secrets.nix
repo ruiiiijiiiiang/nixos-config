@@ -13,14 +13,12 @@ in
     publicKeys = ssh.vm-app;
     armor = true;
   };
-  # TODO: regen
   "cloudflare-token.age" = {
-    publicKeys = ssh.pi ++ ssh.vm-network ++ ssh.vm-app ++ ssh.vm-monitor;
+    publicKeys = ssh.hypervisor ++ ssh.pi ++ ssh.vm-network ++ ssh.vm-app ++ ssh.vm-monitor;
     armor = true;
   };
-  # TODO: regen
   "cloudflare-dns-token.age" = {
-    publicKeys = ssh.pi ++ ssh.vm-network ++ ssh.vm-app ++ ssh.vm-monitor;
+    publicKeys = ssh.hypervisor ++ ssh.pi ++ ssh.vm-network ++ ssh.vm-app ++ ssh.vm-monitor;
     armor = true;
   };
   "cloudflare-tunnel-token.age" = {

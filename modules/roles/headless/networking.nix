@@ -77,7 +77,7 @@ in
           PasswordAuthentication = false;
           PermitRootLogin = "prohibit-password";
           KbdInteractiveAuthentication = false;
-          AllowTcpForwarding = "no";
+          AllowTcpForwarding = false;
           X11Forwarding = false;
         };
       };

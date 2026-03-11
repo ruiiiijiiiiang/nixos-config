@@ -5,11 +5,13 @@ let
     defaultLocale
     username
     home
+    oci-uids
     ;
 in
 {
   users = {
     users.${username} = {
+      uid = oci-uids.user;
       isNormalUser = true;
       extraGroups = [ "wheel" ];
       initialPassword = "yoloswag";
@@ -19,6 +21,7 @@ in
     };
 
     groups.${username} = {
+      gid = oci-uids.user;
       name = username;
       members = [ username ];
     };

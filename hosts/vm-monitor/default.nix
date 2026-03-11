@@ -1,6 +1,7 @@
 { consts, ... }:
 let
   inherit (consts) vlan-ids;
+  lanInterface = "lan0";
   vlanId = vlan-ids.infra;
 in
 {
@@ -23,16 +24,22 @@ in
         enable = true;
         size = 100;
       };
+
+      networking = {
+        enable = true;
+        inherit lanInterface;
+      };
     };
 
     roles.headless = {
       networking.enable = true;
-      podman.enable = true;
       security.enable = true;
       services.enable = true;
     };
 
     services = {
+      infra.podman.enable = true;
+
       networking.nginx.enable = true;
 
       observability = {

@@ -33,6 +33,7 @@ in
       packages.enable = true;
       development = {
         flatpak.enable = true;
+        homelab-mount.enable = true;
         nixos.enable = true;
         packages.enable = true;
         services.enable = true;
@@ -41,6 +42,8 @@ in
 
     services = {
       apps.tools.syncthing.enable = true;
+
+      infra.podman.enable = true;
 
       networking.wireguard.client = {
         enable = true;

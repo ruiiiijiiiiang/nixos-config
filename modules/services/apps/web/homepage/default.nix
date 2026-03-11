@@ -57,7 +57,7 @@ in
               };
             }
             {
-              "Security" = {
+              "Authentication" = {
                 style = "row";
                 columns = 6;
                 tab = "Apps";
@@ -353,10 +353,10 @@ in
           {
             "System" = [
               {
-                "Proxmox" = {
-                  icon = "proxmox";
-                  href = "https://${addresses.infra.hosts.proxmox}:${toString ports.proxmox}";
-                  description = "Virtual Environment Hypervisor";
+                "Cockpit" = {
+                  icon = "cockpit";
+                  href = "https://${subdomains.hypervisor.cockpit}.${domain}";
+                  description = "Cockpit Server Manager";
                 };
               }
               {

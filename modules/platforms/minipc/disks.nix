@@ -102,10 +102,22 @@ in
 
     fileSystems = lib.mapAttrs' (
       name: device:
-      lib.nameValuePair "/mnt/${name}" {
+      lib.nameValuePair "/mnt/external/${name}" {
         device = "/dev/disk/by-id/${device}";
         fsType = "ext4";
+        options = [
+          "nofail"
+          "x-systemd.automount"
+          "x-systemd.idle-timeout=60"
+        ];
       }
+    ) hardware.storage.external;
+
+    systemd.tmpfiles.rules = [
+      "d /mnt/external 0755 root root -"
+    ]
+    ++ lib.mapAttrsToList (
+      name: _: "d /mnt/external/${name} 0755 root root -"
     ) hardware.storage.external;
   };
 }

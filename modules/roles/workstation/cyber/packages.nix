@@ -80,5 +80,9 @@ in
     environment.variables = {
       ZED_ALLOW_EMULATED_GPU = "1";
     };
+
+    systemd.tmpfiles.rules = [
+      "L /home/user/wordlists - - - - /run/current-system/sw/share/wordlists"
+    ];
   };
 }
