@@ -179,6 +179,7 @@ rec {
     microbin = 8088;
     monit = 2812;
     myspeed = 5216;
+    nfs = 2049;
     nginx = {
       stub = 8082;
     };

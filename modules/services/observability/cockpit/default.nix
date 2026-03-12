@@ -47,19 +47,6 @@ in
         inherit fqdn;
         port = ports.cockpit;
       };
-
-      dbus.packages = with pkgs; [ libvirt-dbus ];
-    };
-
-    systemd.packages = with pkgs; [ libvirt-dbus ];
-
-    environment.systemPackages = with pkgs; [ libvirt-dbus ];
-
-    users.groups.libvirtdbus = { };
-    users.users.libvirtdbus = {
-      isSystemUser = true;
-      group = "libvirtdbus";
-      extraGroups = [ "libvirtd" ];
     };
   };
 }

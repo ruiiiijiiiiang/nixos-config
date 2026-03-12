@@ -21,15 +21,26 @@ in
 {
   options.custom.services.apps.media.jellyfin = with lib; {
     enable = mkEnableOption "Enable Jellyfin";
+    mediaPath = mkOption {
+      type = types.str;
+      description = "Path to store media data.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = lib.hasPrefix "/" cfg.mediaPath;
+        message = "custom.services.apps.media.jellyfin.mediaPath must be an absolute path string.";
+      }
+    ];
+
     virtualisation.oci-containers.containers.jellyfin = {
       image = "lscr.io/linuxserver/jellyfin:latest";
       ports = [ "${addresses.localhost}:${toString ports.jellyfin}:${toString ports.jellyfin}" ];
       volumes = [
         "/var/lib/jellyfin/config:/config"
-        "/media:/media"
+        "${cfg.mediaPath}:/media"
         "jellyfin-cache:/cache"
       ];
       environment = {
@@ -40,11 +51,9 @@ in
         LIBVA_DRIVER_NAME = "radeonsi";
       };
       devices = [
-        "/dev/dri/card0:/dev/dri/card0"
-      ]
-      ++ lib.optional (
-        config.custom.platforms.vm.kernel.hardwarePassthrough == "gpu"
-      ) "/dev/dri/renderD128:/dev/dri/renderD128";
+        "/dev/dri/card1:/dev/dri/card0"
+        "/dev/dri/renderD128:/dev/dri/renderD128"
+      ];
       labels = {
         "io.containers.autoupdate" = "registry";
       };

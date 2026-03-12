@@ -17,6 +17,7 @@ let
   inherit (helpers) mkOciUser mkVirtualHost mkNotifyService;
   cfg = config.custom.services.apps.tools.llm;
   fqdn = "${subdomains.${config.networking.hostName}.openwebui}.${domain}";
+  hasGpuPassthrough = config.custom.platforms.vm.kernel.hardwarePassthrough == "gpu";
 in
 {
   options.custom.services.apps.tools.llm = with lib; {
@@ -33,7 +34,7 @@ in
 
     virtualisation.oci-containers.containers = {
       ollama = {
-        image = "docker.io/ollama/ollama:rocm";
+        image = "docker.io/ollama/ollama${lib.optionalString hasGpuPassthrough ":rocm"}";
         user = "${toString oci-uids.llm}:${toString oci-uids.llm}";
         ports = [
           "${addresses.localhost}:${toString ports.ollama}:${toString ports.ollama}"
@@ -53,9 +54,7 @@ in
           "/dev/kfd:/dev/kfd"
           "/dev/dri:/dev/dri"
         ]
-        ++ lib.optional (
-          config.custom.platforms.vm.kernel.hardwarePassthrough == "gpu"
-        ) "/dev/dri/renderD128:/dev/dri/renderD128";
+        ++ lib.optional hasGpuPassthrough "/dev/dri/renderD128:/dev/dri/renderD128";
         labels = {
           "io.containers.autoupdate" = "registry";
         };

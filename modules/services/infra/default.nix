@@ -1,6 +1,7 @@
 {
   imports = [
     ./harmonia
+    ./nfs
     ./podman
   ];
 }

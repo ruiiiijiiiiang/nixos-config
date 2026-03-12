@@ -4,9 +4,9 @@
 
 This repository isn't just a collection of config files; it is a **fully declarative, reproducible, and fortified infrastructure** definition for my personal homelab. Built on the bedrock of **NixOS** and **Nix Flakes**, this project represents a complete paradigm shift from fragile, imperative sysadmin tasks to a robust, code-driven ecosystem.
 
-Every single aspect of this infrastructure — from hardware provisioning and vlan routing rules to the complex web of containerized microservices and their secret management — is defined in code. Version controlled and GitOps-friendly, it emphasizes **stability** through atomic rollbacks, **observability** via a comprehensive monitoring stack, and **security** with hardened kernels and isolated networking.
+Every single aspect of this infrastructure — from hardware provisioning and VLAN routing rules to the complex web of containerized microservices and their secret management — is defined in code. Version controlled and GitOps-friendly, it emphasizes **stability** through atomic rollbacks, **observability** via a comprehensive monitoring stack, and **security** with hardened kernels and isolated networking.
 
-My homelab isn't running on expensive, power-hungry enterprise-grade racks. This entire infrastructure is powered by a mini PC, a Raspberry Pi 4, and a couple of old hard drives. I work with what I have, and my goal is **maximum software correctness**: proving that proper architecture, deliberate design, and disciplined engineering matter far more than raw hardware specs.
+My homelab isn't running on expensive, power-hungry enterprise-grade racks. This entire infrastructure is powered by a mini PC, a Raspberry Pi, an unmanaged switch, and a couple of old hard drives. I work with what I have, and my goal is **maximum software correctness**: proving that proper architecture, deliberate design, and disciplined engineering matter far more than raw hardware specs.
 
 The beauty of this setup? **Total vertical alignment.** The hypervisor, the guests, the network topology, the services — every single layer is declared in nix code. No hybrid imperative management, no XML sprawl, no clicking through web UIs. Just pure, plain-text infrastructure definitions that rebuild atomically and roll back instantly.
 
@@ -22,7 +22,7 @@ This infrastructure is engineered following a rigorous **Domain-Driven Design** 
 2. **Platform (`modules/platform`):** The hardware abstraction layer. Whether it's a Raspberry Pi ARM chip or a virtualized x86 hypervisor, this layer handles the metal.
 3. **Roles (`modules/roles`):** The personality injection. A host is defined by its mission: a hardened **Headless Server** guarding the network, or a feature-rich **Workstation** designed for development.
 4. **Services (`modules/services`):** The functional payload. Granular, plug-and-play applications categorized by domain:
-   - **Networking:** The mesh that connects it all (DNS, Routing, VPNs).
+   - **Networking:** The mesh that connects it all (DNS, Routing, VPN).
    - **Observability:** The eyes and ears (Monitoring, Logging, Security Agents).
    - **Security:** The active defense perimeter (Fail2Ban, Wazuh, Suricata, CrowdSec).
    - **Apps:** The user experience, grouped by function (Office, Tools, Media, Authentication, Web).
@@ -221,4 +221,4 @@ The local Forgejo instance doubles as a private **OCI container registry**. CI p
 
 Using the **NixVirt** module, every VM is defined as a Nix derivation — CPU allocation, memory size, disk backend (LVM logical volumes), network interfaces with VLAN tagging, PCI device passthrough, and even lifecycle hooks for GPU reset workarounds. The host bridge is configured via `systemd-networkd` with VLAN filtering, allowing guests to trunk into segregated networks without any imperative configuration.
 
-What makes this truly powerful is the **vertical alignment**: the hypervisor host, the VM definitions, the guest OS configurations, and the services they run are all declared in the same Nix flake. Change a VM's VLAN assignment? Update one line in Nix, rebuild, and the entire networking stack reconfigures atomically. Need to passthrough a piece of hardware? Declare it in the guest config, and the host automatically binds the right kernel modules and IOMMU groups. Everything is type-checked, reproducible, and instantly auditable in git history.
+What makes this truly powerful is the **total alignment**: the hypervisor host, the VM definitions, the guest OS configurations, and the services they run are all declared in the same Nix flake. Change a VM's VLAN assignment? Update one line in Nix, rebuild, and the entire networking stack reconfigures atomically. Need to passthrough a piece of hardware? Declare it in the guest config, and the host automatically binds the right kernel modules and IOMMU groups. Everything is type-checked, reproducible, and instantly auditable in git history.

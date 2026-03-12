@@ -3,6 +3,8 @@ let
   inherit (consts) addresses vlan-ids;
   lanInterface = "lan0";
   vlanId = vlan-ids.infra;
+  storagePath = "/mnt/usb-hdd-0/vm-app/storage";
+  mediaPath = "/mnt/usb-hdd-0/vm-app/media";
 in
 {
   system.stateVersion = "25.11";
@@ -55,11 +57,20 @@ in
         };
         office = {
           memos.enable = true;
-          opencloud.enable = true;
-          paperless.enable = true;
+          opencloud = {
+            enable = true;
+            inherit storagePath;
+          };
+          paperless = {
+            enable = true;
+            inherit storagePath;
+          };
         };
         tools = {
-          arr.enable = true;
+          arr = {
+            enable = true;
+            inherit mediaPath;
+          };
           atuin.enable = true;
           microbin.enable = true;
           syncthing = {
@@ -68,8 +79,14 @@ in
           };
         };
         media = {
-          immich.enable = true;
-          jellyfin.enable = true;
+          immich = {
+            enable = true;
+            inherit storagePath;
+          };
+          jellyfin = {
+            enable = true;
+            inherit mediaPath;
+          };
         };
         web = {
           homepage.enable = true;
@@ -81,6 +98,7 @@ in
 
       infra = {
         harmonia.enable = true;
+        nfs.server.enable = true;
         podman.enable = true;
       };
 

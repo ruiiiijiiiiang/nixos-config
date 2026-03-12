@@ -17,14 +17,26 @@ let
   inherit (helpers) mkOciUser mkVirtualHost mkNotifyService;
   cfg = config.custom.services.apps.media.immich;
   fqdn = "${subdomains.${config.networking.hostName}.immich}.${domain}";
+  hasGpuPassthrough = config.custom.platforms.vm.kernel.hardwarePassthrough == "gpu";
   immich-version = "v2.5.6";
 in
 {
   options.custom.services.apps.media.immich = with lib; {
     enable = mkEnableOption "Enable Immich";
+    storagePath = mkOption {
+      type = types.str;
+      description = "Path to store Immich data.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = lib.hasPrefix "/" cfg.storagePath;
+        message = "custom.services.apps.media.immich.storagePath must be an absolute path string.";
+      }
+    ];
+
     age.secrets = {
       immich-env.file = ../../../../../secrets/immich-env.age;
       # POSTGRES_USER
@@ -84,15 +96,13 @@ in
         };
         environmentFiles = [ config.age.secrets.immich-env.path ];
         volumes = [
-          "/var/storage/immich:/usr/src/app/upload"
+          "${cfg.storagePath}/immich:/usr/src/app/upload"
           "/etc/localtime:/etc/localtime:ro"
         ];
       };
 
       immich-machine-learning = {
-        image = "ghcr.io/immich-app/immich-machine-learning:${immich-version}${
-          lib.optionalString (config.custom.platforms.vm.kernel.hardwarePassthrough == "gpu") "-rocm"
-        }";
+        image = "ghcr.io/immich-app/immich-machine-learning:${immich-version}${lib.optionalString hasGpuPassthrough "-rocm"}";
         user = "${toString oci-uids.immich}:${toString oci-uids.immich}";
         dependsOn = [ "immich-postgres" ];
         networks = [ "container:immich-postgres" ];
@@ -117,7 +127,7 @@ in
       tmpfiles.rules = [
         "d /var/lib/immich/postgres 0700 ${toString oci-uids.postgres} ${toString oci-uids.postgres} - -"
         "d /var/lib/immich/model-cache 0755 ${toString oci-uids.immich} ${toString oci-uids.immich} - -"
-        "d /var/storage/immich 0755 ${toString oci-uids.immich} ${toString oci-uids.immich} - -"
+        "d ${cfg.storagePath}/immich 0755 ${toString oci-uids.immich} ${toString oci-uids.immich} - -"
       ];
 
       services.podman-immich-postgres = mkNotifyService { timeout = 900; };

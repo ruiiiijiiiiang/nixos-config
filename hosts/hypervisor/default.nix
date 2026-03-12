@@ -49,7 +49,13 @@ in
     };
 
     services = {
-      infra.podman.enable = true;
+      infra = {
+        nfs.server = {
+          enable = true;
+          interface = vlanInterface;
+        };
+        podman.enable = true;
+      };
 
       networking.nginx.enable = true;
 

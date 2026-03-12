@@ -38,7 +38,10 @@ in
     };
 
     services = {
-      infra.podman.enable = true;
+      infra = {
+        nfs.server.enable = true;
+        podman.enable = true;
+      };
 
       networking.nginx.enable = true;
 

@@ -25,9 +25,20 @@ in
 {
   options.custom.services.apps.tools.arr = with lib; {
     enable = mkEnableOption "Enable Arr stack";
+    mediaPath = mkOption {
+      type = types.str;
+      description = "Path to store media data.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = lib.hasPrefix "/" cfg.mediaPath;
+        message = "custom.services.apps.tools.arr.mediaPath must be an absolute path string.";
+      }
+    ];
+
     virtualisation.oci-containers.containers = {
       lidarr = {
         image = "lscr.io/linuxserver/lidarr:latest";
@@ -45,7 +56,7 @@ in
         };
         volumes = [
           "/var/lib/lidarr/config:/config"
-          "/media:/mnt"
+          "${cfg.mediaPath}:/mnt"
         ];
         labels = {
           "io.containers.autoupdate" = "registry";
@@ -68,7 +79,7 @@ in
         };
         volumes = [
           "/var/lib/radarr/config:/config"
-          "/media:/mnt"
+          "${cfg.mediaPath}:/mnt"
         ];
         labels = {
           "io.containers.autoupdate" = "registry";
@@ -91,7 +102,7 @@ in
         };
         volumes = [
           "/var/lib/sonarr/config:/config"
-          "/media:/mnt"
+          "${cfg.mediaPath}:/mnt"
         ];
         labels = {
           "io.containers.autoupdate" = "registry";
@@ -131,7 +142,7 @@ in
         };
         volumes = [
           "/var/lib/bazarr/config:/config"
-          "/media:/mnt"
+          "${cfg.mediaPath}:/mnt"
         ];
         labels = {
           "io.containers.autoupdate" = "registry";
@@ -155,13 +166,13 @@ in
 
     systemd.tmpfiles.rules = [
       "d /var/lib/lidarr/config 0755 ${toString oci-uids.arr} ${toString oci-uids.arr} - -"
-      "d /media/music 0775 ${toString oci-uids.arr} ${toString oci-uids.arr} - -"
+      "d ${cfg.mediaPath}/music 0775 ${toString oci-uids.arr} ${toString oci-uids.arr} - -"
 
       "d /var/lib/radarr/config 0755 ${toString oci-uids.arr} ${toString oci-uids.arr} - -"
-      "d /media/movies 0775 ${toString oci-uids.arr} ${toString oci-uids.arr} - -"
+      "d ${cfg.mediaPath}/movies 0775 ${toString oci-uids.arr} ${toString oci-uids.arr} - -"
 
       "d /var/lib/sonarr/config 0755 ${toString oci-uids.arr} ${toString oci-uids.arr} - -"
-      "d /media/tv 0775 ${toString oci-uids.arr} ${toString oci-uids.arr} - -"
+      "d ${cfg.mediaPath}/tv 0775 ${toString oci-uids.arr} ${toString oci-uids.arr} - -"
 
       "d /var/lib/bazarr/config 0755 ${toString oci-uids.arr} ${toString oci-uids.arr} - -"
 

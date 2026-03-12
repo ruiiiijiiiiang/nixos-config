@@ -24,11 +24,8 @@ in
       };
 
       pipewire.enable = false;
-
-      pulseaudio = {
-        enable = true;
-        extraConfig = "load-module module-xrdp-sink";
-      };
+      pulseaudio.enable = true;
+      spice-vdagentd.enable = true;
 
       postgresql = {
         enable = true;
@@ -48,12 +45,6 @@ in
       };
 
       vnstat.enable = true;
-
-      xrdp = {
-        enable = true;
-        audio.enable = true;
-        defaultWindowManager = "startlxqt";
-      };
     };
 
     users.users.${username}.extraGroups = [

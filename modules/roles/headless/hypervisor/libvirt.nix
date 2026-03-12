@@ -11,14 +11,16 @@ let
   inherit (consts) username hardware;
   inherit (helpers) parsePciAddress;
   inherit (inputs.self) nixosConfigurations;
+  inherit (config.custom.roles.headless.hypervisor.networking) lanBridge;
   cfg = config.custom.roles.headless.hypervisor.libvirt;
 
   getPassthroughGuest =
-    hw:
+    hardware:
     let
       guestConfigs = lib.filterAttrs (name: _: lib.elem name cfg.guests) nixosConfigurations;
       matching = lib.filterAttrs (
-        _: c: c.config.custom.platforms.vm.kernel.hardwarePassthrough == hw
+        _: nixosConfiguration:
+        nixosConfiguration.config.custom.platforms.vm.kernel.hardwarePassthrough == hardware
       ) guestConfigs;
     in
     if matching == { } then null else lib.head (lib.attrNames matching);
@@ -71,15 +73,14 @@ let
           }
         ];
 
-        filesystem = [
-          {
-            type = "mount";
-            accessmode = "passthrough";
-            driver.type = "virtiofs";
-            source.dir = "/mnt/external";
-            target.dir = "usb_hdd";
-          }
-        ];
+        filesystem = lib.mapAttrsToList (name: _: {
+          type = "mount";
+          accessmode = "passthrough";
+          driver.type = "virtiofs";
+          binary.xattr = true;
+          source.dir = "/mnt/external/${name}";
+          target.dir = name;
+        }) hardware.storage.external;
 
         interface = [
           {
@@ -88,7 +89,7 @@ let
               address = hardware.macs.${guest};
             };
             source = {
-              bridge = config.custom.roles.headless.hypervisor.networking.lanBridge;
+              bridge = lanBridge;
             };
             vlan = {
               tag = [ { id = libvirtCfg.vlanId; } ];
@@ -165,6 +166,33 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    assertions = [
+      {
+        assertion =
+          let
+            missing = lib.filter (guest: !(lib.hasAttr guest nixosConfigurations)) cfg.guests;
+          in
+          missing == [ ];
+        message = "Unknown nixosConfigurations entries found in libvirt.guests.";
+      }
+      {
+        assertion = config.custom.platforms.minipc.disks.enable;
+        message = "Libvirt requires custom.platforms.minipc.disks.enable for volume group-backed guest disks.";
+      }
+      {
+        assertion = (config.custom.platforms.minipc.disks.volumeGroup or "") != "";
+        message = "custom.platforms.minipc.disks.volumeGroup must be set.";
+      }
+      {
+        assertion = lib.all (
+          guest:
+          (lib.hasAttr guest nixosConfigurations)
+          && (nixosConfigurations.${guest}.config.custom.platforms.vm.libvirt.enable or false)
+        ) cfg.guests;
+        message = "Every libvirt guest must enable custom.platforms.vm.libvirt.";
+      }
+    ];
+
     environment.systemPackages = with pkgs; [
       pciutils
       usbutils
@@ -172,14 +200,18 @@ in
     ];
 
     virtualisation = {
-      libvirtd.qemu = {
-        runAsRoot = true;
-        package = pkgs.qemu_kvm;
-        vhostUserPackages = with pkgs; [ virtiofsd ];
-        verbatimConfig = ''
-          user = "root"
-          group = "root"
-        '';
+      libvirtd = {
+        qemu = {
+          runAsRoot = true;
+          package = pkgs.qemu_kvm;
+          vhostUserPackages = with pkgs; [ virtiofsd ];
+          verbatimConfig = ''
+            user = "root"
+            group = "root"
+          '';
+        };
+        dbus.enable = true;
+        allowedBridges = [ lanBridge ];
       };
 
       libvirt = {
@@ -285,6 +317,9 @@ in
         };
       };
 
-    users.users.${username}.extraGroups = [ "libvirtd" ];
+    users.users = {
+      ${username}.extraGroups = [ "libvirtd" ];
+      libvirtdbus.extraGroups = [ "libvirtd" ];
+    };
   };
 }

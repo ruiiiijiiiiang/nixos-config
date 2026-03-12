@@ -1,6 +1,6 @@
 { consts, ... }:
 let
-  inherit (consts) vlan-ids;
+  inherit (consts) addresses vlan-ids;
   vlanId = vlan-ids.dmz;
 in
 {
@@ -19,6 +19,29 @@ in
         cpu = 4;
         memory = 4;
         inherit vlanId;
+        extraConfigs = {
+          devices = {
+            graphics = [
+              {
+                type = "spice";
+                autoport = true;
+                listen = {
+                  type = "address";
+                  address = addresses.any;
+                };
+              }
+            ];
+            channel = [
+              {
+                type = "spicevmc";
+                target = {
+                  type = "virtio";
+                  name = "com.redhat.spice.0";
+                };
+              }
+            ];
+          };
+        };
       };
 
       disks.enable = true;

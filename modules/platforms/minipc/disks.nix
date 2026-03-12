@@ -103,7 +103,7 @@ in
     fileSystems = lib.mapAttrs' (
       name: device:
       lib.nameValuePair "/mnt/external/${name}" {
-        device = "/dev/disk/by-id/${device}";
+        device = "/dev/disk/by-id/${device}-part1";
         fsType = "ext4";
         options = [
           "nofail"

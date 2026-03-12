@@ -21,9 +21,20 @@ in
 {
   options.custom.services.apps.office.paperless = with lib; {
     enable = mkEnableOption "Enable Paperless-ngx";
+    storagePath = mkOption {
+      type = types.str;
+      description = "Path to store Paperless-ngx data.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = lib.hasPrefix "/" cfg.storagePath;
+        message = "custom.services.apps.office.paperless.storagePath must be an absolute path string.";
+      }
+    ];
+
     age.secrets = {
       paperless-env.file = ../../../../../secrets/paperless-env.age;
       # POSTGRES_DB
@@ -64,10 +75,10 @@ in
         dependsOn = [ "paperless-postgres" ];
         networks = [ "container:paperless-postgres" ];
         volumes = [
-          "/var/storage/paperless/log:/usr/src/paperless/log"
-          "/var/storage/paperless/media:/usr/src/paperless/media"
-          "/var/storage/paperless/consume:/usr/src/paperless/consume"
-          "/var/storage/paperless/data/data:/usr/src/paperless/data"
+          "${cfg.storagePath}/paperless/log:/usr/src/paperless/log"
+          "${cfg.storagePath}/paperless/media:/usr/src/paperless/media"
+          "${cfg.storagePath}/paperless/consume:/usr/src/paperless/consume"
+          "${cfg.storagePath}/paperless/data/data:/usr/src/paperless/data"
         ];
 
         environment = {
@@ -94,12 +105,12 @@ in
 
     systemd = {
       tmpfiles.rules = [
-        "d /var/storage/paperless 0700 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
-        "d /var/storage/paperless/log 0700 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
-        "d /var/storage/paperless/media 0700 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
-        "d /var/storage/paperless/consume 0700 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
-        "d /var/storage/paperless/data 0700 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
-        "d /var/storage/paperless/data/data 0700 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
+        "d ${cfg.storagePath}/paperless 0700 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
+        "d ${cfg.storagePath}/paperless/log 0700 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
+        "d ${cfg.storagePath}/paperless/media 0700 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
+        "d ${cfg.storagePath}/paperless/consume 0700 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
+        "d ${cfg.storagePath}/paperless/data 0700 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
+        "d ${cfg.storagePath}/paperless/data/data 0700 ${toString oci-uids.paperless} ${toString oci-uids.paperless} - -"
         "d /var/lib/paperless/postgres 0700 ${toString oci-uids.postgres} ${toString oci-uids.postgres} - -"
       ];
 

@@ -35,9 +35,20 @@ in
 {
   options.custom.services.apps.office.opencloud = with lib; {
     enable = mkEnableOption "Enable OpenCloud";
+    storagePath = mkOption {
+      type = types.str;
+      description = "Path to store OpenCloud data.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = lib.hasPrefix "/" cfg.storagePath;
+        message = "custom.services.apps.office.opencloud.storagePath must be an absolute path string.";
+      }
+    ];
+
     age.secrets = {
       opencloud-env.file = ../../../../../secrets/opencloud-env.age;
       # WEB_OIDC_CLIENT_ID
@@ -55,7 +66,7 @@ in
         ];
         volumes = [
           "/var/lib/opencloud/config:/etc/opencloud"
-          "/var/storage/opencloud:/var/lib/opencloud"
+          "${cfg.storagePath}/opencloud:/var/lib/opencloud"
         ];
         environment = {
           PROXY_TLS = "false";
@@ -116,7 +127,7 @@ in
     systemd = {
       tmpfiles.rules = [
         "d /var/lib/opencloud/config 0755 ${toString oci-uids.opencloud} ${toString oci-uids.opencloud} - -"
-        "d /var/storage/opencloud 0755 ${toString oci-uids.opencloud} ${toString oci-uids.opencloud} - -"
+        "d ${cfg.storagePath}/opencloud 0755 ${toString oci-uids.opencloud} ${toString oci-uids.opencloud} - -"
       ];
 
       services.podman-opencloud = mkNotifyService { timeout = 600; };

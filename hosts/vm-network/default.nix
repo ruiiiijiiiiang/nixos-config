@@ -92,7 +92,13 @@ in
     };
 
     services = {
-      infra.podman.enable = true;
+      infra = {
+        nfs.server = {
+          enable = true;
+          interface = infraInterface;
+        };
+        podman.enable = true;
+      };
 
       networking = {
         router = {

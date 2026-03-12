@@ -7,7 +7,7 @@
 }:
 let
   inherit (import ../../../../lib/keys.nix) ssh;
-  inherit (consts) username home;
+  inherit (consts) username;
   cfg = config.custom.roles.workstation.cyber.networking;
 in
 {
@@ -27,10 +27,6 @@ in
     };
 
     services = {
-      openvpn.servers.tryhackme = {
-        config = "config ${home}/tryhackme/tryhackme.ovpn";
-      };
-
       openssh = {
         enable = true;
         settings = {
