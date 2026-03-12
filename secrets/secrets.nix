@@ -33,7 +33,7 @@ in
     publicKeys = ssh.vm-app;
     armor = true;
   };
-  "geoip-key.age" = {
+  "maxmind-license-key.age" = {
     publicKeys = ssh.vm-network ++ ssh.vm-app ++ ssh.vm-monitor;
     armor = true;
   };

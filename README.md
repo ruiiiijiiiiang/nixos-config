@@ -4,11 +4,11 @@
 
 This repository isn't just a collection of config files; it is a **fully declarative, reproducible, and fortified infrastructure** definition for my personal homelab. Built on the bedrock of **NixOS** and **Nix Flakes**, this project represents a complete paradigm shift from fragile, imperative sysadmin tasks to a robust, code-driven ecosystem.
 
-Every single aspect of this infrastructure — from hardware provisioning and VLAN routing rules to the complex web of containerized microservices and their secret management — is defined in code. Version controlled and GitOps-friendly, it emphasizes **stability** through atomic rollbacks, **observability** via a comprehensive monitoring stack, and **security** with hardened kernels and isolated networking.
+Every single aspect of this infrastructure — from virtualization resource provisioning and VLAN routing rules to the complex web of containerized microservices and their secret management — is defined in code. Version controlled and GitOps-friendly, it emphasizes **stability** through atomic rollbacks, **observability** via a comprehensive monitoring stack, and **security** with hardened kernels and isolated networking.
 
 My homelab isn't running on expensive, power-hungry enterprise-grade racks. This entire infrastructure is powered by a mini PC, a Raspberry Pi, an unmanaged switch, and a couple of old hard drives. I work with what I have, and my goal is **maximum software correctness**: proving that proper architecture, deliberate design, and disciplined engineering matter far more than raw hardware specs.
 
-The beauty of this setup? **Total vertical alignment.** The hypervisor, the guests, the network topology, the services — every single layer is declared in nix code. No hybrid imperative management, no XML sprawl, no clicking through web UIs. Just pure, plain-text infrastructure definitions that rebuild atomically and roll back instantly.
+The beauty of this setup? **Total vertical alignment.** The hypervisor, the guests, the network topology, the services — every single layer is declared in Nix code. No hybrid imperative management, no XML sprawl, no clicking through web UIs. Just pure, plain-text infrastructure definitions that rebuild atomically and roll back instantly.
 
 We're way past infrastructure-as-code. It's time for infrastructure/networking/configuration/security/pipeline all-rolled-into-one-as-code.
 
@@ -90,8 +90,8 @@ The `vm-network` VM serves as the nerve center of the home network. It replaces 
 
 The network is physically connected via two interfaces, but logically segmented into distinct security zones using VLANs and virtual interfaces:
 
-- **WAN (`ens18`):** The shield against the public internet.
-- **LAN (`ens19`):** The physical trunk carrying multiple logical networks:
+- **WAN (`wan0`):** The shield against the public internet.
+- **LAN (`lan0`):** The physical trunk carrying multiple logical networks:
   - **Home (Native):** Trusted user devices (e.g., `framework`).
     - _Routing:_ Unrestricted access to WAN, Infra, DMZ, and VPN.
   - **VLAN 20 (`infa0`):** Dedicated management lane for servers and critical infrastructure (e.g., `pi`, `vm-app`, `vm-monitor`).
@@ -190,7 +190,7 @@ Security isn't a feature; it's the foundation. Every server is hardened against 
 
 **Vault-Grade Secrets.**
 
-No more `.env` files leaking in git history. Sensitive data is encrypted at rest using **age** and **agenix**. Secrets are decrypted only at runtime, in-memory, and only by the specific host identity that requires them. It is cryptographically secure and zero-trust by default.
+No more `.env` files leaking in git history. Sensitive data is encrypted at rest using **agenix**. Secrets are decrypted only at runtime, in-memory, and only by the specific host identity that requires them. It is cryptographically secure and zero-trust by default.
 
 ## Build & Deployment
 

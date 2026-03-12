@@ -18,6 +18,7 @@ in
 
   config = lib.mkIf cfg.enable {
     age.secrets = {
+      maxmind-license-key.file = ../../../../../secrets/maxmind-license-key.age;
       pocketid-encryption-key.file = ../../../../../secrets/pocketid-encryption-key.age;
     };
 
@@ -32,6 +33,7 @@ in
         };
         credentials = {
           ENCRYPTION_KEY = config.age.secrets.pocketid-encryption-key.path;
+          MAXMIND_LICENSE_KEY = config.age.secrets.maxmind-license-key.path;
         };
       };
 

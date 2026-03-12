@@ -8,10 +8,10 @@ let
   inherit (consts) addresses ports;
   cfg = config.custom.services.infra.nfs.server;
 
-  commonOptions = "rw,nohide,insecure,no_subtree_check";
+  commonOptions = "rw,nohide,insecure,no_subtree_check,no_root_squash,fsid=0";
   networks = [
-    "${addresses.home.network}/24"
-    "${addresses.vpn.network}/24"
+    addresses.home.network
+    addresses.vpn.network
   ];
   exportLine = builtins.concatStringsSep " " (map (net: "${net}(${commonOptions})") networks);
 in

@@ -9,14 +9,14 @@ in
 
   config = lib.mkIf cfg.enable {
     age.secrets = {
-      geoip-key.file = ../../../../../secrets/geoip-key.age;
+      maxmind-license-key.file = ../../../../../secrets/maxmind-license-key.age;
     };
 
     services.geoipupdate = {
       enable = true;
       settings = {
         AccountID = 1271453;
-        LicenseKey = config.age.secrets.geoip-key.path;
+        LicenseKey = config.age.secrets.maxmind-license-key.path;
         EditionIDs = [
           "GeoLite2-ASN"
           "GeoLite2-City"
