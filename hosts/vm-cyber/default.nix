@@ -1,6 +1,6 @@
 { consts, ... }:
 let
-  inherit (consts) addresses vlan-ids;
+  inherit (consts) addresses ports vlan-ids;
   vlanId = vlan-ids.dmz;
 in
 {
@@ -24,7 +24,10 @@ in
             graphics = [
               {
                 type = "spice";
+                # Waiting on PR:
+                # https://github.com/AshleyYakeley/NixVirt/pull/99
                 autoport = true;
+                port = ports.spice.vm-cyber;
                 listen = {
                   type = "address";
                   address = addresses.any;

@@ -213,6 +213,9 @@ rec {
       daemon = 60073;
     };
     searxng = 8092;
+    spice = {
+      vm-cyber = 5903;
+    };
     stirlingpdf = 8080;
     syncthing = 8384;
     unbound = 5335;

@@ -5,9 +5,15 @@
   ...
 }:
 let
-  inherit (consts) domain addresses vlan-ids;
+  inherit (consts)
+    domain
+    addresses
+    ports
+    vlan-ids
+    ;
   cfg = config.custom.roles.headless.hypervisor.networking;
   vlanInterface = "${cfg.lanBridge}.${toString cfg.vlanId}";
+  spicePorts = lib.mapAttrsToList (_: port: port) ports.spice;
 in
 {
   options.custom.roles.headless.hypervisor.networking = with lib; {
@@ -38,6 +44,12 @@ in
         cfg.lanBridge
         cfg.lanInterface
       ];
+
+      firewall = {
+        interfaces.${vlanInterface} = {
+          allowedTCPPorts = spicePorts;
+        };
+      };
     };
 
     # Using the traditional networking module is quite brittle when working with a NIC that's passed through to a guest.

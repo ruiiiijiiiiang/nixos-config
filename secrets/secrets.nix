@@ -85,6 +85,10 @@ in
     publicKeys = ssh.vm-app;
     armor = true;
   };
+  "tryhackme-ovpn.age" = {
+    publicKeys = ssh.vm-cyber;
+    armor = true;
+  };
   "vaultwarden-env.age" = {
     publicKeys = ssh.vm-app;
     armor = true;

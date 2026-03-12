@@ -1,11 +1,13 @@
 {
   config,
+  consts,
   inputs,
   lib,
   pkgs,
   ...
 }:
 let
+  inherit (consts) username;
   cfg = config.custom.roles.workstation.cyber.packages;
 in
 {
@@ -81,7 +83,7 @@ in
     };
 
     systemd.tmpfiles.rules = [
-      "L /home/user/wordlists - - - - /run/current-system/sw/share/wordlists"
+      "L /home/${username}/wordlists - - - - /run/current-system/sw/share/wordlists"
     ];
   };
 }

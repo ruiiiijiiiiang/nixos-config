@@ -16,6 +16,10 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    age.secrets = {
+      tryhackme-ovpn.file = ../../../../secrets/tryhackme-ovpn.age;
+    };
+
     networking = {
       firewall.enable = false;
       nftables.enable = false;
@@ -27,6 +31,10 @@ in
     };
 
     services = {
+      openvpn.servers.tryhackme = {
+        config = "config ${config.age.secrets.tryhackme-ovpn.path}";
+      };
+
       openssh = {
         enable = true;
         settings = {

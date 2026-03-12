@@ -27,6 +27,10 @@
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFLHjHmKzQtjhRkVj4gaSIwdacXTyKk7yhnetoxQIx3d rui@vm-monitor"
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDMo9Xk1eWLmsdNyqihJoi/b7gmfsjZWlObYk3rUg1Tj root@vm-monitor"
     ];
+    vm-cyber = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDd50+RrfO1TG5woaD1wmkYX+Ne7PWOH5cmS26MS2lly rui@vm-cyber"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAdsyJYOK/gGTezi8oG6huVbJAaQRDkNN+/Bafz0vkHg root@vm-cyber"
+    ];
     github-runner = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIXXmiNdwQD1JdRzZYP2nKb6vR7ZxFxPhSQnJVgG1Dpm github-runner";
     forgejo-runner = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINkz+sEEf6r1a8aNMD1Vd2mJArY9qUC/TTcQRy7wxpST forgejo-runner";
     beszel = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIItKDbSO8vCAHAAKH58q0rCgmWYe9Np7CiwyXmcLSiNV";
