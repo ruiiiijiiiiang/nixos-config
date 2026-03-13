@@ -88,9 +88,15 @@ in
         groups.podman.gid = oci-uids.podman;
       };
 
-      systemd.timers.podman-auto-update = {
-        wantedBy = [ "timers.target" ];
-        enable = true;
+      systemd = {
+        timers.podman-auto-update = {
+          wantedBy = [ "timers.target" ];
+          enable = true;
+        };
+
+        tmpfiles.rules = lib.mkIf cfg.backup.enable [
+          "d ${cfg.backup.path} 0755 0 0 - -"
+        ];
       };
     })
   ];

@@ -1,12 +1,14 @@
 { consts, ... }:
 let
   inherit (consts) vlan-ids;
+  hostName = "vm-monitor";
   lanInterface = "lan0";
   vlanId = vlan-ids.infra;
+  backupPath = "/mnt/usb-hdd-1/${hostName}/backup";
 in
 {
   system.stateVersion = "25.11";
-  networking.hostName = "vm-monitor";
+  networking.hostName = hostName;
 
   custom = {
     platforms.vm = {
@@ -40,7 +42,18 @@ in
     services = {
       infra = {
         nfs.server.enable = true;
-        podman.enable = true;
+        podman = {
+          enable = true;
+          backup = {
+            enable = true;
+            path = backupPath;
+          };
+        };
+        restic = {
+          enable = true;
+          repo = backupPath;
+          backupLocalDatabases = true;
+        };
       };
 
       networking.nginx.enable = true;

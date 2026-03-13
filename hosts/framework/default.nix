@@ -6,6 +6,7 @@
 }:
 let
   inherit (consts) addresses;
+  hostName = "framework";
   wgInterface = "wg0";
 in
 {
@@ -15,7 +16,7 @@ in
   ];
 
   system.stateVersion = "25.05";
-  networking.hostName = "framework";
+  networking.hostName = hostName;
 
   age.secrets = {
     wireguard-framework-private-key.file = ../../secrets/wireguard/framework-private-key.age;

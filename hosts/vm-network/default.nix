@@ -7,16 +7,18 @@
 let
   inherit (consts) addresses hardware vlan-ids;
   inherit (inputs.self) nixosConfigurations;
+  hostName = "vm-network";
   wanInterface = "wan0";
   lanInterface = "lan0";
   podmanInterface = "podman0";
   infraInterface = "infra0";
   dmzInterface = "dmz0";
   wgInterface = "wg0";
+  backupPath = "/mnt/usb-hdd-1/${hostName}/backup";
 in
 {
   system.stateVersion = "25.11";
-  networking.hostName = "vm-network";
+  networking.hostName = hostName;
 
   age.secrets = {
     wireguard-server-private-key.file = ../../secrets/wireguard/server-private-key.age;
@@ -98,6 +100,11 @@ in
           interface = infraInterface;
         };
         podman.enable = true;
+        restic = {
+          enable = true;
+          repo = backupPath;
+          backupLocalDatabases = true;
+        };
       };
 
       networking = {

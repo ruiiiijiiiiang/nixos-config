@@ -1,6 +1,7 @@
 { consts, inputs, ... }:
 let
   inherit (consts) addresses vlan-ids;
+  hostName = "pi";
   lanInterface = "end0";
   wlanInterface = "wlan0";
   vlanId = vlan-ids.infra;
@@ -11,7 +12,7 @@ in
   ];
 
   system.stateVersion = "25.05";
-  networking.hostName = "pi";
+  networking.hostName = hostName;
 
   custom = {
     platforms.pi = {

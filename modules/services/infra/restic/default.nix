@@ -1,4 +1,9 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.custom.services.infra.restic;
 in
@@ -11,7 +16,13 @@ in
     };
     paths = mkOption {
       type = types.listOf types.str;
+      default = [ ];
       description = "Paths to backup data from.";
+    };
+    backupLocalDatabases = mkOption {
+      type = types.bool;
+      default = false;
+      description = "Automatically find and backup all .db files in /var/lib.";
     };
   };
 
@@ -37,6 +48,10 @@ in
       passwordFile = config.age.secrets.restic-password.path;
       inherit (cfg) paths;
 
+      dynamicFilesFrom = lib.mkIf cfg.backupLocalDatabases ''
+        ${pkgs.findutils}/bin/find /var/lib -type f -name "*.db"
+      '';
+
       timerConfig = {
         OnCalendar = "02:00";
         Persistent = true;
@@ -48,5 +63,9 @@ in
         "--keep-monthly 1"
       ];
     };
+
+    systemd.tmpfiles.rules = [
+      "d ${cfg.repo} 0755 0 0 - -"
+    ];
   };
 }

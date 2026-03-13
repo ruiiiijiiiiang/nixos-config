@@ -1,13 +1,14 @@
 { consts, ... }:
 let
   inherit (consts) addresses vlan-ids;
+  hostName = "hypervisor";
   lanInterface = "enxc8a362bf0bb3";
   lanBridge = "br0";
   vlanInterface = "${lanBridge}.${toString vlan-ids.infra}";
 in
 {
   system.stateVersion = "25.11";
-  networking.hostName = "hypervisor";
+  networking.hostName = hostName;
 
   custom = {
     platforms.minipc = {

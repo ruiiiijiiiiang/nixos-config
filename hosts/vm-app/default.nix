@@ -1,21 +1,16 @@
 { consts, ... }:
 let
   inherit (consts) addresses vlan-ids;
+  hostName = "vm-app";
   lanInterface = "lan0";
   vlanId = vlan-ids.infra;
-  storagePath = "/mnt/usb-hdd-0/vm-app/storage";
-  mediaPath = "/mnt/usb-hdd-0/vm-app/media";
-  backupPath = "/mnt/usb-hdd-1/vm-app/backup";
+  storagePath = "/mnt/usb-hdd-0/${hostName}/storage";
+  mediaPath = "/mnt/usb-hdd-0/${hostName}/media";
+  backupPath = "/mnt/usb-hdd-1/${hostName}/backup";
 in
 {
   system.stateVersion = "25.11";
-  networking.hostName = "vm-app";
-
-  systemd.tmpfiles.rules = [
-    "d ${storagePath} 0755 0 0 - -"
-    "d ${mediaPath} 0755 0 0 - -"
-    "d ${backupPath} 0755 0 0 - -"
-  ];
+  networking.hostName = hostName;
 
   custom = {
     platforms.vm = {
@@ -117,6 +112,7 @@ in
           enable = true;
           repo = backupPath;
           paths = [ storagePath ];
+          backupLocalDatabases = true;
         };
       };
 
