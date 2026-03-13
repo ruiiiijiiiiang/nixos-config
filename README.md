@@ -18,14 +18,17 @@ We're way past infrastructure-as-code. It's time for infrastructure/networking/c
 
 This infrastructure is engineered following a rigorous **Domain-Driven Design** philosophy. The modules are organized into four distinct, composable layers:
 
-1. **Core (`modules/core`):** The foundational DNA. Universal baselines shared across all systems, defining the essential "NixOS-ness" of the fleet.
-2. **Platform (`modules/platform`):** The hardware abstraction layer. Whether it's a Raspberry Pi ARM chip or a virtualized x86 hypervisor, this layer handles the metal.
-3. **Roles (`modules/roles`):** The personality injection. A host is defined by its mission: a hardened **Headless Server** guarding the network, or a feature-rich **Workstation** designed for development.
-4. **Services (`modules/services`):** The functional payload. Granular, plug-and-play applications categorized by domain:
-   - **Networking:** The mesh that connects it all (DNS, Routing, VPN).
-   - **Observability:** The eyes and ears (Monitoring, Logging, Security Agents).
-   - **Security:** The active defense perimeter (Fail2Ban, Wazuh, Suricata, CrowdSec).
-   - **Apps:** The user experience, grouped by function (Office, Tools, Media, Authentication, Web).
+1. **core (`modules/core`):** The foundational DNA. Universal baselines shared across all systems, defining the essential "NixOS-ness" of the fleet.
+2. **platform (`modules/platforms`):** The hardware abstraction layer. Whether it's a Raspberry Pi ARM chip or a virtualized x86 hypervisor, this layer handles the metal. Disk partitioning is fully declarative using **Disko**, defining GPT layouts, LVM volume groups for guest VM disks, and filesystem mounts.
+3. **roles (`modules/roles`):** The personality injection. A host is defined by its mission: a hardened **Headless Server** guarding the network, or a feature-rich **Workstation** designed for development.
+4. **services (`modules/services`):** The functional payload. Granular, plug-and-play applications categorized by domain:
+   - **infra:** The backbone utilities (Binary Cache, NFS, Container Runtime, Backup).
+   - **networking:** The mesh that connects it all (DNS, Routing, VPN).
+   - **observability:** The eyes and ears (Monitoring, Logging, Security Agents).
+   - **security:** The active defense perimeter (Fail2Ban, Wazuh, Suricata, CrowdSec).
+   - **apps:** The user experience, grouped by function (Office, Tools, Media, Authentication, Web).
+
+Automated backup is implemented using **db-auto-backup** for containerized databases and **Restic** for filesystem snapshots, ensuring data resilience with scheduled retention policies.
 
 The `flake.nix` is the central cortex, orchestrating these modules to synthesize specific host configurations. A **hybrid deployment strategy** is employed to balance raw performance with operational stability:
 
@@ -192,15 +195,13 @@ Security isn't a feature; it's the foundation. Every server is hardened against 
 
 No more `.env` files leaking in git history. Sensitive data is encrypted at rest using **agenix**. Secrets are decrypted only at runtime, in-memory, and only by the specific host identity that requires them. It is cryptographically secure and zero-trust by default.
 
-## Build & Deployment
+## Operations & Infrastructure
 
-**Atomic. Reproducible. Zero Downtime.**
+**Atomic. Reproducible. Resilient.**
 
-Deployment isn't a manual process — it's an orchestrated, deterministic pipeline. Every build is atomic, every rollback is instantaneous, and every deployment is idempotent.
+The operational layer transforms manual sysadmin workflows into deterministic, code-driven automation. Every deployment is atomic, every rollback is instantaneous, and data is continuously protected.
 
-### Local Binary Cache
-
-**Pre-Built Artifacts. Always Available.**
+### Binary Cache & Pre-Built Artifacts
 
 A private **Harmonia** binary cache runs on `vm-app`, serving as the fleet's internal package repository. A nightly job pre-builds all host configurations and populates the cache with compiled derivations. Deployments pull pre-built packages directly from the local network instead of rebuilding from source or downloading from public caches. This eliminates compilation overhead and guarantees consistent deployment artifacts across the infrastructure.
 
@@ -214,6 +215,15 @@ The infrastructure employs a dual CI/CD strategy, enabling both local-first and 
 - **Remote Pipeline (GitHub Actions):** Establishes a WireGuard tunnel into the homelab for external access. Deploys to all hosts including `pi` using ARM-native runners. Accessible from anywhere. Environment independence.
 
 The local Forgejo instance doubles as a private **OCI container registry**. CI pipelines build, push, and version container images for personal projects, creating a self-contained artifact ecosystem consumed across the entire infrastructure.
+
+### Automated Backup
+
+**Continuous Data Protection.**
+
+Critical data is protected through a multi-tier backup strategy:
+
+- **Database Backup:** **db-auto-backup** automatically dumps all containerized databases (PostgreSQL, MySQL, MongoDB) on a nightly schedule via the Podman socket.
+- **Filesystem Backup:** **Restic** performs incremental, encrypted snapshots of critical paths with intelligent retention.
 
 ### Hypervisor Architecture
 

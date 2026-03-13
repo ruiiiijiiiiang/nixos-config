@@ -3,5 +3,6 @@
     ./harmonia
     ./nfs
     ./podman
+    ./restic
   ];
 }

@@ -13,7 +13,6 @@ in
       cloudflare-tunnel-token.file = ../../../../secrets/cloudflare-tunnel-token.age;
     };
 
-    # To add a tunnel, do `cloudflared tunnel route dns home {subdomain}.ruijiang.me`
     services.cloudflared = {
       enable = true;
       tunnels = {
@@ -21,6 +20,7 @@ in
           default = "http_status:404";
           credentialsFile = config.age.secrets.cloudflare-tunnel-token.path;
           ingress = {
+            # To add a tunnel, do `cloudflared tunnel route dns home {subdomain}.ruijiang.me`
             "public.${domain}" = {
               service = "https://${addresses.infra.hosts.vm-app}:443";
               originRequest = {

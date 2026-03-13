@@ -10,7 +10,15 @@ let
 in
 {
   options.custom.services.infra.podman = with lib; {
-    enable = mkEnableOption "Enable headless Podman role";
+    enable = mkEnableOption "Enable Podman config";
+    backup = {
+      enable = mkEnableOption "Enable auto backup for containerized databases";
+      path = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        description = "Absolute path to store database backups.";
+      };
+    };
   };
 
   config = lib.mkMerge [
@@ -19,6 +27,14 @@ in
         {
           assertion = config.virtualisation.oci-containers.containers == { } || cfg.enable;
           message = "OCI containers are defined but custom.services.infra.podman.enable is false.";
+        }
+        {
+          assertion = (!cfg.backup.enable) || cfg.enable;
+          message = "custom.services.infra.podman.backup.enable requires custom.services.infra.podman.enable.";
+        }
+        {
+          assertion = (!cfg.backup.enable) || (cfg.backup.path != null && lib.hasPrefix "/" cfg.backup.path);
+          message = "custom.services.infra.podman.backup.path must be an absolute path string when backup is enabled.";
         }
       ];
     }
@@ -32,9 +48,6 @@ in
             ];
           };
         };
-        oci-containers = {
-          backend = "podman";
-        };
         podman = {
           enable = true;
           dockerCompat = true;
@@ -46,6 +59,24 @@ in
           };
           defaultNetwork.settings = {
             dns_enable = true;
+          };
+        };
+        oci-containers = {
+          backend = "podman";
+
+          containers."db-auto-backup" = lib.mkIf cfg.backup.enable {
+            image = "ghcr.io/realorangeone/docker-db-auto-backup:latest";
+            volumes = [
+              "/run/podman/podman.sock:/var/run/docker.sock:ro"
+              "${cfg.backup.path}:/var/backups"
+            ];
+            environment = {
+              SCHEDULE = "0 4 * * *";
+              COMPRESSION = "gzip";
+            };
+            labels = {
+              "io.containers.autoupdate" = "registry";
+            };
           };
         };
       };

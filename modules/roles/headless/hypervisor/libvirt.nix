@@ -247,7 +247,7 @@ in
       };
     };
 
-    # Temporary fix for a recent upgrade in libvirt that caused regression. Waiting on the following PR:
+    # Temporary fix for a recent regression in libvirt. Waiting on the following PR:
     # https://github.com/NixOS/nixpkgs/pull/496839
     systemd.services."virt-secret-init-encryption" = {
       preStart = ''

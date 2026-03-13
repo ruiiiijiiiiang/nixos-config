@@ -19,7 +19,7 @@ let
   cfg = config.custom.services.infra.harmonia;
   fqdn = "${subdomains.${config.networking.hostName}.harmonia}.${domain}";
 
-  hostsToBuild = [
+  hosts = [
     "framework"
     "hypervisor"
     "vm-network"
@@ -41,7 +41,7 @@ let
 
     nix flake update
 
-    for host in ${toString hostsToBuild}; do
+    for host in ${toString hosts}; do
       echo "=========================================="
       echo "Building system closure for: $host"
       echo "=========================================="
@@ -90,7 +90,7 @@ in
       timers.daily-nix-build = {
         wantedBy = [ "timers.target" ];
         timerConfig = {
-          OnCalendar = "04:00:00";
+          OnCalendar = "05:00:00";
           Persistent = true;
           Unit = "daily-nix-build.service";
         };

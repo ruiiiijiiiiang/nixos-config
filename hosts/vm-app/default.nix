@@ -5,10 +5,17 @@ let
   vlanId = vlan-ids.infra;
   storagePath = "/mnt/usb-hdd-0/vm-app/storage";
   mediaPath = "/mnt/usb-hdd-0/vm-app/media";
+  backupPath = "/mnt/usb-hdd-1/vm-app/backup";
 in
 {
   system.stateVersion = "25.11";
   networking.hostName = "vm-app";
+
+  systemd.tmpfiles.rules = [
+    "d ${storagePath} 0755 0 0 - -"
+    "d ${mediaPath} 0755 0 0 - -"
+    "d ${backupPath} 0755 0 0 - -"
+  ];
 
   custom = {
     platforms.vm = {
@@ -99,7 +106,18 @@ in
       infra = {
         harmonia.enable = true;
         nfs.server.enable = true;
-        podman.enable = true;
+        podman = {
+          enable = true;
+          backup = {
+            enable = true;
+            path = backupPath;
+          };
+        };
+        restic = {
+          enable = true;
+          repo = backupPath;
+          paths = [ storagePath ];
+        };
       };
 
       networking = {

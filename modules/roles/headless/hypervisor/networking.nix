@@ -53,7 +53,7 @@ in
     };
 
     # Using the traditional networking module is quite brittle when working with a NIC that's passed through to a guest.
-    # The systemd.network module is much more robust and it has better syntax for handling vlan filtering.
+    # The systemd.network module is much more robust and it has better support for vlan filtering.
     systemd.network = {
       enable = true;
 
