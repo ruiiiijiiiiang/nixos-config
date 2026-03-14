@@ -14,8 +14,9 @@ let
     subdomains
     ports
     oci-uids
+    daily-tasks
     ;
-  inherit (helpers) mkVirtualHost;
+  inherit (helpers) dailyTaskToSystemd mkVirtualHost;
   cfg = config.custom.services.infra.harmonia;
   fqdn = "${subdomains.${config.networking.hostName}.harmonia}.${domain}";
 
@@ -90,7 +91,7 @@ in
       timers.daily-nix-build = {
         wantedBy = [ "timers.target" ];
         timerConfig = {
-          OnCalendar = "05:00:00";
+          OnCalendar = dailyTaskToSystemd daily-tasks.${config.networking.hostName}.nix-build;
           Persistent = true;
           Unit = "daily-nix-build.service";
         };

@@ -12,9 +12,11 @@ in
   options.custom.services.observability.prometheus.exporters = with lib; {
     crowdsec.enable = mkEnableOption "Enable Prometheus CrowdSec exporter";
     kea.enable = mkEnableOption "Enable Prometheus Kea exporter";
+    libvirt.enable = mkEnableOption "Enable Prometheus Libvirt exporter";
     nginx.enable = mkEnableOption "Enable Prometheus Nginx exporter";
     node.enable = mkEnableOption "Enable Prometheus Node exporter";
     podman.enable = mkEnableOption "Enable Prometheus Podman exporter";
+    restic.enable = mkEnableOption "Enable Prometheus Restic exporter";
     wireguard.enable = mkEnableOption "Enable Prometheus WireGuard exporter";
     interface = mkOption {
       type = types.nullOr types.str;
@@ -33,6 +35,26 @@ in
         assertion = (!cfg.kea.enable) || config.custom.services.networking.router.enable;
         message = "Prometheus Kea exporter requires networking.router.enable.";
       }
+      {
+        assertion = (!cfg.libvirt.enable) || config.custom.roles.headless.hypervisor.libvirt.enable;
+        message = "Prometheus Libvirt exporter requires roles.headless.hypervisor.libvirt.enable.";
+      }
+      {
+        assertion = (!cfg.nginx.enable) || config.custom.services.networking.nginx.enable;
+        message = "Prometheus Nginx exporter requires networking.nginx.enable.";
+      }
+      {
+        assertion = (!cfg.podman.enable) || config.custom.services.infra.podman.enable;
+        message = "Prometheus Podman exporter requires infra.podman.enable.";
+      }
+      {
+        assertion = (!cfg.restic.enable) || config.custom.services.infra.restic.enable;
+        message = "Prometheus Restic exporter requires infra.restic.enable.";
+      }
+      {
+        assertion = (!cfg.wireguard.enable) || config.custom.services.networking.wireguard.server.enable;
+        message = "Prometheus WireGuard exporter requires networking.wireguard.server.enable.";
+      }
     ];
 
     services = {
@@ -42,6 +64,13 @@ in
           listenAddress = addresses.any;
           port = ports.prometheus.exporters.kea;
           targets = [ "http://${addresses.localhost}:${toString ports.kea.ctrl-agent}" ];
+        };
+
+        libvirt = lib.mkIf cfg.libvirt.enable {
+          # Can't be enabled until this PR is merged:
+          # https://github.com/NixOS/nixpkgs/pull/478425
+          enable = false;
+          port = ports.prometheus.exporters.libvirt;
         };
 
         nginx = lib.mkIf cfg.nginx.enable {
@@ -58,6 +87,15 @@ in
             "processes"
             "tcpstat"
           ];
+        };
+
+        restic = lib.mkIf cfg.restic.enable {
+          enable = true;
+          port = ports.prometheus.exporters.restic;
+          repository = config.services.restic.backups."data-local".repository;
+          passwordFile = config.services.restic.backups."data-local".passwordFile;
+          refreshInterval = 7200;
+          user = "root";
         };
 
         wireguard = lib.mkIf cfg.wireguard.enable {
@@ -99,9 +137,11 @@ in
         exporterPorts =
           (optional cfg.crowdsec.enable ports.prometheus.exporters.crowdsec)
           ++ (optional cfg.kea.enable ports.prometheus.exporters.kea)
+          ++ (optional cfg.libvirt.enable ports.prometheus.exporters.libvirt)
           ++ (optional cfg.nginx.enable ports.prometheus.exporters.nginx)
           ++ (optional cfg.node.enable ports.prometheus.exporters.node)
           ++ (optional cfg.podman.enable ports.prometheus.exporters.podman)
+          ++ (optional cfg.restic.enable ports.prometheus.exporters.restic)
           ++ (optional cfg.wireguard.enable ports.prometheus.exporters.wireguard);
       in
       if cfg.interface != null then

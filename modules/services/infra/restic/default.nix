@@ -1,10 +1,14 @@
 {
   config,
+  consts,
   lib,
   pkgs,
+  helpers,
   ...
 }:
 let
+  inherit (consts) daily-tasks;
+  inherit (helpers) dailyTaskToSystemd;
   cfg = config.custom.services.infra.restic;
 in
 {
@@ -46,14 +50,14 @@ in
       initialize = true;
       repository = "${cfg.repo}/restic-repo";
       passwordFile = config.age.secrets.restic-password.path;
-      inherit (cfg) paths;
+      paths = cfg.paths ++ (lib.optional config.custom.services.networking.nginx.enable "/var/lib/acme");
 
       dynamicFilesFrom = lib.mkIf cfg.backupLocalDatabases ''
         ${pkgs.findutils}/bin/find /var/lib -type f -name "*.db"
       '';
 
       timerConfig = {
-        OnCalendar = "02:00";
+        OnCalendar = dailyTaskToSystemd daily-tasks.${config.networking.hostName}.restic-backup;
         Persistent = true;
       };
 
@@ -65,7 +69,7 @@ in
     };
 
     systemd.tmpfiles.rules = [
-      "d ${cfg.repo} 0755 0 0 - -"
+      "d ${cfg.repo} 0755 - - - -"
     ];
   };
 }

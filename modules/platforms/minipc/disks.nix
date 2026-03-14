@@ -114,10 +114,8 @@ in
     ) hardware.storage.external;
 
     systemd.tmpfiles.rules = [
-      "d /mnt/external 0755 root root -"
+      "d /mnt/external 0755 - - - -"
     ]
-    ++ lib.mapAttrsToList (
-      name: _: "d /mnt/external/${name} 0755 root root -"
-    ) hardware.storage.external;
+    ++ lib.mapAttrsToList (name: _: "d /mnt/external/${name} 0755 - - - -") hardware.storage.external;
   };
 }

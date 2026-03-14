@@ -77,6 +77,7 @@ in
             nginx.enable = true;
             node.enable = true;
             podman.enable = true;
+            restic.enable = true;
           };
         };
       };

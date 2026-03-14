@@ -2,10 +2,17 @@
   config,
   consts,
   lib,
+  helpers,
   ...
 }:
 let
-  inherit (consts) username addresses oci-uids;
+  inherit (consts)
+    username
+    addresses
+    oci-uids
+    daily-tasks
+    ;
+  inherit (helpers) dailyTaskToCron;
   cfg = config.custom.services.infra.podman;
 in
 {
@@ -64,14 +71,14 @@ in
         oci-containers = {
           backend = "podman";
 
-          containers."db-auto-backup" = lib.mkIf cfg.backup.enable {
-            image = "ghcr.io/realorangeone/docker-db-auto-backup:latest";
+          containers.db-auto-backup = lib.mkIf cfg.backup.enable {
+            image = "ghcr.io/realorangeone/db-auto-backup:latest";
             volumes = [
               "/run/podman/podman.sock:/var/run/docker.sock:ro"
               "${cfg.backup.path}:/var/backups"
             ];
             environment = {
-              SCHEDULE = "0 4 * * *";
+              SCHEDULE = dailyTaskToCron daily-tasks.${config.networking.hostName}.container-db-backup;
               COMPRESSION = "gzip";
             };
             labels = {
@@ -95,7 +102,7 @@ in
         };
 
         tmpfiles.rules = lib.mkIf cfg.backup.enable [
-          "d ${cfg.backup.path} 0755 0 0 - -"
+          "d ${cfg.backup.path} 0755 - - - -"
         ];
       };
     })

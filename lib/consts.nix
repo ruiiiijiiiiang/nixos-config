@@ -199,9 +199,11 @@ rec {
       exporters = {
         crowdsec = 6060;
         kea = 9547;
+        libvirt = 9177;
         nginx = 9113;
         node = 9100;
         podman = 9882;
+        restic = 9753;
         wireguard = 9586;
       };
     };
@@ -341,5 +343,20 @@ rec {
     home = 2;
     infra = 20;
     dmz = 88;
+  };
+
+  daily-tasks = {
+    vm-network = {
+      restic-backup = "06:30";
+    };
+    vm-app = {
+      restic-backup = "04:00";
+      container-db-backup = "05:00";
+      nix-build = "05:10";
+    };
+    vm-monitor = {
+      restic-backup = "07:00";
+      container-db-backup = "07:30";
+    };
   };
 }

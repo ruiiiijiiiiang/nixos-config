@@ -30,6 +30,12 @@ let
     sha256 = "1rq8yax192s5knf6lw3sl9rq55xirm1di8ngnqc07b7mmf5gjj7x";
   };
 
+  libvirt-exporter-dashboard = pkgs.fetchurl {
+    name = "libvirt-exporter.json";
+    url = "https://grafana.com/api/dashboards/19639/revisions/5/download";
+    sha256 = "0lflkv9df30jrqyrp7jfkhxnf5jdfziin2vlv3a2k1lxx9m8qq16";
+  };
+
   nginx-exporter-dashboard = pkgs.fetchurl {
     name = "nginx-exporter.json";
     url = "https://grafana.com/api/dashboards/12767/revisions/2/download";
@@ -46,6 +52,12 @@ let
     name = "podman-exporter.json";
     url = "https://grafana.com/api/dashboards/21559/revisions/1/download";
     sha256 = "1aqirx7cjnvn0fmy872nbkxh5xgk3rgz0dllg12j1nismc4mcklb";
+  };
+
+  restic-exporter-dashboard = pkgs.fetchurl {
+    name = "restic-exporter.json";
+    url = "https://grafana.com/api/dashboards/17554/revisions/3/download";
+    sha256 = "0p06z60gxcnv1xswq228583apr8p2m8k8czbqw0hx5031rmgdjwc";
   };
 
   wireguard-exporter-dashboard = pkgs.fetchurl {
@@ -102,7 +114,9 @@ let
   grafana-dashboards = pkgs.runCommand "grafana-dashboards" { } /* bash */ ''
     mkdir -p $out
 
-    # Sanitize the json data sources
+    # Sanitize the json data sources since different dashboards use different names.
+    # When adding a new dashboard, make sure to curl the json and check for datasource.uid.
+    # Add the data source name for sanitization if not present.
     install_dash() {
       sed -e 's/''${DS_PROMETHEUS-DNTG}/prometheus/g' \
           -e 's/''${DS_PROMETHEUS}/prometheus/g' \
@@ -112,9 +126,11 @@ let
 
     # install_dash ${crowdsec-dashboard} "crowdsec-dashboard.json"
     install_dash ${kea-exporter-dashboard} "kea-exporter.json"
+    install_dash ${libvirt-exporter-dashboard} "libvirt-exporter.json"
     install_dash ${nginx-exporter-dashboard} "nginx-exporter.json"
     install_dash ${node-exporter-dashboard} "node-exporter.json"
     install_dash ${podman-exporter-dashboard} "podman-exporter.json"
+    install_dash ${restic-exporter-dashboard} "restic-exporter.json"
     install_dash ${wireguard-exporter-dashboard} "wireguard-exporter.json"
     cp ${systemd-logs-dashboard} $out/systemd-logs.json
   '';

@@ -118,7 +118,10 @@ in
 
       networking = {
         nginx.enable = true;
-        torrent.enable = true;
+        torrent = {
+          enable = true;
+          inherit mediaPath;
+        };
       };
 
       observability = {
@@ -132,6 +135,7 @@ in
           nginx.enable = true;
           node.enable = true;
           podman.enable = true;
+          restic.enable = true;
         };
       };
 

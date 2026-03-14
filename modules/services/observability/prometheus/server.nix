@@ -21,9 +21,11 @@ let
     inherit (ports.prometheus.exporters)
       # crowdsec
       kea
+      libvirt
       nginx
       node
       podman
+      restic
       wireguard
       ;
   };

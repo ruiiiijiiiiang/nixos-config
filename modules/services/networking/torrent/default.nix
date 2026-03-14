@@ -21,9 +21,20 @@ in
 {
   options.custom.services.networking.torrent = with lib; {
     enable = mkEnableOption "Enable qBittorrent via gluetun";
+    mediaPath = mkOption {
+      type = types.str;
+      description = "Path to store media data.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = lib.hasPrefix "/" cfg.mediaPath;
+        message = "custom.services.networking.torrent.mediaPath must be an absolute path string.";
+      }
+    ];
+
     age.secrets = {
       wireguard-proton-private-key.file = ../../../../secrets/wireguard/proton-private-key.age;
     };
@@ -68,7 +79,7 @@ in
         };
         volumes = [
           "/var/lib/qbittorrent/config:/config"
-          "/media:/mnt"
+          "${cfg.mediaPath}:/mnt"
         ];
         labels = {
           "io.containers.autoupdate" = "registry";
@@ -88,7 +99,7 @@ in
 
     systemd = {
       tmpfiles.rules = [
-        "d /media/downloads 0775 ${toString oci-uids.arr} ${toString oci-uids.arr} - -"
+        "d ${cfg.mediaPath}/downloads 0775 ${toString oci-uids.arr} ${toString oci-uids.arr} - -"
         "d /var/lib/qbittorrent/config 0755 ${toString oci-uids.qbittorrent} ${toString oci-uids.arr} - -"
       ];
 

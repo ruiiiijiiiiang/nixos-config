@@ -13,6 +13,18 @@ let
     ;
 in
 {
+  dailyTaskToCron =
+    time:
+    let
+      inherit (lib) splitString toIntBase10;
+      parts = splitString ":" time;
+      hour = builtins.toString (toIntBase10 (builtins.elemAt parts 0));
+      minute = builtins.toString (toIntBase10 (builtins.elemAt parts 1));
+    in
+    "${minute} ${hour} * * *";
+
+  dailyTaskToSystemd = time: "*-*-* ${time}:00";
+
   ensureFile =
     {
       source,

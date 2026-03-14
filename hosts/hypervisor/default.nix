@@ -22,7 +22,10 @@ in
     roles.headless = {
       networking = {
         enable = true;
-        trustedInterfaces = [ vlanInterface ];
+        trustedInterfaces = [
+          lanBridge
+          vlanInterface
+        ];
       };
       security.enable = true;
       services.enable = true;
@@ -75,6 +78,7 @@ in
           serverAddress = addresses.infra.hosts.vm-monitor;
         };
         prometheus.exporters = {
+          libvirt.enable = true;
           nginx.enable = true;
           node.enable = true;
           podman.enable = true;
