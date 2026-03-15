@@ -45,7 +45,10 @@ in
 
       infra = {
         nfs.server.enable = true;
-        podman.enable = true;
+        podman = {
+          enable = true;
+          autoUpdate.enable = true;
+        };
       };
 
       networking.nginx.enable = true;

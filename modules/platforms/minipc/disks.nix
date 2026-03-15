@@ -9,9 +9,7 @@ let
   inherit (consts) hardware;
   inherit (inputs.self) nixosConfigurations;
   cfg = config.custom.platforms.minipc.disks;
-  libvirtCfg = config.custom.roles.headless.hypervisor.libvirt;
-
-  guestLVs = lib.genAttrs libvirtCfg.guests (guest: {
+  guestLvs = lib.genAttrs cfg.guestVms (guest: {
     size = "${toString nixosConfigurations.${guest}.config.custom.platforms.vm.disks.size}GB";
   });
 in
@@ -27,6 +25,11 @@ in
       default = "vg-nvme";
       description = "LVM volume group name.";
     };
+    guestVms = mkOption {
+      type = types.listOf types.str;
+      default = [ ];
+      description = "Guest VM names to define.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -34,17 +37,17 @@ in
       {
         assertion =
           let
-            missing = lib.filter (guest: !(lib.hasAttr guest nixosConfigurations)) libvirtCfg.guests;
+            missing = lib.filter (guest: !(lib.hasAttr guest nixosConfigurations)) cfg.guestVms;
           in
           missing == [ ];
-        message = "Unknown nixosConfigurations entries found in libvirt.guests.";
+        message = "Unknown nixosConfigurations entries found in guestVms.";
       }
       {
         assertion = lib.all (
           guest:
           (builtins.hasAttr guest nixosConfigurations)
           && (nixosConfigurations.${guest}.config.custom.platforms.vm.disks.enable or false)
-        ) libvirtCfg.guests;
+        ) cfg.guestVms;
         message = "Every libvirt guest must enable custom.platforms.vm.disks.";
       }
     ];
@@ -95,7 +98,7 @@ in
               size = "50G";
             };
           }
-          // guestLVs;
+          // guestLvs;
         };
       };
     };

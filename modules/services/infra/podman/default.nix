@@ -12,13 +12,14 @@ let
     oci-uids
     daily-tasks
     ;
-  inherit (helpers) dailyTaskToCron;
+  inherit (helpers) dailyTaskToSystemd dailyTaskToCron;
   cfg = config.custom.services.infra.podman;
 in
 {
   options.custom.services.infra.podman = with lib; {
     enable = mkEnableOption "Enable Podman config";
-    backup = {
+    autoUpdate.enable = mkEnableOption "Enable auto Podman update";
+    autoBackup = {
       enable = mkEnableOption "Enable auto backup for containerized databases";
       path = mkOption {
         type = types.nullOr types.str;
@@ -36,25 +37,15 @@ in
           message = "OCI containers are defined but custom.services.infra.podman.enable is false.";
         }
         {
-          assertion = (!cfg.backup.enable) || cfg.enable;
-          message = "custom.services.infra.podman.backup.enable requires custom.services.infra.podman.enable.";
-        }
-        {
-          assertion = (!cfg.backup.enable) || (cfg.backup.path != null && lib.hasPrefix "/" cfg.backup.path);
-          message = "custom.services.infra.podman.backup.path must be an absolute path string when backup is enabled.";
+          assertion =
+            (!cfg.autoBackup.enable) || (cfg.autoBackup.path != null && lib.hasPrefix "/" cfg.autoBackup.path);
+          message = "custom.services.infra.podman.autoBackup.path must be an absolute path string when backup is enabled.";
         }
       ];
     }
 
     (lib.mkIf cfg.enable {
       virtualisation = {
-        containers.containersConf.settings = {
-          containers = {
-            dns_servers = [
-              addresses.infra.vip.dns
-            ];
-          };
-        };
         podman = {
           enable = true;
           dockerCompat = true;
@@ -68,14 +59,23 @@ in
             dns_enable = true;
           };
         };
+
+        containers.containersConf.settings = {
+          containers = {
+            dns_servers = [
+              addresses.infra.vip.dns
+            ];
+          };
+        };
+
         oci-containers = {
           backend = "podman";
 
-          containers.db-auto-backup = lib.mkIf cfg.backup.enable {
+          containers.db-auto-backup = lib.mkIf cfg.autoBackup.enable {
             image = "ghcr.io/realorangeone/db-auto-backup:latest";
             volumes = [
               "/run/podman/podman.sock:/var/run/docker.sock:ro"
-              "${cfg.backup.path}:/var/backups"
+              "${cfg.autoBackup.path}:/var/backups"
             ];
             environment = {
               SCHEDULE = dailyTaskToCron daily-tasks.${config.networking.hostName}.container-db-backup;
@@ -96,13 +96,17 @@ in
       };
 
       systemd = {
-        timers.podman-auto-update = {
+        timers.podman-auto-update = lib.mkIf cfg.autoUpdate.enable {
           wantedBy = [ "timers.target" ];
           enable = true;
+          timerConfig = {
+            OnCalendar = dailyTaskToSystemd daily-tasks.${config.networking.hostName}.podman-update;
+            Persistent = true;
+          };
         };
 
-        tmpfiles.rules = lib.mkIf cfg.backup.enable [
-          "d ${cfg.backup.path} 0755 - - - -"
+        tmpfiles.rules = lib.mkIf cfg.autoBackup.enable [
+          "d ${cfg.autoBackup.path} 0755 - - - -"
         ];
       };
     })

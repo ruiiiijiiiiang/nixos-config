@@ -20,8 +20,8 @@ in
   config = lib.mkIf cfg.enable {
     assertions = [
       {
-        assertion = config.custom.roles.headless.hypervisor.libvirt.enable;
-        message = "Cockpit requires the hypervisor libvirt role.";
+        assertion = config.custom.services.infra.hypervisor.enable;
+        message = "Cockpit requires the infra hypervisor service.";
       }
     ];
 

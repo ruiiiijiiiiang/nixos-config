@@ -346,17 +346,24 @@ rec {
   };
 
   daily-tasks = {
-    vm-network = {
+    hypervisor = {
+      podman-update = "03:00";
       restic-backup = "06:30";
     };
+    vm-network = {
+      podman-update = "03:05";
+      restic-backup = "06:35";
+    };
     vm-app = {
+      podman-update = "03:10";
       restic-backup = "04:00";
       container-db-backup = "05:00";
       nix-build = "05:10";
     };
     vm-monitor = {
-      restic-backup = "07:00";
-      container-db-backup = "07:30";
+      podman-update = "03:30";
+      restic-backup = "06:45";
+      container-db-backup = "07:00";
     };
   };
 }

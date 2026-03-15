@@ -11,13 +11,13 @@ let
     ports
     vlan-ids
     ;
-  cfg = config.custom.roles.headless.hypervisor.networking;
+  cfg = config.custom.platforms.minipc.networking;
   vlanInterface = "${cfg.lanBridge}.${toString cfg.vlanId}";
   spicePorts = lib.mapAttrsToList (_: port: port) ports.spice;
 in
 {
-  options.custom.roles.headless.hypervisor.networking = with lib; {
-    enable = mkEnableOption "Enable hypervisor networking";
+  options.custom.platforms.minipc.networking = with lib; {
+    enable = mkEnableOption "Enable minipc networking";
     lanInterface = mkOption {
       type = types.nullOr types.str;
       default = null;

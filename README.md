@@ -62,14 +62,19 @@ The `flake.nix` is the central cortex, orchestrating these modules to synthesize
 | Desc: Trusted Clients   |    | Desc: Servers & Infrastructure      |    | Desc: Untrusted Workloads  |
 +-------------------------+    +-------------------------------------+    +----------------------------+
 | +---------------------+ |    | +---------------------------------+ |    | +------------------------+ |
-| | [framework]         | |    | | [vm-app] (libvirt VM)           | |    | | [vm-cyber] (libvirt VM)| |
-| | (Laptop)            | |    | | 8 vCPU, 12GB RAM, GPU Passthru  | |    | | 4 vCPU, 4GB RAM        | |
-| +---------------------+ |    | | Hosts: Jellyfin, Immich, etc.   | |    | | For: Security Research | |
+| | [framework]         | |    | | [hypervisor] (libvirt host)     | |    | | [vm-cyber] (libvirt VM)| |
+| | (Laptop)            | |    | | AMD 6900HX, 32GB DDR5 RAM       | |    | | 4 vCPU, 4GB RAM        | |
+| +---------------------+ |    | | Hosts: All virtual machines     | |    | | Role: Security Research| |
 |                         |    | +---------------------------------+ |    | +------------------------+ |
 | (Other clients...)      |    | +---------------------------------+ |    |                            |
+|                         |    | | [vm-app] (libvirt VM)           | |    |                            |
+|                         |    | | 8 vCPU, 12GB RAM, GPU Passthru  | |    |                            |
+|                         |    | | Hosts: Jellyfin, Immich, etc    | |    |                            |
+|                         |    | +---------------------------------+ |    |                            |
+|                         |    | +---------------------------------+ |    |                            |
 |                         |    | | [vm-monitor] (libvirt VM)       | |    |                            |
 |                         |    | | 4 vCPU, 4GB RAM                 | |    |                            |
-|                         |    | | Hosts: Prometheus, Wazuh, etc.  | |    |                            |
+|                         |    | | Hosts: Prometheus, Wazuh, etc   | |    |                            |
 |                         |    | +---------------------------------+ |    |                            |
 |                         |    | +---------------------------------+ |    |                            |
 |                         |    | | [pi] (Raspberry Pi 4)           | |    |                            |

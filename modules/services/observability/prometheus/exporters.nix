@@ -36,8 +36,8 @@ in
         message = "Prometheus Kea exporter requires networking.router.enable.";
       }
       {
-        assertion = (!cfg.libvirt.enable) || config.custom.roles.headless.hypervisor.libvirt.enable;
-        message = "Prometheus Libvirt exporter requires roles.headless.hypervisor.libvirt.enable.";
+        assertion = (!cfg.libvirt.enable) || config.custom.services.infra.hypervisor.enable;
+        message = "Prometheus Libvirt exporter requires infra.hypervisor.enable.";
       }
       {
         assertion = (!cfg.nginx.enable) || config.custom.services.networking.nginx.enable;

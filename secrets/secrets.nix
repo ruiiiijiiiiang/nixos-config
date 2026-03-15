@@ -86,7 +86,7 @@ in
     armor = true;
   };
   "restic-password.age" = {
-    publicKeys = ssh.vm-network ++ ssh.vm-app ++ ssh.vm-monitor;
+    publicKeys = ssh.hypervisor ++ ssh.vm-network ++ ssh.vm-app ++ ssh.vm-monitor;
     armor = true;
   };
   "tryhackme-ovpn.age" = {

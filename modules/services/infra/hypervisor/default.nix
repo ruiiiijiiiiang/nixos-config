@@ -11,13 +11,12 @@ let
   inherit (consts) username hardware;
   inherit (helpers) parsePciAddress;
   inherit (inputs.self) nixosConfigurations;
-  inherit (config.custom.roles.headless.hypervisor.networking) lanBridge;
-  cfg = config.custom.roles.headless.hypervisor.libvirt;
+  cfg = config.custom.services.infra.hypervisor;
 
   getPassthroughGuest =
     hardware:
     let
-      guestConfigs = lib.filterAttrs (name: _: lib.elem name cfg.guests) nixosConfigurations;
+      guestConfigs = lib.filterAttrs (name: _: lib.elem name cfg.guestVms) nixosConfigurations;
       matching = lib.filterAttrs (
         _: nixosConfiguration:
         nixosConfiguration.config.custom.platforms.vm.kernel.hardwarePassthrough == hardware
@@ -65,7 +64,7 @@ let
               io = "native";
               discard = "unmap";
             };
-            source.dev = "/dev/${config.custom.platforms.minipc.disks.volumeGroup}/${guest}";
+            source.dev = "/dev/${cfg.volumeGroup}/${guest}";
             target = {
               dev = "vda";
               bus = "virtio";
@@ -89,7 +88,7 @@ let
               address = hardware.macs.${guest};
             };
             source = {
-              bridge = lanBridge;
+              bridge = cfg.lanBridge;
             };
             vlan = {
               tag = [ { id = libvirtCfg.vlanId; } ];
@@ -156,9 +155,19 @@ in
     inputs.NixVirt.nixosModules.default
   ];
 
-  options.custom.roles.headless.hypervisor.libvirt = with lib; {
+  options.custom.services.infra.hypervisor = with lib; {
     enable = mkEnableOption "Enable libvirt hypervisor host";
-    guests = mkOption {
+    lanBridge = mkOption {
+      type = types.str;
+      default = "br0";
+      description = "LAN bridge name.";
+    };
+    volumeGroup = mkOption {
+      type = types.str;
+      default = "vg-nvme";
+      description = "LVM volume group name.";
+    };
+    guestVms = mkOption {
       type = types.listOf types.str;
       default = [ ];
       description = "Guest VM names to define.";
@@ -170,25 +179,17 @@ in
       {
         assertion =
           let
-            missing = lib.filter (guest: !(lib.hasAttr guest nixosConfigurations)) cfg.guests;
+            missing = lib.filter (guest: !(lib.hasAttr guest nixosConfigurations)) cfg.guestVms;
           in
           missing == [ ];
-        message = "Unknown nixosConfigurations entries found in libvirt.guests.";
-      }
-      {
-        assertion = config.custom.platforms.minipc.disks.enable;
-        message = "Libvirt requires custom.platforms.minipc.disks.enable for volume group-backed guest disks.";
-      }
-      {
-        assertion = (config.custom.platforms.minipc.disks.volumeGroup or "") != "";
-        message = "custom.platforms.minipc.disks.volumeGroup must be set.";
+        message = "Unknown nixosConfigurations entries found in libvirt.guestVms.";
       }
       {
         assertion = lib.all (
           guest:
           (lib.hasAttr guest nixosConfigurations)
           && (nixosConfigurations.${guest}.config.custom.platforms.vm.libvirt.enable or false)
-        ) cfg.guests;
+        ) cfg.guestVms;
         message = "Every libvirt guest must enable custom.platforms.vm.libvirt.";
       }
     ];
@@ -211,7 +212,7 @@ in
           '';
         };
         dbus.enable = true;
-        allowedBridges = [ lanBridge ];
+        allowedBridges = [ cfg.lanBridge ];
       };
 
       libvirt = {
@@ -242,7 +243,7 @@ in
                 ]
               );
             }
-          ) cfg.guests;
+          ) cfg.guestVms;
         };
       };
     };

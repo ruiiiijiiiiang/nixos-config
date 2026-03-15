@@ -49,8 +49,7 @@ in
                   address = hardware.macs.vm-network;
                 };
                 source = {
-                  bridge =
-                    nixosConfigurations.hypervisor.config.custom.roles.headless.hypervisor.networking.lanBridge;
+                  bridge = nixosConfigurations.hypervisor.config.custom.services.infra.hypervisor.lanBridge;
                 };
                 vlan = {
                   trunk = true;
@@ -99,7 +98,10 @@ in
           enable = true;
           interface = infraInterface;
         };
-        podman.enable = true;
+        podman = {
+          enable = true;
+          autoUpdate.enable = true;
+        };
         restic = {
           enable = true;
           repo = backupPath;

@@ -103,7 +103,8 @@ in
         nfs.server.enable = true;
         podman = {
           enable = true;
-          backup = {
+          autoUpdate.enable = true;
+          autoBackup = {
             enable = true;
             path = backupPath;
           };

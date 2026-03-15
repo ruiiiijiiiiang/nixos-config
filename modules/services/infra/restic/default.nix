@@ -7,7 +7,7 @@
   ...
 }:
 let
-  inherit (consts) daily-tasks;
+  inherit (consts) username daily-tasks;
   inherit (helpers) dailyTaskToSystemd;
   cfg = config.custom.services.infra.restic;
 in
@@ -50,7 +50,14 @@ in
       initialize = true;
       repository = "${cfg.repo}/restic-repo";
       passwordFile = config.age.secrets.restic-password.path;
-      paths = cfg.paths ++ (lib.optional config.custom.services.networking.nginx.enable "/var/lib/acme");
+      paths = [
+        "/etc/ssh/ssh_host_*"
+        "/home/${username}/.ssh/id_*"
+      ]
+      ++ cfg.paths
+      ++ (lib.optional config.custom.services.networking.nginx.enable "/var/lib/acme")
+      ++ (lib.optional config.custom.services.apps.auth.pocketid.enable "/var/lib/pocket-id/data/keys/jwt_private_key.json")
+      ++ (lib.optional config.custom.services.apps.auth.vaultwarden.enable "/var/lib/vaultwarden/rsa_key.pem");
 
       dynamicFilesFrom = lib.mkIf cfg.backupLocalDatabases ''
         ${pkgs.findutils}/bin/find /var/lib -type f -name "*.db"

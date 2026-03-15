@@ -2,9 +2,17 @@
 let
   inherit (consts) addresses vlan-ids;
   hostName = "hypervisor";
+  volumeGroup = "vg-nvme";
   lanInterface = "enxc8a362bf0bb3";
   lanBridge = "br0";
   vlanInterface = "${lanBridge}.${toString vlan-ids.infra}";
+  guestVms = [
+    "vm-network"
+    "vm-app"
+    "vm-monitor"
+    "vm-cyber"
+  ];
+  backupPath = "/mnt/external/usb-hdd-1/${hostName}/backup";
 in
 {
   system.stateVersion = "25.11";
@@ -15,7 +23,15 @@ in
       kernel.enable = true;
       disks = {
         enable = true;
-        volumeGroup = "vg-nvme";
+        inherit volumeGroup guestVms;
+      };
+      networking = {
+        enable = true;
+        inherit
+          lanInterface
+          lanBridge
+          ;
+        vlanId = vlan-ids.infra;
       };
     };
 
@@ -29,36 +45,26 @@ in
       };
       security.enable = true;
       services.enable = true;
-
-      hypervisor = {
-        networking = {
-          enable = true;
-          inherit
-            lanInterface
-            lanBridge
-            ;
-          vlanId = vlan-ids.infra;
-        };
-
-        libvirt = {
-          enable = true;
-          guests = [
-            "vm-network"
-            "vm-app"
-            "vm-monitor"
-            "vm-cyber"
-          ];
-        };
-      };
     };
 
     services = {
       infra = {
+        hypervisor = {
+          enable = true;
+          inherit lanBridge volumeGroup guestVms;
+        };
         nfs.server = {
           enable = true;
           interface = vlanInterface;
         };
-        podman.enable = true;
+        podman = {
+          enable = true;
+          autoUpdate.enable = true;
+        };
+        restic = {
+          enable = true;
+          repo = backupPath;
+        };
       };
 
       networking.nginx.enable = true;
