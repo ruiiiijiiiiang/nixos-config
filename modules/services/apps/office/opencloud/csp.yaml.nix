@@ -7,6 +7,8 @@
     - "'unsafe-inline'"
     - "'unsafe-eval'"
     - "blob:"
+    - "https://@ID_FQDN@"
+    - "wss://@ID_FQDN@"
   style-src:
     - "'self'"
     - "'unsafe-inline'"
@@ -21,6 +23,7 @@
   connect-src:
     - "'self'"
     - "blob:"
+    - 'https://update.opencloud.eu/'
     - "https://@OFFICE_FQDN@"
     - "https://@ID_FQDN@"
     - "wss://@ID_FQDN@"

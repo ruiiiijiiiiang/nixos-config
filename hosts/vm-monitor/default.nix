@@ -53,7 +53,6 @@ in
         restic = {
           enable = true;
           repo = backupPath;
-          backupLocalDatabases = true;
         };
       };
 

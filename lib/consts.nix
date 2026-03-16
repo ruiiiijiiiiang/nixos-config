@@ -115,7 +115,7 @@ rec {
       hosts = {
         vm-network = "10.5.5.1";
         framework = "10.5.5.2";
-        iphone-16 = "10.5.5.3";
+        pixel-7 = "10.5.5.3";
         iphone-17 = "10.5.5.4";
         github-action = "10.5.5.5";
       };

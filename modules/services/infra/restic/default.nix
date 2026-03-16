@@ -2,7 +2,6 @@
   config,
   consts,
   lib,
-  pkgs,
   helpers,
   ...
 }:
@@ -22,11 +21,6 @@ in
       type = types.listOf types.str;
       default = [ ];
       description = "Paths to backup data from.";
-    };
-    backupLocalDatabases = mkOption {
-      type = types.bool;
-      default = false;
-      description = "Automatically find and backup all .db files in /var/lib.";
     };
   };
 
@@ -53,15 +47,21 @@ in
       paths = [
         "/etc/ssh/ssh_host_*"
         "/home/${username}/.ssh/id_*"
+        "/var/lib"
       ]
-      ++ cfg.paths
-      ++ (lib.optional config.custom.services.networking.nginx.enable "/var/lib/acme")
-      ++ (lib.optional config.custom.services.apps.auth.pocketid.enable "/var/lib/pocket-id/data/keys/jwt_private_key.json")
-      ++ (lib.optional config.custom.services.apps.auth.vaultwarden.enable "/var/lib/vaultwarden/rsa_key.pem");
+      ++ cfg.paths;
 
-      dynamicFilesFrom = lib.mkIf cfg.backupLocalDatabases ''
-        ${pkgs.findutils}/bin/find /var/lib -type f -name "*.db"
-      '';
+      exclude = [
+        "/var/lib/containers/storage/overlay"
+        "/var/lib/containers/storage/volumes/backingFsBlockDev"
+        "/var/lib/systemd/coredump"
+        "/var/lib/machines"
+        "**/.cache"
+      ];
+
+      extraBackupArgs = [
+        "--exclude-caches"
+      ];
 
       timerConfig = {
         OnCalendar = dailyTaskToSystemd daily-tasks.${config.networking.hostName}.restic-backup;
@@ -69,8 +69,8 @@ in
       };
 
       pruneOpts = [
-        "--keep-daily 3"
-        "--keep-weekly 1"
+        "--keep-daily 4"
+        "--keep-weekly 2"
         "--keep-monthly 1"
       ];
     };

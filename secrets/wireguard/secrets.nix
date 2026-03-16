@@ -14,7 +14,7 @@ in
     publicKeys = ssh.framework;
     armor = true;
   };
-  "wireguard/iphone-16-preshared-key.age" = {
+  "wireguard/pixel-7-preshared-key.age" = {
     publicKeys = ssh.vm-network;
     armor = true;
   };

@@ -113,7 +113,6 @@ in
           enable = true;
           repo = backupPath;
           paths = [ storagePath ];
-          backupLocalDatabases = true;
         };
       };
 

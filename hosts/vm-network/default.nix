@@ -23,7 +23,7 @@ in
   age.secrets = {
     wireguard-server-private-key.file = ../../secrets/wireguard/server-private-key.age;
     wireguard-framework-preshared-key.file = ../../secrets/wireguard/framework-preshared-key.age;
-    wireguard-iphone-16-preshared-key.file = ../../secrets/wireguard/iphone-16-preshared-key.age;
+    wireguard-pixel-7-preshared-key.file = ../../secrets/wireguard/pixel-7-preshared-key.age;
     wireguard-iphone-17-preshared-key.file = ../../secrets/wireguard/iphone-17-preshared-key.age;
     wireguard-github-action-preshared-key.file = ../../secrets/wireguard/github-action-preshared-key.age;
   };
@@ -105,7 +105,6 @@ in
         restic = {
           enable = true;
           repo = backupPath;
-          backupLocalDatabases = true;
         };
       };
 
@@ -137,8 +136,8 @@ in
               presharedKeyFile = config.age.secrets.wireguard-framework-preshared-key.path;
             }
             {
-              hostName = "iphone-16";
-              presharedKeyFile = config.age.secrets.wireguard-iphone-16-preshared-key.path;
+              hostName = "pixel-7";
+              presharedKeyFile = config.age.secrets.wireguard-pixel-7-preshared-key.path;
             }
             {
               hostName = "iphone-17";

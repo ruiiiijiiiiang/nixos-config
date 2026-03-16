@@ -43,7 +43,7 @@
     framework = {
       publicKey = "SF5kt0KNGdReMPbXltYmgim/0jkbho7ZtBSWVkSUR3c=";
     };
-    iphone-16 = {
+    pixel-7 = {
       publicKey = "irSOyEPaup0nVlHvPIQlrsbx4drvc7+gjj0rc7Hhgzs=";
     };
     iphone-17 = {
