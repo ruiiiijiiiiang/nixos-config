@@ -108,20 +108,27 @@ in
         networks = [ "container:immich-postgres" ];
         environment = {
           HSA_OVERRIDE_GFX_VERSION = "10.3.0";
+          HOME = "/cache";
         };
         volumes = [
           "/var/lib/immich/model-cache:/cache"
         ];
         devices = [
+          "/dev/dri:/dev/dri"
           "/dev/kfd:/dev/kfd"
-        ]
-        ++ lib.optional (
-          config.custom.platforms.vm.kernel.hardwarePassthrough == "gpu"
-        ) "/dev/dri/renderD128:/dev/dri/renderD128";
+        ];
       };
     };
 
-    users = mkOciUser "immich";
+    users = lib.mkMerge [
+      (mkOciUser "immich")
+      {
+        users.immich.extraGroups = [
+          "video"
+          "render"
+        ];
+      }
+    ];
 
     systemd = {
       tmpfiles.rules = [

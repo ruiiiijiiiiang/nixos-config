@@ -51,8 +51,8 @@ in
         LIBVA_DRIVER_NAME = "radeonsi";
       };
       devices = [
-        "/dev/dri/card1:/dev/dri/card0"
-        "/dev/dri/renderD128:/dev/dri/renderD128"
+        "/dev/kfd:/dev/kfd"
+        "/dev/dri:/dev/dri"
       ];
       labels = {
         "io.containers.autoupdate" = "registry";
@@ -63,6 +63,10 @@ in
       uid = oci-uids.jellyfin;
       group = "arr";
       isSystemUser = true;
+      extraGroups = [
+        "video"
+        "render"
+      ];
     };
 
     systemd.tmpfiles.rules = [

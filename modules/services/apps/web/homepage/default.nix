@@ -64,6 +64,14 @@ in
               };
             }
             {
+              "External" = {
+                style = "row";
+                columns = 6;
+                tab = "Apps";
+                iconsOnly = true;
+              };
+            }
+            {
               "Development" = {
                 style = "row";
                 columns = 6;
@@ -105,7 +113,7 @@ in
             resources = {
               cpu = true;
               memory = true;
-              disk = "/data";
+              disk = "/";
               uptime = true;
             };
           }
@@ -119,6 +127,7 @@ in
                   icon = "immich";
                   href = "https://${subdomains.vm-app.immich}.${domain}";
                   description = "Photos & Video";
+                  siteMonitor = "https://${subdomains.vm-app.immich}.${domain}";
                 };
               }
               {
@@ -126,6 +135,7 @@ in
                   icon = "jellyfin";
                   href = "https://${subdomains.vm-app.jellyfin}.${domain}";
                   description = "Media Server";
+                  siteMonitor = "https://${subdomains.vm-app.jellyfin}.${domain}";
                 };
               }
             ];
@@ -137,6 +147,7 @@ in
                   icon = "bytestash";
                   href = "https://${subdomains.vm-app.bytestash}.${domain}";
                   description = "Code Snippets";
+                  siteMonitor = "https://${subdomains.vm-app.bytestash}.${domain}";
                 };
               }
               {
@@ -144,6 +155,7 @@ in
                   icon = "forgejo";
                   href = "https://${subdomains.vm-app.forgejo}.${domain}";
                   description = "Version Control";
+                  siteMonitor = "https://${subdomains.vm-app.forgejo}.${domain}";
                 };
               }
             ];
@@ -155,6 +167,7 @@ in
                   icon = "sonarr";
                   href = "https://${subdomains.vm-app.sonarr}.${domain}";
                   description = "TV Series Management";
+                  siteMonitor = "https://${subdomains.vm-app.sonarr}.${domain}";
                 };
               }
               {
@@ -162,6 +175,7 @@ in
                   icon = "radarr";
                   href = "https://${subdomains.vm-app.radarr}.${domain}";
                   description = "Movie Management";
+                  siteMonitor = "https://${subdomains.vm-app.radarr}.${domain}";
                 };
               }
               {
@@ -169,6 +183,7 @@ in
                   icon = "lidarr";
                   href = "https://${subdomains.vm-app.lidarr}.${domain}";
                   description = "Music Management";
+                  siteMonitor = "https://${subdomains.vm-app.lidarr}.${domain}";
                 };
               }
               {
@@ -176,6 +191,7 @@ in
                   icon = "prowlarr";
                   href = "https://${subdomains.vm-app.prowlarr}.${domain}";
                   description = "Indexer Management";
+                  siteMonitor = "https://${subdomains.vm-app.prowlarr}.${domain}";
                 };
               }
               {
@@ -183,6 +199,7 @@ in
                   icon = "bazarr";
                   href = "https://${subdomains.vm-app.bazarr}.${domain}";
                   description = "Subtitle Management";
+                  siteMonitor = "https://${subdomains.vm-app.bazarr}.${domain}";
                 };
               }
               {
@@ -190,6 +207,7 @@ in
                   icon = "qbittorrent";
                   href = "https://${subdomains.vm-app.qbittorrent}.${domain}";
                   description = "Torrent Client";
+                  siteMonitor = "https://${subdomains.vm-app.qbittorrent}.${domain}";
                 };
               }
             ];
@@ -201,6 +219,7 @@ in
                   icon = "open-cloud";
                   href = "https://${subdomains.vm-app.opencloud}.${domain}";
                   description = "Cloud Storage";
+                  siteMonitor = "https://${subdomains.vm-app.opencloud}.${domain}";
                 };
               }
               {
@@ -208,6 +227,7 @@ in
                   icon = "paperless";
                   href = "https://${subdomains.vm-app.paperless}.${domain}";
                   description = "Document Archive";
+                  siteMonitor = "https://${subdomains.vm-app.paperless}.${domain}";
                 };
               }
               {
@@ -215,20 +235,7 @@ in
                   icon = "memos";
                   href = "https://${subdomains.vm-app.memos}.${domain}";
                   description = "Note Taking";
-                };
-              }
-              {
-                "Bento PDF" = {
-                  icon = "bentopdf";
-                  href = "https://www.bentopdf.com/index.html";
-                  description = "PDF Editor";
-                };
-              }
-              {
-                "Calendar Parser" = {
-                  icon = "p-cal";
-                  href = "https://calendar-parse.ruiiiijiiiiang.deno.net";
-                  description = "Parse CSV Calendar";
+                  siteMonitor = "https://${subdomains.vm-app.memos}.${domain}";
                 };
               }
             ];
@@ -240,6 +247,7 @@ in
                   icon = "pocket-id";
                   href = "https://${subdomains.vm-app.pocketid}.${domain}";
                   description = "Identity Provider";
+                  siteMonitor = "https://${subdomains.vm-app.pocketid}.${domain}";
                 };
               }
               {
@@ -247,6 +255,7 @@ in
                   icon = "vaultwarden";
                   href = "https://${subdomains.vm-app.vaultwarden}.${domain}";
                   description = "Password Manager";
+                  siteMonitor = "https://${subdomains.vm-app.vaultwarden}.${domain}";
                 };
               }
             ];
@@ -258,13 +267,7 @@ in
                   icon = "home-assistant";
                   href = "https://${subdomains.pi.homeassistant}.${domain}";
                   description = "Home Automation System";
-                };
-              }
-              {
-                "Zwave" = {
-                  icon = "z-wave-js-ui";
-                  href = "https://${subdomains.pi.zwave}.${domain}";
-                  description = "Zwave Device Manager";
+                  siteMonitor = "https://${subdomains.pi.homeassistant}.${domain}";
                 };
               }
               {
@@ -272,6 +275,7 @@ in
                   icon = "microbin";
                   href = "https://${subdomains.vm-app.microbin}.${domain}";
                   description = "Pastebin";
+                  siteMonitor = "https://${subdomains.vm-app.microbin}.${domain}";
                 };
               }
               {
@@ -279,6 +283,7 @@ in
                   icon = "karakeep";
                   href = "https://${subdomains.vm-app.karakeep}.${domain}";
                   description = "Bookmark";
+                  siteMonitor = "https://${subdomains.vm-app.karakeep}.${domain}";
                 };
               }
               {
@@ -286,6 +291,7 @@ in
                   icon = "https://cdn.jsdelivr.net/gh/selfhst/icons@main/png/reitti.png";
                   href = "https://${subdomains.vm-app.reitti}.${domain}";
                   description = "Location Tracking";
+                  siteMonitor = "https://${subdomains.vm-app.reitti}.${domain}";
                 };
               }
               {
@@ -293,27 +299,7 @@ in
                   icon = "searxng";
                   href = "https://${subdomains.vm-app.searxng}.${domain}";
                   description = "Search engine";
-                };
-              }
-              {
-                "OmniTools" = {
-                  icon = "omni-tools";
-                  href = "https://omnitools.app";
-                  description = "Miscellaneous Utilities";
-                };
-              }
-              {
-                "Vert" = {
-                  icon = "https://avatars.githubusercontent.com/u/198117259?s=48&v=4";
-                  href = "https://vert.sh";
-                  description = "File Converter";
-                };
-              }
-              {
-                "Syncthing" = {
-                  icon = "syncthing";
-                  href = "https://${subdomains.vm-app.syncthing}.${domain}";
-                  description = "File Sync Tool";
+                  siteMonitor = "https://${subdomains.vm-app.searxng}.${domain}";
                 };
               }
             ];
@@ -325,6 +311,7 @@ in
                   icon = "myspeed";
                   href = "https://${subdomains.vm-monitor.myspeed}.${domain}";
                   description = "Speed Test Analysis";
+                  siteMonitor = "https://${subdomains.vm-monitor.myspeed}.${domain}";
                 };
               }
               {
@@ -332,6 +319,7 @@ in
                   icon = "pi-hole";
                   href = "https://${subdomains.vm-network.pihole}.${domain}";
                   description = "DNS Ad Blocker";
+                  siteMonitor = "https://${subdomains.vm-network.pihole}.${domain}";
                 };
               }
               {
@@ -339,6 +327,7 @@ in
                   icon = "pi-hole";
                   href = "https://${subdomains.pi.pihole}.${domain}";
                   description = "DNS Ad Blocker";
+                  siteMonitor = "https://${subdomains.pi.pihole}.${domain}";
                 };
               }
               {
@@ -346,6 +335,7 @@ in
                   icon = "pi-hole";
                   href = "https://${addresses.infra.hosts.pi-legacy}/admin";
                   description = "DNS Ad Blocker";
+                  siteMonitor = "https://${addresses.infra.hosts.pi-legacy}/admin";
                 };
               }
             ];
@@ -357,6 +347,7 @@ in
                   icon = "cockpit";
                   href = "https://${subdomains.hypervisor.cockpit}.${domain}";
                   description = "Cockpit Server Manager";
+                  siteMonitor = "https://${subdomains.hypervisor.cockpit}.${domain}";
                 };
               }
               {
@@ -364,6 +355,7 @@ in
                   icon = "gatus";
                   href = "https://${subdomains.vm-monitor.gatus}.${domain}";
                   description = "Server Health Monitoring";
+                  siteMonitor = "https://${subdomains.vm-monitor.gatus}.${domain}";
                 };
               }
               {
@@ -371,6 +363,7 @@ in
                   icon = "https://cdn.jsdelivr.net/gh/selfhst/icons@main/png/dockhand.png";
                   href = "https://${subdomains.vm-monitor.dockhand}.${domain}";
                   description = "Container Management Dashboard";
+                  siteMonitor = "https://${subdomains.vm-monitor.dockhand}.${domain}";
                 };
               }
               {
@@ -378,6 +371,7 @@ in
                   icon = "beszel";
                   href = "https://${subdomains.vm-monitor.beszel}.${domain}";
                   description = "Server Monitoring";
+                  siteMonitor = "https://${subdomains.vm-monitor.beszel}.${domain}";
                 };
               }
               {
@@ -385,6 +379,7 @@ in
                   icon = "prometheus";
                   href = "https://${subdomains.vm-monitor.prometheus}.${domain}";
                   description = "Metrics Monitoring";
+                  siteMonitor = "https://${subdomains.vm-monitor.prometheus}.${domain}";
                 };
               }
               {
@@ -392,6 +387,7 @@ in
                   icon = "grafana";
                   href = "https://${subdomains.vm-monitor.grafana}.${domain}";
                   description = "Metrics Visualization";
+                  siteMonitor = "https://${subdomains.vm-monitor.grafana}.${domain}";
                 };
               }
               {
@@ -399,7 +395,76 @@ in
                   icon = "wazuh";
                   href = "https://${subdomains.vm-monitor.wazuh}.${domain}";
                   description = "Security Monitoring";
+                  siteMonitor = "https://${subdomains.vm-monitor.wazuh}.${domain}";
                 };
+              }
+              {
+                "Syncthing" = {
+                  icon = "syncthing";
+                  href = "https://${subdomains.vm-app.syncthing}.${domain}";
+                  description = "File Sync Tool";
+                  siteMonitor = "https://${subdomains.vm-app.syncthing}.${domain}";
+                };
+              }
+              {
+                "Zwave" = {
+                  icon = "z-wave-js-ui";
+                  href = "https://${subdomains.pi.zwave}.${domain}";
+                  description = "Zwave Device Manager";
+                  siteMonitor = "https://${subdomains.pi.zwave}.${domain}";
+                };
+              }
+            ];
+          }
+        ];
+
+        bookmarks = [
+          {
+            "External" = [
+              {
+                "Calendar Parser" = [
+                  {
+                    icon = "p-cal";
+                    href = "https://calendar-parse.ruiiiijiiiiang.deno.net";
+                    description = "Parse CSV Calendar";
+                  }
+                ];
+              }
+              {
+                "Bento PDF" = [
+                  {
+                    icon = "bentopdf";
+                    href = "https://www.bentopdf.com/index.html";
+                    description = "PDF Editor";
+                  }
+                ];
+              }
+              {
+                "OmniTools" = [
+                  {
+                    icon = "omni-tools";
+                    href = "https://omnitools.app";
+                    description = "Miscellaneous Utilities";
+                  }
+                ];
+              }
+              {
+                "Vert" = [
+                  {
+                    icon = "https://avatars.githubusercontent.com/u/198117259?s=48&v=4";
+                    href = "https://vert.sh";
+                    description = "File Converter";
+                  }
+                ];
+              }
+              {
+                "IT Tools" = [
+                  {
+                    icon = "it-tools";
+                    href = "https://it-tools.tech";
+                    description = "IT Utilities";
+                  }
+                ];
               }
             ];
           }

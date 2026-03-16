@@ -53,8 +53,7 @@ in
         devices = [
           "/dev/kfd:/dev/kfd"
           "/dev/dri:/dev/dri"
-        ]
-        ++ lib.optional hasGpuPassthrough "/dev/dri/renderD128:/dev/dri/renderD128";
+        ];
         labels = {
           "io.containers.autoupdate" = "registry";
         };
