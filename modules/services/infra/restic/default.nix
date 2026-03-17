@@ -17,10 +17,10 @@ in
       type = types.str;
       description = "Base path to store the Restic repository.";
     };
-    paths = mkOption {
+    extraPaths = mkOption {
       type = types.listOf types.str;
       default = [ ];
-      description = "Paths to backup data from.";
+      description = "Extra paths to backup data from.";
     };
   };
 
@@ -31,8 +31,8 @@ in
         message = "custom.services.infra.restic.repo must be an absolute path.";
       }
       {
-        assertion = lib.all (p: lib.hasPrefix "/" p) cfg.paths;
-        message = "custom.services.infra.restic.paths must contain only absolute paths.";
+        assertion = lib.all (p: lib.hasPrefix "/" p) cfg.extraPaths;
+        message = "custom.services.infra.restic.extraPaths must contain only absolute paths.";
       }
     ];
 
@@ -49,7 +49,7 @@ in
         "/home/${username}/.ssh/id_*"
         "/var/lib"
       ]
-      ++ cfg.paths;
+      ++ cfg.extraPaths;
 
       exclude = [
         "/var/lib/containers/storage/overlay"

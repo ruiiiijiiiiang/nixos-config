@@ -57,6 +57,16 @@ in
         location = {
           reitti.enable = true;
         };
+        media = {
+          immich = {
+            enable = true;
+            inherit storagePath;
+          };
+          jellyfin = {
+            enable = true;
+            inherit mediaPath;
+          };
+        };
         office = {
           memos.enable = true;
           opencloud = {
@@ -74,20 +84,11 @@ in
             inherit mediaPath;
           };
           atuin.enable = true;
+          llm.enable = true;
           microbin.enable = true;
           syncthing = {
             enable = true;
             proxied = true;
-          };
-        };
-        media = {
-          immich = {
-            enable = true;
-            inherit storagePath;
-          };
-          jellyfin = {
-            enable = true;
-            inherit mediaPath;
           };
         };
         web = {
@@ -112,7 +113,7 @@ in
         restic = {
           enable = true;
           repo = backupPath;
-          paths = [ storagePath ];
+          extraPaths = [ storagePath ];
         };
       };
 

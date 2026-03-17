@@ -2,15 +2,13 @@
 
 **Welcome to the future of homelabbing.**
 
-This repository isn't just a collection of config files; it is a **fully declarative, reproducible, and fortified infrastructure** definition for my personal homelab. Built on the bedrock of **NixOS** and **Nix Flakes**, this project represents a complete paradigm shift from fragile, imperative sysadmin tasks to a robust, code-driven ecosystem.
+This repository is a **fully declarative, reproducible infrastructure** definition for my personal homelab. Built on **NixOS** and **Nix Flakes**, it represents a complete paradigm shift from fragile, imperative administration to a robust, code-driven ecosystem. Every layer — from CPU/RAM allocation, disk partitioning, VLAN assignment, to application services, container orchestration, and secret management — is defined in code. Version controlled and GitOps-friendly, it emphasizes **stability** through atomic rollbacks, **observability** via a comprehensive monitoring stack, and **security** with hardened services and isolated networking.
 
-Every single aspect of this infrastructure — from virtualization resource provisioning and VLAN routing rules to the complex web of containerized microservices and their secret management — is defined in code. Version controlled and GitOps-friendly, it emphasizes **stability** through atomic rollbacks, **observability** via a comprehensive monitoring stack, and **security** with hardened kernels and isolated networking.
+The hardware? A mini PC, a Raspberry Pi, an unmanaged switch, and some old hard drives. No enterprise racks. No excessive power draw. The goal is **maximum software efficiency** — proving that proper architecture, deliberate design, and disciplined engineering matter far more than raw specs. This setup runs a full production-grade stack: VLAN-segmented networks, VPN for remote access, high-availability DNS cluster, intrusion detection systems, centralized logging and monitoring, encrypted backups, CI/CD pipelines, private code repositories, SSO authorization, reverse proxies with automatic TLS, media servers, document management, smart home automation, and more.
 
-My homelab isn't running on expensive, power-hungry enterprise-grade racks. This entire infrastructure is powered by a mini PC, a Raspberry Pi, an unmanaged switch, and a couple of old hard drives. I work with what I have, and my goal is **maximum software correctness**: proving that proper architecture, deliberate design, and disciplined engineering matter far more than raw hardware specs.
+The beauty of this setup? **Total vertical alignment.** The entire infrastructure is declared in one monolithic Nix flake and accessible to all hosts. Change a VM's VLAN assignment? Update one value in Nix, rebuild, and the entire networking stack reconfigures. Need to migrate a service between hosts? Move the configuration block and redeploy — the entire dependency chain follows atomically.
 
-The beauty of this setup? **Total vertical alignment.** The hypervisor, the guests, the network topology, the services — every single layer is declared in Nix code. No hybrid imperative management, no XML sprawl, no clicking through web UIs. Just pure, plain-text infrastructure definitions that rebuild atomically and roll back instantly.
-
-We're way past infrastructure-as-code. It's time for infrastructure/networking/configuration/security/pipeline all-rolled-into-one-as-code.
+**100% declarative. 100% visible. 100% reproducible.** No hidden state. No XML sprawl. No clicking through web UIs. Just plain-text Nix code. This is true infrastructure-as-code: reproducible, auditable, and resilient.
 
 ## Project Structure
 
@@ -22,7 +20,7 @@ This infrastructure is engineered following a rigorous **Domain-Driven Design** 
 2. **platform (`modules/platforms`):** The hardware abstraction layer. Whether it's a Raspberry Pi ARM chip or a virtualized x86 hypervisor, this layer handles the metal. Disk partitioning is fully declarative using **Disko**, defining GPT layouts, LVM volume groups for guest VM disks, and filesystem mounts.
 3. **roles (`modules/roles`):** The personality injection. A host is defined by its mission: a hardened **Headless Server** guarding the network, or a feature-rich **Workstation** designed for development.
 4. **services (`modules/services`):** The functional payload. Granular, plug-and-play applications categorized by domain:
-   - **infra:** The backbone utilities (binary cache, container runtime, backup).
+   - **infra:** The backbone utilities (binary cache, hypervisor, backup).
    - **networking:** The mesh that connects it all (DNS, routing, VPN).
    - **observability:** The eyes and ears (monitoring, logging, tracking agents).
    - **security:** The active defense perimeter (Fail2Ban, Wazuh, Suricata, CrowdSec).
@@ -115,7 +113,7 @@ Powered by **NFTables**, the firewall enforces a strict "default drop" policy fo
 
 ### High-Availability DNS
 
-Redundancy is the only reliability. The network relies on a high-availability DNS cluster between `vm-network` and `pi` to ensure that ad-blocking and name resolution never sleep.
+The network relies on a high-availability DNS cluster between `vm-network` and `pi` to ensure that ad-blocking and name resolution never sleep.
 
 - **The Stack:** **Pi-hole** for network-wide ad-blocking + **Unbound** for recursive, privacy-respecting DNS-over-TLS resolution.
 - **The Redundancy:** **Keepalived** manages a Virtual IP (VIP) that floats across the cluster. If the master node blinks, the VIP instantly migrates to a backup, keeping the network online without a hiccup.
@@ -198,7 +196,7 @@ Security isn't a feature; it's the foundation. Every server is hardened against 
 
 No more `.env` files leaking in git history. Sensitive data is encrypted at rest using **agenix**. Secrets are decrypted only at runtime, in-memory, and only by the specific host identity that requires them. It is cryptographically secure and zero-trust by default.
 
-## Operations & Infrastructure
+## Operations & Maintenance
 
 **Atomic. Reproducible. Resilient.**
 
@@ -227,11 +225,3 @@ Critical data is protected through a multi-tier backup strategy:
 
 - **Database Backup:** **db-auto-backup** automatically dumps all containerized databases via the Podman socket.
 - **Filesystem Backup:** **Restic** performs incremental, encrypted snapshots of critical paths with intelligent retention.
-
-### Hypervisor Architecture
-
-**Vertical Integration. End to End.**
-
-Using the **NixVirt** module, every VM is defined as a Nix derivation — CPU allocation, memory size, disk backend (LVM logical volumes), network interfaces with VLAN tagging, PCI device passthrough, and even lifecycle hooks for GPU reset workarounds. The host bridge is configured via `systemd-networkd` with VLAN filtering, allowing guests to trunk into segregated networks without any imperative configuration.
-
-What makes this truly powerful is the **total alignment**: the hypervisor host, the VM definitions, the guest OS configurations, and the services they run are all declared in the same Nix flake. Change a VM's VLAN assignment? Update one line in Nix, rebuild, and the entire networking stack reconfigures atomically. Need to passthrough a piece of hardware? Declare it in the guest config, and the host automatically binds the right kernel modules and IOMMU groups. Everything is type-checked, reproducible, and instantly auditable in git history.

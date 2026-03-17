@@ -18,12 +18,12 @@ in
         grub.enable = false;
         generic-extlinux-compatible.enable = true;
       };
+      kernelPackages = pkgs.linuxPackages_rpi4;
 
-      supportedFilesystems = lib.mkForce [
+      supportedFilesystems = [
         "vfat"
         "ext4"
       ];
-      kernelPackages = pkgs.linuxPackages_rpi4;
     };
 
     fileSystems = {

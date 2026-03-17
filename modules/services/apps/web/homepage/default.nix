@@ -302,6 +302,14 @@ in
                   siteMonitor = "https://${subdomains.vm-app.searxng}.${domain}";
                 };
               }
+              {
+                "LLM" = {
+                  icon = "open-webui";
+                  href = "https://${subdomains.vm-app.openwebui}.${domain}";
+                  description = "Large Language Model";
+                  siteMonitor = "https://${subdomains.vm-app.openwebui}.${domain}";
+                };
+              }
             ];
           }
           {
@@ -434,7 +442,7 @@ in
                 "Bento PDF" = [
                   {
                     icon = "bentopdf";
-                    href = "https://www.bentopdf.com/index.html";
+                    href = "https://www.bentopdf.com";
                     description = "PDF Editor";
                   }
                 ];

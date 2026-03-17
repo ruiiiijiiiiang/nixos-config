@@ -120,6 +120,7 @@ in
       gemini-cli
       github-copilot-cli
       codex
+      opencode
 
       # Web Development
       deno
@@ -146,6 +147,7 @@ in
       pyright
       ruff
       python313Packages.debugpy
+      uv
 
       # Go
       go
