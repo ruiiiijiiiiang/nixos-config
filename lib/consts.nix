@@ -350,6 +350,9 @@ rec {
       podman-update = "03:00";
       restic-backup = "06:30";
     };
+    pi = {
+      podman-update = "03:00";
+    };
     vm-network = {
       podman-update = "03:05";
       restic-backup = "06:35";

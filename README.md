@@ -78,7 +78,6 @@ The `flake.nix` is the central cortex, orchestrating these modules to synthesize
 |                         |    | | [pi] (Raspberry Pi 4)           | |    |                            |
 |                         |    | | Hosts: Home Assistant, DNS slave| |    |                            |
 |                         |    | +---------------------------------+ |    |                            |
-|                         |    |                                     |    |                            |
 |                         |    | DNS VIP: 192.168.20.53 (HA Cluster) |    |                            |
 +-------------------------+    +-------------------------------------+    +----------------------------+
              |                                     ^                                     ^

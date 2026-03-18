@@ -248,25 +248,6 @@ in
       };
     };
 
-    # Temporary fix for a recent regression in libvirt. Waiting on the following PR:
-    # https://github.com/NixOS/nixpkgs/pull/496839
-    systemd.services."virt-secret-init-encryption" = {
-      preStart = ''
-        mkdir -p /var/lib/libvirt/secrets
-        chmod 0711 /var/lib/libvirt
-        chmod 0700 /var/lib/libvirt/secrets
-      '';
-
-      serviceConfig = {
-        ExecStart = lib.mkForce [
-          ""
-          "${pkgs.bash}/bin/sh -c '${pkgs.coreutils}/bin/head -c 32 /dev/random | ${pkgs.systemd}/bin/systemd-creds encrypt --name=secrets-encryption-key - /var/lib/libvirt/secrets/secrets-encryption-key'"
-        ];
-      };
-
-      path = [ pkgs.systemd ];
-    };
-
     boot = lib.mkIf (passthroughIds != [ ]) {
       kernelParams = [
         "amd_iommu=on"
@@ -283,40 +264,6 @@ in
         "vfio_iommu_type1"
       ];
     };
-
-    environment.etc =
-      let
-        gpuPassthroughGuest = getPassthroughGuest "gpu";
-      in
-      lib.mkIf (gpuPassthroughGuest != null) {
-        # This is needed to handle AMD GPU reset bug when the guest doesn't shut down correctly.
-        "libvirt/hooks/qemu" = {
-          mode = "0755";
-          source = pkgs.writeShellScript "qemu-hook" /* bash */ ''
-            GUEST_NAME="$1"
-            OPERATION="$2"
-            SUB_OPERATION="$3"
-
-            GPU_PCI="${hardware.gpu.address}"
-            TARGET_VM="${gpuPassthroughGuest}"
-
-            if [ "$GUEST_NAME" == "$TARGET_VM" ]; then
-              if [ "$OPERATION" == "release" ]; then
-                if [ -e "/sys/bus/pci/devices/$GPU_PCI/remove" ]; then
-                  echo "libvirt-qemu-hook: Removing AMD APU $GPU_PCI from bus..." | ${pkgs.systemd}/bin/systemd-cat -t libvirt-qemu-hook
-                  echo 1 > "/sys/bus/pci/devices/$GPU_PCI/remove"
-                  ${pkgs.coreutils}/bin/sleep 1
-                  echo 1 > /sys/bus/pci/rescan
-                  ${pkgs.coreutils}/bin/sleep 1
-                  echo "libvirt-qemu-hook: PCIe rescan complete for $TARGET_VM." | ${pkgs.systemd}/bin/systemd-cat -t libvirt-qemu-hook
-                else
-                  echo "libvirt-qemu-hook: Device $GPU_PCI not found on bus, skipping reset." | ${pkgs.systemd}/bin/systemd-cat -t libvirt-qemu-hook
-                fi
-              fi
-            fi
-          '';
-        };
-      };
 
     users.users = {
       ${username}.extraGroups = [ "libvirtd" ];
