@@ -15,23 +15,12 @@ in
 
   config = lib.mkIf cfg.enable {
     environment = {
+      systemPackages = [
+        inputs.agenix.packages.${pkgs.stdenv.system}.default
+      ];
       variables = {
         EDITOR = "vim";
       };
-
-      interactiveShellInit = /* bash */ ''
-        stats() {
-          systemctl status "$1" | tspin
-        }
-
-        log() {
-          if [ -z "$2" ]; then
-            journalctl -u "$1" -f | tspin
-          else
-            journalctl -u "$1" -n "$2" | tspin
-          fi
-        }
-      '';
     };
 
     services = {
@@ -45,9 +34,5 @@ in
       avahi.enable = false;
       printing.enable = false;
     };
-
-    environment.systemPackages = [
-      inputs.agenix.packages.${pkgs.stdenv.system}.default
-    ];
   };
 }

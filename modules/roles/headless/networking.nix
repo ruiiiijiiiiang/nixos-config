@@ -83,12 +83,18 @@ in
       };
     };
 
-    users.users.${username}.openssh.authorizedKeys.keys = ssh.arch ++ ssh.framework;
-    users.users.root.openssh.authorizedKeys.keys = [
-      ssh.github-runner
-      ssh.forgejo-runner
-    ]
-    ++ ssh.arch
-    ++ ssh.framework;
+    users.users = {
+      ${username} = {
+        linger = true;
+        openssh.authorizedKeys.keys = ssh.arch ++ ssh.framework;
+      };
+
+      root.openssh.authorizedKeys.keys = [
+        ssh.github-runner
+        ssh.forgejo-runner
+      ]
+      ++ ssh.arch
+      ++ ssh.framework;
+    };
   };
 }

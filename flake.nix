@@ -8,6 +8,7 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    dotfiles.url = "github:ruiiiijiiiiang/dotfiles";
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -17,6 +18,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     agenix.url = "github:ryantm/agenix";
+    wezterm.url = "github:wezterm/wezterm?dir=nix";
     nix-flatpak.url = "github:gmodena/nix-flatpak";
     catppuccin = {
       url = "github:catppuccin/nix";
@@ -46,110 +48,164 @@
       self,
       nixpkgs,
       home-manager,
+      dotfiles,
       ...
     }@inputs:
     let
       system = "x86_64-linux";
-      pkgs = import nixpkgs { inherit system; };
+      inherit (nixpkgs) lib;
+
+      pkgs = import nixpkgs {
+        inherit system;
+        config.allowUnfree = true;
+      };
       consts = import ./lib/consts.nix;
       helpers = import ./lib/helpers.nix {
-        inherit (nixpkgs) lib;
-        inherit consts;
-        inherit pkgs;
+        inherit consts lib pkgs;
       };
-      inherit (nixpkgs.lib) nixosSystem;
-      inherit (home-manager.lib) homeManagerConfiguration;
+      inherit (consts) username home;
+
+      mkHomeManagerModule =
+        {
+          dotfilesRoot,
+          dotfilesOutOfStore,
+          homeModules,
+          homeConfig,
+        }:
+        lib.recursiveUpdate
+          {
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              extraSpecialArgs = {
+                inherit
+                  consts
+                  inputs
+                  helpers
+                  dotfilesRoot
+                  dotfilesOutOfStore
+                  ;
+              };
+            };
+          }
+          {
+            home-manager.users.${username}.imports = [
+              homeModules
+              homeConfig
+            ];
+          };
     in
     {
       nixosConfigurations = {
-        framework = nixosSystem {
+        framework = lib.nixosSystem {
           inherit system;
           specialArgs = {
-            inherit inputs;
-            inherit consts;
-            inherit helpers;
+            inherit consts inputs helpers;
           };
           modules = [
             ./modules
-            ./hosts/framework
+            ./hosts/framework.nix
+            home-manager.nixosModules.home-manager
+            (mkHomeManagerModule {
+              dotfilesRoot = "${home}/dotfiles";
+              dotfilesOutOfStore = true;
+              homeModules = ./homes/modules;
+              homeConfig = ./homes/configs/framework.nix;
+            })
           ];
         };
 
-        pi = nixosSystem {
+        pi = lib.nixosSystem {
           system = "aarch64-linux";
           specialArgs = {
-            inherit inputs;
-            inherit consts;
-            inherit helpers;
+            inherit consts inputs helpers;
           };
           modules = [
             ./modules
-            ./hosts/pi
+            ./hosts/pi.nix
           ];
         };
 
-        hypervisor = nixosSystem {
+        hypervisor = lib.nixosSystem {
           inherit system;
           specialArgs = {
-            inherit inputs;
-            inherit consts;
-            inherit helpers;
+            inherit consts inputs helpers;
           };
           modules = [
             ./modules
-            ./hosts/hypervisor
+            ./hosts/hypervisor.nix
           ];
         };
 
-        vm-network = nixosSystem {
+        vm-network = lib.nixosSystem {
           inherit system;
           specialArgs = {
-            inherit inputs;
-            inherit consts;
-            inherit helpers;
+            inherit consts inputs helpers;
           };
           modules = [
             ./modules
-            ./hosts/vm-network
+            ./hosts/vm-network.nix
+            home-manager.nixosModules.home-manager
+            (mkHomeManagerModule {
+              dotfilesRoot = dotfiles.outPath;
+              dotfilesOutOfStore = false;
+              homeModules = ./homes/modules;
+              homeConfig = ./homes/configs/headless.nix;
+            })
           ];
         };
 
-        vm-app = nixosSystem {
+        vm-app = lib.nixosSystem {
           inherit system;
           specialArgs = {
-            inherit inputs;
-            inherit consts;
-            inherit helpers;
+            inherit consts inputs helpers;
           };
           modules = [
             ./modules
-            ./hosts/vm-app
+            ./hosts/vm-app.nix
+            home-manager.nixosModules.home-manager
+            (mkHomeManagerModule {
+              dotfilesRoot = dotfiles.outPath;
+              dotfilesOutOfStore = false;
+              homeModules = ./homes/modules;
+              homeConfig = ./homes/configs/headless.nix;
+            })
           ];
         };
 
-        vm-monitor = nixosSystem {
+        vm-monitor = lib.nixosSystem {
           inherit system;
           specialArgs = {
-            inherit inputs;
-            inherit consts;
-            inherit helpers;
+            inherit consts inputs helpers;
           };
           modules = [
             ./modules
-            ./hosts/vm-monitor
+            ./hosts/vm-monitor.nix
+            home-manager.nixosModules.home-manager
+            (mkHomeManagerModule {
+              dotfilesRoot = dotfiles.outPath;
+              dotfilesOutOfStore = false;
+              homeModules = ./homes/modules;
+              homeConfig = ./homes/configs/headless.nix;
+            })
           ];
         };
 
-        vm-cyber = nixosSystem {
+        vm-cyber = lib.nixosSystem {
           inherit system;
           specialArgs = {
-            inherit inputs;
-            inherit consts;
-            inherit helpers;
+            inherit consts inputs helpers;
           };
           modules = [
             ./modules
-            ./hosts/vm-cyber
+            ./hosts/vm-cyber.nix
+            home-manager.nixosModules.home-manager
+            (mkHomeManagerModule {
+              dotfilesRoot = dotfiles.outPath;
+              dotfilesOutOfStore = false;
+              homeModules = ./homes/modules;
+              homeConfig = ./homes/configs/vm-cyber.nix;
+            })
           ];
         };
       };
@@ -161,39 +217,16 @@
       };
 
       homeConfigurations = {
-        framework = homeManagerConfiguration {
+        arch = home-manager.lib.homeManagerConfiguration {
           inherit pkgs;
           extraSpecialArgs = {
-            inherit inputs;
-            inherit consts;
-            inherit helpers;
+            inherit consts inputs helpers;
+            dotfilesRoot = "${home}/dotfiles";
+            dotfilesOutOfStore = true;
           };
           modules = [
-            ./homes/framework
-          ];
-        };
-
-        arch = homeManagerConfiguration {
-          inherit pkgs;
-          extraSpecialArgs = {
-            inherit inputs;
-            inherit consts;
-            inherit helpers;
-          };
-          modules = [
-            ./homes/arch
-          ];
-        };
-
-        vm-cyber = homeManagerConfiguration {
-          inherit pkgs;
-          extraSpecialArgs = {
-            inherit inputs;
-            inherit consts;
-            inherit helpers;
-          };
-          modules = [
-            ./homes/vm-cyber
+            ./homes/modules
+            ./homes/configs/arch.nix
           ];
         };
       };

@@ -19,8 +19,8 @@ in
   networking.hostName = hostName;
 
   age.secrets = {
-    wireguard-framework-private-key.file = ../../secrets/wireguard/framework-private-key.age;
-    wireguard-framework-preshared-key.file = ../../secrets/wireguard/framework-preshared-key.age;
+    wireguard-framework-private-key.file = ../secrets/wireguard/framework-private-key.age;
+    wireguard-framework-preshared-key.file = ../secrets/wireguard/framework-preshared-key.age;
   };
 
   custom = {

@@ -21,11 +21,11 @@ in
   networking.hostName = hostName;
 
   age.secrets = {
-    wireguard-server-private-key.file = ../../secrets/wireguard/server-private-key.age;
-    wireguard-framework-preshared-key.file = ../../secrets/wireguard/framework-preshared-key.age;
-    wireguard-pixel-7-preshared-key.file = ../../secrets/wireguard/pixel-7-preshared-key.age;
-    wireguard-iphone-17-preshared-key.file = ../../secrets/wireguard/iphone-17-preshared-key.age;
-    wireguard-github-action-preshared-key.file = ../../secrets/wireguard/github-action-preshared-key.age;
+    wireguard-server-private-key.file = ../secrets/wireguard/server-private-key.age;
+    wireguard-framework-preshared-key.file = ../secrets/wireguard/framework-preshared-key.age;
+    wireguard-pixel-7-preshared-key.file = ../secrets/wireguard/pixel-7-preshared-key.age;
+    wireguard-iphone-17-preshared-key.file = ../secrets/wireguard/iphone-17-preshared-key.age;
+    wireguard-github-action-preshared-key.file = ../secrets/wireguard/github-action-preshared-key.age;
   };
 
   custom = {

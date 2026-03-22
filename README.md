@@ -66,7 +66,7 @@ The `flake.nix` is the central cortex, orchestrating these modules to synthesize
 |                         |    | +---------------------------------+ |    | +------------------------+ |
 | (Other clients...)      |    | +---------------------------------+ |    |                            |
 |                         |    | | [vm-app] (libvirt VM)           | |    |                            |
-|                         |    | | 8 vCPU, 12GB RAM, GPU Passthru  | |    |                            |
+|                         |    | | 10 vCPU, 16GB RAM, GPU Passthru  | |    |                            |
 |                         |    | | Hosts: Jellyfin, Immich, etc    | |    |                            |
 |                         |    | +---------------------------------+ |    |                            |
 |                         |    | +---------------------------------+ |    |                            |
@@ -153,7 +153,7 @@ This infrastructure comprises six distinct hosts. Here's the breakdown:
 ### `vm-app`
 
 - **The Powerhouse.** The main application server. GPU passthrough enables hardware-accelerated transcoding for Jellyfin. It runs my complete suite of user-facing services: Immich for photos, Paperless-ngx for documents, Forgejo for code, and more.
-- **Hardware**: 8 vCPU cores, 12GB RAM, GPU passthrough
+- **Hardware**: 10 vCPU cores, 16GB RAM, GPU passthrough
 - **Network:** Infra (VLAN 20)
 
 ### `vm-monitor`

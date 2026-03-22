@@ -9,7 +9,6 @@ let
     addresses
     subdomains
     oci-uids
-    home
     ;
 in
 {
@@ -157,6 +156,8 @@ in
 
   linkConfig =
     {
+      dotfilesRoot,
+      dotfilesOutOfStore ? true,
       name,
       paths,
     }:
@@ -179,7 +180,11 @@ in
         in
         {
           name = targetPath;
-          value.source = mkOutOfStoreSymlink "${home}/dotfiles/${name}/${sourceSuffix}";
+          value.source =
+            if dotfilesOutOfStore then
+              mkOutOfStoreSymlink "${dotfilesRoot}/${name}/${sourceSuffix}"
+            else
+              "${dotfilesRoot}/${name}/${sourceSuffix}";
         }
       ) paths
     );

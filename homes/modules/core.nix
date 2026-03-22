@@ -4,18 +4,12 @@ let
   flakePath = "${home}/nixos-config";
 in
 {
-  imports = [
-    ./configs.nix
-    ./files
-  ];
-
   home = {
     inherit username;
     homeDirectory = home;
     stateVersion = "25.05";
 
     sessionVariables = {
-      OS = "nixos";
       EDITOR = "nvim";
       NH_FLAKE = flakePath;
       NH_OS_FLAKE = flakePath;

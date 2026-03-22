@@ -21,8 +21,8 @@ in
 
       libvirt = {
         enable = true;
-        cpu = 8;
-        memory = 12;
+        cpu = 10;
+        memory = 16;
         inherit vlanId;
         autoStart = true;
       };

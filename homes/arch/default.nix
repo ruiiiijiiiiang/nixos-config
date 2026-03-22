@@ -1,6 +1,0 @@
-{
-  imports = [
-    ../common
-    ./configs.nix
-  ];
-}
