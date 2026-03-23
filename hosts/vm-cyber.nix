@@ -24,9 +24,7 @@ in
             graphics = [
               {
                 type = "spice";
-                # Waiting on PR:
-                # https://github.com/AshleyYakeley/NixVirt/pull/99
-                autoport = true;
+                autoport = false;
                 port = ports.spice.vm-cyber;
                 listen = {
                   type = "address";

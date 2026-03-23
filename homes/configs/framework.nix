@@ -8,11 +8,13 @@
 
   custom.home = {
     dotfiles = {
-      roles = "workstation";
+      enable = true;
+      role = "workstation";
       host = "framework";
     };
     packages = {
-      roles = "workstation";
+      enable = true;
+      role = "workstation";
       host = "framework";
     };
   };

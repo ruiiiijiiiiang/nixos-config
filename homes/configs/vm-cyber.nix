@@ -4,9 +4,13 @@
   };
 
   custom.home = {
-    dotfiles.roles = "workstation";
+    dotfiles = {
+      enable = true;
+      role = "workstation";
+    };
     packages = {
-      roles = "workstation";
+      enable = true;
+      role = "workstation";
       host = "vm-cyber";
     };
   };

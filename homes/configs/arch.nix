@@ -1,7 +1,8 @@
 {
   custom.home = {
     dotfiles = {
-      roles = "workstation";
+      enable = true;
+      role = "workstation";
       host = "arch";
     };
   };

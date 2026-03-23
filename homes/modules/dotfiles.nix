@@ -153,7 +153,8 @@ let
 in
 {
   options.custom.home.dotfiles = with lib; {
-    roles = mkOption {
+    enable = mkEnableOption "Link dotfiles to home";
+    role = mkOption {
       type = types.nullOr (
         types.enum [
           "headless"
@@ -161,7 +162,7 @@ in
         ]
       );
       default = "headless";
-      description = "Link dotfiles based on roles.";
+      description = "Link dotfiles based on role.";
     };
 
     host = mkOption {
@@ -176,10 +177,10 @@ in
     };
   };
 
-  config = {
+  config = lib.mkIf cfg.enable {
     home.file =
       headlessLinks
-      // lib.optionalAttrs (cfg.roles == "workstation") workstationLinks
+      // lib.optionalAttrs (cfg.role == "workstation") workstationLinks
       // lib.optionalAttrs (cfg.host == "arch") archLinks
       // lib.optionalAttrs (cfg.host == "framework") frameworkLinks;
   };

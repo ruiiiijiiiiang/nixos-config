@@ -1,6 +1,12 @@
 {
   custom.home = {
-    dotfiles.roles = "headless";
-    packages.roles = "headless";
+    dotfiles = {
+      enable = true;
+      role = "headless";
+    };
+    packages = {
+      enable = true;
+      role = "headless";
+    };
   };
 }

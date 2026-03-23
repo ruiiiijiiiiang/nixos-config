@@ -225,7 +225,8 @@ let
 in
 {
   options.custom.home.packages = with lib; {
-    roles = mkOption {
+    enable = mkEnableOption "Install packages and programes for home";
+    role = mkOption {
       type = types.nullOr (
         types.enum [
           "headless"
@@ -233,7 +234,7 @@ in
         ]
       );
       default = "headless";
-      description = "Install packages and programs based on roles.";
+      description = "Install packages and programs based on role.";
     };
 
     host = mkOption {
@@ -248,16 +249,16 @@ in
     };
   };
 
-  config = {
+  config = lib.mkIf cfg.enable {
     home.packages =
       headlessPackages
-      ++ lib.optionals (cfg.roles == "workstation") workstationPackages
+      ++ lib.optionals (cfg.role == "workstation") workstationPackages
       ++ lib.optionals (cfg.host == "framework") frameworkPackages
       ++ lib.optionals (cfg.host == "vm-cyber") cyberPackages;
 
     programs =
       headlessPrograms
-      // lib.optionalAttrs (cfg.roles == "workstation") workstationPrograms
+      // lib.optionalAttrs (cfg.role == "workstation") workstationPrograms
       // lib.optionalAttrs (cfg.host == "framework") frameworkPrograms
       // lib.optionalAttrs (cfg.host == "vm-cyber") cyberPrograms;
   };
