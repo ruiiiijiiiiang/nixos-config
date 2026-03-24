@@ -14,13 +14,10 @@ in
 
   config = lib.mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
-      # --- Networking & Connectivity ---
       iw
       nmap
       mtr
       rustscan
-
-      # --- Disk & Filesystem Utilities ---
       rsync
 
       # --- Desktop Environment: Niri ---
@@ -32,9 +29,8 @@ in
       # --- Desktop Environment: KDE Plasma ---
       kdePackages.plasma-pa
       catppuccin-kde
-
-      # --- Runtime Dependencies ---
       kdePackages.qtdeclarative
+      kdePackages.kdeconnect-kde
     ];
 
     programs = {

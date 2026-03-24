@@ -93,7 +93,6 @@ in
         web = {
           homepage.enable = true;
           karakeep.enable = true;
-          magicmirror.enable = true;
           searxng.enable = true;
           website.enable = true;
         };
