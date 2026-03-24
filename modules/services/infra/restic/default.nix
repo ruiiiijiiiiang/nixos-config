@@ -65,7 +65,6 @@ in
 
       timerConfig = {
         OnCalendar = dailyTaskToSystemd daily-tasks.${config.networking.hostName}.restic-backup;
-        Persistent = true;
       };
 
       pruneOpts = [

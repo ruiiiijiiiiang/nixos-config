@@ -5,15 +5,9 @@
   ...
 }:
 let
-  inherit (consts)
-    domain
-    addresses
-    ports
-    vlan-ids
-    ;
+  inherit (consts) domain addresses vlan-ids;
   cfg = config.custom.platforms.minipc.networking;
   vlanInterface = "${cfg.lanBridge}.${toString cfg.vlanId}";
-  spicePorts = lib.mapAttrsToList (_: port: port) ports.spice;
 in
 {
   options.custom.platforms.minipc.networking = with lib; {
@@ -23,9 +17,14 @@ in
       default = null;
       description = "LAN interface name.";
     };
-    lanBridge = mkOption {
+    wlanInterface = mkOption {
       type = types.nullOr types.str;
       default = null;
+      description = "WLAN interface name.";
+    };
+    lanBridge = mkOption {
+      type = types.str;
+      default = "br0";
       description = "LAN bridge name.";
     };
     vlanId = mkOption {
@@ -39,21 +38,22 @@ in
     networking = {
       useNetworkd = true;
       useDHCP = false;
+      networkmanager.enable = false;
 
-      networkmanager.unmanaged = [
-        cfg.lanBridge
-        cfg.lanInterface
-      ];
-
-      firewall = {
-        interfaces.${vlanInterface} = {
-          allowedTCPPorts = spicePorts;
+      wireless.iwd = lib.mkIf (cfg.wlanInterface != null) {
+        enable = true;
+        settings = {
+          General = {
+            AddressRandomization = "network";
+          };
+          Network = {
+            EnableIPv6 = true;
+            RoutePriorityOffset = 2048;
+          };
         };
       };
     };
 
-    # Using the traditional networking module is quite brittle when working with a NIC that's passed through to a guest.
-    # The systemd.network module is much more robust and it has better support for vlan filtering.
     systemd.network = {
       enable = true;
 
@@ -80,7 +80,7 @@ in
       };
 
       networks = {
-        "10-${cfg.lanInterface}" = {
+        "10-${cfg.lanInterface}" = lib.mkIf (cfg.lanInterface != null) {
           matchConfig.Name = cfg.lanInterface;
           networkConfig = {
             Bridge = cfg.lanBridge;
@@ -119,6 +119,22 @@ in
             Domains = [ domain ];
           };
           linkConfig.RequiredForOnline = "routable";
+        };
+
+        "40-${cfg.wlanInterface}" = lib.mkIf (cfg.wlanInterface != null) {
+          matchConfig.Name = cfg.wlanInterface;
+          networkConfig = {
+            Address = "${addresses.home.hosts.hypervisor-wifi}/24";
+            DHCP = "yes";
+            IgnoreCarrierLoss = "3s";
+          };
+          dhcpV4Config = {
+            RouteMetric = 2048;
+          };
+          dhcpV6Config = {
+            RouteMetric = 2048;
+          };
+          linkConfig.RequiredForOnline = "no";
         };
       };
     };

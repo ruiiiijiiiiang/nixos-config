@@ -33,6 +33,40 @@ The `flake.nix` is the central cortex, orchestrating these modules to synthesize
 
 ## Network Architecture
 
+### Physical Topology
+
+```ascii
+             +-----------+
+             | ISP Modem |
+             +-----------+
+                   |
+                 (WAN)
+                   |
+              +---------+
+              | Mini PC |
+              +---------+
+                   |
+                 (LAN)
+                   |
+          +------------------+
+          | Unmanaged Switch |
+          +------------------+
+           /                \
+          /                  \
+         /                    \
+  +--------------+  +-----------------------+
+  | Raspberry Pi |  | Wireless Access Point |
+  +--------------+  +-----------------------+
+                                |
+                              (WiFi)
+                                |
+                        +--------------+
+                        | Home Devices |
+                        +--------------+
+```
+
+### Logical Architecture
+
 ```ascii
                   +--------------+        +-----------------+        +--------------------+
                   | The Internet |        | Cloudflare Edge |        | Remote VPN Clients |
@@ -66,7 +100,7 @@ The `flake.nix` is the central cortex, orchestrating these modules to synthesize
 |                         |    | +---------------------------------+ |    | +------------------------+ |
 | (Other clients...)      |    | +---------------------------------+ |    |                            |
 |                         |    | | [vm-app] (libvirt VM)           | |    |                            |
-|                         |    | | 10 vCPU, 16GB RAM, GPU Passthru  | |    |                            |
+|                         |    | | 10 vCPU, 16GB RAM, GPU Passthru | |    |                            |
 |                         |    | | Hosts: Jellyfin, Immich, etc    | |    |                            |
 |                         |    | +---------------------------------+ |    |                            |
 |                         |    | +---------------------------------+ |    |                            |

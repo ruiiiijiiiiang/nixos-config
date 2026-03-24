@@ -73,6 +73,7 @@ in
         jellyfin = config.custom.services.apps.media.jellyfin.enable;
         karakeep = config.custom.services.apps.web.karakeep.enable;
         memos = config.custom.services.apps.office.memos.enable;
+        magicmirror = config.custom.services.apps.web.magicmirror.enable;
         microbin = config.custom.services.apps.tools.microbin.enable;
         myspeed = config.custom.services.observability.myspeed.enable;
         nextcloud = config.custom.services.apps.office.nextcloud.enable;

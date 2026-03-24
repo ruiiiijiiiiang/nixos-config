@@ -8,10 +8,12 @@
   ...
 }:
 let
-  inherit (consts) username hardware;
+  inherit (consts) username ports hardware;
   inherit (helpers) parsePciAddress;
   inherit (inputs.self) nixosConfigurations;
   cfg = config.custom.services.infra.hypervisor;
+  vlanInterface = "${cfg.lanBridge}.${toString cfg.vlanId}";
+  spicePorts = lib.mapAttrsToList (_: port: port) ports.spice;
 
   getPassthroughGuest =
     hardware:
@@ -30,6 +32,8 @@ let
         "gpu"
         "nic"
       ];
+
+  gpuGuest = getPassthroughGuest "gpu";
 
   mkLibvirtBase =
     { guest, libvirtCfg }:
@@ -162,6 +166,11 @@ in
       default = "br0";
       description = "LAN bridge name.";
     };
+    vlanId = mkOption {
+      type = types.ints.positive;
+      default = vlan-ids.infra;
+      description = "VLAN ID for infra.";
+    };
     volumeGroup = mkOption {
       type = types.str;
       default = "vg-nvme";
@@ -236,7 +245,7 @@ in
                       count = libvirtCfg.memory;
                       unit = "GiB";
                     };
-                    virtio_video = false;
+                    virtio_video = null;
                   })
                   (mkLibvirtBase { inherit guest libvirtCfg; })
                   libvirtCfg.extraConfigs
@@ -268,6 +277,23 @@ in
     users.users = {
       ${username}.extraGroups = [ "libvirtd" ];
       libvirtdbus.extraGroups = [ "libvirtd" ];
+    };
+
+    networking.firewall = {
+      interfaces.${vlanInterface} = {
+        allowedTCPPorts = spicePorts;
+      };
+    };
+
+    systemd.services."delayed-gpu-guest-start" = lib.mkIf (gpuGuest != null) {
+      description = "Start ${gpuGuest} with a 5-minute delay";
+      after = [ "libvirtd.service" ];
+      wantedBy = [ "multi-user.target" ];
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStart = "${pkgs.bash}/bin/bash -c 'sleep 300 && ${pkgs.libvirt}/bin/virsh start ${gpuGuest}'";
+        RemainAfterExit = true;
+      };
     };
   };
 }

@@ -46,6 +46,11 @@ in
       };
 
       disks.enable = true;
+
+      networking = {
+        enable = true;
+        lanInterface = "lan0";
+      };
     };
 
     roles = {

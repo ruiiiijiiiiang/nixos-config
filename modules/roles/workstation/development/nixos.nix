@@ -34,7 +34,6 @@ in
         };
         timerConfig = {
           OnCalendar = "daily";
-          Persistent = true;
           Unit = "flake-update.service";
         };
         wantedBy = [ "timers.target" ];

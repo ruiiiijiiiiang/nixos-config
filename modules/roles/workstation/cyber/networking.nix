@@ -2,7 +2,6 @@
   config,
   consts,
   lib,
-  pkgs,
   ...
 }:
 let
@@ -23,11 +22,6 @@ in
     networking = {
       firewall.enable = false;
       nftables.enable = false;
-      networkmanager = {
-        plugins = with pkgs; [
-          networkmanager-openvpn
-        ];
-      };
     };
 
     services = {

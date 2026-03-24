@@ -40,13 +40,13 @@ let
       ]
     }:$PATH"
 
-    nix flake update
+    nix flake update --no-warn-dirty --refresh
 
     for host in ${toString hosts}; do
       echo "=========================================="
       echo "Building system closure for: $host"
       echo "=========================================="
-      nix build ".#nixosConfigurations.$host.config.system.build.toplevel" --out-link "${gcRootStr}/$host" || true
+      nix build "path:.#nixosConfigurations.$host.config.system.build.toplevel" --no-warn-dirty --out-link "${gcRootStr}/$host" || true
     done
   '';
 in
@@ -92,7 +92,6 @@ in
         wantedBy = [ "timers.target" ];
         timerConfig = {
           OnCalendar = dailyTaskToSystemd daily-tasks.${config.networking.hostName}.nix-build;
-          Persistent = true;
           Unit = "daily-nix-build.service";
         };
       };

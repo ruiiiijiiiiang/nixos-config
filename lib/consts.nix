@@ -38,6 +38,7 @@ rec {
       karakeep = "karakeep";
       memos = "memos";
       microbin = "bin";
+      magicmirror = "mirror";
       nextcloud = "nextcloud";
       onlyoffice = "office";
       opencloud = "opencloud";
@@ -83,6 +84,7 @@ rec {
         vm-network = "192.168.2.1";
         framework = "192.168.2.10";
         arch = "192.168.2.11";
+        hypervisor-wifi = "192.168.2.254";
       };
     };
     infra = {
@@ -175,6 +177,7 @@ rec {
       server = 3100;
       agent = 3031;
     };
+    magicmirror = 8094;
     memos = 5230;
     microbin = 8088;
     monit = 2812;
@@ -260,6 +263,7 @@ rec {
     llm = 914;
     searxng = 915;
     atuin = 916;
+    magicmirror = 917;
     user = 1000;
     nobody = 65534;
 
@@ -302,6 +306,8 @@ rec {
       pi = "2c:cf:67:0e:c9:6b";
       pi-legacy = "b8:27:eb:af:a2:33";
       wan = "58:47:ca:78:a0:7c";
+      hypervisor = "c8:a3:62:bf:0b:b3";
+      hypervisor-wifi = "52:1d:22:41:5c:dc";
 
       vm-network = "52:54:00:00:00:00";
       vm-app = "52:54:00:00:00:01";

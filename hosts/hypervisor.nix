@@ -4,8 +4,11 @@ let
   hostName = "hypervisor";
   volumeGroup = "vg-nvme";
   lanInterface = "enxc8a362bf0bb3";
+  wlanInterface = "wlan0";
   lanBridge = "br0";
-  vlanInterface = "${lanBridge}.${toString vlan-ids.infra}";
+  vlanId = vlan-ids.infra;
+  vlanInterface = "${lanBridge}.${toString vlanId}";
+
   guestVms = [
     "vm-network"
     "vm-app"
@@ -29,9 +32,10 @@ in
         enable = true;
         inherit
           lanInterface
+          wlanInterface
           lanBridge
+          vlanId
           ;
-        vlanId = vlan-ids.infra;
       };
     };
 
@@ -41,6 +45,7 @@ in
         trustedInterfaces = [
           lanBridge
           vlanInterface
+          wlanInterface
         ];
       };
       security.enable = true;
@@ -51,7 +56,12 @@ in
       infra = {
         hypervisor = {
           enable = true;
-          inherit lanBridge volumeGroup guestVms;
+          inherit
+            lanBridge
+            vlanId
+            volumeGroup
+            guestVms
+            ;
         };
         nfs.server = {
           enable = true;

@@ -101,7 +101,6 @@ in
           enable = true;
           timerConfig = {
             OnCalendar = dailyTaskToSystemd daily-tasks.${config.networking.hostName}.podman-update;
-            Persistent = true;
           };
         };
 

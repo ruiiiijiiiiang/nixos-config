@@ -92,8 +92,7 @@ in
         restic = lib.mkIf cfg.restic.enable {
           enable = true;
           port = ports.prometheus.exporters.restic;
-          repository = config.services.restic.backups."data-local".repository;
-          passwordFile = config.services.restic.backups."data-local".passwordFile;
+          inherit (config.services.restic.backups."data-local") repository passwordFile;
           refreshInterval = 7200;
           user = "root";
         };

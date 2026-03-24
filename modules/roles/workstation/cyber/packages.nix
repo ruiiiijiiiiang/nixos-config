@@ -17,7 +17,6 @@ in
   config = lib.mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
       seclists
-      networkmanagerapplet
     ];
 
     programs = {

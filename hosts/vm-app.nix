@@ -24,7 +24,6 @@ in
         cpu = 10;
         memory = 16;
         inherit vlanId;
-        autoStart = true;
       };
 
       disks = {
@@ -94,6 +93,7 @@ in
         web = {
           homepage.enable = true;
           karakeep.enable = true;
+          magicmirror.enable = true;
           searxng.enable = true;
           website.enable = true;
         };

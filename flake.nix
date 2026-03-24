@@ -134,6 +134,13 @@
           modules = [
             ./modules
             ./hosts/hypervisor.nix
+            home-manager.nixosModules.home-manager
+            (mkHomeManagerModule {
+              dotfilesRoot = dotfiles.lib.source;
+              dotfilesOutOfStore = false;
+              homeModules = ./homes/modules;
+              homeConfig = ./homes/configs/headless.nix;
+            })
           ];
         };
 
@@ -147,7 +154,7 @@
             ./hosts/vm-network.nix
             home-manager.nixosModules.home-manager
             (mkHomeManagerModule {
-              dotfilesRoot = dotfiles.outPath;
+              dotfilesRoot = dotfiles.lib.source;
               dotfilesOutOfStore = false;
               homeModules = ./homes/modules;
               homeConfig = ./homes/configs/headless.nix;
@@ -165,7 +172,7 @@
             ./hosts/vm-app.nix
             home-manager.nixosModules.home-manager
             (mkHomeManagerModule {
-              dotfilesRoot = dotfiles.outPath;
+              dotfilesRoot = dotfiles.lib.source;
               dotfilesOutOfStore = false;
               homeModules = ./homes/modules;
               homeConfig = ./homes/configs/headless.nix;
@@ -183,7 +190,7 @@
             ./hosts/vm-monitor.nix
             home-manager.nixosModules.home-manager
             (mkHomeManagerModule {
-              dotfilesRoot = dotfiles.outPath;
+              dotfilesRoot = dotfiles.lib.source;
               dotfilesOutOfStore = false;
               homeModules = ./homes/modules;
               homeConfig = ./homes/configs/headless.nix;
@@ -201,7 +208,7 @@
             ./hosts/vm-cyber.nix
             home-manager.nixosModules.home-manager
             (mkHomeManagerModule {
-              dotfilesRoot = dotfiles.outPath;
+              dotfilesRoot = dotfiles.lib.source;
               dotfilesOutOfStore = false;
               homeModules = ./homes/modules;
               homeConfig = ./homes/configs/vm-cyber.nix;
