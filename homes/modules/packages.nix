@@ -1,11 +1,13 @@
 {
   config,
+  consts,
   inputs,
   lib,
   pkgs,
   ...
 }:
 let
+  inherit (consts) ports endpoints;
   cfg = config.custom.home.packages;
 
   headlessPackages = with pkgs; [
@@ -189,6 +191,20 @@ let
     navi.enable = true;
     neovim.enable = true;
     pay-respects.enable = true;
+    ssh = {
+      enable = true;
+      enableDefaultConfig = false;
+      matchBlocks = {
+        "forgejo" = {
+          hostname = endpoints.private-repo;
+          user = "git";
+          port = ports.forgejo.ssh;
+        };
+        "*" = {
+          identityFile = "~/.ssh/id_ed25519";
+        };
+      };
+    };
     starship.enable = true;
     wezterm = {
       enable = true;

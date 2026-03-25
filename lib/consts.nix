@@ -5,8 +5,6 @@ rec {
   home = "/home/${username}";
   domain = "ruijiang.me";
   email = "me@${domain}";
-  oidc-issuer = "${subdomains.vm-app.pocketid}.${domain}";
-  vpn-endpoint = "vpn.${domain}";
 
   subdomains = {
     hypervisor = {
@@ -19,6 +17,7 @@ rec {
     };
     vm-network = {
       pihole = "pihole";
+      wireguard = "vpn";
     };
     vm-app = {
       lidarr = "lidarr";
@@ -374,5 +373,11 @@ rec {
       restic-backup = "06:45";
       container-db-backup = "07:00";
     };
+  };
+
+  endpoints = {
+    oidc-issuer = "${subdomains.vm-app.pocketid}.${domain}";
+    private-repo = "${subdomains.vm-app.forgejo}.${domain}";
+    vpn = "${subdomains.vm-network.wireguard}.${domain}";
   };
 }

@@ -6,7 +6,7 @@
 }:
 let
   inherit (import ../../../../lib/keys.nix) wg;
-  inherit (consts) addresses ports vpn-endpoint;
+  inherit (consts) addresses ports endpoints;
   cfg = config.custom.services.networking.wireguard.client;
 in
 {
@@ -62,7 +62,7 @@ in
         {
           inherit (wg.vm-network) publicKey;
           inherit (cfg) presharedKeyFile;
-          endpoint = "${vpn-endpoint}:${toString ports.wireguard}";
+          endpoint = "${endpoints.vpn}:${toString ports.wireguard}";
           allowedIPs = [
             addresses.home.network
             addresses.infra.network

@@ -12,7 +12,7 @@ let
     subdomains
     ports
     oci-uids
-    oidc-issuer
+    endpoints
     ;
   inherit (helpers) mkOciUser mkVirtualHost mkNotifyService;
   cfg = config.custom.services.apps.tools.llm;
@@ -70,7 +70,7 @@ in
           WEBUI_URL = "https://${fqdn}";
           ENABLE_OAUTH_PERSISTENT_CONFIG = "false";
           ENABLE_OAUTH_SIGNUP = "true";
-          OPENID_PROVIDER_URL = "https://${oidc-issuer}/.well-known/openid-configuration";
+          OPENID_PROVIDER_URL = "https://${endpoints.oidc-issuer}/.well-known/openid-configuration";
           OAUTH_PROVIDER_NAME = "Pocket ID";
           OAUTH_MERGE_ACCOUNTS_BY_EMAIL = "true";
         };

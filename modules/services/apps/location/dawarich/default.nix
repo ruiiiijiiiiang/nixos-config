@@ -13,7 +13,7 @@ let
     subdomains
     ports
     oci-uids
-    oidc-issuer
+    endpoints
     ;
   inherit (helpers) mkOciUser mkVirtualHost mkNotifyService;
   cfg = config.custom.services.apps.location.dawarich;
@@ -66,7 +66,7 @@ in
           ALLOW_REGISTRATION = "true";
           DATABASE_HOST = addresses.localhost;
           REDIS_URL = "redis://${addresses.localhost}:${toString ports.redis}/0";
-          OIDC_ISSUER = "https://${oidc-issuer}";
+          OIDC_ISSUER = "https://${endpoints.oidc-issuer}";
           OIDC_REDIRECT_URI = "https://${fqdn}/users/auth/openid_connect/callback";
           OIDC_PROVIDER_NAME = "PocketID";
         };

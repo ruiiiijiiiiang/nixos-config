@@ -11,7 +11,7 @@ let
     subdomains
     ports
     oci-uids
-    oidc-issuer
+    endpoints
     ;
   inherit (helpers) mkOciUser mkVirtualHost mkNotifyService;
   cfg = config.custom.services.apps.location.reitti;
@@ -128,7 +128,7 @@ in
           REDIS_HOST = addresses.localhost;
           TILES_CACHE = "http://${addresses.localhost}";
           OIDC_ENABLED = "true";
-          OIDC_ISSUER_URI = "https://${oidc-issuer}";
+          OIDC_ISSUER_URI = "https://${endpoints.oidc-issuer}";
           APP_UID = toString oci-uids.reitti;
           APP_GID = toString oci-uids.reitti;
         };

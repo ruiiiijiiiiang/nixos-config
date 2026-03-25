@@ -5,7 +5,7 @@
   ...
 }:
 let
-  inherit (consts) vpn-endpoint;
+  inherit (consts) endpoints;
   cfg = config.custom.services.networking.dyndns;
 in
 {
@@ -23,7 +23,7 @@ in
     services.cloudflare-dyndns = {
       enable = true;
       apiTokenFile = config.age.secrets.cloudflare-dns-token.path;
-      domains = [ vpn-endpoint ];
+      domains = [ endpoints.vpn ];
       proxied = false;
     };
   };

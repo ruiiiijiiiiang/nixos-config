@@ -13,7 +13,7 @@ let
     subdomains
     ports
     oci-uids
-    oidc-issuer
+    endpoints
     ;
   inherit (helpers) mkOciUser mkVirtualHost;
   cfg = config.custom.services.apps.development.bytestash;
@@ -44,7 +44,7 @@ in
           DISABLE_INTERNAL_ACCOUNTS = "true";
           OIDC_ENABLED = "true";
           OIDC_DISPLAY_NAME = "Pocket ID";
-          OIDC_ISSUER_URL = "https://${oidc-issuer}";
+          OIDC_ISSUER_URL = "https://${endpoints.oidc-issuer}";
         };
         environmentFiles = [ config.age.secrets.bytestash-env.path ];
         extraOptions = [ "--tmpfs=/tmp" ];

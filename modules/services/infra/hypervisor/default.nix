@@ -143,14 +143,6 @@ let
             model = "isa";
           }
         ];
-
-        video = [
-          {
-            model = {
-              type = "virtio";
-            };
-          }
-        ];
       };
     };
 in

@@ -10,7 +10,7 @@ let
     domain
     subdomains
     ports
-    oidc-issuer
+    endpoints
     oci-uids
     ;
   inherit (helpers) mkOciUser mkVirtualHost mkNotifyService;
@@ -46,7 +46,7 @@ in
           DATA_DIR = "/data";
           OAUTH_PROVIDER_NAME = "Pocket ID";
           OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING = "true";
-          OAUTH_WELLKNOWN_URL = "https://${oidc-issuer}/.well-known/openid-configuration";
+          OAUTH_WELLKNOWN_URL = "https://${endpoints.oidc-issuer}/.well-known/openid-configuration";
         };
         environmentFiles = [ config.age.secrets.karakeep-env.path ];
         labels = {
