@@ -43,11 +43,10 @@ in
       wireless.iwd = lib.mkIf (cfg.wlanInterface != null) {
         enable = true;
         settings = {
-          General = {
-            AddressRandomization = "network";
+          Settings = {
+            AutoConnect = false;
           };
           Network = {
-            EnableIPv6 = true;
             RoutePriorityOffset = 2048;
           };
         };

@@ -58,15 +58,14 @@ in
       inherit (cfg) privateKeyFile;
       address = [ "${cfg.address}/32" ];
       dns = [ addresses.infra.vip.dns ];
+      autostart = false;
       peers = [
         {
           inherit (wg.vm-network) publicKey;
           inherit (cfg) presharedKeyFile;
-          endpoint = "${endpoints.vpn}:${toString ports.wireguard}";
+          endpoint = "${endpoints.vpn-server}:${toString ports.wireguard}";
           allowedIPs = [
-            addresses.home.network
-            addresses.infra.network
-            addresses.vpn.network
+            addresses.private-blocks.class-c
           ];
           persistentKeepalive = 25;
         }

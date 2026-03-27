@@ -13,6 +13,10 @@
     hwinfo
     dig
     traceroute
+    fd
+    ripgrep
+    systemctl-tui
+    tailspin
   ];
 
   programs = {

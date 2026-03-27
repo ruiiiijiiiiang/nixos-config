@@ -11,12 +11,8 @@ let
   cfg = config.custom.home.packages;
 
   headlessPackages = with pkgs; [
-    fd
-    ripgrep
-    systemctl-tui
-    tailspin
-    inputs.file_clipper.packages.${pkgs.stdenv.hostPlatform.system}.default
-    inputs.witr.packages.${stdenv.system}.default
+    inputs.file_clipper.packages.${stdenv.hostPlatform.system}.default
+    inputs.witr.packages.${stdenv.hostPlatform.system}.default
   ];
 
   workstationPackages = with pkgs; [
@@ -35,7 +31,7 @@ let
     ncdu
     dust
     dysk
-    inputs.noxdir.packages.${pkgs.stdenv.hostPlatform.system}.default
+    inputs.noxdir.packages.${stdenv.hostPlatform.system}.default
     unzip
     unrar
     ouch
@@ -51,15 +47,15 @@ let
     gnupg
     doxx
     presenterm
-    inputs.lazynmap.packages.${pkgs.stdenv.hostPlatform.system}.default
-    inputs.agenix.packages.${pkgs.stdenv.hostPlatform.system}.default
+    inputs.lazynmap.packages.${stdenv.hostPlatform.system}.default
+    inputs.agenix.packages.${stdenv.hostPlatform.system}.default
     screen
 
     yq
     miller
     fx
 
-    inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
+    inputs.zen-browser.packages.${stdenv.hostPlatform.system}.default
     vivaldi
     mission-center
     kdePackages.kate
@@ -173,7 +169,7 @@ let
     unrar
     ouch
     remmina
-    inputs.lazynmap.packages.${pkgs.stdenv.hostPlatform.system}.default
+    inputs.lazynmap.packages.${stdenv.hostPlatform.system}.default
   ];
 
   headlessPrograms = {

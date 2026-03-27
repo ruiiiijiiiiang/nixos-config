@@ -44,7 +44,10 @@ in
       apps.tools.homeassistant.enable = true;
 
       infra = {
-        nfs.server.enable = true;
+        nfs.server = {
+          enable = true;
+          interfaces = [ lanInterface ];
+        };
         podman = {
           enable = true;
           autoUpdate.enable = true;

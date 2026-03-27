@@ -11,5 +11,6 @@
     ./portainer
     ./prometheus
     ./scanopy
+    ./termix
   ];
 }

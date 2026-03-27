@@ -46,7 +46,7 @@ let
       echo "=========================================="
       echo "Building system closure for: $host"
       echo "=========================================="
-      nix build "path:.#nixosConfigurations.$host.config.system.build.toplevel" --no-warn-dirty --out-link "${gcRootStr}/$host" || true
+      nix build ".#nixosConfigurations.$host.config.system.build.toplevel" --no-warn-dirty --out-link "${gcRootStr}/$host" || true
     done
   '';
 in

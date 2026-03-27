@@ -159,7 +159,7 @@ Furthermore, all web-facing services are placed behind an **Nginx reverse proxy*
 
 ## The Fleet
 
-This infrastructure comprises six distinct hosts. Here's the breakdown:
+This infrastructure comprises seven distinct hosts. Here's the breakdown:
 
 ### `framework`
 

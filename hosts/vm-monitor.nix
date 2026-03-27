@@ -80,6 +80,7 @@ in
             restic.enable = true;
           };
         };
+        termix.enable = true;
       };
 
       security = {

@@ -65,7 +65,7 @@ in
         };
         nfs.server = {
           enable = true;
-          interface = vlanInterface;
+          interfaces = [ vlanInterface ];
         };
         podman = {
           enable = true;

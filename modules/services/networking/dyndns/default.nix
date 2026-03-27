@@ -23,7 +23,7 @@ in
     services.cloudflare-dyndns = {
       enable = true;
       apiTokenFile = config.age.secrets.cloudflare-dns-token.path;
-      domains = [ endpoints.vpn ];
+      domains = [ endpoints.vpn-server ];
       proxied = false;
     };
   };

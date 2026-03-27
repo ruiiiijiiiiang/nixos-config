@@ -30,12 +30,12 @@ in
       kdePackages.plasma-pa
       catppuccin-kde
       kdePackages.qtdeclarative
-      kdePackages.kdeconnect-kde
     ];
 
     programs = {
       dms-shell.enable = true;
       command-not-found.enable = false;
+      kdeconnect.enable = true;
       niri = {
         enable = true;
         useNautilus = false;

@@ -60,7 +60,7 @@ in
       networking.wireguard.client = {
         enable = true;
         inherit wgInterface;
-        address = addresses.vpn.hosts.framework;
+        address = addresses.wg.hosts.framework;
         privateKeyFile = config.age.secrets.wireguard-framework-private-key.path;
         presharedKeyFile = config.age.secrets.wireguard-framework-preshared-key.path;
       };

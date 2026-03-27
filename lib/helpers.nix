@@ -92,6 +92,7 @@ in
         searxng = config.custom.services.apps.web.searxng.enable;
         stirlingpdf = config.custom.services.apps.office.stirlingpdf.enable;
         syncthing = config.custom.services.apps.tools.syncthing.enable;
+        termix = config.custom.services.observability.termix.enable;
         vaultwarden = config.custom.services.apps.auth.vaultwarden.enable;
         wazuh = config.custom.services.security.wazuh.server.enable;
         yourls = config.custom.services.apps.web.yourls.enable;

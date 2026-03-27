@@ -359,6 +359,14 @@ in
                 };
               }
               {
+                "Termix" = {
+                  icon = "termix";
+                  href = "https://${subdomains.vm-monitor.termix}.${domain}";
+                  description = "Web SSH";
+                  siteMonitor = "https://${subdomains.vm-monitor.termix}.${domain}";
+                };
+              }
+              {
                 "Gatus" = {
                   icon = "gatus";
                   href = "https://${subdomains.vm-monitor.gatus}.${domain}";

@@ -11,17 +11,17 @@ let
   commonOptions = "rw,nohide,insecure,no_subtree_check,no_root_squash,fsid=0";
   networks = [
     addresses.home.network
-    addresses.vpn.network
+    addresses.wg.network
   ];
   exportLine = builtins.concatStringsSep " " (map (net: "${net}(${commonOptions})") networks);
 in
 {
   options.custom.services.infra.nfs.server = with lib; {
     enable = mkEnableOption "Enable NFS file server";
-    interface = mkOption {
-      type = types.nullOr types.str;
-      default = null;
-      description = "Interface allowed to access file server.";
+    interfaces = mkOption {
+      type = types.listOf types.str;
+      default = [ ];
+      description = "Interfaces allowed to access file server.";
     };
   };
 
@@ -34,9 +34,13 @@ in
     };
 
     networking.firewall =
-      if cfg.interface != null then
+      if cfg.interfaces != [ ] then
         {
-          interfaces."${cfg.interface}".allowedTCPPorts = [ ports.nfs ];
+          interfaces = lib.genAttrs cfg.interfaces (iface: {
+            allowedTCPPorts = [
+              ports.nfs
+            ];
+          });
         }
       else
         {

@@ -5,6 +5,7 @@ rec {
   home = "/home/${username}";
   domain = "ruijiang.me";
   email = "me@${domain}";
+  local-ip-prefix = "192.168";
 
   subdomains = {
     hypervisor = {
@@ -62,8 +63,16 @@ rec {
       myspeed = "myspeed";
       prometheus = "prometheus";
       scanopy = "scanopy";
+      termix = "termix";
       wazuh = "wazuh";
     };
+  };
+
+  vlan-ids = {
+    home = 2;
+    infra = 20;
+    dmz = 88;
+    wg = 128;
   };
 
   addresses = {
@@ -76,49 +85,49 @@ rec {
       class-c = "192.168.0.0/16";
     };
     home = {
-      network = "192.168.2.0/24";
-      dhcp-min = "192.168.2.50";
-      dhcp-max = "192.168.2.250";
+      network = "${local-ip-prefix}.${toString vlan-ids.home}.0/24";
+      dhcp-min = "${local-ip-prefix}.${toString vlan-ids.home}.50";
+      dhcp-max = "${local-ip-prefix}.${toString vlan-ids.home}.250";
       hosts = {
-        vm-network = "192.168.2.1";
-        framework = "192.168.2.10";
-        arch = "192.168.2.11";
-        hypervisor-wifi = "192.168.2.254";
+        vm-network = "${local-ip-prefix}.${toString vlan-ids.home}.1";
+        framework = "${local-ip-prefix}.${toString vlan-ids.home}.10";
+        arch = "${local-ip-prefix}.${toString vlan-ids.home}.11";
+        hypervisor-wifi = "${local-ip-prefix}.${toString vlan-ids.home}.254";
       };
     };
     infra = {
-      network = "192.168.20.0/24";
-      dhcp-min = "192.168.20.100";
-      dhcp-max = "192.168.20.250";
+      network = "${local-ip-prefix}.${toString vlan-ids.infra}.0/24";
+      dhcp-min = "${local-ip-prefix}.${toString vlan-ids.infra}.100";
+      dhcp-max = "${local-ip-prefix}.${toString vlan-ids.infra}.250";
       hosts = {
-        vm-network = "192.168.20.1";
-        vm-app = "192.168.20.2";
-        vm-monitor = "192.168.20.3";
-        pi = "192.168.20.51";
-        pi-legacy = "192.168.20.52";
-        hypervisor = "192.168.20.254";
+        vm-network = "${local-ip-prefix}.${toString vlan-ids.infra}.1";
+        vm-app = "${local-ip-prefix}.${toString vlan-ids.infra}.2";
+        vm-monitor = "${local-ip-prefix}.${toString vlan-ids.infra}.3";
+        pi = "${local-ip-prefix}.${toString vlan-ids.infra}.51";
+        pi-legacy = "${local-ip-prefix}.${toString vlan-ids.infra}.52";
+        hypervisor = "${local-ip-prefix}.${toString vlan-ids.infra}.254";
       };
       vip = {
-        dns = "192.168.20.53";
+        dns = "${local-ip-prefix}.${toString vlan-ids.infra}.53";
       };
     };
     dmz = {
-      network = "192.168.88.0/24";
-      dhcp-min = "192.168.88.50";
-      dhcp-max = "192.168.88.250";
+      network = "${local-ip-prefix}.${toString vlan-ids.dmz}.0/24";
+      dhcp-min = "${local-ip-prefix}.${toString vlan-ids.dmz}.50";
+      dhcp-max = "${local-ip-prefix}.${toString vlan-ids.dmz}.250";
       hosts = {
-        vm-network = "192.168.88.1";
-        vm-cyber = "192.168.88.10";
+        vm-network = "${local-ip-prefix}.${toString vlan-ids.dmz}.1";
+        vm-cyber = "${local-ip-prefix}.${toString vlan-ids.dmz}.10";
       };
     };
-    vpn = {
-      network = "10.5.5.0/24";
+    wg = {
+      network = "${local-ip-prefix}.${toString vlan-ids.wg}.0/24";
       hosts = {
-        vm-network = "10.5.5.1";
-        framework = "10.5.5.2";
-        pixel-7 = "10.5.5.3";
-        iphone-17 = "10.5.5.4";
-        github-action = "10.5.5.5";
+        vm-network = "${local-ip-prefix}.${toString vlan-ids.wg}.1";
+        framework = "${local-ip-prefix}.${toString vlan-ids.wg}.2";
+        pixel-7 = "${local-ip-prefix}.${toString vlan-ids.wg}.3";
+        iphone-17 = "${local-ip-prefix}.${toString vlan-ids.wg}.4";
+        github-action = "${local-ip-prefix}.${toString vlan-ids.wg}.5";
       };
     };
     podman = {
@@ -222,6 +231,7 @@ rec {
     };
     stirlingpdf = 8080;
     syncthing = 8384;
+    termix = 8097;
     unbound = 5335;
     uptimekuma = 3002;
     vaultwarden = {
@@ -263,6 +273,7 @@ rec {
     searxng = 915;
     atuin = 916;
     magicmirror = 917;
+    termix = 918;
     user = 1000;
     nobody = 65534;
 
@@ -306,8 +317,7 @@ rec {
       pi-legacy = "b8:27:eb:af:a2:33";
       wan = "58:47:ca:78:a0:7c";
       hypervisor = "c8:a3:62:bf:0b:b3";
-      hypervisor-wifi = "52:1d:22:41:5c:dc";
-
+      hypervisor-wifi = "bc:f1:71:d5:46:c5";
       vm-network = "52:54:00:00:00:00";
       vm-app = "52:54:00:00:00:01";
       vm-monitor = "52:54:00:00:00:02";
@@ -344,12 +354,6 @@ rec {
     };
   };
 
-  vlan-ids = {
-    home = 2;
-    infra = 20;
-    dmz = 88;
-  };
-
   daily-tasks = {
     hypervisor = {
       podman-update = "03:00";
@@ -378,6 +382,6 @@ rec {
   endpoints = {
     oidc-issuer = "${subdomains.vm-app.pocketid}.${domain}";
     private-repo = "${subdomains.vm-app.forgejo}.${domain}";
-    vpn = "${subdomains.vm-network.wireguard}.${domain}";
+    vpn-server = "${subdomains.vm-network.wireguard}.${domain}";
   };
 }

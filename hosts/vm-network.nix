@@ -96,7 +96,10 @@ in
       infra = {
         nfs.server = {
           enable = true;
-          interface = lanInterface;
+          interfaces = [
+            lanInterface
+            wgInterface
+          ];
         };
         podman = {
           enable = true;
