@@ -16,7 +16,7 @@ in
       ignoreIP = [
         addresses.home.network
         addresses.infra.network
-        addresses.wg.network
+        addresses.vpn.network
       ];
 
       jails = {
