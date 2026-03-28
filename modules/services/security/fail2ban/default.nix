@@ -17,6 +17,7 @@ in
         addresses.home.network
         addresses.infra.network
         addresses.vpn.network
+        addresses.podman.network
       ];
 
       jails = {

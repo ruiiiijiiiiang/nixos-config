@@ -89,6 +89,10 @@ in
     publicKeys = ssh.hypervisor ++ ssh.vm-network ++ ssh.vm-app ++ ssh.vm-monitor;
     armor = true;
   };
+  "termix-env.age" = {
+    publicKeys = ssh.vm-monitor;
+    armor = true;
+  };
   "tryhackme-ovpn.age" = {
     publicKeys = ssh.vm-cyber;
     armor = true;

@@ -86,7 +86,7 @@ in
     users.users = {
       ${username} = {
         linger = true;
-        openssh.authorizedKeys.keys = ssh.arch ++ ssh.framework;
+        openssh.authorizedKeys.keys = [ ssh.termix ] ++ ssh.arch ++ ssh.framework;
       };
 
       root.openssh.authorizedKeys.keys = [

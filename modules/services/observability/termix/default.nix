@@ -12,6 +12,7 @@ let
     subdomains
     ports
     oci-uids
+    endpoints
     ;
   inherit (helpers) mkVirtualHost mkOciUser;
   cfg = config.custom.services.observability.termix;
@@ -23,14 +24,24 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    age.secrets = {
+      termix-env.file = ../../../../secrets/termix-env.age;
+      # OIDC_CLIENT_ID
+      # OIDC_CLIENT_SECRET
+    };
+
     virtualisation.oci-containers.containers.termix = {
-      image = "ghcr.io/lukegus/termix:latest";
+      image = "ghcr.io/lukegus/termix";
       ports = [ "${addresses.localhost}:${toString ports.termix}:${toString ports.termix}" ];
       volumes = [ "/var/lib/termix:/app/data" ];
       environment = {
         PORT = toString ports.termix;
         PUID = toString oci-uids.termix;
         PGID = toString oci-uids.termix;
+        OIDC_ISSUER_URL = endpoints.oidc-issuer;
+        OIDC_AUTHORIZATION_URL = "${endpoints.oidc-issuer}/authorize";
+        OIDC_TOKEN_URL = "${endpoints.oidc-issuer}/api/oidc/token";
+        OIDC_NAME_PATH = "preferred_username";
       };
       labels = {
         "io.containers.autoupdate" = "registry";

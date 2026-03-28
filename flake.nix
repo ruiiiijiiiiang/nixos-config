@@ -8,7 +8,6 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    dotfiles.url = "github:ruiiiijiiiiang/dotfiles";
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -17,9 +16,14 @@
       url = "github:AshleyYakeley/NixVirt";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    agenix.url = "github:ryantm/agenix";
-    wezterm.url = "github:wezterm/wezterm?dir=nix";
-    nix-flatpak.url = "github:gmodena/nix-flatpak";
+    agenix = {
+      url = "github:ryantm/agenix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    wezterm = {
+      url = "github:wezterm/wezterm?dir=nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     catppuccin = {
       url = "github:catppuccin/nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -36,11 +40,13 @@
       url = "github:AvengeMedia/dgop";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nix-flatpak.url = "github:gmodena/nix-flatpak";
     zen-browser.url = "github:0xc000022070/zen-browser-flake";
     file_clipper.url = "github:ruiiiijiiiiang/file_clipper";
     lazynmap.url = "github:ruiiiijiiiiang/lazynmap";
     noxdir.url = "github:crumbyte/noxdir";
     witr.url = "github:pranshuparmar/witr";
+    dotfiles.url = "github:ruiiiijiiiiang/dotfiles";
   };
 
   outputs =

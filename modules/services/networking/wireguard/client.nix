@@ -72,5 +72,13 @@ in
         }
       ];
     };
+
+    systemd.services."wg-quick-${cfg.wgInterface}" = {
+      after = [
+        "network-online.target"
+        "nss-lookup.target"
+      ];
+      wants = [ "network-online.target" ];
+    };
   };
 }

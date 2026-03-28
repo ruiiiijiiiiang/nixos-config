@@ -104,6 +104,16 @@ in
 
         widgets = [
           {
+            datetime = {
+              text_size = "xl";
+              format = {
+                dateStyle = "short";
+                timeStyle = "short";
+                hour12 = true;
+              };
+            };
+          }
+          {
             greeting = {
               text_size = "xl";
               text = "Sup homie";
@@ -113,7 +123,6 @@ in
             resources = {
               cpu = true;
               memory = true;
-              disk = "/";
               uptime = true;
             };
           }
