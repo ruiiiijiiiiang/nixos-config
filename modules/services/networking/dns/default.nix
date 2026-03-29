@@ -10,6 +10,7 @@ let
   inherit (consts)
     addresses
     domain
+    endpoints
     subdomains
     ports
     ;
@@ -33,9 +34,12 @@ let
           fqdns = hostFqdns hostName;
         in
         if fqdns == [ ] then "" else "${ip} ${concatStringsSep " " fqdns}";
-      allEntries = concatMap (network: mapAttrsToList hostEntry addresses.${network}.hosts) [ "infra" ];
+      generatedEntries = concatMap (network: mapAttrsToList hostEntry addresses.${network}.hosts) [ "infra" ];
+      manualEntries = [
+        "${addresses.home.hosts.vm-network} ${endpoints.vpn-server}"
+      ];
     in
-    concatStringsSep "\n" (filter (s: s != "") allEntries);
+    concatStringsSep "\n" (filter (s: s != "") (generatedEntries ++ manualEntries));
 in
 {
   options.custom.services.networking.dns = with lib; {

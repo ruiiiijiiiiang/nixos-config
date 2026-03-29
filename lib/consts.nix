@@ -17,7 +17,6 @@ rec {
     };
     vm-network = {
       pihole = "pihole";
-      wireguard = "vpn";
     };
     vm-app = {
       lidarr = "lidarr";
@@ -71,6 +70,7 @@ rec {
     home = 2;
     infra = 20;
     dmz = 88;
+    wg = 128;
   };
 
   addresses = {
@@ -118,14 +118,14 @@ rec {
         vm-cyber = "192.168.88.10";
       };
     };
-    vpn = {
-      network = "10.5.5.0/24";
+    wg = {
+      network = "192.168.128.0/24";
       hosts = {
-        vm-network = "10.5.5.1";
-        framework = "10.5.5.2";
-        pixel-7 = "10.5.5.3";
-        iphone-17 = "10.5.5.4";
-        github-action = "10.5.5.5";
+        vm-network = "192.168.128.1";
+        framework = "192.168.128.2";
+        pixel-7 = "192.168.128.3";
+        iphone-17 = "192.168.128.4";
+        github-action = "192.168.128.5";
       };
     };
     podman = {
@@ -380,6 +380,6 @@ rec {
   endpoints = {
     oidc-issuer = "${subdomains.vm-app.pocketid}.${domain}";
     private-repo = "${subdomains.vm-app.forgejo}.${domain}";
-    vpn-server = "${subdomains.vm-network.wireguard}.${domain}";
+    vpn-server = "vpn.${domain}";
   };
 }

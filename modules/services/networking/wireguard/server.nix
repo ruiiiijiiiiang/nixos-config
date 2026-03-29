@@ -77,11 +77,11 @@ in
         assertion =
           let
             invalid = builtins.filter (
-              peer: !(builtins.hasAttr peer.hostName wg) || !(builtins.hasAttr peer.hostName addresses.vpn.hosts)
+              peer: !(builtins.hasAttr peer.hostName wg) || !(builtins.hasAttr peer.hostName addresses.wg.hosts)
             ) cfg.peers;
           in
           invalid == [ ];
-        message = "WireGuard server peers must exist in wg keys and addresses.vpn.hosts.";
+        message = "WireGuard server peers must exist in wg keys and addresses.wg.hosts.";
       }
       {
         assertion = lib.length cfg.peers == lib.length (lib.unique (map (peer: peer.hostName) cfg.peers));
@@ -104,7 +104,7 @@ in
     networking = {
       wireguard.interfaces.${cfg.wgInterface} = {
         ips = [
-          "${addresses.vpn.hosts.${config.networking.hostName}}/32"
+          "${addresses.wg.hosts.${config.networking.hostName}}/32"
         ];
         listenPort = ports.wireguard;
         inherit (cfg) privateKeyFile;
@@ -112,7 +112,7 @@ in
         peers = map (peer: {
           inherit (wg.${peer.hostName}) publicKey;
           inherit (peer) presharedKeyFile;
-          allowedIPs = [ "${addresses.vpn.hosts.${peer.hostName}}/32" ];
+          allowedIPs = [ "${addresses.wg.hosts.${peer.hostName}}/32" ];
         }) cfg.peers;
       };
 

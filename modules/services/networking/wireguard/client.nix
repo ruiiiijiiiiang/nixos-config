@@ -64,9 +64,7 @@ in
           inherit (cfg) presharedKeyFile;
           endpoint = "${endpoints.vpn-server}:${toString ports.wireguard}";
           allowedIPs = [
-            addresses.home.network
-            addresses.infra.network
-            addresses.vpn.network
+            addresses.private-blocks.class-c
           ];
           persistentKeepalive = 25;
         }
