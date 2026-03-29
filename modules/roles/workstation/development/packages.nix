@@ -28,12 +28,12 @@ in
 
       # --- Desktop Environment: KDE Plasma ---
       kdePackages.plasma-pa
-      catppuccin-kde
       kdePackages.qtdeclarative
+      kdePackages.kirigami
+      catppuccin-kde
     ];
 
     programs = {
-      dms-shell.enable = true;
       command-not-found.enable = false;
       kdeconnect.enable = true;
       niri = {

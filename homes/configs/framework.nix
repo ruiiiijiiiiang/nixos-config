@@ -2,7 +2,7 @@
 
 {
   imports = [
-    inputs.danksearch.homeModules.default
+    inputs.noctalia.homeModules.default
     ../modules/files
   ];
 

@@ -34,7 +34,6 @@ in
         "org.upscayl.Upscayl"
         "com.simplenote.Simplenote"
         "eu.betterbird.Betterbird"
-        "com.karmaa.termix"
       ];
     };
   };

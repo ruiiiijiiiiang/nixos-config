@@ -23,12 +23,14 @@
         "https://cache.nixos.org"
         "https://nix-community.cachix.org"
         "https://wezterm.cachix.org"
+        "https://noctalia.cachix.org"
       ];
       trusted-public-keys = [
         "cache.ruijiang.me-1:uSB517/xV6UnlCkzOYvmCSRG0sOqPPAGla5tY4iSQf0="
         "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
         "wezterm.cachix.org-1:kAbhjYUC9qvblTE+s7S+kl5XM1zVa4skO+E/1IDWdH0="
+        "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
       ];
       connect-timeout = 3;
       stalled-download-timeout = 10;

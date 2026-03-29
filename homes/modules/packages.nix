@@ -226,7 +226,8 @@ let
     htop.enable = true;
     jq.enable = true;
     nix-index.enable = true;
-    dsearch.enable = true;
+    noctalia-shell.enable = true;
+
     obsidian.enable = true;
   };
 

@@ -104,10 +104,6 @@ let
   workstationLinks = lib.foldl' lib.recursiveUpdate { } (
     map mkDotfileLink [
       {
-        name = "niri";
-        paths = [ ".config/niri/config.kdl" ];
-      }
-      {
         name = "nvim";
         paths = [
           {
@@ -126,11 +122,22 @@ let
   archLinks = lib.foldl' lib.recursiveUpdate { } (
     map mkDotfileLink [
       {
-        name = "DankMaterialShell";
+        name = "niri";
         paths = [
+          ".config/niri/config.kdl"
           {
-            src = ".config/DankMaterialShell/settings-arch.json";
-            target = ".config/DankMaterialShell/settings.json";
+            src = ".config/niri/noctalia-arch.kdl";
+            target = ".config/niri/noctalia.kdl";
+          }
+        ];
+      }
+      {
+        name = "noctalia";
+        paths = [
+          ".config/noctalia/colorschemes"
+          {
+            src = ".config/noctalia/settings-arch.json";
+            target = ".config/noctalia/settings.json";
           }
         ];
       }
@@ -140,11 +147,22 @@ let
   frameworkLinks = lib.foldl' lib.recursiveUpdate { } (
     map mkDotfileLink [
       {
-        name = "DankMaterialShell";
+        name = "niri";
         paths = [
+          ".config/niri/config.kdl"
           {
-            src = ".config/DankMaterialShell/settings-framework.json";
-            target = ".config/DankMaterialShell/settings.json";
+            src = ".config/niri/noctalia-framework.kdl";
+            target = ".config/niri/noctalia.kdl";
+          }
+        ];
+      }
+      {
+        name = "noctalia";
+        paths = [
+          ".config/noctalia/colorschemes"
+          {
+            src = ".config/noctalia/settings-framework.json";
+            target = ".config/noctalia/settings.json";
           }
         ];
       }

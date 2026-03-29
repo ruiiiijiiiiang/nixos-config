@@ -24,11 +24,6 @@ in
           enable = true;
           wayland.enable = true;
         };
-
-        dms-greeter = {
-          enable = true;
-          compositor.name = "niri";
-        };
       };
       desktopManager.plasma6.enable = true;
     };

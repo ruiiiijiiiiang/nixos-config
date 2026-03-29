@@ -71,6 +71,7 @@ in
       };
 
       power-profiles-daemon.enable = true;
+      upower.enable = true;
 
       blueman.enable = true;
 

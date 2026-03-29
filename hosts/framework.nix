@@ -1,7 +1,6 @@
 {
   config,
   consts,
-  inputs,
   ...
 }:
 let
@@ -10,11 +9,6 @@ let
   wgInterface = "wg0";
 in
 {
-  imports = [
-    inputs.dankMaterialShell.nixosModules.dank-material-shell
-    inputs.dankMaterialShell.nixosModules.greeter
-  ];
-
   system.stateVersion = "25.05";
   networking.hostName = hostName;
 
