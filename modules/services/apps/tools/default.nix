@@ -5,6 +5,7 @@
     ./homeassistant
     ./llm
     ./microbin
+    ./ovumcy
     ./syncthing
   ];
 }

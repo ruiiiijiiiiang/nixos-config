@@ -34,7 +34,9 @@ let
           fqdns = hostFqdns hostName;
         in
         if fqdns == [ ] then "" else "${ip} ${concatStringsSep " " fqdns}";
-      generatedEntries = concatMap (network: mapAttrsToList hostEntry addresses.${network}.hosts) [ "infra" ];
+      generatedEntries = concatMap (network: mapAttrsToList hostEntry addresses.${network}.hosts) [
+        "infra"
+      ];
       manualEntries = [
         "${addresses.home.hosts.vm-network} ${endpoints.vpn-server}"
       ];
@@ -199,12 +201,15 @@ in
             pkgs.writeShellScriptBin "check_dns_health" /* bash */ ''
               export PATH="${pkgs.coreutils}/bin:${pkgs.gnugrep}/bin:${pkgs.dnsutils}/bin"
               DOMAINS=("google.com" "cloudflare.com" "microsoft.com" "amazon.com")
+
               for DOMAIN in "''${DOMAINS[@]}"; do
                 RESULT=$(dig @127.0.0.1 "$DOMAIN" A +short +time=1 +tries=1 2>/dev/null)
                 FIRST_LINE=$(echo "$RESULT" | head -n 1)
+
                 if [[ -n "$FIRST_LINE" ]] && [[ "$FIRST_LINE" =~ ^[0-9.]+$ ]]; then
                   exit 0
                 fi
+
               done
               exit 1
             ''

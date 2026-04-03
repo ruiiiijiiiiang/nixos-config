@@ -312,11 +312,11 @@ in
                 };
               }
               {
-                "LLM" = {
-                  icon = "open-webui";
-                  href = "https://${subdomains.vm-app.openwebui}.${domain}";
-                  description = "Large Language Model";
-                  siteMonitor = "https://${subdomains.vm-app.openwebui}.${domain}";
+                "Ovumcy" = {
+                  icon = "https://raw.githubusercontent.com/ovumcy/ovumcy-web/refs/heads/main/web/static/brand/ovumcy-icon-dark.svg";
+                  href = "https://${subdomains.vm-app.ovumcy}.${domain}";
+                  description = "Ovumcy Web";
+                  siteMonitor = "https://${subdomains.vm-app.ovumcy}.${domain}";
                 };
               }
             ];

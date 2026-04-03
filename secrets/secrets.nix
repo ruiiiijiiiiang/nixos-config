@@ -53,10 +53,6 @@ in
     publicKeys = ssh.vm-app;
     armor = true;
   };
-  "memos-env.age" = {
-    publicKeys = ssh.vm-app;
-    armor = true;
-  };
   "nextcloud-pass.age" = {
     publicKeys = ssh.vm-app;
     armor = true;
@@ -70,6 +66,10 @@ in
     armor = true;
   };
   "openwebui-env.age" = {
+    publicKeys = ssh.vm-app;
+    armor = true;
+  };
+  "ovumcy-env.age" = {
     publicKeys = ssh.vm-app;
     armor = true;
   };

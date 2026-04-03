@@ -81,6 +81,7 @@ in
         opencloud = config.custom.services.apps.office.opencloud.enable;
         openwebui = config.custom.services.apps.tools.llm.enable;
         paperless = config.custom.services.apps.office.paperless.enable;
+        ovumcy = config.custom.services.apps.tools.ovumcy.enable;
         pihole = config.custom.services.networking.dns.enable;
         pocketid = config.custom.services.apps.auth.pocketid.enable;
         portainer = config.custom.services.observability.portainer.enable;

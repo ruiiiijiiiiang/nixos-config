@@ -94,7 +94,6 @@ let
     vscode-langservers-extracted
     vscode-js-debug
     vtsls
-    nodePackages.prettier
     rustup
     lua55Packages.luarocks
     stylua

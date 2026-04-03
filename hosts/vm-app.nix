@@ -85,6 +85,7 @@ in
           atuin.enable = true;
           llm.enable = true;
           microbin.enable = true;
+          ovumcy.enable = true;
           syncthing = {
             enable = true;
             proxied = true;

@@ -56,7 +56,7 @@ in
             flags = [ "--all" ];
           };
           defaultNetwork.settings = {
-            dns_enable = true;
+            dns_enabled = true;
           };
         };
 
@@ -100,7 +100,11 @@ in
           wantedBy = [ "timers.target" ];
           enable = true;
           timerConfig = {
-            OnCalendar = dailyTaskToSystemd daily-tasks.${config.networking.hostName}.podman-update;
+            OnCalendar = [
+              ""
+              (dailyTaskToSystemd daily-tasks.${config.networking.hostName}.podman-update)
+            ];
+            RandomizedDelaySec = 0;
           };
         };
 

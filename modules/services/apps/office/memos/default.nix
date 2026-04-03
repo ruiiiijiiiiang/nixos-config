@@ -7,13 +7,11 @@
 }:
 let
   inherit (consts)
-    addresses
     domain
     subdomains
     ports
-    oci-uids
     ;
-  inherit (helpers) mkOciUser mkVirtualHost mkNotifyService;
+  inherit (helpers) mkVirtualHost;
   cfg = config.custom.services.apps.office.memos;
   fqdn = "${subdomains.${config.networking.hostName}.memos}.${domain}";
 in
@@ -23,50 +21,16 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    age.secrets = {
-      memos-env.file = ../../../../../secrets/memos-env.age;
-      # POSTGRES_DB
-      # POSTGRES_USER
-      # POSTGRES_PASSWORD
-      # MEMOS_DSN
-    };
-
-    virtualisation.oci-containers.containers = {
-      memos-postgres = {
-        image = "docker.io/library/postgres:15";
-        ports = [ "${addresses.localhost}:${toString ports.memos}:${toString ports.memos}" ];
-        environmentFiles = [ config.age.secrets.memos-env.path ];
-        volumes = [ "/var/lib/memos/postgres:/var/lib/postgresql/data" ];
-        labels = {
-          "io.containers.autoupdate" = "registry";
-        };
+    services.memos = {
+      enable = true;
+      settings = {
+        MEMOS_MODE = "prod";
+        MEMOS_ADDR = "127.0.0.1";
+        MEMOS_PORT = toString ports.memos;
+        MEMOS_DATA = config.services.memos.dataDir;
+        MEMOS_DRIVER = "sqlite";
+        MEMOS_INSTANCE_URL = "http://localhost:${toString ports.memos}";
       };
-
-      memos-app = {
-        image = "docker.io/neosmemo/memos:stable";
-        user = "${toString oci-uids.memos}:${toString oci-uids.memos}";
-        dependsOn = [ "memos-postgres" ];
-        networks = [ "container:memos-postgres" ];
-        environment = {
-          MEMOS_DRIVER = "postgres";
-        };
-        environmentFiles = [ config.age.secrets.memos-env.path ];
-        volumes = [ "/var/lib/memos/app:/var/opt/memos" ];
-        labels = {
-          "io.containers.autoupdate" = "registry";
-        };
-      };
-    };
-
-    users = mkOciUser "memos";
-
-    systemd = {
-      tmpfiles.rules = [
-        "d /var/lib/memos/postgres 0700 ${toString oci-uids.postgres} ${toString oci-uids.postgres} - -"
-        "d /var/lib/memos/app 0700 ${toString oci-uids.memos} ${toString oci-uids.memos} - -"
-      ];
-
-      services.podman-memos-postgres = mkNotifyService { };
     };
 
     services.nginx.virtualHosts."${fqdn}" = mkVirtualHost {

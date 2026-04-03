@@ -46,7 +46,7 @@ in
       infra = {
         nfs.server = {
           enable = true;
-          interfaces = [ lanInterface ];
+          interfaces = [ "${lanInterface}.${toString vlanId}" ];
         };
         podman = {
           enable = true;

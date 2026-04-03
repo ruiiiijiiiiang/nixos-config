@@ -45,6 +45,7 @@ rec {
       pocketid = "id";
       portainer = "portainer";
       public = "public";
+      ovumcy = "ovumcy";
       qbittorrent = "qbittorrent";
       reitti = "reitti";
       searxng = "searxng";
@@ -199,6 +200,7 @@ rec {
     paperless = 28981;
     pihole = 8008;
     pocketid = 1411;
+    ovumcy = 8095;
     portainer = {
       server = 9000;
       edge = 8000;
@@ -257,7 +259,6 @@ rec {
     paperless = 901;
     opencloud = 902;
     karakeep = 903;
-    memos = 904;
     reitti = 905;
     dawarich = 906;
     arr = 907;
@@ -272,6 +273,7 @@ rec {
     atuin = 916;
     magicmirror = 917;
     termix = 918;
+    ovumcy = 919;
     user = 1000;
     nobody = 65534;
 
