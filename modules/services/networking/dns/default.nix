@@ -42,6 +42,30 @@ let
       ];
     in
     concatStringsSep "\n" (filter (s: s != "") (generatedEntries ++ manualEntries));
+
+  checkDnsHealthScript = pkgs.writeShellApplication {
+    name = "check_dns_health";
+    runtimeInputs = with pkgs; [
+      coreutils
+      gnugrep
+      dnsutils
+    ];
+    text = /* bash */ ''
+      domains=("google.com" "cloudflare.com" "microsoft.com" "amazon.com")
+
+      for domain in "''${domains[@]}"; do
+        result=$(dig @127.0.0.1 "$domain" A +short +time=1 +tries=1 2>/dev/null || true)
+        if [[ -n "$result" ]]; then
+          first_line=$(echo "$result" | head -n 1)
+
+          if [[ "$first_line" =~ ^[0-9.]+$ ]]; then
+            exit 0
+          fi
+        fi
+      done
+      exit 1
+    '';
+  };
 in
 {
   options.custom.services.networking.dns = with lib; {
@@ -197,32 +221,7 @@ in
         enable = true;
 
         vrrpScripts.check_dns_health = {
-          script = toString (
-            pkgs.writeShellScriptBin "check_dns_health" /* bash */ ''
-              export PATH="${
-                pkgs.lib.makeBinPath (
-                  with pkgs;
-                  [
-                    coreutils
-                    gnugrep
-                    dnsutils
-                  ]
-                )
-              }:$PATH"
-              DOMAINS=("google.com" "cloudflare.com" "microsoft.com" "amazon.com")
-
-              for DOMAIN in "''${DOMAINS[@]}"; do
-                RESULT=$(dig @127.0.0.1 "$DOMAIN" A +short +time=1 +tries=1 2>/dev/null)
-                FIRST_LINE=$(echo "$RESULT" | head -n 1)
-
-                if [[ -n "$FIRST_LINE" ]] && [[ "$FIRST_LINE" =~ ^[0-9.]+$ ]]; then
-                  exit 0
-                fi
-
-              done
-              exit 1
-            ''
-          );
+          script = "${checkDnsHealthScript}/bin/check_dns_health";
           interval = 5;
           weight = -20;
           fall = 2;
