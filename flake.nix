@@ -196,6 +196,24 @@
           ];
         };
 
+        vm-public = lib.nixosSystem {
+          inherit system;
+          specialArgs = {
+            inherit consts inputs helpers;
+          };
+          modules = [
+            ./modules
+            ./hosts/vm-public.nix
+            home-manager.nixosModules.home-manager
+            (mkHomeManagerModule {
+              dotfilesRoot = dotfiles.lib.source;
+              dotfilesOutOfStore = false;
+              homeModules = ./homes/modules;
+              homeConfig = ./homes/configs/headless.nix;
+            })
+          ];
+        };
+
         vm-cyber = lib.nixosSystem {
           inherit system;
           specialArgs = {

@@ -116,6 +116,7 @@ rec {
       dhcp-max = "192.168.88.250";
       hosts = {
         vm-network = "192.168.88.1";
+        vm-public = "192.168.88.2";
         vm-cyber = "192.168.88.10";
       };
     };
@@ -287,6 +288,7 @@ rec {
       vm-monitor = "26a3e5f9-5c4a-4956-8ee4-b680f507d3cc";
       vm-network = "2b7de5db-e0e6-4f81-b5f4-4efc928ee475";
       vm-cyber = "008d571b-aa7c-4050-96d8-7185f5ea2a95";
+      vm-public = "ec5663c9-bac8-4d69-b120-b2b63a456a67";
     };
 
     gpu = {
@@ -321,7 +323,8 @@ rec {
       vm-network = "52:54:00:00:00:00";
       vm-app = "52:54:00:00:00:01";
       vm-monitor = "52:54:00:00:00:02";
-      vm-cyber = "52:54:00:00:00:03";
+      vm-public = "52:54:00:00:00:03";
+      vm-cyber = "52:54:00:00:00:04";
     };
 
     radios = {
@@ -330,7 +333,7 @@ rec {
     };
 
     partitions = {
-      esp = {
+      ESP = {
         priority = 1;
         name = "ESP";
         size = "512M";

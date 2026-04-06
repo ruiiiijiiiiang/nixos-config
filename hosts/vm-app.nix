@@ -22,7 +22,7 @@ in
       libvirt = {
         enable = true;
         cpu = 10;
-        memory = 16;
+        memory = 12;
         inherit vlanId;
       };
 

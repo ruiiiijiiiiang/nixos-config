@@ -60,7 +60,7 @@ in
           content = {
             type = "gpt";
             partitions = {
-              ESP = hardware.partitions.esp;
+              inherit (hardware.partitions) ESP;
               lvm = {
                 size = "100%";
                 content = {

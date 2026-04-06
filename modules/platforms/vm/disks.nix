@@ -32,8 +32,7 @@ in
         content = {
           type = "gpt";
           partitions = {
-            ESP = hardware.partitions.esp;
-            inherit (hardware.partitions) root;
+            inherit (hardware.partitions) ESP root;
           };
         };
       };

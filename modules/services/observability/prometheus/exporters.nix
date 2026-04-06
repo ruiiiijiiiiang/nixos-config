@@ -61,15 +61,12 @@ in
       prometheus.exporters = {
         kea = lib.mkIf cfg.kea.enable {
           enable = true;
-          listenAddress = addresses.any;
           port = ports.prometheus.exporters.kea;
           targets = [ "http://${addresses.localhost}:${toString ports.kea.ctrl-agent}" ];
         };
 
         libvirt = lib.mkIf cfg.libvirt.enable {
-          # Can't be enabled until this PR is merged:
-          # https://github.com/NixOS/nixpkgs/pull/478425
-          enable = false;
+          enable = true;
           port = ports.prometheus.exporters.libvirt;
         };
 

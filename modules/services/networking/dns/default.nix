@@ -199,7 +199,16 @@ in
         vrrpScripts.check_dns_health = {
           script = toString (
             pkgs.writeShellScriptBin "check_dns_health" /* bash */ ''
-              export PATH="${pkgs.coreutils}/bin:${pkgs.gnugrep}/bin:${pkgs.dnsutils}/bin"
+              export PATH="${
+                pkgs.lib.makeBinPath (
+                  with pkgs;
+                  [
+                    coreutils
+                    gnugrep
+                    dnsutils
+                  ]
+                )
+              }:$PATH"
               DOMAINS=("google.com" "cloudflare.com" "microsoft.com" "amazon.com")
 
               for DOMAIN in "''${DOMAINS[@]}"; do

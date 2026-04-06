@@ -30,6 +30,9 @@ let
       ;
   };
 
+  allHosts =
+    addresses.wg.hosts // addresses.home.hosts // addresses.dmz.hosts // addresses.infra.hosts;
+
   mkScrapeJob = exporterName: port: {
     job_name = "${exporterName}-exporter";
     scrape_interval = "30s";
@@ -40,7 +43,14 @@ let
             _: hostConfig:
             hostConfig.config.custom.services.observability.prometheus.exporters.${exporterName}.enable or false
           ))
-          (lib.mapAttrsToList (hostname: _: "${addresses.infra.hosts.${hostname}}:${toString port}"))
+          (lib.mapAttrsToList (
+            hostname: _:
+            let
+              ip =
+                allHosts.${hostname} or (throw "Host ${hostname} not found in any network map in lib/consts.nix");
+            in
+            "${ip}:${toString port}"
+          ))
         ];
       }
     ];

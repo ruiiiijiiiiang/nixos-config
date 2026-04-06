@@ -14,6 +14,7 @@ let
     "vm-app"
     "vm-monitor"
     "vm-cyber"
+    "vm-public"
   ];
   backupPath = "/mnt/external/usb-hdd-1/${hostName}/backup";
 in
@@ -94,7 +95,7 @@ in
           serverAddress = addresses.infra.hosts.vm-monitor;
         };
         prometheus.exporters = {
-          libvirt.enable = true;
+          # libvirt.enable = true;
           nginx.enable = true;
           node.enable = true;
           podman.enable = true;

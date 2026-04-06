@@ -34,10 +34,13 @@ let
     set -euo pipefail
 
     export PATH="${
-      pkgs.lib.makeBinPath [
-        pkgs.nix
-        pkgs.git
-      ]
+      pkgs.lib.makeBinPath (
+        with pkgs;
+        [
+          nix
+          git
+        ]
+      )
     }:$PATH"
 
     nix flake update --no-warn-dirty --refresh
