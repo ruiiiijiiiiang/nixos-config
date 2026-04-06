@@ -16,6 +16,7 @@ let
   inherit (helpers) mkVirtualHost;
   cfg = config.custom.services.observability.grafana;
   fqdn = "${subdomains.${config.networking.hostName}.grafana}.${domain}";
+  systemd-logs-json = import ./systemd-logs.json.nix;
 
   # Generate the hash by running: nix-prefetch-url <url>
   crowdsec-dashboard = pkgs.fetchurl {
@@ -66,50 +67,7 @@ let
     sha256 = "13qganba7c3b9vahxfc059iingzq5dw46vhl3bzvr7jfp3m8dh7s";
   };
 
-  systemd-logs-dashboard = pkgs.writeText "systemd-logs.json" /* json */ ''
-    {
-      "uid": "systemd-logs-viewer",
-      "title": "Systemd Logs Viewer",
-      "tags": ["loki", "systemd"],
-      "timezone": "browser",
-      "refresh": "10s",
-      "templating": {
-        "list": [
-          {
-            "name": "host",
-            "type": "query",
-            "datasource": "Loki",
-            "query": "label_values({job=\"systemd-journal\"}, host)",
-            "refresh": 1,
-            "includeAll": true,
-            "multi": true
-          },
-          {
-            "name": "unit",
-            "type": "query",
-            "datasource": "Loki",
-            "query": "label_values({job=\"systemd-journal\", host=~\"$host\"}, unit)",
-            "refresh": 1,
-            "includeAll": true,
-            "multi": true
-          }
-        ]
-      },
-      "panels": [
-        {
-          "type": "logs",
-          "title": "Journal Output: $unit on $host",
-          "datasource": "Loki",
-          "gridPos": { "h": 20, "w": 24, "x": 0, "y": 0 },
-          "targets": [
-            {
-              "expr": "{job=\"systemd-journal\", host=~\"$host\", unit=~\"$unit\"}"
-            }
-          ]
-        }
-      ]
-    }
-  '';
+  systemd-logs-dashboard = pkgs.writeText "systemd-logs.json" systemd-logs-json;
 
   grafana-dashboards = pkgs.runCommand "grafana-dashboards" { } /* bash */ ''
     mkdir -p $out

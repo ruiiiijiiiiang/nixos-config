@@ -143,7 +143,7 @@ in
     ]
     ++ lib.mapAttrsToList (name: _: "d /mnt/external/${name} 0755 - - - -") hardware.storage.external;
 
-    system.activationScripts.ensureGuestLvs = {
+    system.activationScripts.ensure-guest-lvs = {
       deps = [ "specialfs" ];
       text = "${ensureGuestLvsScript}/bin/ensure-guest-lvs";
     };
