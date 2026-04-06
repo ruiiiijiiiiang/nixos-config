@@ -380,6 +380,9 @@ rec {
       restic-backup = "06:45";
       container-db-backup = "07:00";
     };
+    vm-public = {
+      podman-update = "03:35";
+    };
   };
 
   endpoints = {
