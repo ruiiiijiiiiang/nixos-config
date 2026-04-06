@@ -1,6 +1,7 @@
-{ consts, inputs, ... }:
+{ consts, helpers, inputs, ... }:
 let
-  inherit (consts) addresses vlan-ids;
+  inherit (consts) vlan-ids;
+  inherit (helpers) getHostAddress;
   hostName = "pi";
   lanInterface = "end0";
   wlanInterface = "wlan0";
@@ -63,7 +64,7 @@ in
         dockhand.agent.enable = true;
         loki.agent = {
           enable = true;
-          serverAddress = addresses.infra.hosts.vm-monitor;
+          serverAddress = getHostAddress "vm-monitor";
         };
         prometheus.exporters = {
           nginx.enable = true;

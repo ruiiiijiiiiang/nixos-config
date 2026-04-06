@@ -1,6 +1,7 @@
-{ consts, ... }:
+{ consts, helpers, ... }:
 let
-  inherit (consts) addresses vlan-ids;
+  inherit (consts) vlan-ids;
+  inherit (helpers) getHostAddress;
   hostName = "hypervisor";
   volumeGroup = "vg-nvme";
   lanInterface = "enxc8a362bf0bb3";
@@ -92,7 +93,7 @@ in
         };
         loki.agent = {
           enable = true;
-          serverAddress = addresses.infra.hosts.vm-monitor;
+          serverAddress = getHostAddress "vm-monitor";
         };
         prometheus.exporters = {
           # libvirt.enable = true;

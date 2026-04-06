@@ -8,12 +8,14 @@
 }:
 let
   inherit (consts)
-    addresses
     domain
     subdomains
     ports
     ;
-  inherit (helpers) mkVirtualHost;
+  inherit (helpers)
+    getHostAddress
+    mkVirtualHost
+    ;
   inherit (inputs.self) nixosConfigurations;
   cfg = config.custom.services.observability.prometheus.server;
   fqdn = "${subdomains.${config.networking.hostName}.prometheus}.${domain}";
@@ -30,9 +32,6 @@ let
       ;
   };
 
-  allHosts =
-    addresses.wg.hosts // addresses.home.hosts // addresses.dmz.hosts // addresses.infra.hosts;
-
   mkScrapeJob = exporterName: port: {
     job_name = "${exporterName}-exporter";
     scrape_interval = "30s";
@@ -43,14 +42,7 @@ let
             _: hostConfig:
             hostConfig.config.custom.services.observability.prometheus.exporters.${exporterName}.enable or false
           ))
-          (lib.mapAttrsToList (
-            hostname: _:
-            let
-              ip =
-                allHosts.${hostname} or (throw "Host ${hostname} not found in any network map in lib/consts.nix");
-            in
-            "${ip}:${toString port}"
-          ))
+          (lib.mapAttrsToList (hostname: _: "${getHostAddress hostname}:${toString port}"))
         ];
       }
     ];

@@ -1,6 +1,12 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  helpers,
+  ...
+}:
 let
-  inherit (import ../../../../lib/consts.nix) addresses domain;
+  inherit (import ../../../../lib/consts.nix) domain;
+  inherit (helpers) getHostAddress;
   cfg = config.custom.services.networking.cloudflared;
 in
 {
@@ -22,13 +28,13 @@ in
           ingress = {
             # To add a tunnel, do `cloudflared tunnel route dns home {subdomain}.ruijiang.me`
             "public.${domain}" = {
-              service = "https://${addresses.infra.hosts.vm-app}:443";
+              service = "https://${getHostAddress "vm-app"}:443";
               originRequest = {
                 originServerName = "public.${domain}";
               };
             };
             "bin.${domain}" = {
-              service = "https://${addresses.infra.hosts.vm-app}:443";
+              service = "https://${getHostAddress "vm-app"}:443";
               originRequest = {
                 originServerName = "bin.${domain}";
               };

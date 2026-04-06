@@ -14,7 +14,7 @@ let
     ports
     hardware
     ;
-  inherit (helpers) mkVirtualHost mkNotifyService;
+  inherit (helpers) getHostAddress mkVirtualHost mkNotifyService;
   cfg = config.custom.services.apps.tools.homeassistant;
   ha-fqdn = "${subdomains.${config.networking.hostName}.homeassistant}.${domain}";
   zwave-fqdn = "${subdomains.${config.networking.hostName}.zwave}.${domain}";
@@ -29,9 +29,7 @@ in
       homeassistant = {
         image = "ghcr.io/home-assistant/home-assistant:stable";
         ports = [
-          "${
-            addresses.infra.hosts.${config.networking.hostName}
-          }:${toString ports.homeassistant}:${toString ports.homeassistant}"
+          "${getHostAddress config.networking.hostName}:${toString ports.homeassistant}:${toString ports.homeassistant}"
           "${addresses.localhost}:${toString ports.homeassistant}:${toString ports.homeassistant}"
           "${addresses.localhost}:${toString ports.zwave}:${toString ports.zwave}"
         ];

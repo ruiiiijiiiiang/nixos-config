@@ -1,11 +1,13 @@
 {
   config,
   consts,
+  helpers,
   inputs,
   ...
 }:
 let
-  inherit (consts) addresses hardware vlan-ids;
+  inherit (consts) hardware vlan-ids;
+  inherit (helpers) getHostAddress;
   inherit (inputs.self) nixosConfigurations;
   hostName = "vm-network";
   wanInterface = "wan0";
@@ -178,7 +180,7 @@ in
         };
         loki.agent = {
           enable = true;
-          serverAddress = addresses.infra.hosts.vm-monitor;
+          serverAddress = getHostAddress "vm-monitor";
         };
         prometheus.exporters = {
           kea.enable = true;
@@ -195,7 +197,7 @@ in
         fail2ban.enable = true;
         wazuh.agent = {
           enable = true;
-          serverAddress = addresses.infra.hosts.vm-monitor;
+          serverAddress = getHostAddress "vm-monitor";
           interface = infraInterface;
         };
       };

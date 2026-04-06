@@ -2,10 +2,12 @@
   config,
   consts,
   lib,
+  helpers,
   ...
 }:
 let
-  inherit (consts) addresses ports oci-uids;
+  inherit (consts) ports oci-uids;
+  inherit (helpers) getHostAddress;
   cfg = config.custom.services.observability.dockhand.agent;
 in
 {
@@ -46,9 +48,7 @@ in
         image = "ghcr.io/finsys/hawser:latest";
         user = "${toString oci-uids.dockhand}:${toString oci-uids.dockhand}";
         ports = [
-          "${
-            addresses.infra.hosts.${config.networking.hostName}
-          }:${toString ports.dockhand.agent}:${toString ports.dockhand.agent}"
+          "${getHostAddress config.networking.hostName}:${toString ports.dockhand.agent}:${toString ports.dockhand.agent}"
         ];
         volumes = [
           "/run/podman/podman.sock:/var/run/docker.sock"

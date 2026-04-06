@@ -2,10 +2,12 @@
   config,
   consts,
   lib,
+  helpers,
   ...
 }:
 let
   inherit (consts) domain addresses vlan-ids;
+  inherit (helpers) getHostAddress;
   cfg = config.custom.platforms.minipc.networking;
   vlanInterface = "${cfg.lanBridge}.${toString cfg.vlanId}";
 in
@@ -112,7 +114,7 @@ in
         "30-${vlanInterface}" = {
           matchConfig.Name = vlanInterface;
           networkConfig = {
-            Address = "${addresses.infra.hosts.hypervisor}/24";
+            Address = "${getHostAddress "hypervisor"}/24";
             Gateway = addresses.infra.hosts.vm-network;
             DNS = [ addresses.infra.vip.dns ];
             Domains = [ domain ];
@@ -123,7 +125,7 @@ in
         "40-${cfg.wlanInterface}" = lib.mkIf (cfg.wlanInterface != null) {
           matchConfig.Name = cfg.wlanInterface;
           networkConfig = {
-            Address = "${addresses.home.hosts.hypervisor-wifi}/24";
+            Address = "${getHostAddress "hypervisor-wifi"}/24";
             DHCP = "yes";
             IgnoreCarrierLoss = "3s";
           };

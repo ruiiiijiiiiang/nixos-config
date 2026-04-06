@@ -1,11 +1,13 @@
 {
   config,
   consts,
+  helpers,
   lib,
   ...
 }:
 let
   inherit (consts) addresses ports oci-uids;
+  inherit (helpers) getHostAddress;
   cfg = config.custom.services.observability.prometheus.exporters;
 in
 {
@@ -111,9 +113,7 @@ in
       image = "quay.io/navidys/prometheus-podman-exporter:latest";
       user = "${toString oci-uids.nobody}:${toString oci-uids.podman}";
       ports = [
-        "${
-          addresses.infra.hosts.${config.networking.hostName}
-        }:${toString ports.prometheus.exporters.podman}:${toString ports.prometheus.exporters.podman}"
+        "${getHostAddress config.networking.hostName}:${toString ports.prometheus.exporters.podman}:${toString ports.prometheus.exporters.podman}"
       ];
       volumes = [
         "/run/podman/podman.sock:/run/podman/podman.sock:ro"

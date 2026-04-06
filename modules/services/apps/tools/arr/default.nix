@@ -14,7 +14,7 @@ let
     ports
     oci-uids
     ;
-  inherit (helpers) mkOciUser mkVirtualHost;
+  inherit (helpers) getHostAddress mkOciUser mkVirtualHost;
   cfg = config.custom.services.apps.tools.arr;
   lidarr-fqdn = "${subdomains.${config.networking.hostName}.lidarr}.${domain}";
   radarr-fqdn = "${subdomains.${config.networking.hostName}.radarr}.${domain}";
@@ -44,9 +44,7 @@ in
         image = "lscr.io/linuxserver/lidarr:latest";
         ports = [
           "${addresses.localhost}:${toString ports.arr.lidarr}:${toString ports.arr.lidarr}"
-          "${
-            addresses.infra.hosts.${config.networking.hostName}
-          }:${toString ports.arr.lidarr}:${toString ports.arr.lidarr}"
+          "${getHostAddress config.networking.hostName}:${toString ports.arr.lidarr}:${toString ports.arr.lidarr}"
         ];
         environment = {
           TZ = timeZone;
@@ -67,9 +65,7 @@ in
         image = "lscr.io/linuxserver/radarr:latest";
         ports = [
           "${addresses.localhost}:${toString ports.arr.radarr}:${toString ports.arr.radarr}"
-          "${
-            addresses.infra.hosts.${config.networking.hostName}
-          }:${toString ports.arr.radarr}:${toString ports.arr.radarr}"
+          "${getHostAddress config.networking.hostName}:${toString ports.arr.radarr}:${toString ports.arr.radarr}"
         ];
         environment = {
           TZ = timeZone;
@@ -90,9 +86,7 @@ in
         image = "lscr.io/linuxserver/sonarr:latest";
         ports = [
           "${addresses.localhost}:${toString ports.arr.sonarr}:${toString ports.arr.sonarr}"
-          "${
-            addresses.infra.hosts.${config.networking.hostName}
-          }:${toString ports.arr.sonarr}:${toString ports.arr.sonarr}"
+          "${getHostAddress config.networking.hostName}:${toString ports.arr.sonarr}:${toString ports.arr.sonarr}"
         ];
         environment = {
           TZ = timeZone;
@@ -113,9 +107,7 @@ in
         image = "lscr.io/linuxserver/prowlarr:latest";
         ports = [
           "${addresses.localhost}:${toString ports.arr.prowlarr}:${toString ports.arr.prowlarr}"
-          "${
-            addresses.infra.hosts.${config.networking.hostName}
-          }:${toString ports.arr.prowlarr}:${toString ports.arr.prowlarr}"
+          "${getHostAddress config.networking.hostName}:${toString ports.arr.prowlarr}:${toString ports.arr.prowlarr}"
         ];
         environment = {
           TZ = timeZone;

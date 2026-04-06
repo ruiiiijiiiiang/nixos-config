@@ -11,7 +11,7 @@ let
     oci-uids
     ;
 in
-{
+rec {
   dailyTaskToCron =
     time:
     let
@@ -102,6 +102,26 @@ in
       subdomainSet = subdomains.${config.networking.hostName} or { };
     in
     filterAttrs (key: value: serviceEnabled.${key} or false) subdomainSet;
+
+  getHostAddressFromNetworks =
+    networkNames: hostname:
+    let
+      hostScopes = map (networkName: lib.attrByPath [ networkName "hosts" ] { } addresses) networkNames;
+      matchingHosts = lib.findFirst (hosts: builtins.hasAttr hostname hosts) null hostScopes;
+      searchedNetworks = lib.concatStringsSep ", " (
+        map (networkName: "addresses.${networkName}.hosts") networkNames
+      );
+    in
+    if matchingHosts == null then
+      builtins.throw "No address found for host `${hostname}` in ${searchedNetworks}"
+    else
+      matchingHosts.${hostname};
+
+  getHostAddress = getHostAddressFromNetworks [
+    "home"
+    "infra"
+    "dmz"
+  ];
 
   mkNotifyService =
     {

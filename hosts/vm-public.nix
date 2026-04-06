@@ -1,6 +1,7 @@
-{ consts, ... }:
+{ consts, helpers, ... }:
 let
-  inherit (consts) addresses vlan-ids;
+  inherit (consts) vlan-ids;
+  inherit (helpers) getHostAddress;
   hostName = "vm-public";
   lanInterface = "lan0";
   vlanId = vlan-ids.dmz;
@@ -40,6 +41,7 @@ in
 
     services = {
       infra = {
+        nfs.server.enable = true;
         podman = {
           enable = true;
           autoUpdate.enable = true;
@@ -53,7 +55,7 @@ in
         dockhand.agent.enable = true;
         loki.agent = {
           enable = true;
-          serverAddress = addresses.infra.hosts.vm-monitor;
+          serverAddress = getHostAddress "vm-monitor";
         };
         prometheus.exporters = {
           nginx.enable = true;
@@ -66,7 +68,7 @@ in
         fail2ban.enable = true;
         wazuh.agent = {
           enable = true;
-          serverAddress = addresses.infra.hosts.vm-monitor;
+          serverAddress = getHostAddress "vm-monitor";
         };
       };
     };

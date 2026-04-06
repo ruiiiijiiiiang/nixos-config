@@ -12,7 +12,7 @@ let
     subdomains
     ports
     ;
-  inherit (helpers) mkVirtualHost;
+  inherit (helpers) getHostAddress mkVirtualHost;
   cfg = config.custom.services.apps.web.homepage;
   fqdn = "${subdomains.${config.networking.hostName}.homepage}.${domain}";
 in
@@ -350,9 +350,9 @@ in
               {
                 "Pihole Backup 2" = {
                   icon = "pi-hole";
-                  href = "https://${addresses.infra.hosts.pi-legacy}/admin";
+                  href = "https://${getHostAddress "pi-legacy"}/admin";
                   description = "DNS Ad Blocker";
-                  siteMonitor = "https://${addresses.infra.hosts.pi-legacy}/admin";
+                  siteMonitor = "https://${getHostAddress "pi-legacy"}/admin";
                 };
               }
             ];

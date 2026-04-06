@@ -46,6 +46,7 @@ in
             "vm-app"
             "vm-monitor"
             "vm-network"
+            "vm-public"
           ];
         };
         podman.enable = true;

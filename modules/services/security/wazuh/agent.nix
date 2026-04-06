@@ -6,8 +6,8 @@
   ...
 }:
 let
-  inherit (import ../../../../lib/consts.nix) addresses ports;
-  inherit (helpers) ensureFile;
+  inherit (import ../../../../lib/consts.nix) ports;
+  inherit (helpers) ensureFile getHostAddress;
   cfg = config.custom.services.security.wazuh.agent;
 
   nginxXml = ''
@@ -45,7 +45,7 @@ in
     enable = mkEnableOption "Enable Wazuh agent";
     serverAddress = mkOption {
       type = types.str;
-      default = addresses.infra.hosts.vm-monitor;
+      default = getHostAddress "vm-monitor";
       description = "Wazuh server address.";
     };
     interface = mkOption {
