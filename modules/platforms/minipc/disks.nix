@@ -3,7 +3,6 @@
   consts,
   inputs,
   lib,
-  pkgs,
   ...
 }:
 let
@@ -13,27 +12,6 @@ let
   guestLvs = lib.genAttrs cfg.guestVms (guest: {
     size = "${toString nixosConfigurations.${guest}.config.custom.platforms.vm.disks.size}GB";
   });
-  guestLvEntries = lib.mapAttrsToList (guest: lv: "${guest}:${lv.size}") guestLvs;
-
-  ensureGuestLvsScript = pkgs.writeShellApplication {
-    name = "ensure-guest-lvs";
-    runtimeInputs = with pkgs; [ lvm2 ];
-    text = /* bash */ ''
-      guest_lvs=(
-        ${lib.concatMapStringsSep "\n        " lib.escapeShellArg guestLvEntries}
-      )
-
-      for entry in "''${guest_lvs[@]}"; do
-        guest="''${entry%%:*}"
-        size="''${entry#*:}"
-
-        if ! lvs "/dev/${cfg.volumeGroup}/$guest" >/dev/null 2>&1; then
-          echo "Creating missing LV /dev/${cfg.volumeGroup}/$guest ($size)"
-          lvcreate -L "$size" -n "$guest" "${cfg.volumeGroup}"
-        fi
-      done
-    '';
-  };
 in
 {
   imports = [
@@ -67,7 +45,7 @@ in
       {
         assertion = lib.all (
           guest:
-          (builtins.hasAttr guest nixosConfigurations)
+          (lib.hasAttr guest nixosConfigurations)
           && (nixosConfigurations.${guest}.config.custom.platforms.vm.disks.enable or false)
         ) cfg.guestVms;
         message = "Every libvirt guest must enable custom.platforms.vm.disks.";
@@ -142,10 +120,5 @@ in
       "d /mnt/external 0755 - - - -"
     ]
     ++ lib.mapAttrsToList (name: _: "d /mnt/external/${name} 0755 - - - -") hardware.storage.external;
-
-    system.activationScripts.ensure-guest-lvs = {
-      deps = [ "specialfs" ];
-      text = "${ensureGuestLvsScript}/bin/ensure-guest-lvs";
-    };
   };
 }

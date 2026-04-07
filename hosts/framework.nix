@@ -37,20 +37,7 @@ in
     services = {
       apps.tools.syncthing.enable = true;
 
-      infra = {
-        nfs.client = {
-          enable = true;
-          servers = [
-            "hypervisor"
-            "pi"
-            "vm-app"
-            "vm-monitor"
-            "vm-network"
-            "vm-public"
-          ];
-        };
-        podman.enable = true;
-      };
+      infra.podman.enable = true;
 
       networking.wireguard.client = {
         enable = true;

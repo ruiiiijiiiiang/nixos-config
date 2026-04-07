@@ -24,10 +24,9 @@ let
   cfg = config.custom.services.apps.office.opencloud;
   opencloud-fqdn = "${subdomains.${config.networking.hostName}.opencloud}.${domain}";
   onlyoffice-fqdn = "${subdomains.${config.networking.hostName}.onlyoffice}.${domain}";
-  cspTemplate = import ./csp.yaml.nix;
   cspContent =
-    builtins.replaceStrings [ "@OFFICE_FQDN@" "@ID_FQDN@" ] [ onlyoffice-fqdn endpoints.oidc-issuer ]
-      cspTemplate;
+    lib.replaceStrings [ "@OFFICE_FQDN@" "@ID_FQDN@" ] [ onlyoffice-fqdn endpoints.oidc-issuer ]
+      (lib.readFile ./csp.yaml);
   initialFile = pkgs.writeText "csp.yaml" cspContent;
   cspFile = "/var/lib/opencloud/config/csp.yaml";
   opencloud-port = "9200";

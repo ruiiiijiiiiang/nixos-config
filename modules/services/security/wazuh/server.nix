@@ -16,8 +16,7 @@ let
   inherit (helpers) ensureFile mkVirtualHost mkNotifyService;
   cfg = config.custom.services.security.wazuh.server;
   fqdn = "${subdomains.${config.networking.hostName}.wazuh}.${domain}";
-  dashboardsContent = import ./opensearch_dashboards.yml.nix;
-  initialFile = pkgs.writeText "opensearch_dashboards.yml" dashboardsContent;
+  initialFile = pkgs.writeText "opensearch_dashboards.yml" (lib.readFile ./opensearch_dashboards.yml);
   dashboardsFile = "/var/wazuh/opensearch_dashboards.yml";
 in
 {

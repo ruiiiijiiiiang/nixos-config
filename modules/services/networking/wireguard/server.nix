@@ -76,8 +76,8 @@ in
       {
         assertion =
           let
-            invalid = builtins.filter (
-              peer: !(builtins.hasAttr peer.hostName wg) || !(builtins.hasAttr peer.hostName addresses.wg.hosts)
+            invalid = lib.filter (
+              peer: !(lib.hasAttr peer.hostName wg) || !(lib.hasAttr peer.hostName addresses.wg.hosts)
             ) cfg.peers;
           in
           invalid == [ ];

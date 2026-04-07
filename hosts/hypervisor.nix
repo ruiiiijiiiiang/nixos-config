@@ -65,10 +65,6 @@ in
             guestVms
             ;
         };
-        nfs.server = {
-          enable = true;
-          interfaces = [ vlanInterface ];
-        };
         podman = {
           enable = true;
           autoUpdate.enable = true;
@@ -96,7 +92,7 @@ in
           serverAddress = getHostAddress "vm-monitor";
         };
         prometheus.exporters = {
-          # libvirt.enable = true;
+          libvirt.enable = true;
           nginx.enable = true;
           node.enable = true;
           podman.enable = true;

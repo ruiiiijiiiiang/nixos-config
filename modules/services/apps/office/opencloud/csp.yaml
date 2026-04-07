@@ -1,5 +1,4 @@
-/* yaml */ ''
-  directives:
+directives:
   default-src:
     - "'self'"
   script-src:
@@ -42,4 +41,3 @@
   form-action:
     - "'self'"
     - "https://@OFFICE_FQDN@"
-''

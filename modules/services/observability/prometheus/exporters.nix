@@ -109,6 +109,10 @@ in
       };
     };
 
+    systemd.services.prometheus-libvirt-exporter.serviceConfig.SupplementaryGroups =
+      lib.mkIf cfg.libvirt.enable
+        [ "libvirtd" ];
+
     virtualisation.oci-containers.containers.podman-exporter = lib.mkIf cfg.podman.enable {
       image = "quay.io/navidys/prometheus-podman-exporter:latest";
       user = "${toString oci-uids.nobody}:${toString oci-uids.podman}";

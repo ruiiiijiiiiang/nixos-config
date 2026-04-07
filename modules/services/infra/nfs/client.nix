@@ -28,7 +28,7 @@ let
     };
   };
 
-  allMounts = builtins.map mkNfsMounts cfg.servers;
+  allMounts = lib.map mkNfsMounts cfg.servers;
 in
 {
   options.custom.services.infra.nfs.client = with lib; {
@@ -66,10 +66,10 @@ in
       tmpfiles.rules = [
         "d ${localBaseDir} 0755 ${username} users -"
       ]
-      ++ (builtins.map (h: "d ${localBaseDir}/${h} 0755 ${username} users -") cfg.servers);
+      ++ (lib.map (h: "d ${localBaseDir}/${h} 0755 ${username} users -") cfg.servers);
 
-      mounts = builtins.map (m: m.mount) allMounts;
-      automounts = builtins.map (m: m.automount) allMounts;
+      mounts = lib.map (m: m.mount) allMounts;
+      automounts = lib.map (m: m.automount) allMounts;
     };
   };
 }

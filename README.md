@@ -26,11 +26,6 @@ This infrastructure is engineered following a rigorous **Domain-Driven Design** 
    - **security:** The active defense perimeter (Fail2Ban, Wazuh, Suricata, CrowdSec).
    - **apps:** The user experience, grouped by function (office, tools, media, authentication, development).
 
-The `flake.nix` is the central cortex, orchestrating these modules to synthesize specific host configurations. A **hybrid deployment strategy** is employed to balance raw performance with operational stability:
-
-- **Native Infrastructure:** Core network services like **Nginx**, **Kea DHCP**, and **WireGuard** run close to the metal via native NixOS modules for maximum throughput and reliability.
-- **Containerized Applications:** User-facing apps are encapsulated in **OCI containers** (managed by Podman). This ensures strict isolation, precise version pinning, and a clean separation between the "Application Layer" and the "OS Layer."
-
 ## Network Architecture
 
 ### Physical Topology

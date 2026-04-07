@@ -15,10 +15,15 @@ rec {
   dailyTaskToCron =
     time:
     let
-      inherit (lib) splitString toIntBase10;
+      inherit (lib)
+        splitString
+        toString
+        toIntBase10
+        elemAt
+        ;
       parts = splitString ":" time;
-      hour = builtins.toString (toIntBase10 (builtins.elemAt parts 0));
-      minute = builtins.toString (toIntBase10 (builtins.elemAt parts 1));
+      hour = toString (toIntBase10 (elemAt parts 0));
+      minute = toString (toIntBase10 (elemAt parts 1));
     in
     "${minute} ${hour} * * *";
 
@@ -106,9 +111,15 @@ rec {
   getHostAddressFromNetworks =
     networkNames: hostname:
     let
-      hostScopes = map (networkName: lib.attrByPath [ networkName "hosts" ] { } addresses) networkNames;
-      matchingHosts = lib.findFirst (hosts: builtins.hasAttr hostname hosts) null hostScopes;
-      searchedNetworks = lib.concatStringsSep ", " (
+      inherit (lib)
+        attrByPath
+        findFirst
+        hasAttr
+        concatStringsSep
+        ;
+      hostScopes = map (networkName: attrByPath [ networkName "hosts" ] { } addresses) networkNames;
+      matchingHosts = findFirst (hosts: hasAttr hostname hosts) null hostScopes;
+      searchedNetworks = concatStringsSep ", " (
         map (networkName: "addresses.${networkName}.hosts") networkNames
       );
     in
@@ -165,16 +176,17 @@ rec {
   parsePciAddress =
     addrStr:
     let
-      parts = builtins.match "([0-9a-fA-F]+):([0-9a-fA-F]+):([0-9a-fA-F]+)\\.([0-9a-fA-F]+)" addrStr;
+      inherit (lib) match fromHexString elemAt;
+      parts = match "([0-9a-fA-F]+):([0-9a-fA-F]+):([0-9a-fA-F]+)\\.([0-9a-fA-F]+)" addrStr;
     in
     if parts == null then
       builtins.throw "Invalid PCI address: ${addrStr}. Expected format DDDD:BB:SS.F"
     else
       {
-        domain = lib.fromHexString (builtins.elemAt parts 0);
-        bus = lib.fromHexString (builtins.elemAt parts 1);
-        slot = lib.fromHexString (builtins.elemAt parts 2);
-        function = lib.fromHexString (builtins.elemAt parts 3);
+        domain = fromHexString (elemAt parts 0);
+        bus = fromHexString (elemAt parts 1);
+        slot = fromHexString (elemAt parts 2);
+        function = fromHexString (elemAt parts 3);
       };
 
   linkConfig =
@@ -185,19 +197,20 @@ rec {
       paths,
     }:
     let
+      inherit (lib) escapeShellArg listToAttrs isString;
       mkOutOfStoreSymlink =
         path:
         let
           pathStr = toString path;
           name = baseNameOf pathStr;
         in
-        pkgs.runCommandLocal name { } "ln -s ${lib.escapeShellArg pathStr} $out";
+        pkgs.runCommandLocal name { } "ln -s ${escapeShellArg pathStr} $out";
     in
-    builtins.listToAttrs (
+    listToAttrs (
       map (
         item:
         let
-          isSimple = builtins.isString item;
+          isSimple = isString item;
           targetPath = if isSimple then item else item.target;
           sourceSuffix = if isSimple then item else item.src;
         in

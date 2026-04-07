@@ -37,7 +37,7 @@ in
   config = lib.mkIf cfg.enable {
     assertions = [
       {
-        assertion = lib.elem cfg.vlanId (builtins.attrValues vlan-ids);
+        assertion = lib.elem cfg.vlanId (lib.attrValues vlan-ids);
         message = "VM libvirt VLAN ID must exist in consts.vlan-ids.";
       }
     ];

@@ -22,11 +22,11 @@ let
     network:
     let
       inherit (addresses.${network}) hosts;
-      reservations = builtins.map (hostname: {
+      reservations = lib.map (hostname: {
         hw-address = hardware.macs.${hostname};
         ip-address = hosts.${hostname};
         inherit hostname;
-      }) (builtins.filter (hostname: builtins.hasAttr hostname hosts) (builtins.attrNames hardware.macs));
+      }) (lib.filter (hostname: lib.hasAttr hostname hosts) (lib.attrNames hardware.macs));
     in
     {
       id = vlan-ids.${network};
@@ -101,9 +101,9 @@ in
       }
       {
         assertion =
-          builtins.hasAttr config.networking.hostName addresses.home.hosts
-          && builtins.hasAttr config.networking.hostName addresses.infra.hosts
-          && builtins.hasAttr config.networking.hostName addresses.dmz.hosts;
+          lib.hasAttr config.networking.hostName addresses.home.hosts
+          && lib.hasAttr config.networking.hostName addresses.infra.hosts
+          && lib.hasAttr config.networking.hostName addresses.dmz.hosts;
         message = "Router hostName must exist in addresses.home/infra/dmz host maps.";
       }
     ];

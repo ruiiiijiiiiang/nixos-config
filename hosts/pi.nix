@@ -1,4 +1,9 @@
-{ consts, helpers, inputs, ... }:
+{
+  consts,
+  helpers,
+  inputs,
+  ...
+}:
 let
   inherit (consts) vlan-ids;
   inherit (helpers) getHostAddress;
@@ -45,10 +50,6 @@ in
       apps.tools.homeassistant.enable = true;
 
       infra = {
-        nfs.server = {
-          enable = true;
-          interfaces = [ "${lanInterface}.${toString vlanId}" ];
-        };
         podman = {
           enable = true;
           autoUpdate.enable = true;

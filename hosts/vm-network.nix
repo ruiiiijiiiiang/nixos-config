@@ -96,13 +96,6 @@ in
 
     services = {
       infra = {
-        nfs.server = {
-          enable = true;
-          interfaces = [
-            lanInterface
-            wgInterface
-          ];
-        };
         podman = {
           enable = true;
           autoUpdate.enable = true;

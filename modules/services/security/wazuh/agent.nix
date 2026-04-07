@@ -29,12 +29,11 @@ let
     (if config.custom.services.security.suricata.enable then suricataXml else "")
   ];
 
-  ossecTemplate = import ./ossec.conf.nix;
   ossecContent =
-    builtins.replaceStrings
+    lib.replaceStrings
       [ "@AGENT_NAME@" "@SERVER_ADDRESS@" "@EXTRA_LOCALFILES@" ]
       [ config.networking.hostName cfg.serverAddress extraLocalfiles ]
-      ossecTemplate;
+      (lib.readFile ./ossec.conf);
   initialFile = pkgs.writeText "ossec.conf" ossecContent;
 
   ossecFile = "/var/wazuh/ossec.conf";

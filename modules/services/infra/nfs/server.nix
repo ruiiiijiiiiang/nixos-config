@@ -8,12 +8,8 @@ let
   inherit (consts) addresses ports;
   cfg = config.custom.services.infra.nfs.server;
 
-  commonOptions = "rw,nohide,insecure,no_subtree_check,no_root_squash,fsid=0";
-  networks = [
-    addresses.home.network
-    addresses.wg.network
-  ];
-  exportLine = builtins.concatStringsSep " " (map (net: "${net}(${commonOptions})") networks);
+  commonOptions = "rw,nohide,no_subtree_check,fsid=0";
+  exportLine = lib.concatStringsSep " " (map (net: "${net}(${commonOptions})") cfg.allowedHosts);
 in
 {
   options.custom.services.infra.nfs.server = with lib; {
@@ -22,6 +18,14 @@ in
       type = types.listOf types.str;
       default = [ ];
       description = "Interfaces allowed to access file server.";
+    };
+    allowedHosts = mkOption {
+      type = types.listOf types.str;
+      default = [
+        addresses.home.hosts.framework
+        addresses.home.hosts.arch
+      ];
+      description = "Hosts allowed to access file server.";
     };
   };
 

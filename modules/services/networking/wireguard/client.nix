@@ -32,6 +32,15 @@ in
       default = null;
       description = "WireGuard client preshared key path.";
     };
+    allowedIPs = mkOption {
+      type = types.listOf types.str;
+      default = [
+        addresses.infra.network
+        addresses.dmz.network
+        addresses.wg.network
+      ];
+      description = "Subnets routed through the WireGuard tunnel.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -52,6 +61,10 @@ in
         assertion = cfg.address != null && !(lib.hasInfix "/" cfg.address);
         message = "WireGuard client address must be a host IP without CIDR suffix (module appends /32).";
       }
+      {
+        assertion = cfg.allowedIPs != [ ];
+        message = "WireGuard client requires at least one allowed IP/network.";
+      }
     ];
 
     networking.wg-quick.interfaces.${cfg.wgInterface} = {
@@ -61,11 +74,8 @@ in
       peers = [
         {
           inherit (wg.vm-network) publicKey;
-          inherit (cfg) presharedKeyFile;
+          inherit (cfg) presharedKeyFile allowedIPs;
           endpoint = "${endpoints.vpn-server}:${toString ports.wireguard}";
-          allowedIPs = [
-            addresses.private-blocks.class-c
-          ];
           persistentKeepalive = 25;
         }
       ];

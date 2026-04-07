@@ -1,11 +1,16 @@
 { consts, lib, ... }:
 let
   inherit (consts) addresses username;
-  inherit (lib) mkDefault;
+  inherit (lib)
+    foldl'
+    mkDefault
+    concatStringsSep
+    mapAttrsToList
+    ;
+
   getExtraHosts =
     let
-      inherit (lib) concatStringsSep mapAttrsToList;
-      mergedHosts = builtins.foldl' (acc: net: addresses.${net}.hosts // acc) { } [
+      mergedHosts = foldl' (acc: net: addresses.${net}.hosts // acc) { } [
         "infra"
         "home"
         "dmz"

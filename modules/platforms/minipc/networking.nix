@@ -132,9 +132,6 @@ in
           dhcpV4Config = {
             RouteMetric = 2048;
           };
-          dhcpV6Config = {
-            RouteMetric = 2048;
-          };
           linkConfig.RequiredForOnline = "no";
         };
       };

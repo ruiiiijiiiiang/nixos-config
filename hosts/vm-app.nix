@@ -84,7 +84,6 @@ in
             inherit mediaPath;
           };
           atuin.enable = true;
-          llm.enable = true;
           microbin.enable = true;
           ovumcy.enable = true;
           syncthing = {
@@ -102,7 +101,6 @@ in
 
       infra = {
         harmonia.enable = true;
-        nfs.server.enable = true;
         podman = {
           enable = true;
           autoUpdate.enable = true;

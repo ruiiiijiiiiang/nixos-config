@@ -21,38 +21,45 @@ in
       }
     ];
 
-    services.promtail = {
+    services.alloy = {
       enable = true;
-
-      configuration = {
-        server = {
-          http_listen_port = ports.loki.agent;
-          grpc_listen_port = 0;
-        };
-        positions = {
-          filename = "/tmp/positions.yaml";
-        };
-        clients = [{
-          url = "http://${cfg.serverAddress}:${toString ports.loki.server}/loki/api/v1/push";
-        }];
-
-        scrape_configs = [{
-          job_name = "journal";
-          journal = {
-            max_age = "12h";
-            labels = {
-              job = "systemd-journal";
-              host = config.networking.hostName;
-            };
-          };
-          relabel_configs = [{
-            source_labels = [ "__journal__systemd_unit" ];
-            target_label = "unit";
-          }];
-        }];
-      };
     };
 
-    systemd.services.promtail.serviceConfig.SupplementaryGroups = [ "systemd-journal" ];
+    environment.etc."alloy/loki-journal.alloy".text = ''
+      loki.write "nixos_loki_remote" {
+        endpoint {
+          url = "http://${cfg.serverAddress}:${toString ports.loki.server}/loki/api/v1/push"
+        }
+      }
+
+      loki.relabel "nixos_journal_labels" {
+        forward_to = []
+
+        rule {
+          source_labels = ["__journal__systemd_unit"]
+          target_label  = "unit"
+        }
+
+        rule {
+          source_labels = ["__journal__systemd_unit"]
+          regex         = ".*"
+          replacement   = "systemd-journal"
+          target_label  = "job"
+        }
+
+        rule {
+          source_labels = ["__journal__systemd_unit"]
+          regex         = ".*"
+          replacement   = "${config.networking.hostName}"
+          target_label  = "host"
+        }
+      }
+
+      loki.source.journal "nixos_journal" {
+        forward_to    = [loki.write.nixos_loki_remote.receiver]
+        relabel_rules = loki.relabel.nixos_journal_labels.rules
+        max_age       = "12h"
+      }
+    '';
   };
 }

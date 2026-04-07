@@ -15,6 +15,33 @@ let
   vlanInterface = "${cfg.lanBridge}.${toString cfg.vlanId}";
   spicePorts = lib.mapAttrsToList (_: port: port) ports.spice;
 
+  selfFlakePath = inputs.self.outPath;
+  guestListFile = pkgs.writeText "hypervisor-guests" (lib.concatStringsSep "\n" cfg.guestVms);
+  guestSizeFile = pkgs.writeText "hypervisor-guest-sizes" (
+    lib.concatMapStringsSep "\n" (
+      guest: "${guest}:${toString nixosConfigurations.${guest}.config.custom.platforms.vm.disks.size}G"
+    ) cfg.guestVms
+  );
+  provisionVmScriptText =
+    lib.replaceStrings
+      [
+        "@SELF_FLAKE_PATH@"
+        "@VOLUME_GROUP@"
+        "@GUEST_LIST_FILE@"
+        "@GUEST_SIZE_FILE@"
+      ]
+      [
+        (lib.escapeShellArg selfFlakePath)
+        (lib.escapeShellArg cfg.volumeGroup)
+        (lib.escapeShellArg guestListFile)
+        (lib.escapeShellArg guestSizeFile)
+      ]
+      (lib.readFile ./provision-vm.sh);
+
+  shutdownHypervisorScriptText =
+    lib.replaceStrings [ "@GUEST_LIST_FILE@" ] [ (lib.escapeShellArg guestListFile) ]
+      (lib.readFile ./shutdown-hypervisor.sh);
+
   getPassthroughGuest =
     hardware:
     let
@@ -35,8 +62,34 @@ let
 
   gpuGuest = getPassthroughGuest "gpu";
 
+  provisionVmScript = pkgs.writeShellApplication {
+    name = "provision-vm";
+    runtimeInputs = with pkgs; [
+      coreutils
+      lvm2
+      nix
+      systemd
+      util-linux
+    ];
+    text = provisionVmScriptText;
+  };
+
+  shutdownHypervisorScript = pkgs.writeShellApplication {
+    name = "shutdown-hypervisor";
+    runtimeInputs = with pkgs; [
+      coreutils
+      gnused
+      libvirt
+      systemd
+    ];
+    text = shutdownHypervisorScriptText;
+  };
+
   mkLibvirtBase =
     { guest, libvirtCfg }:
+    let
+      escapeLvmName = name: lib.replaceStrings [ "-" ] [ "--" ] name;
+    in
     {
       vcpu.placement = "static";
 
@@ -68,7 +121,7 @@ let
               io = "native";
               discard = "unmap";
             };
-            source.dev = "/dev/${cfg.volumeGroup}/${guest}";
+            source.dev = "/dev/mapper/${escapeLvmName cfg.volumeGroup}-${escapeLvmName guest}";
             target = {
               dev = "vda";
               bus = "virtio";
@@ -193,10 +246,21 @@ in
         ) cfg.guestVms;
         message = "Every libvirt guest must enable custom.platforms.vm.libvirt.";
       }
+      {
+        assertion = lib.all (
+          guest:
+          (lib.hasAttr guest nixosConfigurations)
+          && (nixosConfigurations.${guest}.config.custom.platforms.vm.disks.enable or false)
+          && (nixosConfigurations.${guest}.config.system.build ? diskoImages)
+        ) cfg.guestVms;
+        message = "Every libvirt guest must enable custom.platforms.vm.disks and expose system.build.diskoImages.";
+      }
     ];
 
     environment.systemPackages = with pkgs; [
       pciutils
+      provisionVmScript
+      shutdownHypervisorScript
       usbutils
       virtiofsd
     ];
@@ -285,6 +349,18 @@ in
         Type = "oneshot";
         ExecStart = "${pkgs.bash}/bin/bash -c 'sleep 300 && ${pkgs.libvirt}/bin/virsh start ${gpuGuest}'";
         RemainAfterExit = true;
+      };
+    };
+
+    systemd.services."provision-vm@" = {
+      description = "Provision VM disk for %i";
+      after = [
+        "local-fs.target"
+        "lvm2-monitor.service"
+      ];
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStart = "${provisionVmScript}/bin/provision-vm %i";
       };
     };
   };

@@ -105,7 +105,7 @@ in
         message = "DNS VRRP priority must be between 1 and 254.";
       }
       {
-        assertion = (!cfg.vrrp.enable) || builtins.hasAttr config.networking.hostName addresses.infra.hosts;
+        assertion = (!cfg.vrrp.enable) || lib.hasAttr config.networking.hostName addresses.infra.hosts;
         message = "DNS VRRP requires hostName to exist in addresses.infra.hosts.";
       }
     ];
@@ -245,7 +245,7 @@ in
                 addresses.infra.hosts.pi-legacy
               ];
             in
-            builtins.filter (ip: ip != config.services.keepalived.vrrpInstances.dns_ha.unicastSrcIp) allNodes;
+            lib.filter (ip: ip != config.services.keepalived.vrrpInstances.dns_ha.unicastSrcIp) allNodes;
         };
       };
     };

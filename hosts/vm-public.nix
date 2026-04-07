@@ -41,7 +41,6 @@ in
 
     services = {
       infra = {
-        nfs.server.enable = true;
         podman = {
           enable = true;
           autoUpdate.enable = true;

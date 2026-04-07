@@ -16,7 +16,6 @@ let
   inherit (helpers) mkVirtualHost;
   cfg = config.custom.services.observability.grafana;
   fqdn = "${subdomains.${config.networking.hostName}.grafana}.${domain}";
-  systemd-logs-json = import ./systemd-logs.json.nix;
 
   # Generate the hash by running: nix-prefetch-url <url>
   crowdsec-dashboard = pkgs.fetchurl {
@@ -67,7 +66,7 @@ let
     sha256 = "13qganba7c3b9vahxfc059iingzq5dw46vhl3bzvr7jfp3m8dh7s";
   };
 
-  systemd-logs-dashboard = pkgs.writeText "systemd-logs.json" systemd-logs-json;
+  systemd-logs-dashboard = pkgs.writeText "systemd-logs.json" (lib.readFile ./systemd-logs.json);
 
   grafana-dashboards = pkgs.runCommand "grafana-dashboards" { } /* bash */ ''
     mkdir -p $out

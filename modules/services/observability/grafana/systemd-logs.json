@@ -1,0 +1,42 @@
+{
+  "uid": "systemd-logs-viewer",
+  "title": "Systemd Logs Viewer",
+  "tags": ["loki", "systemd"],
+  "timezone": "browser",
+  "refresh": "10s",
+  "templating": {
+    "list": [
+      {
+        "name": "host",
+        "type": "query",
+        "datasource": "Loki",
+        "query": "label_values({job=\"systemd-journal\"}, host)",
+        "refresh": 1,
+        "includeAll": true,
+        "multi": true
+      },
+      {
+        "name": "unit",
+        "type": "query",
+        "datasource": "Loki",
+        "query": "label_values({job=\"systemd-journal\", host=~\"$host\"}, unit)",
+        "refresh": 1,
+        "includeAll": true,
+        "multi": true
+      }
+    ]
+  },
+  "panels": [
+    {
+      "type": "logs",
+      "title": "Journal Output: $unit on $host",
+      "datasource": "Loki",
+      "gridPos": { "h": 20, "w": 24, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "expr": "{job=\"systemd-journal\", host=~\"$host\", unit=~\"$unit\"}"
+        }
+      ]
+    }
+  ]
+}

@@ -32,7 +32,7 @@ let
     mkGatusEndpoints {
       inherit inputs hostName;
     }
-  ) (builtins.attrNames nixosConfigurations);
+  ) (lib.attrNames nixosConfigurations);
 in
 {
   options.custom.services.observability.gatus = with lib; {

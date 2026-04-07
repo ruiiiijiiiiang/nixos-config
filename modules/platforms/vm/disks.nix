@@ -28,7 +28,7 @@ in
       primary = {
         type = "disk";
         device = "/dev/vda";
-        imageSize = "50G";
+        imageSize = "${toString cfg.size}G";
         content = {
           type = "gpt";
           partitions = {
