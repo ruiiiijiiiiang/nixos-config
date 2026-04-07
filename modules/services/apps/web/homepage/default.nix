@@ -282,9 +282,9 @@ in
               {
                 "Microbin" = {
                   icon = "microbin";
-                  href = "https://${subdomains.vm-app.microbin}.${domain}";
+                  href = "https://${subdomains.vm-public.microbin}.${domain}";
                   description = "Pastebin";
-                  siteMonitor = "https://${subdomains.vm-app.microbin}.${domain}";
+                  siteMonitor = "https://${subdomains.vm-public.microbin}.${domain}";
                 };
               }
               {
@@ -306,9 +306,9 @@ in
               {
                 "SearXNG" = {
                   icon = "searxng";
-                  href = "https://${subdomains.vm-app.searxng}.${domain}";
+                  href = "https://${subdomains.vm-public.searxng}.${domain}";
                   description = "Search engine";
-                  siteMonitor = "https://${subdomains.vm-app.searxng}.${domain}";
+                  siteMonitor = "https://${subdomains.vm-public.searxng}.${domain}";
                 };
               }
               {

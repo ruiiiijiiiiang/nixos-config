@@ -14,11 +14,11 @@ let
     oci-uids
     ;
   inherit (helpers) mkOciUser mkVirtualHost mkNotifyService;
-  cfg = config.custom.services.apps.web.karakeep;
+  cfg = config.custom.services.apps.tools.karakeep;
   fqdn = "${subdomains.${config.networking.hostName}.karakeep}.${domain}";
 in
 {
-  options.custom.services.apps.web.karakeep = with lib; {
+  options.custom.services.apps.tools.karakeep = with lib; {
     enable = mkEnableOption "Enable Karakeep";
   };
 

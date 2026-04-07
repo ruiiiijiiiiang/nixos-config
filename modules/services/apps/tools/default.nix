@@ -3,6 +3,7 @@
     ./arr
     ./atuin
     ./homeassistant
+    ./karakeep
     ./llm
     ./microbin
     ./ovumcy

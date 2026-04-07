@@ -84,7 +84,7 @@ in
             inherit mediaPath;
           };
           atuin.enable = true;
-          microbin.enable = true;
+          karakeep.enable = true;
           ovumcy.enable = true;
           syncthing = {
             enable = true;
@@ -93,9 +93,6 @@ in
         };
         web = {
           homepage.enable = true;
-          karakeep.enable = true;
-          searxng.enable = true;
-          website.enable = true;
         };
       };
 

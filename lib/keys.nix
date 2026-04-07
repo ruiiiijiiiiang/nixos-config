@@ -27,6 +27,10 @@
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFLHjHmKzQtjhRkVj4gaSIwdacXTyKk7yhnetoxQIx3d rui@vm-monitor"
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDMo9Xk1eWLmsdNyqihJoi/b7gmfsjZWlObYk3rUg1Tj root@vm-monitor"
     ];
+    vm-public = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEmUmJzoaV43anRDwqCBuZoCP9cwQ3z1tVR66441xewF rui@vm-public"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOq+tbBvICc9s0TvE//7+dn22BZJz6iCGW1ZpnjhQDGs root@vm-public"
+    ];
     vm-cyber = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDd50+RrfO1TG5woaD1wmkYX+Ne7PWOH5cmS26MS2lly rui@vm-cyber"
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAdsyJYOK/gGTezi8oG6huVbJAaQRDkNN+/Bafz0vkHg root@vm-cyber"

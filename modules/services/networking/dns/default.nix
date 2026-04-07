@@ -21,11 +21,11 @@ let
   getFullExtraHosts =
     let
       inherit (lib)
-        concatStringsSep
-        mapAttrsToList
-        concatMap
-        filter
         attrValues
+        concatStringsSep
+        foldl'
+        mapAttrsToList
+        filter
         ;
       hostFqdns = hostName: map (sub: "${sub}.${domain}") (attrValues (subdomains.${hostName} or { }));
       hostEntry =
@@ -34,9 +34,14 @@ let
           fqdns = hostFqdns hostName;
         in
         if fqdns == [ ] then "" else "${ip} ${concatStringsSep " " fqdns}";
-      generatedEntries = concatMap (network: mapAttrsToList hostEntry addresses.${network}.hosts) [
+
+      targetNetworks = [
+        "dmz"
         "infra"
       ];
+      allHosts = foldl' (acc: net: (addresses.${net}.hosts or { }) // acc) { } targetNetworks;
+      generatedEntries = mapAttrsToList hostEntry allHosts;
+
       manualEntries = [
         "${addresses.home.hosts.vm-network} ${endpoints.vpn-server}"
       ];

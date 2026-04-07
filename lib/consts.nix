@@ -35,7 +35,6 @@ rec {
       jellyfin = "jellyfin";
       karakeep = "karakeep";
       memos = "memos";
-      microbin = "bin";
       magicmirror = "mirror";
       nextcloud = "nextcloud";
       onlyoffice = "office";
@@ -44,11 +43,9 @@ rec {
       paperless = "paperless";
       pocketid = "id";
       portainer = "portainer";
-      public = "public";
       ovumcy = "ovumcy";
       qbittorrent = "qbittorrent";
       reitti = "reitti";
-      searxng = "searxng";
       stirlingpdf = "pdf";
       syncthing = "syncthing";
       vaultwarden = "vault";
@@ -64,6 +61,11 @@ rec {
       scanopy = "scanopy";
       termix = "termix";
       wazuh = "wazuh";
+    };
+    vm-public = {
+      microbin = "bin";
+      searxng = "searxng";
+      public = "public";
     };
   };
 

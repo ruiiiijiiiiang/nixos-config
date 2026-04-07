@@ -71,11 +71,11 @@ This infrastructure is engineered following a rigorous **Domain-Driven Design** 
                        (WAN)              (Cloudflare Tunnel)          (WireGuard Tunnel)
                          |                         |                           |
                          |                         v                           v
-+------------------------------------------------------------------------------------------------------+
-| [vm-network] (libvirt VM)                                                                            |
-| 4 vCPU, 2GB RAM, NIC Passthru                                                                        |
-| Role: Router, Firewall (nftables), DHCP (Kea), DNS master (Pi-hole/Unbound), VPN Gateway (WireGuard) |
-+------------------------------------------------------------------------------------------------------+
++-------------------------------------------------------------------------------------------------------+
+| [vm-network] (libvirt VM)                                                                             |
+| 4 vCPU, 2GB RAM, NIC Passthru                                                                         |
+| Role: Router, Firewall (nftables), DHCP (Kea), DNS master (Pi-hole/Unbound), VPN Gateway (WireGuard)  |
++-------------------------------------------------------------------------------------------------------+
                                                    ^
                                                    |
                                               (LAN Trunk)
@@ -83,32 +83,32 @@ This infrastructure is engineered following a rigorous **Domain-Driven Design** 
              +-------------------------------------|-------------------------------------+
              |                                     |                                     |
              v                                     v                                     v
-+-------------------------+    +-------------------------------------+    +----------------------------+
-| LAN (Native/Untagged)   |    | VLAN 20 (Infra)                     |    | VLAN 88 (DMZ)              |
-| Network: 192.168.2.0/24 |    | Network: 192.168.20.0/24            |    | Network: 192.168.88.0/24   |
-| Desc: Trusted Clients   |    | Desc: Servers & Infrastructure      |    | Desc: Untrusted Workloads  |
-+-------------------------+    +-------------------------------------+    +----------------------------+
-| +---------------------+ |    | +---------------------------------+ |    | +------------------------+ |
-| | [framework]         | |    | | [hypervisor] (libvirt host)     | |    | | [vm-cyber] (libvirt VM)| |
-| | (Laptop)            | |    | | AMD 6900HX, 32GB DDR5 RAM       | |    | | 4 vCPU, 4GB RAM        | |
-| +---------------------+ |    | | Hosts: All virtual machines     | |    | | Role: Security Research| |
-|                         |    | +---------------------------------+ |    | +------------------------+ |
-| (Other clients...)      |    | +---------------------------------+ |    |                            |
-|                         |    | | [vm-app] (libvirt VM)           | |    |                            |
-|                         |    | | 10 vCPU, 12GB RAM, GPU Passthru | |    |                            |
-|                         |    | | Hosts: Jellyfin, Immich, etc    | |    |                            |
-|                         |    | +---------------------------------+ |    |                            |
-|                         |    | +---------------------------------+ |    |                            |
-|                         |    | | [vm-monitor] (libvirt VM)       | |    |                            |
-|                         |    | | 4 vCPU, 4GB RAM                 | |    |                            |
-|                         |    | | Hosts: Prometheus, Wazuh, etc   | |    |                            |
-|                         |    | +---------------------------------+ |    |                            |
-|                         |    | +---------------------------------+ |    |                            |
-|                         |    | | [pi] (Raspberry Pi 4)           | |    |                            |
-|                         |    | | Hosts: Home Assistant, DNS slave| |    |                            |
-|                         |    | +---------------------------------+ |    |                            |
-|                         |    | DNS VIP: 192.168.20.53 (HA Cluster) |    |                            |
-+-------------------------+    +-------------------------------------+    +----------------------------+
++-------------------------+    +-------------------------------------+    +-----------------------------+
+| LAN (Native/Untagged)   |    | VLAN 20 (Infra)                     |    | VLAN 88 (DMZ)               |
+| Network: 192.168.2.0/24 |    | Network: 192.168.20.0/24            |    | Network: 192.168.88.0/24    |
+| Desc: Trusted Clients   |    | Desc: Servers & Infrastructure      |    | Desc: Untrusted Workloads   |
++-------------------------+    +-------------------------------------+    +-----------------------------+
+| +---------------------+ |    | +---------------------------------+ |    | +-------------------------+ |
+| | [framework]         | |    | | [hypervisor] (libvirt host)     | |    | | [vm-public] (libvirt VM)| |
+| | (Laptop)            | |    | | AMD 6900HX, 32GB DDR5 RAM       | |    | | 4 vCPU, 2GB RAM         | |
+| +---------------------+ |    | | Hosts: All virtual machines     | |    | | Hosts: Personal website | |
+|                         |    | +---------------------------------+ |    | +-------------------------+ |
+| (Other clients...)      |    | +---------------------------------+ |    | +-------------------------+ |
+|                         |    | | [vm-app] (libvirt VM)           | |    | | [vm-cyber] (libvirt VM) | |
+|                         |    | | 10 vCPU, 12GB RAM, GPU Passthru | |    | | 4 vCPU, 4GB RAM         | |
+|                         |    | | Hosts: Jellyfin, Immich, etc    | |    | | Role: Security Research | |
+|                         |    | +---------------------------------+ |    | +-------------------------+ |
+|                         |    | +---------------------------------+ |    |                             |
+|                         |    | | [vm-monitor] (libvirt VM)       | |    |                             |
+|                         |    | | 4 vCPU, 4GB RAM                 | |    |                             |
+|                         |    | | Hosts: Prometheus, Wazuh, etc   | |    |                             |
+|                         |    | +---------------------------------+ |    |                             |
+|                         |    | +---------------------------------+ |    |                             |
+|                         |    | | [pi] (Raspberry Pi 4)           | |    |                             |
+|                         |    | | Hosts: Home Assistant, DNS slave| |    |                             |
+|                         |    | +---------------------------------+ |    |                             |
+|                         |    | DNS VIP: 192.168.20.53 (HA Cluster) |    |                             |
++-------------------------+    +-------------------------------------+    +-----------------------------+
              |                                     ^                                     ^
              |                                     |                                     |
              +-------------------------------------|-------------------------------------+

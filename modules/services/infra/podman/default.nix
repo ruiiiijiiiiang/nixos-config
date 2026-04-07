@@ -55,9 +55,6 @@ in
             dates = "weekly";
             flags = [ "--all" ];
           };
-          defaultNetwork.settings = {
-            dns_enabled = true;
-          };
         };
 
         containers.containersConf.settings = {

@@ -76,7 +76,7 @@ rec {
         homepage = config.custom.services.apps.web.homepage.enable;
         immich = config.custom.services.apps.media.immich.enable;
         jellyfin = config.custom.services.apps.media.jellyfin.enable;
-        karakeep = config.custom.services.apps.web.karakeep.enable;
+        karakeep = config.custom.services.apps.tools.karakeep.enable;
         memos = config.custom.services.apps.office.memos.enable;
         magicmirror = config.custom.services.apps.web.magicmirror.enable;
         microbin = config.custom.services.apps.tools.microbin.enable;

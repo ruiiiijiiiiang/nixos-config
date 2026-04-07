@@ -40,6 +40,16 @@ in
     };
 
     services = {
+      apps = {
+        tools = {
+          microbin.enable = true;
+        };
+        web = {
+          searxng.enable = true;
+          website.enable = true;
+        };
+      };
+
       infra = {
         podman = {
           enable = true;

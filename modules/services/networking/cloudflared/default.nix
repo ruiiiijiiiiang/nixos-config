@@ -28,13 +28,13 @@ in
           ingress = {
             # To add a tunnel, do `cloudflared tunnel route dns home {subdomain}.ruijiang.me`
             "public.${domain}" = {
-              service = "https://${getHostAddress "vm-app"}:443";
+              service = "https://${getHostAddress "vm-public"}:443";
               originRequest = {
                 originServerName = "public.${domain}";
               };
             };
             "bin.${domain}" = {
-              service = "https://${getHostAddress "vm-app"}:443";
+              service = "https://${getHostAddress "vm-public"}:443";
               originRequest = {
                 originServerName = "bin.${domain}";
               };

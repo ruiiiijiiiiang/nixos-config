@@ -14,11 +14,11 @@ in
     armor = true;
   };
   "cloudflare-token.age" = {
-    publicKeys = ssh.hypervisor ++ ssh.pi ++ ssh.vm-network ++ ssh.vm-app ++ ssh.vm-monitor;
+    publicKeys = ssh.hypervisor ++ ssh.pi ++ ssh.vm-network ++ ssh.vm-app ++ ssh.vm-monitor ++ ssh.vm-public;
     armor = true;
   };
   "cloudflare-dns-token.age" = {
-    publicKeys = ssh.hypervisor ++ ssh.pi ++ ssh.vm-network ++ ssh.vm-app ++ ssh.vm-monitor;
+    publicKeys = ssh.vm-network;
     armor = true;
   };
   "cloudflare-tunnel-token.age" = {
@@ -34,7 +34,7 @@ in
     armor = true;
   };
   "maxmind-license-key.age" = {
-    publicKeys = ssh.vm-network ++ ssh.vm-app ++ ssh.vm-monitor;
+    publicKeys = ssh.vm-network ++ ssh.vm-app ++ ssh.vm-monitor ++ ssh.vm-public;
     armor = true;
   };
   "grafana-secret-key.age" = {

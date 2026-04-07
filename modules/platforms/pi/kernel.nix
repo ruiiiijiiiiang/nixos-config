@@ -20,7 +20,7 @@ in
       };
       kernelPackages = pkgs.linuxPackages_rpi4;
 
-      supportedFilesystems = [
+      supportedFilesystems = lib.mkForce [
         "vfat"
         "ext4"
       ];
