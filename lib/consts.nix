@@ -34,6 +34,7 @@ rec {
       immich = "immich";
       jellyfin = "jellyfin";
       karakeep = "karakeep";
+      librechat = "chat";
       memos = "memos";
       magicmirror = "mirror";
       nextcloud = "nextcloud";
@@ -65,6 +66,7 @@ rec {
     vm-public = {
       microbin = "bin";
       searxng = "searxng";
+      krawl = "krawl";
       public = "public";
     };
   };
@@ -177,12 +179,14 @@ rec {
     harmonia = 5001;
     homeassistant = 8123;
     homepage = 8089;
+    immich = 2283;
+    jellyfin = 8096;
     karakeep = 8084;
     kea = {
       ctrl-agent = 8002;
     };
-    immich = 2283;
-    jellyfin = 8096;
+    krawl = 5002;
+    librechat = 3080;
     loki = {
       server = 3100;
       agent = 3031;
@@ -262,6 +266,7 @@ rec {
     paperless = 901;
     opencloud = 902;
     karakeep = 903;
+    librechat = 904;
     reitti = 905;
     dawarich = 906;
     arr = 907;
@@ -277,6 +282,7 @@ rec {
     magicmirror = 917;
     termix = 918;
     ovumcy = 919;
+    krawl = 920;
     user = 1000;
     nobody = 65534;
 

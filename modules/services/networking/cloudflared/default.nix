@@ -1,13 +1,30 @@
 {
   config,
   lib,
+  consts,
   helpers,
   ...
 }:
 let
-  inherit (import ../../../../lib/consts.nix) domain;
+  inherit (consts) domain;
   inherit (helpers) getHostAddress;
   cfg = config.custom.services.networking.cloudflared;
+
+  tunneledSubdomains = [
+    "public"
+    "bin"
+    "krawl"
+  ];
+
+  mkIngress = subdomain: {
+    service = "https://${getHostAddress "vm-public"}:443";
+    originRequest = {
+      originServerName = "${subdomain}.${domain}";
+      noTLSVerify = true;
+    };
+  };
+
+  ingressRules = lib.genAttrs tunneledSubdomains mkIngress;
 in
 {
   options.custom.services.networking.cloudflared = with lib; {
@@ -16,7 +33,7 @@ in
 
   config = lib.mkIf cfg.enable {
     age.secrets = {
-      cloudflare-tunnel-token.file = ../../../../secrets/cloudflare-tunnel-token.age;
+      cloudflared-tunnel-token.file = ../../../../secrets/cloudflared-tunnel-token.age;
     };
 
     services.cloudflared = {
@@ -24,21 +41,8 @@ in
       tunnels = {
         "home" = {
           default = "http_status:404";
-          credentialsFile = config.age.secrets.cloudflare-tunnel-token.path;
-          ingress = {
-            # To add a tunnel, do `cloudflared tunnel route dns home {subdomain}.ruijiang.me`
-            "public.${domain}" = {
-              service = "https://${getHostAddress "vm-public"}:443";
-              originRequest = {
-                originServerName = "public.${domain}";
-              };
-            };
-            "bin.${domain}" = {
-              service = "https://${getHostAddress "vm-public"}:443";
-              originRequest = {
-                originServerName = "bin.${domain}";
-              };
-            };
+          credentialsFile = config.age.secrets.cloudflared-tunnel-token.path;
+          ingress = ingressRules // {
             service = "http_status:404";
           };
         };

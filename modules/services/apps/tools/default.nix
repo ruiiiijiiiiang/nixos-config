@@ -4,6 +4,7 @@
     ./atuin
     ./homeassistant
     ./karakeep
+    ./librechat
     ./llm
     ./microbin
     ./ovumcy

@@ -184,7 +184,11 @@ let
     lazygit.enable = true;
     lsd.enable = true;
     navi.enable = true;
-    neovim.enable = true;
+    neovim = {
+      enable = true;
+      withPython3 = false;
+      withRuby = false;
+    };
     pay-respects.enable = true;
     ssh = {
       enable = true;

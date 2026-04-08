@@ -85,6 +85,7 @@ in
           };
           atuin.enable = true;
           karakeep.enable = true;
+          librechat.enable = true;
           ovumcy.enable = true;
           syncthing = {
             enable = true;

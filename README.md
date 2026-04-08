@@ -133,12 +133,6 @@ The network is physically connected via two interfaces, but logically segmented 
 - **WireGuard (`wg0`):** Secure remote access tunnel.
   - _Routing:_ Authenticated peers get full access to Home, Infra, and DMZ networks.
 
-Powered by **NFTables**, the firewall enforces a strict "default drop" policy for forwarding. Traffic is explicitly permitted based on the source zone:
-
-- **Home:** Trusted; can initiate connections to anywhere.
-- **Infra/DMZ:** Untrusted; can only egress to the internet (WAN), with DMZ having a pinhole into Infra for DNS.
-- **VPN:** Trusted; treated effectively as an extension of the Home network.
-
 ### High-Availability DNS
 
 The network relies on a high-availability DNS cluster between `vm-network` and `pi` to ensure that ad-blocking and name resolution never sleep.
@@ -148,13 +142,13 @@ The network relies on a high-availability DNS cluster between `vm-network` and `
 
 ### External Access
 
-To maintain a zero-exposure posture, all external access is brokered by **Cloudflare Tunnels**. This architecture ensures that no ports are open on the WAN interface (besides WireGuard), completely eliminating the need for traditional port forwarding. The `cloudflared` service (running on `vm-network`) establishes an encrypted outbound connection to the Cloudflare edge, securely routing traffic for public-facing subdomains directly to the internal application stack.
+To maintain a zero-exposure posture, all external access is brokered by **Cloudflare Tunnels**. This architecture ensures that no ports are open on the WAN interface (besides WireGuard), completely eliminating the need for traditional port forwarding. The `cloudflared` service (running on `vm-network`) establishes an encrypted outbound connection to the Cloudflare edge, securely routing traffic for public-facing subdomains directly to the internal application stack. Only services hosted in the DMZ (VLAN 88) are exposed to the internet — the Infra and Home networks remain completely isolated from external access.
 
 Furthermore, all web-facing services are placed behind an **Nginx reverse proxy**, which acts as a unified gateway. SSL/TLS certificates are automatically provisioned and managed by **ACME (Let's Encrypt)**, leveraging Cloudflare for DNS challenges, ensuring robust, always-on encryption without manual intervention.
 
 ## The Fleet
 
-This infrastructure comprises seven distinct hosts. Here's the breakdown:
+This infrastructure comprises eight distinct hosts. Here's the breakdown:
 
 ### `framework`
 
@@ -190,6 +184,12 @@ This infrastructure comprises seven distinct hosts. Here's the breakdown:
 - **The Watchtower.** Dedicated to keeping the lights on. It hosts the **Beszel Hub**, **Prometheus**, **Loki**, **Wazuh Server**, and **Gatus** to visualize the health and security of the entire infrastructure.
 - **Hardware**: 4 vCPU cores, 4GB RAM
 - **Network:** Infra (VLAN 20)
+
+### `vm-public`
+
+- **The Public Face.** A DMZ-hosted server exposing personal projects and services to the world.
+- **Hardware**: 4 vCPU cores, 2GB RAM
+- **Network:** DMZ (VLAN 88)
 
 ### `vm-cyber`
 

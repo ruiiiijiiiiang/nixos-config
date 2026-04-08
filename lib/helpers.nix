@@ -77,6 +77,8 @@ rec {
         immich = config.custom.services.apps.media.immich.enable;
         jellyfin = config.custom.services.apps.media.jellyfin.enable;
         karakeep = config.custom.services.apps.tools.karakeep.enable;
+        krawl = config.custom.services.security.krawl.enable;
+        librechat = config.custom.services.apps.tools.librechat.enable;
         memos = config.custom.services.apps.office.memos.enable;
         magicmirror = config.custom.services.apps.web.magicmirror.enable;
         microbin = config.custom.services.apps.tools.microbin.enable;

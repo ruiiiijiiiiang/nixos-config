@@ -41,9 +41,7 @@ in
 
     services = {
       apps = {
-        tools = {
-          microbin.enable = true;
-        };
+        tools.microbin.enable = true;
         web = {
           searxng.enable = true;
           website.enable = true;
@@ -75,6 +73,7 @@ in
 
       security = {
         fail2ban.enable = true;
+        krawl.enable = true;
         wazuh.agent = {
           enable = true;
           serverAddress = getHostAddress "vm-monitor";

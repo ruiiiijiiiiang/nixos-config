@@ -75,28 +75,35 @@ in
               "Development" = {
                 style = "row";
                 columns = 6;
-                tab = "System";
+                tab = "Homelab";
               };
             }
             {
               "Downloads" = {
                 style = "row";
                 columns = 6;
-                tab = "System";
+                tab = "Homelab";
               };
             }
             {
               "Networking" = {
                 style = "row";
                 columns = 6;
-                tab = "System";
+                tab = "Homelab";
               };
             }
             {
               "System" = {
                 style = "row";
                 columns = 6;
-                tab = "System";
+                tab = "Homelab";
+              };
+            }
+            {
+              "Security" = {
+                style = "row";
+                columns = 6;
+                tab = "Homelab";
               };
             }
           ];
@@ -275,7 +282,7 @@ in
                 "Home Assistant" = {
                   icon = "home-assistant";
                   href = "https://${subdomains.pi.homeassistant}.${domain}";
-                  description = "Home Automation System";
+                  description = "Home Automation";
                   siteMonitor = "https://${subdomains.pi.homeassistant}.${domain}";
                 };
               }
@@ -293,6 +300,14 @@ in
                   href = "https://${subdomains.vm-app.karakeep}.${domain}";
                   description = "Bookmark";
                   siteMonitor = "https://${subdomains.vm-app.karakeep}.${domain}";
+                };
+              }
+              {
+                "Librechat" = {
+                  icon = "librechat";
+                  href = "https://${subdomains.vm-app.librechat}.${domain}";
+                  description = "Chatbot";
+                  siteMonitor = "https://${subdomains.vm-app.librechat}.${domain}";
                 };
               }
               {
@@ -416,14 +431,6 @@ in
                 };
               }
               {
-                "Wazuh" = {
-                  icon = "wazuh";
-                  href = "https://${subdomains.vm-monitor.wazuh}.${domain}";
-                  description = "Security Monitoring";
-                  siteMonitor = "https://${subdomains.vm-monitor.wazuh}.${domain}";
-                };
-              }
-              {
                 "Syncthing" = {
                   icon = "syncthing";
                   href = "https://${subdomains.vm-app.syncthing}.${domain}";
@@ -437,6 +444,26 @@ in
                   href = "https://${subdomains.pi.zwave}.${domain}";
                   description = "Zwave Device Manager";
                   siteMonitor = "https://${subdomains.pi.zwave}.${domain}";
+                };
+              }
+            ];
+          }
+          {
+            "Security" = [
+              {
+                "Wazuh" = {
+                  icon = "wazuh";
+                  href = "https://${subdomains.vm-monitor.wazuh}.${domain}";
+                  description = "Security Monitoring";
+                  siteMonitor = "https://${subdomains.vm-monitor.wazuh}.${domain}";
+                };
+              }
+              {
+                "Krawl" = {
+                  icon = "https://raw.githubusercontent.com/BlessedRebuS/Krawl/refs/heads/main/img/krawl-svg.svg";
+                  href = "https://${subdomains.vm-public.krawl}.${domain}/krawl-honeypot-dashboard";
+                  description = "Honeypot Dashboard";
+                  siteMonitor = "https://${subdomains.vm-public.krawl}.${domain}/krawl-honeypot-dashboard";
                 };
               }
             ];

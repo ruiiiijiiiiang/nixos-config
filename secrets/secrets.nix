@@ -14,14 +14,15 @@ in
     armor = true;
   };
   "cloudflare-token.age" = {
-    publicKeys = ssh.hypervisor ++ ssh.pi ++ ssh.vm-network ++ ssh.vm-app ++ ssh.vm-monitor ++ ssh.vm-public;
+    publicKeys =
+      ssh.hypervisor ++ ssh.pi ++ ssh.vm-network ++ ssh.vm-app ++ ssh.vm-monitor ++ ssh.vm-public;
     armor = true;
   };
   "cloudflare-dns-token.age" = {
     publicKeys = ssh.vm-network;
     armor = true;
   };
-  "cloudflare-tunnel-token.age" = {
+  "cloudflared-tunnel-token.age" = {
     publicKeys = ssh.vm-network;
     armor = true;
   };
@@ -51,6 +52,14 @@ in
   };
   "karakeep-env.age" = {
     publicKeys = ssh.vm-app;
+    armor = true;
+  };
+  "librechat-env.age" = {
+    publicKeys = ssh.vm-app;
+    armor = true;
+  };
+  "krawl-env.age" = {
+    publicKeys = ssh.vm-public;
     armor = true;
   };
   "nextcloud-pass.age" = {
