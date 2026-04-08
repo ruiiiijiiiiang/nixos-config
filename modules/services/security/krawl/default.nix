@@ -33,7 +33,6 @@ in
         image = "ghcr.io/blessedrebus/krawl:latest";
         ports = [ "${addresses.localhost}:${toString ports.krawl}:5000" ];
         volumes = [ "/var/lib/krawl:/app/data" ];
-        user = "${toString oci-uids.krawl}:${toString oci-uids.krawl}";
         environment = {
           KRAWL_DASHBOARD_SECRET_PATH = "/krawl-honeypot-dashboard";
         };

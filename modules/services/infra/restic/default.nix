@@ -52,9 +52,8 @@ in
       ++ cfg.extraPaths;
 
       exclude = [
-        "/var/lib/containers/storage/overlay"
-        "/var/lib/containers/storage/volumes/backingFsBlockDev"
-        "/var/lib/systemd/coredump"
+        "/var/lib/containers"
+        "/var/lib/systemd"
         "/var/lib/machines"
         "**/.cache"
       ];

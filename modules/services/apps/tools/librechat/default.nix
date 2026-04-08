@@ -30,18 +30,24 @@ in
       # POSTGRES_PASSWORD
       # MEILI_MASTER_KEY
       # GEMINI_API_KEY
+      # JWT_SECRET
+      # JWT_REFRESH_SECRET
     };
 
     virtualisation.oci-containers.containers = {
       librechat-mongodb = {
-        image = "mongo:8.0.20";
+        image = "docker.io/library/mongo:7.0.31";
         user = "${toString oci-uids.librechat}:${toString oci-uids.librechat}";
+        ports = [ "${addresses.localhost}:${toString ports.librechat}:${toString ports.librechat}" ];
         volumes = [ "/var/lib/librechat/mongodb:/data/db" ];
-        cmd = [ "mongod --noauth" ];
+        cmd = [
+          "mongod"
+          "--noauth"
+        ];
       };
 
       librechat-vectordb = {
-        image = "pgvector/pgvector:0.8.0-pg15-trixie";
+        image = "docker.io/pgvector/pgvector:0.8.0-pg15-trixie";
         dependsOn = [ "librechat-mongodb" ];
         networks = [ "container:librechat-mongodb" ];
         volumes = [ "/var/lib/librechat/vectordb:/var/lib/postgresql/data" ];
@@ -53,10 +59,16 @@ in
         user = "${toString oci-uids.librechat}:${toString oci-uids.librechat}";
         dependsOn = [ "librechat-mongodb" ];
         networks = [ "container:librechat-mongodb" ];
+        volumes = [
+          "/var/lib/librechat/images:/app/client/public/images"
+          "/var/lib/librechat/uploads:/app/uploads"
+          "/var/lib/librechat/logs:/app/logs"
+        ];
         environment = {
           DB_HOST = addresses.localhost;
           RAG_PORT = "8000";
         };
+        environmentFiles = [ config.age.secrets.librechat-env.path ];
         labels = {
           "io.containers.autoupdate" = "registry";
         };
@@ -82,7 +94,6 @@ in
       librechat-api = {
         image = "registry.librechat.ai/danny-avila/librechat-dev:latest";
         user = "${toString oci-uids.librechat}:${toString oci-uids.librechat}";
-        ports = [ "${addresses.localhost}:${toString ports.librechat}:${toString ports.librechat}" ];
         dependsOn = [ "librechat-mongodb" ];
         networks = [ "container:librechat-mongodb" ];
         volumes = [
@@ -127,4 +138,3 @@ in
     };
   };
 }
-

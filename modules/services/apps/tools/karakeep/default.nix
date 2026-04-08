@@ -55,7 +55,7 @@ in
       };
 
       karakeep-chrome = {
-        image = "gcr.io/zenika-hub/alpine-chrome:124";
+        image = "gcr.io/zenika-hub/alpine-chrome:latest";
         user = "${toString oci-uids.karakeep}:${toString oci-uids.karakeep}";
         dependsOn = [ "karakeep-server" ];
         networks = [ "container:karakeep-server" ];
@@ -67,6 +67,9 @@ in
           "--remote-debugging-port=9222"
           "--hide-scrollbars"
         ];
+        labels = {
+          "io.containers.autoupdate" = "registry";
+        };
       };
 
       karakeep-meilisearch = {
