@@ -32,8 +32,8 @@ let
 
   libvirt-exporter-dashboard = pkgs.fetchurl {
     name = "libvirt-exporter.json";
-    url = "https://grafana.com/api/dashboards/19639/revisions/5/download";
-    sha256 = "0lflkv9df30jrqyrp7jfkhxnf5jdfziin2vlv3a2k1lxx9m8qq16";
+    url = "https://grafana.com/api/dashboards/23230/revisions/1/download";
+    sha256 = "17c085bw3v43l32vm1bxblk7b68ysvyiqxli9s9hxp8hv1p1qq2a";
   };
 
   nginx-exporter-dashboard = pkgs.fetchurl {

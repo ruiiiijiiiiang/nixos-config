@@ -70,6 +70,7 @@ in
         libvirt = lib.mkIf cfg.libvirt.enable {
           enable = true;
           port = ports.prometheus.exporters.libvirt;
+          libvirtUri = "qemu:///system?socket=/run/libvirt/libvirt-sock-ro";
         };
 
         nginx = lib.mkIf cfg.nginx.enable {
@@ -108,10 +109,6 @@ in
         listen_port = toString ports.prometheus.exporters.crowdsec;
       };
     };
-
-    systemd.services.prometheus-libvirt-exporter.serviceConfig.SupplementaryGroups =
-      lib.mkIf cfg.libvirt.enable
-        [ "libvirtd" ];
 
     virtualisation.oci-containers.containers.podman-exporter = lib.mkIf cfg.podman.enable {
       image = "quay.io/navidys/prometheus-podman-exporter:latest";

@@ -12,6 +12,7 @@ let
     subdomains
     ports
     oci-uids
+    endpoints
     ;
   inherit (helpers) mkOciUser mkVirtualHost mkNotifyService;
   cfg = config.custom.services.apps.tools.librechat;
@@ -32,6 +33,8 @@ in
       # GEMINI_API_KEY
       # JWT_SECRET
       # JWT_REFRESH_SECRET
+      # OPENID_CLIENT_ID
+      # OPENID_CLIENT_SECRET
     };
 
     virtualisation.oci-containers.containers = {
@@ -104,10 +107,27 @@ in
         environment = {
           HOST = addresses.any;
           PORT = toString ports.librechat;
+          NO_INDEX = "true";
+          SEARCH = "true";
+
           MONGO_URI = "mongodb://${addresses.localhost}:27017/LibreChat";
           MEILI_HOST = "http://${addresses.localhost}:7700";
           RAG_PORT = "8000";
           RAG_API_URL = "http://${addresses.localhost}:8000";
+
+          DOMAIN_CLIENT = "https://${fqdn}";
+          DOMAIN_SERVER = "https://${fqdn}";
+
+          ALLOW_EMAIL_LOGIN = "true";
+          ALLOW_REGISTRATION = "true";
+          ALLOW_SOCIAL_LOGIN = "true";
+
+          OPENID_BUTTON_LABEL = "Pocket ID";
+          OPENID_ISSUER = "https://${endpoints.oidc-issuer}";
+          OPENID_SCOPE = "openid profile email";
+          OPENID_CALLBACK_URL = "/oauth/openid/callback";
+
+          GOOGLE_MODELS = "gemini-3.1-pro-preview,gemini-3.1-pro-preview-customtools,gemini-3.1-flash-lite-preview,gemini-3-flash-preview,gemini-2.5-pro,gemini-2.5-flash,gemini-2.5-flash-lite";
         };
         environmentFiles = [ config.age.secrets.librechat-env.path ];
         labels = {

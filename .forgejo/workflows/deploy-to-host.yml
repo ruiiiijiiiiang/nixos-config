@@ -13,6 +13,7 @@ on:
           - vm-cyber
           - vm-monitor
           - vm-network
+          - vm-public
 
 jobs:
   deploy:
@@ -39,6 +40,9 @@ jobs:
               ;;
             "vm-network")
               echo "TARGET_IP=192.168.20.1" >> $GITHUB_ENV
+              ;;
+            "vm-public")
+              echo "TARGET_IP=192.168.88.2" >> $GITHUB_ENV
               ;;
             *)
               echo "Unknown host selected"

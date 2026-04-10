@@ -38,9 +38,9 @@ in
         PORT = toString ports.termix;
         PUID = toString oci-uids.termix;
         PGID = toString oci-uids.termix;
-        OIDC_ISSUER_URL = endpoints.oidc-issuer;
-        OIDC_AUTHORIZATION_URL = "${endpoints.oidc-issuer}/authorize";
-        OIDC_TOKEN_URL = "${endpoints.oidc-issuer}/api/oidc/token";
+        OIDC_ISSUER_URL = "https://${endpoints.oidc-issuer}";
+        OIDC_AUTHORIZATION_URL = "https://${endpoints.oidc-issuer}/authorize";
+        OIDC_TOKEN_URL = "https://${endpoints.oidc-issuer}/api/oidc/token";
         OIDC_NAME_PATH = "preferred_username";
       };
       labels = {
