@@ -234,7 +234,7 @@ rec {
     };
     searxng = 8092;
     spice = {
-      vm-cyber = 5903;
+      vm-cyber = 5988;
     };
     stirlingpdf = 8080;
     syncthing = 8384;
@@ -295,8 +295,8 @@ rec {
       vm-app = "532ea825-4ca3-46a2-b15d-ba8af70ba733";
       vm-monitor = "26a3e5f9-5c4a-4956-8ee4-b680f507d3cc";
       vm-network = "2b7de5db-e0e6-4f81-b5f4-4efc928ee475";
-      vm-cyber = "008d571b-aa7c-4050-96d8-7185f5ea2a95";
       vm-public = "ec5663c9-bac8-4d69-b120-b2b63a456a67";
+      vm-cyber = "008d571b-aa7c-4050-96d8-7185f5ea2a95";
     };
 
     gpu = {
@@ -380,13 +380,13 @@ rec {
     vm-app = {
       podman-update = "03:10";
       restic-backup = "04:00";
-      container-db-backup = "05:00";
-      nix-build = "05:10";
+      container-db-backup = "03:30";
+      nix-build = "05:30";
     };
     vm-monitor = {
       podman-update = "03:30";
       restic-backup = "06:45";
-      container-db-backup = "07:00";
+      container-db-backup = "03:45";
     };
     vm-public = {
       podman-update = "03:35";

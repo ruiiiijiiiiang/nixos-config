@@ -14,8 +14,8 @@ let
     "vm-network"
     "vm-app"
     "vm-monitor"
-    "vm-cyber"
     "vm-public"
+    "vm-cyber"
   ];
   backupPath = "/mnt/external/usb-hdd-1/${hostName}/backup";
 in

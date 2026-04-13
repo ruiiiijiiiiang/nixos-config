@@ -37,6 +37,12 @@ let
       git
     ];
     text = /* bash */ ''
+      CPT_DEB="${home}/Sync/CiscoPacketTracer_900_Ubuntu_64bit.deb"
+      if [ -f "$CPT_DEB" ]; then
+        echo "Ensuring Cisco Packet Tracer is in store..."
+        nix-store --add-fixed sha256 "$CPT_DEB" > /dev/null
+      fi
+
       nix flake update --no-warn-dirty --refresh
 
       for host in ${toString hosts}; do

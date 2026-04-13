@@ -7,11 +7,22 @@
   ...
 }:
 let
-  inherit (consts) domain subdomains ports;
+  inherit (consts)
+    addresses
+    domain
+    subdomains
+    ports
+    ;
   inherit (helpers) mkVirtualHost getEnabledServices;
   inherit (inputs.self) nixosConfigurations;
   cfg = config.custom.services.observability.gatus;
   fqdn = "${subdomains.${config.networking.hostName}.gatus}.${domain}";
+
+  interval = "1m";
+  conditions = [ "[STATUS] == 200" ];
+  extraPaths = {
+    krawl = "/krawl-honeypot-dashboard";
+  };
 
   mkGatusEndpoints =
     { inputs, hostName }:
@@ -21,17 +32,26 @@ let
     in
     lib.mapAttrsToList (service: subdomain: {
       name = service;
-      url = "https://${subdomain}.${domain}";
+      url = "https://${subdomain}.${domain}${extraPaths.${service} or ""}";
       group = hostName;
-      interval = "1m";
-      conditions = [ "[STATUS] == 200" ];
+      inherit interval conditions;
     }) enabledServices;
+
+  manualGatusEndpoints = [
+    {
+      name = "legacy pihole";
+      url = "https://${addresses.infra.hosts.pi-legacy}/admin";
+      group = "pi-legacy";
+      inherit interval conditions;
+    }
+  ];
 
   endpoints = lib.concatMap (
     hostName:
     mkGatusEndpoints {
       inherit inputs hostName;
     }
+    ++ manualGatusEndpoints
   ) (lib.attrNames nixosConfigurations);
 in
 {

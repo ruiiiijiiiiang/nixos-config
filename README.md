@@ -91,7 +91,7 @@ This infrastructure is engineered following a rigorous **Domain-Driven Design** 
 | +---------------------+ |    | +---------------------------------+ |    | +-------------------------+ |
 | | [framework]         | |    | | [hypervisor] (libvirt host)     | |    | | [vm-public] (libvirt VM)| |
 | | (Laptop)            | |    | | AMD 6900HX, 32GB DDR5 RAM       | |    | | 4 vCPU, 2GB RAM         | |
-| +---------------------+ |    | | Hosts: All virtual machines     | |    | | Hosts: Personal website | |
+| +---------------------+ |    | | Hosts: All virtual machines     | |    | | Hosts: Public endpoints | |
 |                         |    | +---------------------------------+ |    | +-------------------------+ |
 | (Other clients...)      |    | +---------------------------------+ |    | +-------------------------+ |
 |                         |    | | [vm-app] (libvirt VM)           | |    | | [vm-cyber] (libvirt VM) | |

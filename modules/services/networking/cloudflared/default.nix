@@ -16,15 +16,17 @@ let
     "krawl"
   ];
 
-  mkIngress = subdomain: {
+  mkIngress = fqdn: {
     service = "https://${getHostAddress "vm-public"}:443";
     originRequest = {
-      originServerName = "${subdomain}.${domain}";
+      originServerName = fqdn;
       noTLSVerify = true;
     };
   };
 
-  ingressRules = lib.genAttrs tunneledSubdomains mkIngress;
+  ingressRules = lib.genAttrs (map (
+    subdomain: "${subdomain}.${domain}"
+  ) tunneledSubdomains) mkIngress;
 in
 {
   options.custom.services.networking.cloudflared = with lib; {
