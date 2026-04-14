@@ -31,7 +31,7 @@ let
     ncdu
     dust
     dysk
-    inputs.noxdir.packages.${stdenv.hostPlatform.system}.default
+    noxdir
     unzip
     unrar
     ouch
@@ -125,6 +125,7 @@ let
 
     nix-tree
     nix-inspect
+    comma
   ];
 
   cyberPackages = with pkgs; [

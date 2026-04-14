@@ -31,8 +31,6 @@ in
       # POSTGIS_USER
       # POSTGIS_DB
       # POSTGIS_PASSWORD
-      # RABBITMQ_DEFAULT_USER
-      # RABBITMQ_DEFAULT_PASS
       # OIDC_CLIENT_ID
       # OIDC_CLIENT_SECRET
     };
@@ -45,17 +43,6 @@ in
         volumes = [ "/var/lib/reitti/postgis:/var/lib/postgresql/data" ];
       };
 
-      reitti-rabbitmq = {
-        image = "docker.io/library/rabbitmq:latest";
-        dependsOn = [ "reitti-postgis" ];
-        networks = [ "container:reitti-postgis" ];
-        environmentFiles = [ config.age.secrets.reitti-env.path ];
-        volumes = [ "reitti-rabbitmq-data:/var/lib/rabbitmq" ];
-        labels = {
-          "io.containers.autoupdate" = "registry";
-        };
-      };
-
       reitti-redis = {
         image = "docker.io/library/redis:latest";
         dependsOn = [ "reitti-postgis" ];
@@ -66,65 +53,27 @@ in
         };
       };
 
-      reitti-photon = {
-        image = "ghcr.io/rtuszik/photon-docker:latest";
+      reitti-tile-cache = {
+        image = "docker.io/dedicatedcode/reitti-tile-cache:next";
         dependsOn = [ "reitti-postgis" ];
         networks = [ "container:reitti-postgis" ];
         environment = {
-          UPDATE_STRATEGY = "PARALLEL";
-          REGION = "us";
+          APP_UID = toString oci-uids.reitti;
+          APP_GID = toString oci-uids.reitti;
         };
-        volumes = [ "reitti-photon-data:/photon/data" ];
-        labels = {
-          "io.containers.autoupdate" = "registry";
-        };
-      };
-
-      reitti-tile-cache = {
-        image = "docker.io/library/nginx:alpine";
-        dependsOn = [ "reitti-postgis" ];
-        networks = [ "container:reitti-postgis" ];
-        cmd = [
-          "sh"
-          "-c"
-          /* bash */ ''
-            mkdir -p /var/cache/nginx/tiles
-            cat > /etc/nginx/nginx.conf << 'EOF'
-            events {
-              worker_connections 1024;
-            }
-            http {
-              proxy_cache_path /var/cache/nginx/tiles levels=1:2 keys_zone=tiles:10m max_size=1g inactive=30d use_temp_path=off;
-              server {
-                listen 80;
-                location / {
-                  proxy_pass https://tile.openstreetmap.org/;
-                  proxy_set_header Host tile.openstreetmap.org;
-                  proxy_set_header User-Agent "Reitti/1.0";
-                  proxy_cache tiles;
-                  proxy_cache_valid 200 30d;
-                  proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
-                }
-              }
-            }
-            EOF
-            nginx -g 'daemon off;'
-          ''
-        ];
+        volumes = [ "reitti-tile-cache-data:/var/cache/nginx" ];
         labels = {
           "io.containers.autoupdate" = "registry";
         };
       };
 
       reitti-server = {
-        image = "docker.io/dedicatedcode/reitti:latest";
+        image = "docker.io/dedicatedcode/reitti:next";
         dependsOn = [ "reitti-postgis" ];
         networks = [ "container:reitti-postgis" ];
         environment = {
           SERVER_PORT = toString ports.reitti;
-          PHOTON_BASE_URL = "http://${addresses.localhost}:2322";
           POSTGIS_HOST = addresses.localhost;
-          RABBITMQ_HOST = addresses.localhost;
           REDIS_HOST = addresses.localhost;
           TILES_CACHE = "http://${addresses.localhost}";
           OIDC_ENABLED = "true";

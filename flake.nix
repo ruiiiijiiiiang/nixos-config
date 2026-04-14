@@ -36,7 +36,6 @@
     zen-browser.url = "github:0xc000022070/zen-browser-flake";
     file_clipper.url = "github:ruiiiijiiiiang/file_clipper";
     lazynmap.url = "github:ruiiiijiiiiang/lazynmap";
-    noxdir.url = "github:crumbyte/noxdir";
     witr.url = "github:pranshuparmar/witr";
     dotfiles.url = "github:ruiiiijiiiiang/dotfiles";
   };
