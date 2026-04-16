@@ -187,26 +187,32 @@ in
           {
             url = "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/multi.txt";
             description = "HaGeZi normal";
+            type = "block";
           }
           {
             url = "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts";
             description = "Steven Black";
+            type = "block";
           }
           {
             url = "https://v.firebog.net/hosts/AdguardDNS.txt";
             description = "AdguardDNS";
+            type = "block";
           }
           {
             url = "https://v.firebog.net/hosts/Easyprivacy.txt";
             description = "Easyprivacy";
+            type = "block";
           }
           {
             url = "https://v.firebog.net/hosts/Admiral.txt";
             description = "Admiral";
+            type = "block";
           }
           {
             url = "https://adaway.org/hosts.txt";
             description = "adaway";
+            type = "block";
           }
         ];
       };

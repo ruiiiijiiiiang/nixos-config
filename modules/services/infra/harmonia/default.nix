@@ -89,6 +89,11 @@ in
       };
     };
 
+    nix.settings = {
+      keep-derivations = true;
+      keep-outputs = true;
+    };
+
     systemd = {
       tmpfiles.rules = [
         "d ${gcRootStr} 0755 ${toString oci-uids.user} ${toString oci-uids.user} - -"

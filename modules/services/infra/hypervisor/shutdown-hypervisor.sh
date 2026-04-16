@@ -46,7 +46,7 @@ EOF
   esac
 done
 
-mapfile -t guests < "$GUEST_LIST_FILE"
+mapfile -t guests < <(tac "$GUEST_LIST_FILE")
 
 for guest in "${guests[@]}"; do
   if ! virsh dominfo "$guest" >/dev/null 2>&1; then
