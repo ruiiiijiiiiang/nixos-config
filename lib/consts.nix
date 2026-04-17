@@ -50,6 +50,7 @@ rec {
       stirlingpdf = "pdf";
       syncthing = "syncthing";
       vaultwarden = "vault";
+      changedetection = "watch";
       yourls = "url";
     };
     vm-monitor = {
@@ -157,6 +158,7 @@ rec {
     atuin = 8888;
     bentopdf = 8080;
     bytestash = 5000;
+    changedetection = 5003;
     cockpit = 9091;
     crowdsec = {
       lapi = 8093;
@@ -283,6 +285,7 @@ rec {
     termix = 918;
     ovumcy = 919;
     krawl = 920;
+    changedetection = 921;
     user = 1000;
     nobody = 65534;
 

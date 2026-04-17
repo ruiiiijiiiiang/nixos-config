@@ -334,6 +334,14 @@ in
                   siteMonitor = "https://${subdomains.vm-app.ovumcy}.${domain}";
                 };
               }
+              {
+                "ChangeDetection" = {
+                  icon = "changedetection";
+                  href = "https://${subdomains.vm-app.changedetection}.${domain}";
+                  description = "Website Change Monitoring";
+                  siteMonitor = "https://${subdomains.vm-app.changedetection}.${domain}";
+                };
+              }
             ];
           }
           {

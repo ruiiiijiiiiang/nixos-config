@@ -46,13 +46,14 @@ let
     }
   ];
 
-  endpoints = lib.concatMap (
-    hostName:
-    mkGatusEndpoints {
-      inherit inputs hostName;
-    }
-    ++ manualGatusEndpoints
-  ) (lib.attrNames nixosConfigurations);
+  endpoints =
+    (lib.concatMap (
+      hostName:
+      mkGatusEndpoints {
+        inherit inputs hostName;
+      }
+    ) (lib.attrNames nixosConfigurations))
+    ++ manualGatusEndpoints;
 in
 {
   options.custom.services.observability.gatus = with lib; {

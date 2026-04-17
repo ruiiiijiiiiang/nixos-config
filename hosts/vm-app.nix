@@ -84,6 +84,7 @@ in
             inherit mediaPath;
           };
           atuin.enable = true;
+          changedetection.enable = true;
           karakeep.enable = true;
           librechat.enable = true;
           ovumcy.enable = true;
