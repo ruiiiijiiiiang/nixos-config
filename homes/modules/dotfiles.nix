@@ -113,6 +113,10 @@ let
         ];
       }
       {
+        name = "rs-top";
+        paths = [ ".config/rs-top.toml" ];
+      }
+      {
         name = "zed";
         paths = [ ".config/zed/settings.json" ];
       }

@@ -203,7 +203,7 @@ This infrastructure comprises eight distinct hosts. Here's the breakdown:
 Every server host (`pi`, `vm-network`, `vm-app`, `vm-monitor`) comes equipped with a standard observability and security sidecar:
 
 - **Prometheus Exporters:** Granular telemetry for Nginx, Node, Podman, etc.
-- **Promtail:** Grafana Loki agent for collecting `systemd-journal` logs.
+- **Alloy:** Grafana Loki agent for collecting `systemd-journal` logs.
 - **Beszel Agent:** Custom monitoring agent for real-time insights and control.
 - **Dockhand Agent (Hawser):** Lightweight container agent for OCI container monitoring and management.
 - **Wazuh Agent:** Enterprise-grade security monitoring and intrusion detection.

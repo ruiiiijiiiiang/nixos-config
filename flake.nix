@@ -34,9 +34,10 @@
     };
     nix-flatpak.url = "github:gmodena/nix-flatpak";
     zen-browser.url = "github:0xc000022070/zen-browser-flake";
-    file_clipper.url = "github:ruiiiijiiiiang/file_clipper";
-    lazynmap.url = "github:ruiiiijiiiiang/lazynmap";
     witr.url = "github:pranshuparmar/witr";
+    file_clipper.url = "github:ruiiiijiiiiang/file_clipper";
+    rs-top.url = "github:ruiiiijiiiiang/rs-top";
+    lazynmap.url = "github:ruiiiijiiiiang/lazynmap";
     dotfiles.url = "github:ruiiiijiiiiang/dotfiles";
   };
 

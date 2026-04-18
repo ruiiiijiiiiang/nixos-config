@@ -11,6 +11,7 @@ let
   cfg = config.custom.home.packages;
 
   headlessPackages = with pkgs; [
+    neovim
     inputs.file_clipper.packages.${stdenv.hostPlatform.system}.default
     inputs.witr.packages.${stdenv.hostPlatform.system}.default
   ];
@@ -47,6 +48,7 @@ let
     gnupg
     doxx
     presenterm
+    inputs.rs-top.packages.${stdenv.hostPlatform.system}.default
     inputs.lazynmap.packages.${stdenv.hostPlatform.system}.default
     inputs.agenix.packages.${stdenv.hostPlatform.system}.default
     screen
@@ -185,11 +187,6 @@ let
     lazygit.enable = true;
     lsd.enable = true;
     navi.enable = true;
-    neovim = {
-      enable = true;
-      withPython3 = false;
-      withRuby = false;
-    };
     pay-respects.enable = true;
     ssh = {
       enable = true;
