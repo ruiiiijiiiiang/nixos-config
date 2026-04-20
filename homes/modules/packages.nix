@@ -222,7 +222,10 @@ let
       enable = true;
       package = pkgs.ungoogled-chromium;
     };
-    direnv.enable = true;
+    direnv = {
+      enable = true;
+      nix-direnv.enable = true;
+    };
     gh.enable = true;
     htop.enable = true;
     jq.enable = true;

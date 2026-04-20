@@ -31,24 +31,24 @@ This infrastructure is engineered following a rigorous **Domain-Driven Design** 
 ### Physical Topology
 
 ```ascii
-             +-----------+
-             | ISP Modem |
-             +-----------+
-                   |
-                 (WAN)
-                   |
-              +---------+
-              | Mini PC |
-              +---------+
-                   |
-                 (LAN)
-                   |
-          +------------------+
-          | Unmanaged Switch |
-          +------------------+
-           /                \
-          /                  \
-         /                    \
+              +-----------+
+              | ISP Modem |
+              +-----------+
+                    |
+                  (WAN)
+                    |
+               +---------+
+               | Mini PC |
+               +---------+
+                    |
+                  (LAN)
+                    |
+           +------------------+
+           | Unmanaged Switch |
+           +------------------+
+                    |
+          +---------+-----------+
+          |                     |
   +--------------+  +-----------------------+
   | Raspberry Pi |  | Wireless Access Point |
   +--------------+  +-----------------------+
