@@ -8,7 +8,6 @@
 }:
 let
   inherit (consts)
-    addresses
     domain
     subdomains
     ports
@@ -37,23 +36,12 @@ let
       inherit interval conditions;
     }) enabledServices;
 
-  manualGatusEndpoints = [
-    {
-      name = "legacy pihole";
-      url = "https://${addresses.infra.hosts.pi-legacy}/admin";
-      group = "pi-legacy";
-      inherit interval conditions;
+  endpoints = lib.concatMap (
+    hostName:
+    mkGatusEndpoints {
+      inherit inputs hostName;
     }
-  ];
-
-  endpoints =
-    (lib.concatMap (
-      hostName:
-      mkGatusEndpoints {
-        inherit inputs hostName;
-      }
-    ) (lib.attrNames nixosConfigurations))
-    ++ manualGatusEndpoints;
+  ) (lib.attrNames nixosConfigurations);
 in
 {
   options.custom.services.observability.gatus = with lib; {

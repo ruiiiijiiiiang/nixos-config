@@ -61,8 +61,8 @@ in
         cyber = {
           networking.enable = true;
           packages.enable = true;
-          services.enable = true;
           security.enable = true;
+          services.enable = true;
         };
       };
     };

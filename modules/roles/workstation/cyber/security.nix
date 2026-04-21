@@ -6,7 +6,7 @@
 }:
 let
   inherit (consts) username;
-  cfg = config.custom.roles.workstation.cyber.services;
+  cfg = config.custom.roles.workstation.cyber.security;
 in
 {
   options.custom.roles.workstation.cyber.security = with lib; {

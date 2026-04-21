@@ -3,15 +3,16 @@
   consts,
   lib,
   helpers,
+  inputs,
+  pkgs,
   ...
 }:
 let
   inherit (consts)
-    addresses
     domain
     subdomains
     ports
-    oci-uids
+    username
     ;
   inherit (helpers) mkVirtualHost;
   cfg = config.custom.services.apps.web.website;
@@ -23,18 +24,42 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    virtualisation.oci-containers.containers.website = {
-      image = "git.ruijiang.me/rui/website:latest";
-      user = "${toString oci-uids.user}:${toString oci-uids.user}";
-      ports = [ "${addresses.localhost}:${toString ports.website}:${toString ports.website}" ];
-      volumes = [ "/var/lib/blog:/app/blog:ro" ];
-      labels = {
-        "io.containers.autoupdate" = "registry";
+    systemd.services.website = {
+      description = "Website service";
+      after = [ "network.target" ];
+      wantedBy = [ "multi-user.target" ];
+      preStart = ''
+        rm -rf /var/lib/website/public
+        mkdir -p /var/lib/website/public
+
+        cp -f --no-preserve=mode ${
+          inputs.website.packages.${pkgs.stdenv.hostPlatform.system}.default
+        }/app/server /var/lib/website/server
+        cp -f --no-preserve=mode ${
+          inputs.website.packages.${pkgs.stdenv.hostPlatform.system}.default
+        }/app/sitemap /var/lib/website/sitemap
+        cp -rf --no-preserve=mode ${
+          inputs.website.packages.${pkgs.stdenv.hostPlatform.system}.default
+        }/app/public/. /var/lib/website/public/
+
+        chmod +x /var/lib/website/server /var/lib/website/sitemap
+        chmod -R u+w /var/lib/website
+
+        /var/lib/website/sitemap
+      '';
+      serviceConfig = {
+        ExecStart = "/var/lib/website/server";
+        User = username;
+        Restart = "always";
+        Environment = [
+          "PORT=${toString ports.website}"
+        ];
+        WorkingDirectory = "/var/lib/website";
       };
     };
 
     systemd.tmpfiles.rules = [
-      "d /var/lib/blog 0775 root wheel -"
+      "d /var/lib/website 0775 ${username} wheel -"
     ];
 
     services.nginx.virtualHosts."${fqdn}" = mkVirtualHost {
