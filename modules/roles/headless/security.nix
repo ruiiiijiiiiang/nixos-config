@@ -1,4 +1,9 @@
-{ lib, config, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
 let
   cfg = config.custom.roles.headless.security;
 in
@@ -32,6 +37,12 @@ in
     };
 
     security = {
+      protectKernelImage = true;
+      apparmor = {
+        enable = true;
+        packages = with pkgs; [ apparmor-profiles ];
+      };
+
       pam.loginLimits = [
         {
           domain = "*";

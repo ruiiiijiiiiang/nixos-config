@@ -1,7 +1,5 @@
 {
   inputs,
-  lib,
-  pkgs,
   ...
 }:
 {
@@ -9,14 +7,6 @@
     inputs.agenix.nixosModules.default
   ];
   age.identityPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
-
-  security = {
-    protectKernelImage = true;
-    apparmor = {
-      enable = lib.mkDefault true;
-      packages = with pkgs; [ apparmor-profiles ];
-    };
-  };
 
   services = {
     xserver.xkb = {

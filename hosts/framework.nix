@@ -21,6 +21,7 @@ in
     platforms.framework = {
       disks.enable = true;
       kernel.enable = true;
+      services.enable = true;
     };
 
     roles.workstation = {

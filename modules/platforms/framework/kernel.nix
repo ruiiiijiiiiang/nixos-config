@@ -2,7 +2,6 @@
   config,
   lib,
   modulesPath,
-  pkgs,
   ...
 }:
 let
@@ -57,31 +56,6 @@ in
     hardware = {
       cpu.amd.updateMicrocode = true;
       bluetooth.enable = true;
-    };
-
-    services = {
-      fwupd.enable = true;
-
-      fprintd = {
-        enable = true;
-        tod = {
-          enable = true;
-          driver = pkgs.libfprint-2-tod1-goodix;
-        };
-      };
-
-      power-profiles-daemon.enable = true;
-      upower.enable = true;
-
-      blueman.enable = true;
-
-      pipewire = {
-        enable = true;
-        alsa.enable = true;
-        alsa.support32Bit = true;
-        pulse.enable = true;
-        jack.enable = true;
-      };
     };
   };
 }

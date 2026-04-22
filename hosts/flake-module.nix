@@ -48,6 +48,7 @@ in
       modules = [
         ../modules
         ../hosts/framework.nix
+        inputs.nixos-hardware.nixosModules.framework-13-7040-amd
         inputs.home-manager.nixosModules.home-manager
         (mkHomeManagerModule {
           dotfilesRoot = "${home}/dotfiles";
@@ -76,6 +77,7 @@ in
       modules = [
         ../modules
         ../hosts/hypervisor.nix
+        inputs.nixos-hardware.nixosModules.raspberry-pi-4
         inputs.home-manager.nixosModules.home-manager
         (mkHomeManagerModule {
           dotfilesRoot = inputs.dotfiles.lib.source;
