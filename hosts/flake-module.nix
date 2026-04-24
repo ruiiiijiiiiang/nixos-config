@@ -66,6 +66,7 @@ in
       modules = [
         ../modules
         ../hosts/pi.nix
+        inputs.nixos-hardware.nixosModules.raspberry-pi-4
       ];
     };
 
@@ -77,7 +78,6 @@ in
       modules = [
         ../modules
         ../hosts/hypervisor.nix
-        inputs.nixos-hardware.nixosModules.raspberry-pi-4
         inputs.home-manager.nixosModules.home-manager
         (mkHomeManagerModule {
           dotfilesRoot = inputs.dotfiles.lib.source;

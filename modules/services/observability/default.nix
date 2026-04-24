@@ -8,6 +8,7 @@
     ./loki
     ./monit
     ./myspeed
+    ./ntfy
     ./portainer
     ./prometheus
     ./scanopy

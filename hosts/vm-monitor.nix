@@ -70,6 +70,7 @@ in
           agent.enable = true;
         };
         myspeed.enable = true;
+        ntfy.enable = true;
         prometheus = {
           server.enable = true;
           exporters = {

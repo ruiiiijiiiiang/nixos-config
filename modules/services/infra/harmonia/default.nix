@@ -15,6 +15,7 @@ let
     ports
     oci-uids
     daily-tasks
+    endpoints
     ;
   inherit (helpers) dailyTaskToSystemd mkVirtualHost;
   cfg = config.custom.services.infra.harmonia;
@@ -33,11 +34,25 @@ let
   dailyNixBuildScript = pkgs.writeShellApplication {
     name = "daily-nix-build";
     runtimeInputs = with pkgs; [
+      curl
       nix
       git
     ];
     text = /* bash */ ''
       CPT_DEB="${home}/Sync/CiscoPacketTracer_900_Ubuntu_64bit.deb"
+      failed_hosts=()
+
+      notify_build_failures() {
+        local failed_hosts_csv="$1"
+
+        curl --fail --silent --show-error \
+          -H "Title: Nix build failures" \
+          -H "Priority: high" \
+          -H "Tags: warning,computer" \
+          -d "daily-nix-build on ${config.networking.hostName} completed with failures for: $failed_hosts_csv" \
+          "${endpoints.ntfy-server}/harmonia-alerts" > /dev/null || echo "Failed to send ntfy notification" >&2
+      }
+
       if [ -f "$CPT_DEB" ]; then
         echo "Ensuring Cisco Packet Tracer is in store..."
         nix-store --add-fixed sha256 "$CPT_DEB" > /dev/null
@@ -50,10 +65,19 @@ let
         echo "Building system closure for: $host"
         echo "=========================================="
 
-        nix build ".#nixosConfigurations.$host.config.system.build.toplevel" \
+        if ! nix build ".#nixosConfigurations.$host.config.system.build.toplevel" \
           --no-warn-dirty \
-          --out-link "${gcRootStr}/$host" || true
+          --out-link "${gcRootStr}/$host"; then
+          failed_hosts+=("$host")
+        fi
       done
+
+      if [ "''${#failed_hosts[@]}" -gt 0 ]; then
+        failed_hosts_csv=$(IFS=', '; echo "''${failed_hosts[*]}")
+
+        echo "Build failures detected for: $failed_hosts_csv" >&2
+        notify_build_failures "$failed_hosts_csv"
+      fi
     '';
   };
 in

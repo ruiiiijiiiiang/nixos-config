@@ -30,5 +30,11 @@ in
         jack.enable = true;
       };
     };
+
+    security.pam.services = {
+      login.fprintAuth = true;
+      sddm.fprintAuth = true;
+      kdewallet.fprintAuth = true;
+    };
   };
 }

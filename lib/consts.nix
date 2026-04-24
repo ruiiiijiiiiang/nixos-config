@@ -59,6 +59,7 @@ rec {
       gatus = "gatus";
       grafana = "grafana";
       myspeed = "myspeed";
+      ntfy = "ntfy";
       prometheus = "prometheus";
       scanopy = "scanopy";
       termix = "termix";
@@ -198,6 +199,7 @@ rec {
     microbin = 8088;
     monit = 2812;
     myspeed = 5216;
+    ntfy = 2586;
     nfs = 2049;
     nginx = {
       stub = 8082;
@@ -210,12 +212,9 @@ rec {
     pihole = 8008;
     pocketid = 1411;
     ovumcy = 8095;
-    portainer = {
-      server = 9000;
-      edge = 8000;
-    };
     prometheus = {
       server = 9090;
+      alertmanager = 8000;
       exporters = {
         crowdsec = 6060;
         kea = 9547;
@@ -400,5 +399,6 @@ rec {
     oidc-issuer = "${subdomains.vm-app.pocketid}.${domain}";
     private-repo = "${subdomains.vm-app.forgejo}.${domain}";
     vpn-server = "vpn.${domain}";
+    ntfy-server = "${subdomains.vm-monitor.ntfy}.${domain}";
   };
 }

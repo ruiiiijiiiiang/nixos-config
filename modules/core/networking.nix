@@ -1,6 +1,6 @@
 { consts, lib, ... }:
 let
-  inherit (consts) addresses username;
+  inherit (consts) addresses domain username;
   inherit (lib)
     foldl'
     mkDefault
@@ -21,6 +21,7 @@ let
 in
 {
   networking = {
+    inherit domain;
     firewall.enable = mkDefault true;
     nftables.enable = mkDefault true;
     extraHosts = getExtraHosts;

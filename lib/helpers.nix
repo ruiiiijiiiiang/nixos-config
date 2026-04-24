@@ -84,6 +84,7 @@ rec {
         magicmirror = config.custom.services.apps.web.magicmirror.enable;
         microbin = config.custom.services.apps.tools.microbin.enable;
         myspeed = config.custom.services.observability.myspeed.enable;
+        ntfy = config.custom.services.observability.ntfy.enable;
         nextcloud = config.custom.services.apps.office.nextcloud.enable;
         onlyoffice = config.custom.services.apps.office.opencloud.enable;
         opencloud = config.custom.services.apps.office.opencloud.enable;

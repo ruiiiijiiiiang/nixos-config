@@ -1,7 +1,6 @@
 {
   consts,
   helpers,
-  inputs,
   ...
 }:
 let
@@ -13,10 +12,6 @@ let
   vlanId = vlan-ids.infra;
 in
 {
-  imports = [
-    inputs.nixos-hardware.nixosModules.raspberry-pi-4
-  ];
-
   system.stateVersion = "25.05";
   networking.hostName = hostName;
 

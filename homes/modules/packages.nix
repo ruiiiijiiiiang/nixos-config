@@ -74,6 +74,7 @@ let
     kitty
     onlyoffice-desktopeditors
     cisco-packet-tracer_9
+    stirling-pdf-desktop
 
     easyeffects
     spicetify-cli

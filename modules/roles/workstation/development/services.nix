@@ -1,12 +1,10 @@
 {
   config,
-  consts,
   lib,
   pkgs,
   ...
 }:
 let
-  inherit (consts) username;
   cfg = config.custom.roles.workstation.development.services;
 in
 {
@@ -29,8 +27,8 @@ in
     };
 
     security.pam.services = {
-      sddm.enableKwallet = true;
-      ${username}.kwallet.enable = true;
+      sddm.kwallet.enable = true;
+      login.kwallet.enable = true;
     };
 
     system.autoUpgrade.enable = true;
