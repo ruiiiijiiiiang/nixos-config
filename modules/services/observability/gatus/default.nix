@@ -8,10 +8,10 @@
 }:
 let
   inherit (consts)
-    addresses
     domain
     subdomains
     ports
+    endpoints
     ;
   inherit (helpers) mkVirtualHost getEnabledServices;
   inherit (inputs.self) nixosConfigurations;
@@ -38,7 +38,7 @@ let
       alerts = [ { type = "ntfy"; } ];
     }) enabledServices;
 
-  endpoints = lib.concatMap (
+  gatusEndpoints = lib.concatMap (
     hostName:
     mkGatusEndpoints {
       inherit inputs hostName;
@@ -55,20 +55,14 @@ in
       gatus = {
         enable = true;
         settings = {
+          endpoints = gatusEndpoints;
           web.port = ports.gatus;
           alerting.ntfy = {
-            url = "http://${addresses.localhost}:${toString ports.ntfy}";
+            url = "https://${endpoints.ntfy-server}";
             topic = "gatus-alerts";
             priority = 4;
             click = "https://${fqdn}";
-            "default-alert" = {
-              description = "Endpoint offline for more than 5 minutes";
-              "failure-threshold" = 6;
-              "success-threshold" = 2;
-              "send-on-resolved" = true;
-            };
           };
-          inherit endpoints;
         };
       };
 
@@ -77,12 +71,5 @@ in
         port = ports.gatus;
       };
     };
-
-    assertions = [
-      {
-        assertion = config.custom.services.observability.ntfy.enable;
-        message = "Gatus ntfy alerting requires observability.ntfy to be enabled on the same host.";
-      }
-    ];
   };
 }

@@ -439,6 +439,14 @@ in
                 };
               }
               {
+                "ntfy" = {
+                  icon = "ntfy";
+                  href = "https://${subdomains.vm-monitor.ntfy}.${domain}";
+                  description = "Notification Service";
+                  siteMonitor = "https://${subdomains.vm-monitor.ntfy}.${domain}";
+                };
+              }
+              {
                 "Syncthing" = {
                   icon = "syncthing";
                   href = "https://${subdomains.vm-app.syncthing}.${domain}";

@@ -12,6 +12,7 @@ let
     domain
     subdomains
     ports
+    endpoints
     ;
   inherit (helpers)
     getHostAddress
@@ -153,14 +154,14 @@ in
           };
         };
 
-        "alertmanager-ntfy" = {
+        alertmanager-ntfy = {
           enable = true;
           settings = {
             http.addr = "${addresses.localhost}:${toString ports.prometheus.alertmanager}";
             ntfy = {
-              baseurl = "http://${addresses.localhost}:${toString ports.ntfy}";
+              baseurl = "https://${endpoints.ntfy-server}";
               notification = {
-                topic = "system-alerts";
+                topic = "prometheus-alerts";
                 priority = ''status == "firing" ? "high" : "default"'';
                 templates = {
                   title = ''{{ if eq .Status "resolved" }}Resolved: {{ end }}{{ index .Annotations "summary" }}'';

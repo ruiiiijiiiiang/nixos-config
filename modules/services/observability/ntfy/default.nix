@@ -26,9 +26,9 @@ in
       ntfy-sh = {
         enable = true;
         settings = {
-          "base-url" = "https://${fqdn}";
-          "behind-proxy" = true;
-          "listen-http" = "${addresses.localhost}:${toString ports.ntfy}";
+          base-url = "https://${fqdn}";
+          behind-proxy = true;
+          listen-http = "${addresses.localhost}:${toString ports.ntfy}";
         };
       };
 

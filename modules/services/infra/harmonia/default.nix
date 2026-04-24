@@ -50,7 +50,7 @@ let
           -H "Priority: high" \
           -H "Tags: warning,computer" \
           -d "daily-nix-build on ${config.networking.hostName} completed with failures for: $failed_hosts_csv" \
-          "${endpoints.ntfy-server}/harmonia-alerts" > /dev/null || echo "Failed to send ntfy notification" >&2
+          "https://${endpoints.ntfy-server}/harmonia-alerts" > /dev/null || echo "Failed to send ntfy notification" >&2
       }
 
       if [ -f "$CPT_DEB" ]; then
