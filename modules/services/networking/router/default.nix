@@ -14,9 +14,8 @@ let
     vlan-ids
     ;
   inherit (helpers) getHostAddress;
+  inherit (inputs.self) nixosConfigurations;
   cfg = config.custom.services.networking.router;
-
-  monitorCfg = inputs.self.nixosConfigurations.vm-monitor.config;
 
   mkSubnet =
     network:
@@ -73,10 +72,10 @@ in
       default = "dmz0";
       description = "DMZ VLAN interface name.";
     };
-    extraForwardRules = mkOption {
-      type = types.lines;
-      default = "";
-      description = "Extra nftables forward-chain rules.";
+    wgInterface = mkOption {
+      type = types.str;
+      default = "wg0";
+      description = "WireGuard interface name.";
     };
   };
 
@@ -110,7 +109,7 @@ in
 
     boot.kernel.sysctl = {
       "net.ipv4.ip_forward" = 1;
-      "net.ipv4.conf.all.forwarding" = 1;
+      "net.ipv6.conf.all.forwarding" = 1;
     };
 
     networking = {
@@ -209,7 +208,7 @@ in
 
       nftables = {
         tables.router-flow = {
-          family = "ip";
+          family = "inet";
           content = /* bash */ ''
             chain forward {
               type filter hook forward priority 0; policy drop;
@@ -221,21 +220,40 @@ in
               iifname "${cfg.infraInterface}" oifname "${cfg.podmanInterface}" accept
               iifname "${cfg.infraInterface}" oifname "${cfg.dmzInterface}" accept
 
+              ${lib.optionalString nixosConfigurations.pi.config.custom.services.apps.tools.homeassistant.enable
+                /* bash */ ''
+                  iifname "${cfg.infraInterface}" oifname "${cfg.lanInterface}" ether saddr ${hardware.macs.pi} udp dport { 5353, 5540 } accept
+                  iifname "${cfg.infraInterface}" oifname "${cfg.lanInterface}" ether saddr ${hardware.macs.pi} tcp dport 5540 accept
+                ''
+              }
+
               iifname "${cfg.dmzInterface}" oifname "${cfg.wanInterface}" accept
               iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip daddr ${addresses.infra.vip.dns} udp dport ${toString ports.dns} accept
               iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip daddr ${addresses.infra.vip.dns} tcp dport ${toString ports.dns} accept
-
               iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip daddr ${getHostAddress "vm-app"} tcp dport { ${toString ports.http}, ${toString ports.https} } accept
 
-              ${lib.optionalString monitorCfg.custom.services.observability.loki.server.enable /* bash */ ''
-                iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip daddr ${getHostAddress "vm-monitor"} tcp dport ${toString ports.loki.server} accept
-              ''}
+              ${lib.optionalString
+                nixosConfigurations.vm-monitor.config.custom.services.observability.loki.server.enable
+                /* bash */ ''
+                  iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip daddr ${getHostAddress "vm-monitor"} tcp dport ${toString ports.loki.server} accept
+                ''
+              }
 
-              ${lib.optionalString monitorCfg.custom.services.security.wazuh.server.enable /* bash */ ''
-                iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip daddr ${getHostAddress "vm-monitor"} tcp dport { ${toString ports.wazuh.agent.connection}, ${toString ports.wazuh.agent.enrollment} } accept
-              ''}
+              ${lib.optionalString
+                nixosConfigurations.vm-monitor.config.custom.services.security.wazuh.server.enable
+                /* bash */ ''
+                  iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip daddr ${getHostAddress "vm-monitor"} tcp dport { ${toString ports.wazuh.agent.connection}, ${toString ports.wazuh.agent.enrollment} } accept
+                ''
+              }
 
-              ${cfg.extraForwardRules}
+              ${lib.optionalString
+                nixosConfigurations.vm-network.config.custom.services.networking.wireguard.server.enable
+                /* bash */ ''
+                  iifname "${cfg.wgInterface}" oifname "${cfg.lanInterface}" accept
+                  iifname "${cfg.wgInterface}" oifname "${cfg.infraInterface}" accept
+                  iifname "${cfg.wgInterface}" oifname "${cfg.dmzInterface}" accept
+                ''
+              }
             }
           '';
         };

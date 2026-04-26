@@ -154,23 +154,25 @@ in
           };
         };
 
-        alertmanager-ntfy = {
-          enable = true;
-          settings = {
-            http.addr = "${addresses.localhost}:${toString ports.prometheus.alertmanager}";
-            ntfy = {
-              baseurl = "https://${endpoints.ntfy-server}";
-              notification = {
-                topic = "prometheus-alerts";
-                priority = ''status == "firing" ? "high" : "default"'';
-                templates = {
-                  title = ''{{ if eq .Status "resolved" }}Resolved: {{ end }}{{ index .Annotations "summary" }}'';
-                  description = ''{{ index .Annotations "description" }}'';
+        alertmanager-ntfy =
+          lib.mkIf nixosConfigurations.vm-monitor.config.custom.observability.ntfy.enable
+            {
+              enable = true;
+              settings = {
+                http.addr = "${addresses.localhost}:${toString ports.prometheus.alertmanager}";
+                ntfy = {
+                  baseurl = "https://${endpoints.ntfy-server}";
+                  notification = {
+                    topic = "prometheus-alerts";
+                    priority = ''status == "firing" ? "high" : "default"'';
+                    templates = {
+                      title = ''{{ if eq .Status "resolved" }}Resolved: {{ end }}{{ index .Annotations "summary" }}'';
+                      description = ''{{ index .Annotations "description" }}'';
+                    };
+                  };
                 };
               };
             };
-          };
-        };
       };
 
       nginx.virtualHosts."${fqdn}" = mkVirtualHost {

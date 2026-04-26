@@ -115,6 +115,7 @@ in
             podmanInterface
             infraInterface
             dmzInterface
+            wgInterface
             ;
         };
 
@@ -123,8 +124,6 @@ in
           inherit
             wanInterface
             lanInterface
-            infraInterface
-            dmzInterface
             wgInterface
             ;
           privateKeyFile = config.age.secrets.wireguard-server-private-key.path;

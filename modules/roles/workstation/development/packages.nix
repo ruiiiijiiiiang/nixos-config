@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 let
@@ -13,6 +14,8 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    nixpkgs.overlays = [ inputs.niri.overlays.niri ];
+
     environment.systemPackages = with pkgs; [
       iw
       nmap
@@ -38,7 +41,7 @@ in
       kdeconnect.enable = true;
       niri = {
         enable = true;
-        useNautilus = false;
+        package = pkgs.niri-unstable;
       };
       steam.enable = true;
       wireshark.enable = true;

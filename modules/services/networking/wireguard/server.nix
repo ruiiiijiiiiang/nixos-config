@@ -27,16 +27,6 @@ in
       default = null;
       description = "LAN interface name.";
     };
-    infraInterface = mkOption {
-      type = types.str;
-      default = "infra0";
-      description = "Infra VLAN interface name.";
-    };
-    dmzInterface = mkOption {
-      type = types.str;
-      default = "dmz0";
-      description = "DMZ VLAN interface name.";
-    };
     wgInterface = mkOption {
       type = types.str;
       default = "wg0";
@@ -91,8 +81,7 @@ in
         assertion =
           cfg.wanInterface != cfg.lanInterface
           && cfg.wgInterface != cfg.wanInterface
-          && cfg.wgInterface != cfg.lanInterface
-          && cfg.infraInterface != cfg.dmzInterface;
+          && cfg.wgInterface != cfg.lanInterface;
         message = "WireGuard server interface names must not overlap.";
       }
       {
@@ -131,11 +120,5 @@ in
         };
       };
     };
-
-    custom.services.networking.router.extraForwardRules = /* bash */ ''
-      iifname "${cfg.wgInterface}" oifname "${cfg.lanInterface}" accept
-      iifname "${cfg.wgInterface}" oifname "${cfg.infraInterface}" accept
-      iifname "${cfg.wgInterface}" oifname "${cfg.dmzInterface}" accept
-    '';
   };
 }

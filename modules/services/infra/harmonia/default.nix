@@ -4,6 +4,7 @@
   lib,
   pkgs,
   helpers,
+  inputs,
   ...
 }:
 let
@@ -29,7 +30,26 @@ let
     "vm-public"
     "vm-cyber"
   ];
-  gcRootStr = "/var/lib/nix-cache-roots";
+  gcRoot = "/var/lib/nix-cache-roots";
+  ntfyEnabled = inputs.self.nixosConfigurations.vm-monitor.config.custom.observability.ntfy.enable;
+
+  dailyNixBuildScriptText =
+    lib.replaceStrings
+      [
+        "@HOME@"
+        "@HOSTS@"
+        "@GC_ROOT@"
+        "@NTFY_SERVER@"
+        "@NTFY_ENABLED@"
+      ]
+      [
+        (lib.escapeShellArg home)
+        (lib.concatMapStringsSep " " lib.escapeShellArg hosts)
+        (lib.escapeShellArg gcRoot)
+        (lib.escapeShellArg endpoints.ntfy-server)
+        (lib.escapeShellArg (lib.boolToString ntfyEnabled))
+      ]
+      (lib.readFile ./daily-nix-build.sh);
 
   dailyNixBuildScript = pkgs.writeShellApplication {
     name = "daily-nix-build";
@@ -38,47 +58,7 @@ let
       nix
       git
     ];
-    text = /* bash */ ''
-      CPT_DEB="${home}/Sync/CiscoPacketTracer_900_Ubuntu_64bit.deb"
-      failed_hosts=()
-
-      notify_build_failures() {
-        local failed_hosts_csv="$1"
-
-        curl --fail --silent --show-error \
-          -H "Title: Nix build failures" \
-          -H "Priority: high" \
-          -H "Tags: warning,computer" \
-          -d "daily-nix-build on ${config.networking.hostName} completed with failures for: $failed_hosts_csv" \
-          "https://${endpoints.ntfy-server}/harmonia-alerts" > /dev/null || echo "Failed to send ntfy notification" >&2
-      }
-
-      if [ -f "$CPT_DEB" ]; then
-        echo "Ensuring Cisco Packet Tracer is in store..."
-        nix-store --add-fixed sha256 "$CPT_DEB" > /dev/null
-      fi
-
-      nix flake update --no-warn-dirty --refresh
-
-      for host in ${toString hosts}; do
-        echo "=========================================="
-        echo "Building system closure for: $host"
-        echo "=========================================="
-
-        if ! nix build ".#nixosConfigurations.$host.config.system.build.toplevel" \
-          --no-warn-dirty \
-          --out-link "${gcRootStr}/$host"; then
-          failed_hosts+=("$host")
-        fi
-      done
-
-      if [ "''${#failed_hosts[@]}" -gt 0 ]; then
-        failed_hosts_csv=$(IFS=', '; echo "''${failed_hosts[*]}")
-
-        echo "Build failures detected for: $failed_hosts_csv" >&2
-        notify_build_failures "$failed_hosts_csv"
-      fi
-    '';
+    text = dailyNixBuildScriptText;
   };
 in
 {
@@ -120,8 +100,8 @@ in
 
     systemd = {
       tmpfiles.rules = [
-        "d ${gcRootStr} 0755 ${toString oci-uids.user} ${toString oci-uids.user} - -"
-        "L+ /nix/var/nix/gcroots/per-user/${username}/daily-builds - - - - ${gcRootStr}"
+        "d ${gcRoot} 0755 ${toString oci-uids.user} ${toString oci-uids.user} - -"
+        "L+ /nix/var/nix/gcroots/per-user/${username}/daily-builds - - - - ${gcRoot}"
       ];
 
       timers.daily-nix-build = {

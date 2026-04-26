@@ -53,12 +53,23 @@ in
           "io.containers.autoupdate" = "registry";
         };
       };
+
+      matter-server = {
+        image = "ghcr.io/matter-js/python-matter-server:stable";
+        dependsOn = [ "homeassistant" ];
+        volumes = [ "/var/lib/matter-server:/data" ];
+        networks = [ "host" ];
+        labels = {
+          "io.containers.autoupdate" = "registry";
+        };
+      };
     };
 
     systemd = {
       tmpfiles.rules = [
         "d /var/lib/home-assistant 0775 root wheel -"
         "d /var/lib/zwave-js-ui 0775 root wheel -"
+        "d /var/lib/matter-server 0775 root wheel -"
       ];
 
       services.podman-homeassistant = mkNotifyService { };

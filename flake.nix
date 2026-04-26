@@ -26,6 +26,7 @@
     lazynmap.url = "github:ruiiiijiiiiang/lazynmap";
     nix-flatpak.url = "github:gmodena/nix-flatpak";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+    niri.url = "github:sodiboo/niri-flake";
     NixVirt = {
       url = "github:AshleyYakeley/NixVirt";
       inputs.nixpkgs.follows = "nixpkgs";
