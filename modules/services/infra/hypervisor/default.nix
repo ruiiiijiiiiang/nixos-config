@@ -16,11 +16,13 @@ let
   spicePorts = lib.mapAttrsToList (_: port: port) ports.spice;
 
   selfFlakePath = inputs.self.outPath;
-  guestListFile = pkgs.writeText "hypervisor-guests" (lib.concatStringsSep "\n" cfg.guestVms);
+  guestListFile = pkgs.writeText "hypervisor-guests" (lib.concatLines cfg.guestVms);
   guestSizeFile = pkgs.writeText "hypervisor-guest-sizes" (
-    lib.concatMapStringsSep "\n" (
-      guest: "${guest}:${toString nixosConfigurations.${guest}.config.custom.platforms.vm.disks.size}G"
-    ) cfg.guestVms
+    lib.concatLines (
+      map (
+        guest: "${guest}:${toString nixosConfigurations.${guest}.config.custom.platforms.vm.disks.size}G"
+      ) cfg.guestVms
+    )
   );
   provisionVmScriptText =
     lib.replaceStrings

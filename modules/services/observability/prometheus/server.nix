@@ -155,7 +155,7 @@ in
         };
 
         alertmanager-ntfy =
-          lib.mkIf nixosConfigurations.vm-monitor.config.custom.observability.ntfy.enable
+          lib.mkIf nixosConfigurations.vm-monitor.config.custom.services.observability.ntfy.enable
             {
               enable = true;
               settings = {

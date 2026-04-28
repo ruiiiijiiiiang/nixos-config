@@ -31,8 +31,8 @@ in
       '';
 
       xserver.enable = false;
-      avahi.enable = false;
       printing.enable = false;
+      avahi.enable = lib.mkDefault false;
     };
   };
 }

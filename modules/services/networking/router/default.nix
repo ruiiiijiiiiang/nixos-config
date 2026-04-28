@@ -126,6 +126,12 @@ in
               prefixLength = 24;
             }
           ];
+          ipv6.addresses = [
+            {
+              address = addresses.home.hosts."${config.networking.hostName}-v6";
+              prefixLength = 64;
+            }
+          ];
         };
 
         ${cfg.infraInterface} = {
@@ -136,6 +142,12 @@ in
               prefixLength = 24;
             }
           ];
+          ipv6.addresses = [
+            {
+              address = addresses.infra.hosts."${config.networking.hostName}-v6";
+              prefixLength = 64;
+            }
+          ];
         };
 
         ${cfg.dmzInterface} = {
@@ -144,6 +156,12 @@ in
             {
               address = addresses.dmz.hosts.${config.networking.hostName};
               prefixLength = 24;
+            }
+          ];
+          ipv6.addresses = [
+            {
+              address = addresses.dmz.hosts."${config.networking.hostName}-v6";
+              prefixLength = 64;
             }
           ];
         };
@@ -172,6 +190,7 @@ in
             allowedUDPPorts = [
               ports.dhcp
               ports.dns
+              ports.mdns
             ];
           };
 
@@ -180,6 +199,7 @@ in
             allowedUDPPorts = [
               ports.dhcp
               ports.dns
+              ports.mdns
             ];
           };
 
@@ -189,6 +209,8 @@ in
         };
 
         extraInputRules = /* bash */ ''
+          ip6 nexthdr icmpv6 accept
+
           iifname "${cfg.dmzInterface}" ip daddr ${addresses.infra.vip.dns} udp dport ${toString ports.dns} accept
           iifname "${cfg.dmzInterface}" ip daddr ${addresses.infra.vip.dns} tcp dport ${toString ports.dns} accept
         '';
@@ -214,18 +236,13 @@ in
               type filter hook forward priority 0; policy drop;
               ct state established,related accept
 
+              ip6 nexthdr icmpv6 accept
+
               iifname "${cfg.lanInterface}" accept
 
               iifname "${cfg.infraInterface}" oifname "${cfg.wanInterface}" accept
               iifname "${cfg.infraInterface}" oifname "${cfg.podmanInterface}" accept
               iifname "${cfg.infraInterface}" oifname "${cfg.dmzInterface}" accept
-
-              ${lib.optionalString nixosConfigurations.pi.config.custom.services.apps.tools.homeassistant.enable
-                /* bash */ ''
-                  iifname "${cfg.infraInterface}" oifname "${cfg.lanInterface}" ether saddr ${hardware.macs.pi} udp dport { 5353, 5540 } accept
-                  iifname "${cfg.infraInterface}" oifname "${cfg.lanInterface}" ether saddr ${hardware.macs.pi} tcp dport 5540 accept
-                ''
-              }
 
               iifname "${cfg.dmzInterface}" oifname "${cfg.wanInterface}" accept
               iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip daddr ${addresses.infra.vip.dns} udp dport ${toString ports.dns} accept
@@ -254,49 +271,100 @@ in
                   iifname "${cfg.wgInterface}" oifname "${cfg.dmzInterface}" accept
                 ''
               }
+
+              ${lib.optionalString nixosConfigurations.pi.config.custom.services.apps.tools.homeassistant.enable
+                /* bash */ ''
+                  iifname "${cfg.infraInterface}" oifname "${cfg.lanInterface}" ether saddr ${hardware.macs.pi} udp dport ${toString ports.matter} accept
+                  iifname "${cfg.infraInterface}" oifname "${cfg.lanInterface}" ether saddr ${hardware.macs.pi} tcp dport ${toString ports.matter} accept
+                ''
+              }
             }
           '';
         };
       };
     };
 
-    services.kea = {
-      dhcp4 = {
+    services = {
+      avahi = {
         enable = true;
-        settings = {
-          interfaces-config = {
-            interfaces = [
-              cfg.lanInterface
-              cfg.infraInterface
-              cfg.dmzInterface
-            ];
-          };
-          valid-lifetime = 86400;
-          subnet4 = map mkSubnet [
-            "home"
-            "infra"
-            "dmz"
-          ];
+        reflector = true;
+        ipv6 = true;
+        nssmdns4 = true;
+        nssmdns6 = true;
 
-          control-socket = {
-            socket-type = "unix";
-            socket-name = "/run/kea/kea-dhcp4.socket";
-          };
-        };
+        allowInterfaces = [
+          cfg.lanInterface
+          cfg.infraInterface
+        ];
       };
 
-      ctrl-agent = lib.mkIf config.custom.services.observability.prometheus.exporters.kea.enable {
-        enable = true;
-        settings = {
-          http-host = addresses.localhost;
-          http-port = ports.kea.ctrl-agent;
-          control-sockets = {
-            dhcp4 = {
+      kea = {
+        dhcp4 = {
+          enable = true;
+          settings = {
+            interfaces-config = {
+              interfaces = [
+                cfg.lanInterface
+                cfg.infraInterface
+                cfg.dmzInterface
+              ];
+            };
+            valid-lifetime = 86400;
+            subnet4 = map mkSubnet [
+              "home"
+              "infra"
+              "dmz"
+            ];
+
+            control-socket = {
               socket-type = "unix";
               socket-name = "/run/kea/kea-dhcp4.socket";
             };
           };
         };
+
+        ctrl-agent = lib.mkIf config.custom.services.observability.prometheus.exporters.kea.enable {
+          enable = true;
+          settings = {
+            http-host = addresses.localhost;
+            http-port = ports.kea.ctrl-agent;
+            control-sockets = {
+              dhcp4 = {
+                socket-type = "unix";
+                socket-name = "/run/kea/kea-dhcp4.socket";
+              };
+            };
+          };
+        };
+      };
+
+      radvd = {
+        enable = true;
+        config = /* bash */ ''
+          interface ${cfg.lanInterface} {
+            AdvSendAdvert on;
+            prefix ${addresses.home.network-v6} {
+              AdvOnLink on;
+              AdvAutonomous on;
+            };
+          };
+
+          interface ${cfg.infraInterface} {
+            AdvSendAdvert on;
+            prefix ${addresses.infra.network-v6} {
+              AdvOnLink on;
+              AdvAutonomous on;
+            };
+          };
+
+          interface ${cfg.dmzInterface} {
+            AdvSendAdvert on;
+            prefix ${addresses.dmz.network-v6} {
+              AdvOnLink on;
+              AdvAutonomous on;
+            };
+          };
+        '';
       };
     };
   };

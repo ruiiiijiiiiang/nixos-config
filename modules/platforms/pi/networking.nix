@@ -7,6 +7,7 @@
 let
   inherit (consts) vlan-ids;
   cfg = config.custom.platforms.pi.networking;
+  vlanInterface = "${cfg.lanInterface}.${toString cfg.vlanId}";
 in
 {
   options.custom.platforms.pi.networking = with lib; {
@@ -50,12 +51,12 @@ in
         ${cfg.wlanInterface} = {
           useDHCP = false;
         };
-        "${cfg.lanInterface}.${toString cfg.vlanId}" = {
+        ${vlanInterface} = {
           useDHCP = true;
         };
       };
 
-      vlans."${cfg.lanInterface}.${toString cfg.vlanId}" = {
+      vlans."${vlanInterface}" = {
         interface = cfg.lanInterface;
         id = cfg.vlanId;
       };
@@ -64,6 +65,13 @@ in
         cfg.lanInterface
         cfg.wlanInterface
       ];
+    };
+
+    services.avahi = {
+      enable = true;
+      ipv6 = true;
+      nssmdns4 = true;
+      nssmdns6 = true;
     };
   };
 }

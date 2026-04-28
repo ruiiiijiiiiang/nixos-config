@@ -86,5 +86,13 @@ in
         port = ports.zwave;
       };
     };
+
+    networking.firewall = {
+      allowedTCPPorts = [ ports.matter ];
+      allowedUDPPorts = [
+        ports.mdns
+        ports.matter
+      ];
+    };
   };
 }

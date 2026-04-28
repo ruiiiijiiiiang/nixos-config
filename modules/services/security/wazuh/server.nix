@@ -35,7 +35,7 @@ in
       wazuh-indexer = {
         image = "wazuh/wazuh-indexer:${config.custom.services.security.wazuh.version}";
         environment = {
-          OPENSEARCH_JAVA_OPTS = "-Xms512m -Xmx512m";
+          OPENSEARCH_JAVA_OPTS = "-Xms1g -Xmx1g";
         };
         ports = [
           "${toString ports.wazuh.agent.connection}:${toString ports.wazuh.agent.connection}"

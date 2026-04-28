@@ -133,8 +133,8 @@ rec {
       matchingHosts.${hostname};
 
   getHostAddress = getHostAddressFromNetworks [
-    "home"
     "infra"
+    "home"
     "dmz"
   ];
 

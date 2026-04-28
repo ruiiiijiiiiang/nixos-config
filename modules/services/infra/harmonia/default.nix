@@ -31,7 +31,8 @@ let
     "vm-cyber"
   ];
   gcRoot = "/var/lib/nix-cache-roots";
-  ntfyEnabled = inputs.self.nixosConfigurations.vm-monitor.config.custom.observability.ntfy.enable;
+  ntfyEnabled =
+    inputs.self.nixosConfigurations.vm-monitor.config.custom.services.observability.ntfy.enable;
 
   dailyNixBuildScriptText =
     lib.replaceStrings

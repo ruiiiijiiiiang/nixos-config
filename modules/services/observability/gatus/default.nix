@@ -57,12 +57,14 @@ in
         settings = {
           endpoints = gatusEndpoints;
           web.port = ports.gatus;
-          alerting.ntfy = lib.mkIf nixosConfigurations.vm-monitor.config.custom.observability.ntfy.enable {
-            url = "https://${endpoints.ntfy-server}";
-            topic = "gatus-alerts";
-            priority = 4;
-            click = "https://${fqdn}";
-          };
+          alerting.ntfy =
+            lib.mkIf nixosConfigurations.vm-monitor.config.custom.services.observability.ntfy.enable
+              {
+                url = "https://${endpoints.ntfy-server}";
+                topic = "gatus-alerts";
+                priority = 4;
+                click = "https://${fqdn}";
+              };
         };
       };
 

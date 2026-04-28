@@ -89,51 +89,59 @@ rec {
       class-b = "172.16.0.0/12";
       class-c = "192.168.0.0/16";
     };
+    home-prefix = "192.168";
+    home-prefix-v6 = "fd00";
     home = {
-      network = "192.168.2.0/24";
-      dhcp-min = "192.168.2.50";
-      dhcp-max = "192.168.2.250";
+      network = "${addresses.home-prefix}.${toString vlan-ids.home}.0/24";
+      network-v6 = "${addresses.home-prefix-v6}:${toString vlan-ids.home}::/64";
+      dhcp-min = "${addresses.home-prefix}.${toString vlan-ids.home}.50";
+      dhcp-max = "${addresses.home-prefix}.${toString vlan-ids.home}.250";
       hosts = {
-        vm-network = "192.168.2.1";
-        framework = "192.168.2.10";
-        arch = "192.168.2.11";
-        hypervisor-wifi = "192.168.2.254";
+        vm-network = "${addresses.home-prefix}.${toString vlan-ids.home}.1";
+        vm-network-v6 = "${addresses.home-prefix-v6}:${toString vlan-ids.home}::1";
+        framework = "${addresses.home-prefix}.${toString vlan-ids.home}.10";
+        arch = "${addresses.home-prefix}.${toString vlan-ids.home}.11";
+        hypervisor-wifi = "${addresses.home-prefix}.${toString vlan-ids.home}.254";
       };
     };
     infra = {
-      network = "192.168.20.0/24";
-      dhcp-min = "192.168.20.100";
-      dhcp-max = "192.168.20.250";
+      network = "${addresses.home-prefix}.${toString vlan-ids.infra}.0/24";
+      network-v6 = "${addresses.home-prefix-v6}:${toString vlan-ids.infra}::/64";
+      dhcp-min = "${addresses.home-prefix}.${toString vlan-ids.infra}.100";
+      dhcp-max = "${addresses.home-prefix}.${toString vlan-ids.infra}.250";
       hosts = {
-        vm-network = "192.168.20.1";
-        vm-app = "192.168.20.2";
-        vm-monitor = "192.168.20.3";
-        pi = "192.168.20.51";
-        pi-legacy = "192.168.20.52";
-        hypervisor = "192.168.20.254";
+        vm-network = "${addresses.home-prefix}.${toString vlan-ids.infra}.1";
+        vm-network-v6 = "${addresses.home-prefix-v6}:${toString vlan-ids.infra}::1";
+        vm-app = "${addresses.home-prefix}.${toString vlan-ids.infra}.2";
+        vm-monitor = "${addresses.home-prefix}.${toString vlan-ids.infra}.3";
+        pi = "${addresses.home-prefix}.${toString vlan-ids.infra}.51";
+        pi-legacy = "${addresses.home-prefix}.${toString vlan-ids.infra}.52";
+        hypervisor = "${addresses.home-prefix}.${toString vlan-ids.infra}.254";
       };
       vip = {
-        dns = "192.168.20.53";
+        dns = "${addresses.home-prefix}.${toString vlan-ids.infra}.53";
       };
     };
     dmz = {
-      network = "192.168.88.0/24";
-      dhcp-min = "192.168.88.50";
-      dhcp-max = "192.168.88.250";
+      network = "${addresses.home-prefix}.${toString vlan-ids.dmz}.0/24";
+      network-v6 = "${addresses.home-prefix-v6}:${toString vlan-ids.dmz}::/64";
+      dhcp-min = "${addresses.home-prefix}.${toString vlan-ids.dmz}.50";
+      dhcp-max = "${addresses.home-prefix}.${toString vlan-ids.dmz}.250";
       hosts = {
-        vm-network = "192.168.88.1";
-        vm-public = "192.168.88.2";
-        vm-cyber = "192.168.88.10";
+        vm-network = "${addresses.home-prefix}.${toString vlan-ids.dmz}.1";
+        vm-network-v6 = "${addresses.home-prefix-v6}:${toString vlan-ids.dmz}::1";
+        vm-public = "${addresses.home-prefix}.${toString vlan-ids.dmz}.2";
+        vm-cyber = "${addresses.home-prefix}.${toString vlan-ids.dmz}.10";
       };
     };
     wg = {
-      network = "192.168.128.0/24";
+      network = "${addresses.home-prefix}.${toString vlan-ids.wg}.0/24";
       hosts = {
-        vm-network = "192.168.128.1";
-        framework = "192.168.128.2";
-        pixel-7 = "192.168.128.3";
-        iphone-17 = "192.168.128.4";
-        github-action = "192.168.128.5";
+        vm-network = "${addresses.home-prefix}.${toString vlan-ids.wg}.1";
+        framework = "${addresses.home-prefix}.${toString vlan-ids.wg}.2";
+        pixel-7 = "${addresses.home-prefix}.${toString vlan-ids.wg}.3";
+        iphone-17 = "${addresses.home-prefix}.${toString vlan-ids.wg}.4";
+        github-action = "${addresses.home-prefix}.${toString vlan-ids.wg}.5";
       };
     };
     podman = {
@@ -147,6 +155,7 @@ rec {
     dhcp = 67;
     http = 80;
     https = 443;
+    mdns = 5353;
 
     arr = {
       lidarr = 8686;
@@ -195,6 +204,7 @@ rec {
       agent = 3031;
     };
     magicmirror = 8094;
+    matter = 5540;
     memos = 5230;
     microbin = 8088;
     monit = 2812;
