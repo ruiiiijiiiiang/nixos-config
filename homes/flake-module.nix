@@ -8,20 +8,41 @@ let
   };
 
   inherit (consts) home;
-in
-{
-  flake.homeConfigurations = {
-    arch = inputs.home-manager.lib.homeManagerConfiguration {
+
+  mkHome =
+    {
+      homeConfig,
+      dotfiles ? "local",
+    }:
+    let
+      dotfilesRoot =
+        {
+          flake = inputs.dotfiles.lib.source;
+          local = "${home}/dotfiles";
+        }
+        .${dotfiles};
+    in
+    inputs.home-manager.lib.homeManagerConfiguration {
       inherit pkgs;
       extraSpecialArgs = {
-        inherit consts inputs helpers;
-        dotfilesRoot = "${home}/dotfiles";
-        dotfilesOutOfStore = true;
+        inherit
+          consts
+          inputs
+          helpers
+          dotfilesRoot
+          ;
       };
       modules = [
         ../homes/modules
-        ../homes/configs/arch.nix
+        homeConfig
       ];
+    };
+in
+{
+  flake.homeConfigurations = {
+    arch = mkHome {
+      homeConfig = ../homes/configs/arch.nix;
+      dotfiles = "local";
     };
   };
 }

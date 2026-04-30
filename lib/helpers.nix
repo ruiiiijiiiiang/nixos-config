@@ -196,12 +196,12 @@ rec {
   linkConfig =
     {
       dotfilesRoot,
-      dotfilesOutOfStore ? true,
       name,
       paths,
     }:
     let
-      inherit (lib) escapeShellArg listToAttrs isString;
+      inherit (lib) escapeShellArg listToAttrs isString hasPrefix;
+      dotfilesOutOfStore = ! (hasPrefix "/nix/store" (toString dotfilesRoot));
       mkOutOfStoreSymlink =
         path:
         let
@@ -222,7 +222,7 @@ rec {
           name = targetPath;
           value.source =
             if dotfilesOutOfStore then
-              mkOutOfStoreSymlink "${dotfilesRoot}/${name}/${sourceSuffix}"
+              mkOutOfStoreSymlink "${toString dotfilesRoot}/${name}/${sourceSuffix}"
             else
               "${dotfilesRoot}/${name}/${sourceSuffix}";
         }

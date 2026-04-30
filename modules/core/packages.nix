@@ -4,24 +4,19 @@
   nixpkgs.config.allowUnfree = true;
 
   environment.systemPackages = with pkgs; [
-    linux-firmware
     cachix
-    lsof
-    wget
-    pciutils
-    usbutils
-    hwinfo
     dig
-    traceroute
     fd
+    hwinfo
+    linux-firmware
+    lsof
+    pciutils
     ripgrep
     systemctl-tui
     tailspin
+    traceroute
+    usbutils
+    vim
+    wget
   ];
-
-  programs = {
-    fish.enable = true;
-    tcpdump.enable = true;
-    vim.enable = true;
-  };
 }

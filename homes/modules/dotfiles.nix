@@ -3,14 +3,13 @@
   lib,
   helpers,
   dotfilesRoot,
-  dotfilesOutOfStore,
   ...
 }:
 let
   inherit (helpers) linkConfig;
   cfg = config.custom.home.dotfiles;
 
-  mkDotfileLink = attrs: linkConfig ({ inherit dotfilesRoot dotfilesOutOfStore; } // attrs);
+  mkDotfileLink = attrs: linkConfig ({ inherit dotfilesRoot; } // attrs);
 
   headlessLinks = lib.foldl' lib.recursiveUpdate { } (
     map mkDotfileLink [

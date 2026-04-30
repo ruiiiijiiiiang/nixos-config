@@ -8,10 +8,5 @@
       enable = true;
       role = "workstation";
     };
-    packages = {
-      enable = true;
-      role = "workstation";
-      host = "vm-cyber";
-    };
   };
 }

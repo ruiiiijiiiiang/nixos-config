@@ -90,6 +90,7 @@ in
           wgInterface
         ];
       };
+      packages.enable = true;
       security.enable = true;
       services.enable = true;
     };

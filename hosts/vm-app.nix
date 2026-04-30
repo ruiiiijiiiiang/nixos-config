@@ -40,6 +40,7 @@ in
 
     roles.headless = {
       networking.enable = true;
+      packages.enable = true;
       security.enable = true;
       services.enable = true;
     };

@@ -11,167 +11,96 @@ let
 
   mkHomeManagerModule =
     {
-      dotfilesRoot,
-      dotfilesOutOfStore,
       homeConfig,
+      dotfilesSource,
     }:
-    lib.recursiveUpdate
-      {
-        home-manager = {
-          useGlobalPkgs = true;
-          useUserPackages = true;
-          extraSpecialArgs = {
-            inherit
-              consts
-              inputs
-              helpers
-              dotfilesRoot
-              dotfilesOutOfStore
-              ;
-          };
+    let
+      dotfilesRoot =
+        {
+          flake = inputs.dotfiles.lib.source;
+          local = "${home}/dotfiles";
+        }
+        .${dotfilesSource};
+    in
+    {
+      home-manager = {
+        useGlobalPkgs = true;
+        useUserPackages = true;
+        extraSpecialArgs = {
+          inherit
+            consts
+            inputs
+            helpers
+            dotfilesRoot
+            ;
         };
-      }
-      {
-        home-manager.users.${username}.imports = [
+        users.${username}.imports = [
           ../homes/modules
           homeConfig
         ];
       };
+    };
+
+  mkHost =
+    hostname:
+    {
+      system ? "x86_64-linux",
+      hardware ? [ ],
+      homeConfig ? null,
+      dotfilesSource ? "flake",
+    }:
+    inputs.nixpkgs.lib.nixosSystem {
+      inherit system;
+      specialArgs = {
+        inherit consts inputs helpers;
+      };
+      modules = [
+        ../modules
+        ../hosts/${hostname}.nix
+      ]
+      ++ hardware
+      ++ lib.optionals (homeConfig != null) [
+        inputs.home-manager.nixosModules.home-manager
+        (mkHomeManagerModule { inherit homeConfig dotfilesSource; })
+      ];
+    };
 in
 {
   flake.nixosConfigurations = {
-    framework = inputs.nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      specialArgs = {
-        inherit consts inputs helpers;
-      };
-      modules = [
-        ../modules
-        ../hosts/framework.nix
-        inputs.nixos-hardware.nixosModules.framework-13-7040-amd
-        inputs.home-manager.nixosModules.home-manager
-        inputs.niri.nixosModules.niri
-        (mkHomeManagerModule {
-          dotfilesRoot = "${home}/dotfiles";
-          dotfilesOutOfStore = true;
-          homeConfig = ../homes/configs/framework.nix;
-        })
-      ];
+    framework = mkHost "framework" {
+      hardware = [ inputs.nixos-hardware.nixosModules.framework-13-7040-amd ];
+      dotfilesSource = "local";
+      homeConfig = ../homes/configs/framework.nix;
     };
 
-    pi = inputs.nixpkgs.lib.nixosSystem {
+    pi = mkHost "pi" {
       system = "aarch64-linux";
-      specialArgs = {
-        inherit consts inputs helpers;
-      };
-      modules = [
-        ../modules
-        ../hosts/pi.nix
-        inputs.nixos-hardware.nixosModules.raspberry-pi-4
-      ];
+      hardware = [ inputs.nixos-hardware.nixosModules.raspberry-pi-4 ];
     };
 
-    hypervisor = inputs.nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      specialArgs = {
-        inherit consts inputs helpers;
-      };
-      modules = [
-        ../modules
-        ../hosts/hypervisor.nix
-        inputs.nixos-hardware.nixosModules.minisforum-um690
-        inputs.home-manager.nixosModules.home-manager
-        (mkHomeManagerModule {
-          dotfilesRoot = inputs.dotfiles.lib.source;
-          dotfilesOutOfStore = false;
-          homeConfig = ../homes/configs/headless.nix;
-        })
-      ];
+    hypervisor = mkHost "hypervisor" {
+      hardware = [ inputs.nixos-hardware.nixosModules.minisforum-um690 ];
+      homeConfig = ../homes/configs/headless.nix;
     };
 
-    vm-network = inputs.nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      specialArgs = {
-        inherit consts inputs helpers;
-      };
-      modules = [
-        ../modules
-        ../hosts/vm-network.nix
-        inputs.home-manager.nixosModules.home-manager
-        (mkHomeManagerModule {
-          dotfilesRoot = inputs.dotfiles.lib.source;
-          dotfilesOutOfStore = false;
-          homeConfig = ../homes/configs/headless.nix;
-        })
-      ];
+    vm-network = mkHost "vm-network" {
+      homeConfig = ../homes/configs/headless.nix;
     };
 
-    vm-app = inputs.nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      specialArgs = {
-        inherit consts inputs helpers;
-      };
-      modules = [
-        ../modules
-        ../hosts/vm-app.nix
-        inputs.home-manager.nixosModules.home-manager
-        (mkHomeManagerModule {
-          dotfilesRoot = inputs.dotfiles.lib.source;
-          dotfilesOutOfStore = false;
-          homeConfig = ../homes/configs/headless.nix;
-        })
-      ];
+    vm-app = mkHost "vm-app" {
+      homeConfig = ../homes/configs/headless.nix;
     };
 
-    vm-monitor = inputs.nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      specialArgs = {
-        inherit consts inputs helpers;
-      };
-      modules = [
-        ../modules
-        ../hosts/vm-monitor.nix
-        inputs.home-manager.nixosModules.home-manager
-        (mkHomeManagerModule {
-          dotfilesRoot = inputs.dotfiles.lib.source;
-          dotfilesOutOfStore = false;
-          homeConfig = ../homes/configs/headless.nix;
-        })
-      ];
+    vm-monitor = mkHost "vm-monitor" {
+      homeConfig = ../homes/configs/headless.nix;
     };
 
-    vm-public = inputs.nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      specialArgs = {
-        inherit consts inputs helpers;
-      };
-      modules = [
-        ../modules
-        ../hosts/vm-public.nix
-        inputs.home-manager.nixosModules.home-manager
-        (mkHomeManagerModule {
-          dotfilesRoot = inputs.dotfiles.lib.source;
-          dotfilesOutOfStore = false;
-          homeConfig = ../homes/configs/headless.nix;
-        })
-      ];
+    vm-public = mkHost "vm-public" {
+      homeConfig = ../homes/configs/headless.nix;
     };
 
-    vm-cyber = inputs.nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      specialArgs = {
-        inherit consts inputs helpers;
-      };
-      modules = [
-        ../modules
-        ../hosts/vm-cyber.nix
-        inputs.home-manager.nixosModules.home-manager
-        (mkHomeManagerModule {
-          dotfilesRoot = inputs.dotfiles.lib.source;
-          dotfilesOutOfStore = false;
-          homeConfig = ../homes/configs/vm-cyber.nix;
-        })
-      ];
+    vm-cyber = mkHost "vm-cyber" {
+      homeConfig = ../homes/configs/vm-cyber.nix;
     };
   };
 }

@@ -1,68 +1,46 @@
 {
   config,
+  inputs,
   lib,
   pkgs,
   ...
 }:
 let
-  cfg = config.custom.roles.workstation.packages;
+  cfg = config.custom.roles.headless.packages;
 in
 {
-  options.custom.roles.workstation.packages = with lib; {
-    enable = mkEnableOption "Enable workstation packages";
+  options.custom.roles.headless.packages = with lib; {
+    enable = mkEnableOption "Enable headless packages";
   };
 
   config = lib.mkIf cfg.enable {
-    fonts = {
-      enableGhostscriptFonts = true;
-      packages = with pkgs; [
-        maple-mono.truetype
-      ];
-
-      fontconfig = {
-        defaultFonts = {
-          monospace = [ "maple-mono" ];
-        };
-      };
-    };
-
     environment.systemPackages = with pkgs; [
       atuin
-      bottom
       btop
       carapace
       comma
       delta
       fastfetch
       fzf
-      gh
-      glow
       helix
       inputs.file_clipper.packages.${stdenv.hostPlatform.system}.default
       inputs.wezterm.packages.${pkgs.stdenv.hostPlatform.system}.default
       inputs.witr.packages.${stdenv.hostPlatform.system}.default
-      jq
       lazygit
       lsd
       navi
       neovim
-      nix-search-cli
-      onefetch
       pay-respects
-      silver-searcher
       starship
       tailspin
-      tldr
-      zed-editor
     ];
 
     programs = {
+      ssh.startAgent = true;
+
       bat.enable = true;
-      firefox.enable = true;
       fish.enable = true;
       git.enable = true;
-      htop.enable = true;
-      nix-index.enable = true;
       tcpdump.enable = true;
       yazi.enable = true;
       zoxide.enable = true;
