@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  inputs,
   pkgs,
   ...
 }:
@@ -38,20 +39,15 @@ in
       gh
       glow
       helix
-      inputs.file_clipper.packages.${stdenv.hostPlatform.system}.default
-      inputs.wezterm.packages.${pkgs.stdenv.hostPlatform.system}.default
-      inputs.witr.packages.${stdenv.hostPlatform.system}.default
+      inputs.wezterm.packages.${stdenv.hostPlatform.system}.default
       jq
       lazygit
       lsd
       navi
-      neovim
       nix-search-cli
       onefetch
-      pay-respects
       silver-searcher
       starship
-      tailspin
       tldr
       zed-editor
     ];
@@ -60,9 +56,13 @@ in
       bat.enable = true;
       firefox.enable = true;
       fish.enable = true;
-      git.enable = true;
       htop.enable = true;
+      neovim = {
+        enable = true;
+        package = inputs.neovim-nightly-overlay.packages.${pkgs.system}.default;
+      };
       nix-index.enable = true;
+      pay-respects.enable = true;
       tcpdump.enable = true;
       yazi.enable = true;
       zoxide.enable = true;

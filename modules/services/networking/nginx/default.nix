@@ -52,6 +52,9 @@ in
           allow ${addresses.private-blocks.class-a};
           allow ${addresses.private-blocks.class-b};
           allow ${addresses.private-blocks.class-c};
+          allow ${addresses.home.network-v6};
+          allow ${addresses.infra.network-v6};
+          allow ${addresses.dmz.network-v6};
           deny all;
 
           ${lib.optionalString config.custom.services.observability.prometheus.exporters.nginx.enable ''

@@ -23,24 +23,19 @@ in
       fastfetch
       fzf
       helix
-      inputs.file_clipper.packages.${stdenv.hostPlatform.system}.default
-      inputs.wezterm.packages.${pkgs.stdenv.hostPlatform.system}.default
-      inputs.witr.packages.${stdenv.hostPlatform.system}.default
+      inputs.agenix.packages.${stdenv.hostPlatform.system}.default
       lazygit
       lsd
       navi
-      neovim
-      pay-respects
       starship
-      tailspin
+      wezterm
     ];
 
     programs = {
-      ssh.startAgent = true;
-
       bat.enable = true;
       fish.enable = true;
-      git.enable = true;
+      neovim.enable = true;
+      pay-respects.enable = true;
       tcpdump.enable = true;
       yazi.enable = true;
       zoxide.enable = true;

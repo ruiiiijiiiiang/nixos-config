@@ -27,20 +27,20 @@ in
       rsync
       rustscan
 
-      # --- Desktop Environment: Niri ---
+      # Desktop Environment: Niri
       catppuccin-cursors.frappeLavender
-      inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
+      inputs.noctalia.packages.${stdenv.hostPlatform.system}.default
       networkmanagerapplet
       wl-clipboard
       xwayland-satellite
 
-      # --- Desktop Environment: KDE Plasma ---
+      # Desktop Environment: KDE Plasma
       catppuccin-kde
       kdePackages.kirigami
       kdePackages.plasma-pa
       kdePackages.qtdeclarative
 
-      # Framework/Workstation specific
+      # TUI Apps
       broot
       doxx
       dust
@@ -62,6 +62,7 @@ in
       presenterm
       screen
       smassh
+      spicetify-cli
       stow
       superfile
       tree
@@ -88,7 +89,6 @@ in
       opencloud-desktop
       protonmail-bridge-gui
       remmina
-      spicetify-cli
       stirling-pdf-desktop
       telegram-desktop
       vivaldi
@@ -105,10 +105,9 @@ in
       nix-inspect
       nix-tree
 
-      # --- Development Tools ---
+      # Development Tools
       bash-language-server
       cmake
-      codeium
       codex
       deno
       gcc
@@ -117,6 +116,7 @@ in
       github-copilot-cli
       gnumake
       go
+      inputs.windsurf.packages.${stdenv.hostPlatform.system}.codeium-lsp
       lldb
       lua-language-server
       lua55Packages.luarocks

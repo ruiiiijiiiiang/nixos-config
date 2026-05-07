@@ -1,4 +1,4 @@
-{ consts }:
+{ consts, ... }:
 let
   inherit (consts) ports endpoints;
 in
@@ -8,6 +8,7 @@ in
   ];
 
   programs.ssh = {
+    enable = true;
     enableDefaultConfig = false;
     matchBlocks = {
       "forgejo" = {

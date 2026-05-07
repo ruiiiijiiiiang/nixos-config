@@ -122,15 +122,15 @@ The `vm-network` VM serves as the nerve center of the home network. It replaces 
 
 The network is physically connected via two interfaces, but logically segmented into distinct security zones using VLANs and virtual interfaces:
 
-- **WAN (`wan0`):** The shield against the public internet.
-- **LAN (`lan0`):** The physical trunk carrying multiple logical networks:
-  - **Home (Native):** Trusted user devices (e.g., `framework`).
+- **WAN:** The shield against the public internet.
+- **LAN:** The physical trunk carrying multiple logical networks:
+  - **Home/Native (VLAN 2):** Trusted user devices (e.g., `framework`).
     - _Routing:_ Unrestricted access to WAN, Infra, DMZ, and VPN.
-  - **VLAN 20 (`infa0`):** Dedicated management lane for servers and critical infrastructure (e.g., `pi`, `vm-app`, `vm-monitor`).
+  - **Infra (VLAN 20):** Dedicated management lane for servers and critical infrastructure (e.g., `pi`, `vm-app`, `vm-monitor`).
     - _Routing:_ Access to WAN. Isolated from Home.
-  - **VLAN 88 (`dmz0`):** Isolated zone for untrusted workloads (e.g., `vm-cyber`).
+  - **DMZ (VLAN 88):** Isolated zone for untrusted workloads (e.g., `vm-cyber`).
     - _Routing:_ Access to WAN. Restricted access to Infra for DNS (UDP/TCP 53) only. No access to Home.
-- **WireGuard (`wg0`):** Secure remote access tunnel.
+- **WireGuard (VLAN 128):** Secure remote access tunnel.
   - _Routing:_ Authenticated peers get full access to Home, Infra, and DMZ networks.
 
 ### High-Availability DNS

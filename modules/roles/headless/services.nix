@@ -1,10 +1,4 @@
-{
-  config,
-  inputs,
-  lib,
-  pkgs,
-  ...
-}:
+{ config, lib, ... }:
 let
   cfg = config.custom.roles.headless.services;
 in
@@ -15,9 +9,6 @@ in
 
   config = lib.mkIf cfg.enable {
     environment = {
-      systemPackages = [
-        inputs.agenix.packages.${pkgs.stdenv.system}.default
-      ];
       variables = {
         EDITOR = "vim";
       };

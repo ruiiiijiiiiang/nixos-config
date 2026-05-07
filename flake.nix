@@ -24,6 +24,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     lazynmap.url = "github:ruiiiijiiiiang/lazynmap";
+    neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
     nix-flatpak.url = "github:gmodena/nix-flatpak";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     niri.url = "github:sodiboo/niri-flake";
@@ -45,7 +46,7 @@
       url = "github:wezterm/wezterm?dir=nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    witr.url = "github:pranshuparmar/witr";
+    windsurf.url = "github:Exafunction/windsurf.nvim";
     zen-browser.url = "github:0xc000022070/zen-browser-flake";
   };
 
@@ -63,7 +64,6 @@
           _module.args.pkgs = import inputs.nixpkgs {
             inherit system;
             overlays = [ inputs.rust-overlay.overlays.default ];
-            config.allowUnfree = true;
           };
         };
 

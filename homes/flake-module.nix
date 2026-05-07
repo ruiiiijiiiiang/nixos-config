@@ -27,7 +27,6 @@ let
       extraSpecialArgs = {
         inherit
           consts
-          inputs
           helpers
           dotfilesRoot
           ;
