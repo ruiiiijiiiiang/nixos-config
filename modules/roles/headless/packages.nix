@@ -23,17 +23,15 @@ in
       fastfetch
       fzf
       helix
-      inputs.agenix.packages.${stdenv.hostPlatform.system}.default
+      inputs.wezterm.packages.${stdenv.hostPlatform.system}.default
       lazygit
       lsd
       navi
       starship
-      wezterm
     ];
 
     programs = {
       bat.enable = true;
-      fish.enable = true;
       neovim.enable = true;
       pay-respects.enable = true;
       tcpdump.enable = true;

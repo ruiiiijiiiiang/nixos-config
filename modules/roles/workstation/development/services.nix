@@ -26,11 +26,6 @@ in
       desktopManager.plasma6.enable = true;
     };
 
-    security.pam.services = {
-      sddm.kwallet.enable = true;
-      login.kwallet.enable = true;
-    };
-
     system.autoUpgrade.enable = true;
 
     xdg.portal = {

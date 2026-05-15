@@ -83,7 +83,7 @@ in
           enable = true;
           settings = {
             bind = "[::]:${toString ports.harmonia}";
-            sign_key_path = config.age.secrets.harmonia-sign-key.path;
+            sign_key_paths = [ config.age.secrets.harmonia-sign-key.path ];
           };
         };
       };
@@ -93,6 +93,12 @@ in
         port = ports.harmonia;
       };
     };
+
+    users.users.harmonia = {
+      isSystemUser = true;
+      group = "harmonia";
+    };
+    users.groups.harmonia = { };
 
     nix.settings = {
       keep-derivations = true;

@@ -32,9 +32,17 @@ in
     };
 
     security.pam.services = {
-      login.fprintAuth = true;
-      sddm.fprintAuth = true;
+      login = {
+        fprintAuth = true;
+        kwallet.enable = true;
+      };
+      sddm = {
+        fprintAuth = true;
+        kwallet.enable = true;
+      };
       kdewallet.fprintAuth = true;
+      polkit-1.fprintAuth = true;
+      sudo.fprintAuth = true;
     };
   };
 }

@@ -1,4 +1,4 @@
-{ consts, ... }:
+{ consts, pkgs, ... }:
 let
   inherit (consts)
     timeZone
@@ -18,6 +18,7 @@ in
       group = username;
       inherit home;
       createHome = true;
+      shell = pkgs.fish;
     };
 
     groups.${username} = {

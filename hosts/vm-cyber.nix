@@ -54,10 +54,10 @@ in
     };
 
     roles = {
+      headless.packages.enable = true;
       workstation = {
         catppuccin.enable = true;
         packages.enable = true;
-
         cyber = {
           networking.enable = true;
           packages.enable = true;

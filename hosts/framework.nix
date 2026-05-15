@@ -24,14 +24,17 @@ in
       services.enable = true;
     };
 
-    roles.workstation = {
-      catppuccin.enable = true;
-      packages.enable = true;
-      development = {
-        flatpak.enable = true;
-        nixos.enable = true;
+    roles = {
+      headless.packages.enable = true;
+      workstation = {
+        catppuccin.enable = true;
         packages.enable = true;
-        services.enable = true;
+        development = {
+          flatpak.enable = true;
+          nixos.enable = true;
+          packages.enable = true;
+          services.enable = true;
+        };
       };
     };
 
