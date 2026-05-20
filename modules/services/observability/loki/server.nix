@@ -51,6 +51,8 @@ in
             directory = "/var/lib/loki/chunks";
           };
         };
+
+        analytics.reporting_enabled = false;
       };
     };
 

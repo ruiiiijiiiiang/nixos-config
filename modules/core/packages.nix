@@ -1,10 +1,9 @@
-{ inputs, pkgs, ... }:
+{ pkgs, ... }:
 
 {
   nixpkgs.config.allowUnfree = true;
 
   environment.systemPackages = with pkgs; [
-    inputs.file_clipper.packages.${stdenv.hostPlatform.system}.default
     cachix
     dig
     fd

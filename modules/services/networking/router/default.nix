@@ -274,8 +274,7 @@ in
 
               ${lib.optionalString nixosConfigurations.pi.config.custom.services.apps.tools.homeassistant.enable
                 /* bash */ ''
-                  iifname "${cfg.infraInterface}" oifname "${cfg.lanInterface}" ether saddr ${hardware.macs.pi} udp dport ${toString ports.matter} accept
-                  iifname "${cfg.infraInterface}" oifname "${cfg.lanInterface}" ether saddr ${hardware.macs.pi} tcp dport ${toString ports.matter} accept
+                  iifname "${cfg.infraInterface}" oifname "${cfg.lanInterface}" ether saddr ${hardware.macs.pi} accept
                 ''
               }
             }

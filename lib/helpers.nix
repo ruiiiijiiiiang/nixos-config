@@ -80,8 +80,9 @@ rec {
         karakeep = config.custom.services.apps.tools.karakeep.enable;
         krawl = config.custom.services.security.krawl.enable;
         librechat = config.custom.services.apps.tools.librechat.enable;
-        memos = config.custom.services.apps.office.memos.enable;
         magicmirror = config.custom.services.apps.web.magicmirror.enable;
+        mealie = config.custom.services.apps.tools.mealie.enable;
+        memos = config.custom.services.apps.office.memos.enable;
         microbin = config.custom.services.apps.tools.microbin.enable;
         myspeed = config.custom.services.observability.myspeed.enable;
         ntfy = config.custom.services.observability.ntfy.enable;
@@ -200,8 +201,13 @@ rec {
       paths,
     }:
     let
-      inherit (lib) escapeShellArg listToAttrs isString hasPrefix;
-      dotfilesOutOfStore = ! (hasPrefix "/nix/store" (toString dotfilesRoot));
+      inherit (lib)
+        escapeShellArg
+        listToAttrs
+        isString
+        hasPrefix
+        ;
+      dotfilesOutOfStore = !(hasPrefix "/nix/store" (toString dotfilesRoot));
       mkOutOfStoreSymlink =
         path:
         let

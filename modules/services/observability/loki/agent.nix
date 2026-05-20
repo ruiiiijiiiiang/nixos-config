@@ -23,6 +23,7 @@ in
 
     services.alloy = {
       enable = true;
+      extraFlags = [ "--disable-reporting" ];
     };
 
     environment.etc."alloy/loki-journal.alloy".text = ''

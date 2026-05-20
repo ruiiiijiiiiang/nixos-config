@@ -27,6 +27,7 @@ rec {
       atuin = "atuin";
       bytestash = "stash";
       dawarich = "dawarich";
+      mealie = "mealie";
       bentopdf = "pdf";
       forgejo = "git";
       harmonia = "cache";
@@ -169,6 +170,7 @@ rec {
     bentopdf = 8080;
     bytestash = 5000;
     changedetection = 5003;
+    mealie = 9000;
     cockpit = 9091;
     crowdsec = {
       lapi = 8093;
@@ -295,6 +297,7 @@ rec {
     ovumcy = 919;
     krawl = 920;
     changedetection = 921;
+    mealie = 922;
     user = 1000;
     nobody = 65534;
 

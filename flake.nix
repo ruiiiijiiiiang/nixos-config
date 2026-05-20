@@ -41,6 +41,7 @@
       url = "github:oxalica/rust-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    sdctl.url = "github:ruiiiijiiiiang/sdctl";
     website.url = "github:ruiiiijiiiiang/website";
     wezterm = {
       url = "github:wezterm/wezterm?dir=nix";

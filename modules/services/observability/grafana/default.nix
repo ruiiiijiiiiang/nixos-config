@@ -133,6 +133,11 @@ in
           auth = {
             oauth_allow_insecure_email_lookup = true;
           };
+          analytics = {
+            reporting_enabled = false;
+            check_for_updates = false;
+            check_for_plugin_updates = false;
+          };
         };
 
         provision = {

@@ -62,6 +62,10 @@ in
     publicKeys = ssh.vm-public;
     armor = true;
   };
+  "mealie-env.age" = {
+    publicKeys = ssh.vm-app;
+    armor = true;
+  };
   "nextcloud-pass.age" = {
     publicKeys = ssh.vm-app;
     armor = true;

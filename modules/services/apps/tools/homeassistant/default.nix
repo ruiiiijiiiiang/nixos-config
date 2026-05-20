@@ -36,6 +36,10 @@ in
         volumes = [ "/var/lib/home-assistant:/config" ];
         environment.TZ = timeZone;
         devices = [ "/dev/serial/by-id/${hardware.radios.zigbee}:/dev/zigbee" ];
+        extraOptions = [
+          "--cap-add=NET_RAW"
+          "--cap-add=NET_ADMIN"
+        ];
         labels = {
           "io.containers.autoupdate" = "registry";
         };

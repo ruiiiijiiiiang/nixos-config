@@ -23,6 +23,8 @@ in
       fastfetch
       fzf
       helix
+      inputs.file_clipper.packages.${stdenv.hostPlatform.system}.default
+      inputs.sdctl.packages.${stdenv.hostPlatform.system}.default
       inputs.wezterm.packages.${stdenv.hostPlatform.system}.default
       lazygit
       lsd

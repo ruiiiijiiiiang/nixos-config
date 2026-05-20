@@ -342,6 +342,14 @@ in
                   siteMonitor = "https://${subdomains.vm-app.changedetection}.${domain}";
                 };
               }
+              {
+                "Mealie" = {
+                  icon = "mealie";
+                  href = "https://${subdomains.vm-app.mealie}.${domain}";
+                  description = "Recipe Manager";
+                  siteMonitor = "https://${subdomains.vm-app.mealie}.${domain}";
+                };
+              }
             ];
           }
           {

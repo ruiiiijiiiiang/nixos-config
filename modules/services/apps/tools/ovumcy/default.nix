@@ -33,7 +33,7 @@ in
     };
 
     virtualisation.oci-containers.containers.ovumcy = {
-      image = "ghcr.io/ovumcy/ovumcy-web:v0.8.5";
+      image = "ghcr.io/ovumcy/ovumcy-web:latest";
       user = "${toString oci-uids.ovumcy}:${toString oci-uids.ovumcy}";
       ports = [ "${addresses.localhost}:${toString ports.ovumcy}:${toString ports.ovumcy}" ];
       volumes = [
@@ -49,9 +49,7 @@ in
         PROXY_HEADER = "X-Forwarded-For";
         TRUSTED_PROXIES = "${addresses.localhost},${addresses.localhost-v6}";
 
-        # pocket id support currently on hold; waiting on:
-        # https://github.com/pocket-id/pocket-id/pull/1360
-        # OIDC_ENABLED = "true";
+        OIDC_ENABLED = "true";
         OIDC_ISSUER_URL = "https://${endpoints.oidc-issuer}";
         OIDC_REDIRECT_URL = "https://${fqdn}/auth/oidc/callback";
         OIDC_AUTO_PROVISION = "true";

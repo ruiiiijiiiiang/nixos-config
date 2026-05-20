@@ -7,6 +7,7 @@
     ./karakeep
     ./librechat
     ./llm
+    ./mealie
     ./microbin
     ./ovumcy
     ./syncthing

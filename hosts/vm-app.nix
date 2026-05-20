@@ -88,6 +88,7 @@ in
           changedetection.enable = true;
           karakeep.enable = true;
           librechat.enable = true;
+          mealie.enable = true;
           ovumcy.enable = true;
           syncthing = {
             enable = true;
