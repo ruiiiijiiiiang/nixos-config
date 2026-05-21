@@ -42,6 +42,7 @@ let
         "@GC_ROOT@"
         "@NTFY_SERVER@"
         "@NTFY_ENABLED@"
+        "@NTFY_TOPIC@"
       ]
       [
         (lib.escapeShellArg home)
@@ -49,6 +50,7 @@ let
         (lib.escapeShellArg gcRoot)
         (lib.escapeShellArg endpoints.ntfy-server)
         (lib.escapeShellArg (lib.boolToString ntfyEnabled))
+        (lib.escapeShellArg endpoints.ntfy-topics.harmonia-alerts)
       ]
       (lib.readFile ./daily-nix-build.sh);
 

@@ -2,6 +2,7 @@ readonly HOME_DIR=@HOME@
 readonly GC_ROOT=@GC_ROOT@
 readonly NTFY_SERVER=@NTFY_SERVER@
 readonly NTFY_ENABLED=@NTFY_ENABLED@
+readonly NTFY_TOPIC=@NTFY_TOPIC@
 
 CPT_DEB="$HOME_DIR/Sync/CiscoPacketTracer_900_Ubuntu_64bit.deb"
 failed_hosts=()
@@ -14,7 +15,7 @@ notify_build_failures() {
     -H "Priority: high" \
     -H "Tags: warning,computer" \
     -d "daily-nix-build completed with failures for: $failed_hosts_csv" \
-    "https://$NTFY_SERVER/harmonia-alerts" > /dev/null || echo "Failed to send ntfy notification" >&2
+    "https://$NTFY_SERVER/$NTFY_TOPIC" > /dev/null || echo "Failed to send ntfy notification" >&2
 }
 
 if [ -f "$CPT_DEB" ]; then

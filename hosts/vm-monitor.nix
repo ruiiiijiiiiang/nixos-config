@@ -17,7 +17,7 @@ in
       libvirt = {
         enable = true;
         cpu = 4;
-        memory = 4;
+        memory = 6;
         inherit vlanId;
         autoStart = true;
       };
@@ -86,6 +86,10 @@ in
 
       security = {
         fail2ban.enable = true;
+        trivy = {
+          server.enable = true;
+          scanning.enable = true;
+        };
         wazuh = {
           server.enable = true;
           agent.enable = true;

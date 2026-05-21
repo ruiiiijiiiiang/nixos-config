@@ -53,7 +53,10 @@ in
 
       networking.nginx.enable = true;
 
-      security.fail2ban.enable = true;
+      security = {
+        fail2ban.enable = true;
+        trivy.scanning.enable = true;
+      };
 
       observability = {
         beszel.agent.enable = true;

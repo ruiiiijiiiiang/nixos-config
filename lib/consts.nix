@@ -252,6 +252,7 @@ rec {
     stirlingpdf = 8080;
     syncthing = 8384;
     termix = 8097;
+    trivy = 9501;
     unbound = 5335;
     uptimekuma = 3002;
     vaultwarden = {
@@ -383,28 +384,34 @@ rec {
   daily-tasks = {
     hypervisor = {
       podman-update = "03:00";
+      trivy-scan = "03:10";
       restic-backup = "06:30";
     };
     pi = {
       podman-update = "03:00";
+      trivy-scan = "03:10";
     };
     vm-network = {
       podman-update = "03:05";
+      trivy-scan = "03:15";
       restic-backup = "06:35";
     };
     vm-app = {
       podman-update = "03:10";
+      trivy-scan = "03:25";
       restic-backup = "04:00";
       container-db-backup = "03:30";
       nix-build = "05:30";
     };
     vm-monitor = {
       podman-update = "03:30";
+      trivy-scan = "03:50";
       restic-backup = "06:45";
       container-db-backup = "03:45";
     };
     vm-public = {
       podman-update = "03:35";
+      trivy-scan = "03:50";
     };
   };
 
@@ -413,5 +420,11 @@ rec {
     private-repo = "${subdomains.vm-app.forgejo}.${domain}";
     vpn-server = "vpn.${domain}";
     ntfy-server = "${subdomains.vm-monitor.ntfy}.${domain}";
+    ntfy-topics = {
+      prometheus-alerts = "prometheus-alerts";
+      harmonia-alerts = "harmonia-alerts";
+      gatus-alerts = "gatus-alerts";
+      trivy = "trivy-alerts";
+    };
   };
 }

@@ -264,6 +264,13 @@ in
               }
 
               ${lib.optionalString
+                nixosConfigurations.vm-monitor.config.custom.services.security.trivy.server.enable
+                /* bash */ ''
+                  iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip daddr ${getHostAddress "vm-monitor"} tcp dport ${toString ports.trivy} accept
+                ''
+              }
+
+              ${lib.optionalString
                 nixosConfigurations.vm-network.config.custom.services.networking.wireguard.server.enable
                 /* bash */ ''
                   iifname "${cfg.wgInterface}" oifname "${cfg.lanInterface}" accept

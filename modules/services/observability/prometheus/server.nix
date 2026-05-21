@@ -56,114 +56,114 @@ in
     enable = mkEnableOption "Enable Prometheus server";
   };
 
-  config = lib.mkIf cfg.enable {
-    assertions = [
-      {
-        assertion = config.custom.services.observability.ntfy.enable;
-        message = "Prometheus alerting requires custom.services.observability.ntfy.enable";
-      }
-    ];
-
-    services = {
-      prometheus = {
+  config = lib.mkMerge [
+    (lib.mkIf cfg.enable {
+      services.prometheus = {
         enable = true;
         port = ports.prometheus.server;
-        alertmanagers = [
-          {
-            scheme = "http";
-            static_configs = [
-              {
-                targets = [ "${addresses.localhost}:${toString config.services.prometheus.alertmanager.port}" ];
-              }
-            ];
-          }
-        ];
-        rules = [
-          ''
-            groups:
-              - name: system
-                rules:
-                  - alert: HostDown
-                    expr: up{job="node-exporter"} == 0
-                    for: 5m
-                    labels:
-                      severity: critical
-                    annotations:
-                      summary: "Host down: {{ $labels.hostname }}"
-                      description: "Prometheus has not scraped node_exporter on {{ $labels.hostname }} for 5 minutes."
-
-                  - alert: HostLowDiskSpace
-                    expr: |
-                      (
-                        node_filesystem_avail_bytes{job="node-exporter", mountpoint="/", fstype!~"tmpfs|overlay|squashfs"}
-                        /
-                        node_filesystem_size_bytes{job="node-exporter", mountpoint="/", fstype!~"tmpfs|overlay|squashfs"}
-                      ) * 100 < 10
-                    for: 5m
-                    labels:
-                      severity: warning
-                    annotations:
-                      summary: "Low disk space: {{ $labels.hostname }}"
-                      description: "Root filesystem free space is below 10% on {{ $labels.hostname }}."
-
-                  - alert: HostLowMemory
-                    expr: |
-                      (
-                        node_memory_MemAvailable_bytes{job="node-exporter"}
-                        /
-                        node_memory_MemTotal_bytes{job="node-exporter"}
-                      ) * 100 < 10
-                    for: 5m
-                    labels:
-                      severity: warning
-                    annotations:
-                      summary: "Low memory: {{ $labels.hostname }}"
-                      description: "Available memory is below 10% on {{ $labels.hostname }}."
-          ''
-        ];
         scrapeConfigs = lib.mapAttrsToList mkScrapeJob monitoredExporters;
-
-        alertmanager = {
-          enable = true;
-          configuration = {
-            global.resolve_timeout = "5m";
-
-            route = {
-              receiver = "ntfy";
-              group_by = [
-                "alertname"
-                "hostname"
-              ];
-              group_wait = "30s";
-              group_interval = "5m";
-              repeat_interval = "6h";
-            };
-
-            receivers = [
+      };
+      services.nginx.virtualHosts."${fqdn}" = mkVirtualHost {
+        inherit fqdn;
+        port = ports.prometheus.server;
+      };
+    })
+    (lib.mkIf cfg.enable {
+      services.prometheus =
+        lib.mkIf nixosConfigurations.vm-monitor.config.custom.services.observability.ntfy.enable
+          {
+            alertmanagers = [
               {
-                name = "ntfy";
-                webhook_configs = [
+                scheme = "http";
+                static_configs = [
                   {
-                    url = "http://${addresses.localhost}:${toString ports.prometheus.alertmanager}/hook";
-                    send_resolved = true;
-                    max_alerts = 0;
+                    targets = [ "${addresses.localhost}:${toString config.services.prometheus.alertmanager.port}" ];
                   }
                 ];
               }
             ];
-          };
-        };
+            rules = [
+              ''
+                groups:
+                  - name: system
+                    rules:
+                      - alert: HostDown
+                        expr: up{job="node-exporter"} == 0
+                        for: 5m
+                        labels:
+                          severity: critical
+                        annotations:
+                          summary: "Host down: {{ $labels.hostname }}"
+                          description: "Prometheus has not scraped node_exporter on {{ $labels.hostname }} for 5 minutes."
 
-        alertmanager-ntfy =
-          lib.mkIf nixosConfigurations.vm-monitor.config.custom.services.observability.ntfy.enable
-            {
+                      - alert: HostLowDiskSpace
+                        expr: |
+                          (
+                            node_filesystem_avail_bytes{job="node-exporter", mountpoint="/", fstype!~"tmpfs|overlay|squashfs"}
+                            /
+                            node_filesystem_size_bytes{job="node-exporter", mountpoint="/", fstype!~"tmpfs|overlay|squashfs"}
+                          ) * 100 < 10
+                        for: 5m
+                        labels:
+                          severity: warning
+                        annotations:
+                          summary: "Low disk space: {{ $labels.hostname }}"
+                          description: "Root filesystem free space is below 10% on {{ $labels.hostname }}."
+
+                      - alert: HostLowMemory
+                        expr: |
+                          (
+                            node_memory_MemAvailable_bytes{job="node-exporter"}
+                            /
+                            node_memory_MemTotal_bytes{job="node-exporter"}
+                          ) * 100 < 10
+                        for: 5m
+                        labels:
+                          severity: warning
+                        annotations:
+                          summary: "Low memory: {{ $labels.hostname }}"
+                          description: "Available memory is below 10% on {{ $labels.hostname }}."
+              ''
+            ];
+            alertmanager = {
+              enable = true;
+              configuration = {
+                global.resolve_timeout = "5m";
+
+                route = {
+                  receiver = "ntfy";
+                  group_by = [
+                    "alertname"
+                    "hostname"
+                  ];
+                  group_wait = "30s";
+                  group_interval = "5m";
+                  repeat_interval = "6h";
+                };
+
+                receivers = [
+                  {
+                    name = "ntfy";
+                    webhook_configs = [
+                      {
+                        url = "http://${addresses.localhost}:${toString ports.prometheus.alertmanager}/hook";
+                        send_resolved = true;
+                        max_alerts = 0;
+                      }
+                    ];
+                  }
+                ];
+              };
+            };
+
+            alertmanager-ntfy = {
               enable = true;
               settings = {
                 http.addr = "${addresses.localhost}:${toString ports.prometheus.alertmanager}";
                 ntfy = {
                   baseurl = "https://${endpoints.ntfy-server}";
                   notification = {
-                    topic = "prometheus-alerts";
+                    topic = endpoints.ntfy-topics.prometheus-alerts;
                     priority = ''status == "firing" ? "high" : "default"'';
                     templates = {
                       title = ''{{ if eq .Status "resolved" }}Resolved: {{ end }}{{ index .Annotations "summary" }}'';
@@ -173,12 +173,7 @@ in
                 };
               };
             };
-      };
-
-      nginx.virtualHosts."${fqdn}" = mkVirtualHost {
-        inherit fqdn;
-        port = ports.prometheus.server;
-      };
-    };
-  };
+          };
+    })
+  ];
 }
