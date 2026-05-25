@@ -60,7 +60,6 @@ in
       pastel
       posting
       presenterm
-      screen
       smassh
       spicetify-cli
       stow
@@ -77,9 +76,11 @@ in
       easyeffects
       inputs.zen-browser.packages.${stdenv.hostPlatform.system}.default
       kdePackages.filelight
+      kdePackages.gwenview
       kdePackages.kate
       kdePackages.kcalc
       kdePackages.kolourpaint
+      kdePackages.okular
       kdePackages.yakuake
       kitty
       mission-center
@@ -93,6 +94,7 @@ in
       telegram-desktop
       vivaldi
       vlc
+      anki
 
       # Fun stuff
       astroterm

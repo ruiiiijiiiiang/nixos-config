@@ -46,6 +46,7 @@ rec {
       pocketid = "id";
       portainer = "portainer";
       ovumcy = "ovumcy";
+      pricebuddy = "pricebuddy";
       qbittorrent = "qbittorrent";
       reitti = "reitti";
       stirlingpdf = "pdf";
@@ -224,6 +225,7 @@ rec {
     pihole = 8008;
     pocketid = 1411;
     ovumcy = 8095;
+    pricebuddy = 8098;
     prometheus = {
       server = 9090;
       alertmanager = 8000;
@@ -299,6 +301,7 @@ rec {
     krawl = 920;
     changedetection = 921;
     mealie = 922;
+    pricebuddy = 923;
     user = 1000;
     nobody = 65534;
 
@@ -389,7 +392,6 @@ rec {
     };
     pi = {
       podman-update = "03:00";
-      trivy-scan = "03:10";
     };
     vm-network = {
       podman-update = "03:05";

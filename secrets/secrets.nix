@@ -94,6 +94,10 @@ in
     publicKeys = ssh.vm-app;
     armor = true;
   };
+  "pricebuddy-env.age" = {
+    publicKeys = ssh.vm-app;
+    armor = true;
+  };
   "reitti-env.age" = {
     publicKeys = ssh.vm-app;
     armor = true;

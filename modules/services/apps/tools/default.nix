@@ -10,6 +10,7 @@
     ./mealie
     ./microbin
     ./ovumcy
+    ./pricebuddy
     ./syncthing
   ];
 }

@@ -74,12 +74,11 @@ in
           OC_URL = "https://${opencloud-fqdn}";
           OC_INSECURE = "true";
 
-          OC_ADD_RUN_SERVICES = "collaboration";
-          COLLABORATION_APP_ADDR = "https://${onlyoffice-fqdn}";
+          OC_ADD_RUN_SERVICES = "nats,collaboration";
+          COLLABORATION_APP_ADDR = "http://localhost:80";
           COLLABORATION_WOPI_SRC = "http://localhost:${opencloud-port}";
           COLLABORATION_APP_NAME = "OnlyOffice";
           COLLABORATION_APP_PRODUCT = "OnlyOffice";
-          COLLABORATION_APP_INSECURE = "true";
 
           OC_OIDC_ISSUER = "https://${endpoints.oidc-issuer}";
           OC_EXCLUDE_RUN_SERVICES = "idp";

@@ -90,6 +90,7 @@ in
           librechat.enable = true;
           mealie.enable = true;
           ovumcy.enable = true;
+          pricebuddy.enable = true;
           syncthing = {
             enable = true;
             proxied = true;

@@ -55,7 +55,6 @@ in
 
       security = {
         fail2ban.enable = true;
-        trivy.scanning.enable = true;
       };
 
       observability = {

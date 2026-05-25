@@ -335,6 +335,14 @@ in
                 };
               }
               {
+                "Pricebuddy" = {
+                  icon = "price-buddy";
+                  href = "https://${subdomains.vm-app.pricebuddy}.${domain}";
+                  description = "Price Tracker";
+                  siteMonitor = "https://${subdomains.vm-app.pricebuddy}.${domain}";
+                };
+              }
+              {
                 "ChangeDetection" = {
                   icon = "changedetection";
                   href = "https://${subdomains.vm-app.changedetection}.${domain}";
