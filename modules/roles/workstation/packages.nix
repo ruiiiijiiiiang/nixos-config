@@ -32,6 +32,9 @@ in
         EDITOR = "nvim";
       };
 
+      etc."xdg/menus/applications.menu".source =
+        "${pkgs.kdePackages.plasma-workspace}/etc/xdg/menus/plasma-applications.menu";
+
       systemPackages = with pkgs; [
         bottom
         gh

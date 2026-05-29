@@ -75,7 +75,6 @@ in
       security = {
         fail2ban.enable = true;
         krawl.enable = true;
-        trivy.scanning.enable = true;
         wazuh.agent = {
           enable = true;
           serverAddress = getHostAddress "vm-monitor";

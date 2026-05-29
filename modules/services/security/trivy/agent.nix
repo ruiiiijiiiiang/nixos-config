@@ -12,7 +12,6 @@ let
   inherit (helpers) dailyTaskToSystemd getHostAddress;
   cfg = config.custom.services.security.trivy.scanning;
   hostName = config.networking.hostName;
-  serverAddr = getHostAddress "vm-monitor";
   ntfyEnabled =
     inputs.self.nixosConfigurations.vm-monitor.config.custom.services.observability.ntfy.enable;
 
@@ -27,7 +26,7 @@ let
         "@HOST_NAME@"
       ]
       [
-        (lib.escapeShellArg "${serverAddr}:${toString ports.trivy}")
+        (lib.escapeShellArg "${cfg.serverAddress}:${toString ports.trivy}")
         (lib.escapeShellArg (builtins.concatStringsSep "," cfg.scanners))
         (lib.escapeShellArg endpoints.ntfy-server)
         (lib.escapeShellArg (lib.boolToString ntfyEnabled))
@@ -51,6 +50,11 @@ in
 {
   options.custom.services.security.trivy.scanning = with lib; {
     enable = mkEnableOption "Periodic container image scanning on this host";
+    serverAddress = mkOption {
+      type = types.str;
+      default = getHostAddress "vm-monitor";
+      description = "Trivy server address.";
+    };
     scanners = mkOption {
       type = types.listOf types.str;
       default = [

@@ -81,7 +81,7 @@ in
 
     systemd = {
       tmpfiles.rules = [
-        "d /var/lib/pricebuddy/storage 0700 ${toString oci-uids.pricebuddy} ${toString oci-uids.pricebuddy} - -"
+        "d /var/lib/pricebuddy/storage 0755 ${toString oci-uids.pricebuddy} ${toString oci-uids.pricebuddy} - -"
         "d /var/lib/pricebuddy/mysql 0755 ${toString oci-uids.postgres} ${toString oci-uids.postgres} - -"
       ];
 
@@ -92,9 +92,7 @@ in
       inherit fqdn;
       port = ports.pricebuddy;
       extraConfig = ''
-        proxy_set_header Host $host;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_redirect http://${fqdn}/ /;
       '';
     };
   };

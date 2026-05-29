@@ -103,7 +103,6 @@ in
 
       security = {
         fail2ban.enable = true;
-        trivy.scanning.enable = true;
         wazuh.agent = {
           enable = true;
           interface = vlanInterface;

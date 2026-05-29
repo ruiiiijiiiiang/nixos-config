@@ -23,7 +23,7 @@ in
       libvirt = {
         enable = true;
         cpu = 10;
-        memory = 12;
+        memory = 14;
         inherit vlanId;
       };
 
@@ -143,7 +143,6 @@ in
 
       security = {
         fail2ban.enable = true;
-        trivy.scanning.enable = true;
         wazuh.agent = {
           enable = true;
           serverAddress = getHostAddress "vm-monitor";

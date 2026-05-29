@@ -86,10 +86,6 @@ in
 
       security = {
         fail2ban.enable = true;
-        trivy = {
-          server.enable = true;
-          scanning.enable = true;
-        };
         wazuh = {
           server.enable = true;
           agent.enable = true;
