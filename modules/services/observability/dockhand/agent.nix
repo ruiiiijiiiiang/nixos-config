@@ -63,10 +63,7 @@ in
         labels = {
           "io.containers.autoupdate" = "registry";
         };
-        extraOptions = [
-          "--health-cmd=wget -q --spider --no-check-certificate https://localhost:${toString ports.dockhand.agent}/_hawser/health || exit 1"
-          "--group-add=${toString oci-uids.podman}"
-        ];
+        extraOptions = [ "--group-add=${toString oci-uids.podman}" ];
       };
     };
 

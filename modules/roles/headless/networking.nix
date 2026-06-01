@@ -1,6 +1,7 @@
 {
   config,
   consts,
+  inputs,
   lib,
   ...
 }:
@@ -8,6 +9,8 @@ let
   inherit (import ../../../lib/keys.nix) ssh;
   inherit (consts) username ports;
   cfg = config.custom.roles.headless.networking;
+  termixEnabled =
+    inputs.self.nixosConfigurations.vm-monitor.config.custom.services.observability.termix.enable;
 in
 {
   options.custom.roles.headless.networking = with lib; {
@@ -86,7 +89,8 @@ in
     users.users = {
       ${username} = {
         linger = true;
-        openssh.authorizedKeys.keys = [ ssh.termix ] ++ ssh.arch ++ ssh.framework;
+        openssh.authorizedKeys.keys =
+          lib.optionals termixEnabled [ ssh.termix ] ++ ssh.arch ++ ssh.framework;
       };
 
       root.openssh.authorizedKeys.keys = [

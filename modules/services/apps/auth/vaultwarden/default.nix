@@ -40,7 +40,7 @@ in
           ROCKET_ADDRESS = addresses.localhost;
           ROCKET_PORT = ports.vaultwarden.server;
 
-          WEBSOCKET_ENABLED = true;
+          ENABLE_WEBSOCKET = true;
           WEBSOCKET_ADDRESS = addresses.localhost;
           WEBSOCKET_PORT = ports.vaultwarden.websocket;
         };

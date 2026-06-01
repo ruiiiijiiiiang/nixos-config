@@ -68,7 +68,11 @@ let
 
   systemd-logs-dashboard = pkgs.writeText "systemd-logs.json" (lib.readFile ./systemd-logs.json);
 
-  grafana-dashboards = pkgs.runCommand "grafana-dashboards" { } /* bash */ ''
+  grafana-dashboards = pkgs.runCommand "grafana-dashboards"
+    {
+      nativeBuildInputs = [ pkgs.jq ];
+    }
+    /* bash */ ''
     mkdir -p $out
 
     # Sanitize the json data sources since different dashboards use different names.
@@ -89,6 +93,20 @@ let
     install_dash ${podman-exporter-dashboard} "podman-exporter.json"
     install_dash ${restic-exporter-dashboard} "restic-exporter.json"
     install_dash ${wireguard-exporter-dashboard} "wireguard-exporter.json"
+    jq '
+      (.templating.list[] | select(.name == "instance")) |= . + {
+        datasource: {type: "prometheus", uid: "prometheus"},
+        definition: "label_values(nginx_up, instance)",
+        query: "label_values(nginx_up, instance)",
+        options: [],
+        hide: 0,
+        sort: 1,
+        skipUrlSync: false,
+        allValue: ".*",
+        current: {selected: true, text: "All", value: "$__all"}
+      }
+    ' "$out/nginx-exporter.json" > "$out/nginx-exporter.json.tmp"
+    mv "$out/nginx-exporter.json.tmp" "$out/nginx-exporter.json"
     cp ${systemd-logs-dashboard} $out/systemd-logs.json
   '';
 

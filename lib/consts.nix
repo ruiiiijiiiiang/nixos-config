@@ -92,7 +92,7 @@ rec {
       class-c = "192.168.0.0/16";
     };
     home-prefix = "192.168";
-    home-prefix-v6 = "fd00";
+    home-prefix-v6 = "fd00:0:0";
     home = {
       network = "${addresses.home-prefix}.${toString vlan-ids.home}.0/24";
       network-v6 = "${addresses.home-prefix-v6}:${toString vlan-ids.home}::/64";

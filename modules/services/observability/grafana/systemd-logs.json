@@ -9,20 +9,42 @@
       {
         "name": "host",
         "type": "query",
-        "datasource": "Loki",
+        "datasource": { "type": "loki", "uid": "loki" },
+        "definition": "label_values({job=\"systemd-journal\"}, host)",
         "query": "label_values({job=\"systemd-journal\"}, host)",
+        "options": [],
+        "hide": 0,
         "refresh": 1,
+        "sort": 1,
+        "skipUrlSync": false,
         "includeAll": true,
-        "multi": true
+        "multi": true,
+        "allValue": ".*",
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        }
       },
       {
         "name": "unit",
         "type": "query",
-        "datasource": "Loki",
+        "datasource": { "type": "loki", "uid": "loki" },
+        "definition": "label_values({job=\"systemd-journal\", host=~\"$host\"}, unit)",
         "query": "label_values({job=\"systemd-journal\", host=~\"$host\"}, unit)",
+        "options": [],
+        "hide": 0,
         "refresh": 1,
+        "sort": 1,
+        "skipUrlSync": false,
         "includeAll": true,
-        "multi": true
+        "multi": true,
+        "allValue": ".*",
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        }
       }
     ]
   },

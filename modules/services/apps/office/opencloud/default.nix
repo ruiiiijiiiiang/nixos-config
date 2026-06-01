@@ -79,6 +79,7 @@ in
           COLLABORATION_WOPI_SRC = "http://localhost:${opencloud-port}";
           COLLABORATION_APP_NAME = "OnlyOffice";
           COLLABORATION_APP_PRODUCT = "OnlyOffice";
+          COLLABORATION_APP_INSECURE = "true";
 
           OC_OIDC_ISSUER = "https://${endpoints.oidc-issuer}";
           OC_EXCLUDE_RUN_SERVICES = "idp";

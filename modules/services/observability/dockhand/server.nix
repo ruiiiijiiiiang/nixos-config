@@ -39,9 +39,7 @@ in
         labels = {
           "io.containers.autoupdate" = "registry";
         };
-        extraOptions = [
-          "--group-add=${toString oci-uids.podman}"
-        ];
+        extraOptions = [ "--group-add=${toString oci-uids.podman}" ];
       };
     };
 
@@ -52,6 +50,11 @@ in
     services.nginx.virtualHosts."${fqdn}" = mkVirtualHost {
       inherit fqdn;
       port = ports.dockhand.server;
+      extraConfig = ''
+        proxy_buffer_size 16k;
+        proxy_buffers 8 16k;
+        proxy_busy_buffers_size 32k;
+      '';
     };
   };
 }
