@@ -36,13 +36,8 @@ in
         config = {
           DOMAIN = "https://${fqdn}";
           SIGNUPS_ALLOWED = false;
-
           ROCKET_ADDRESS = addresses.localhost;
-          ROCKET_PORT = ports.vaultwarden.server;
-
-          ENABLE_WEBSOCKET = true;
-          WEBSOCKET_ADDRESS = addresses.localhost;
-          WEBSOCKET_PORT = ports.vaultwarden.websocket;
+          ROCKET_PORT = ports.vaultwarden;
         };
       };
 
@@ -50,10 +45,7 @@ in
         useACMEHost = fqdn;
         forceSSL = true;
         locations."/" = {
-          proxyPass = "http://${addresses.localhost}:${toString ports.vaultwarden.server}";
-        };
-        locations."/notifications/hub" = {
-          proxyPass = "http://${addresses.localhost}:${toString ports.vaultwarden.websocket}";
+          proxyPass = "http://${addresses.localhost}:${toString ports.vaultwarden}";
         };
       };
     };

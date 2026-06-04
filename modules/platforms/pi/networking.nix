@@ -2,10 +2,12 @@
   config,
   consts,
   lib,
+  helpers,
   ...
 }:
 let
-  inherit (consts) vlan-ids;
+  inherit (consts) domain addresses vlan-ids;
+  inherit (helpers) getHostAddress;
   cfg = config.custom.platforms.pi.networking;
   vlanInterface = "${cfg.lanInterface}.${toString cfg.vlanId}";
 in
@@ -33,38 +35,113 @@ in
     assertions = [
       {
         assertion = lib.elem cfg.vlanId (lib.attrValues vlan-ids);
-        message = "Pi VLAN ID must exist in consts.vlan-ids.";
+        message = "VLAN ID must exist in consts.vlan-ids.";
       }
       {
         assertion = cfg.lanInterface != cfg.wlanInterface;
-        message = "Pi LAN and WLAN interfaces must be different.";
+        message = "LAN and WLAN interfaces must be different.";
       }
     ];
 
     networking = {
+      useNetworkd = true;
       useDHCP = false;
+      networkmanager.enable = false;
 
-      interfaces = {
-        ${cfg.lanInterface} = {
-          useDHCP = false;
+      wireless.iwd = lib.mkIf (cfg.wlanInterface != null) {
+        enable = true;
+        settings = {
+          Settings = {
+            AutoConnect = false;
+          };
         };
-        ${cfg.wlanInterface} = {
-          useDHCP = false;
-        };
-        ${vlanInterface} = {
-          useDHCP = true;
+      };
+    };
+
+    systemd.network = {
+      enable = true;
+
+      netdevs = {
+        "20-${vlanInterface}" = {
+          netdevConfig = {
+            Kind = "vlan";
+            Name = vlanInterface;
+          };
+          vlanConfig = {
+            Id = cfg.vlanId;
+          };
         };
       };
 
-      vlans."${vlanInterface}" = {
-        interface = cfg.lanInterface;
-        id = cfg.vlanId;
-      };
+      networks = {
+        "10-${cfg.lanInterface}" = {
+          matchConfig.Name = cfg.lanInterface;
+          networkConfig = {
+            VLAN = [ vlanInterface ];
+            LinkLocalAddressing = "no";
+          };
+          linkConfig.RequiredForOnline = "carrier";
+        };
 
-      networkmanager.unmanaged = [
-        cfg.lanInterface
-        cfg.wlanInterface
-      ];
+        "20-${vlanInterface}" = {
+          matchConfig.Name = vlanInterface;
+          networkConfig = {
+            Address = "${getHostAddress "pi"}/24";
+            Gateway = addresses.infra.hosts.vm-network;
+            DNS = [ addresses.infra.vip.dns ];
+            Domains = [ domain ];
+            IPv4ReversePathFilter = "loose";
+          };
+          routingPolicyRules = [
+            {
+              From = getHostAddress "pi";
+              Table = 20;
+            }
+          ];
+          routes = [
+            {
+              Destination = addresses.infra.network;
+              Scope = "link";
+              Table = 20;
+            }
+            {
+              Gateway = addresses.infra.hosts.vm-network;
+              Table = 20;
+            }
+          ];
+          linkConfig.RequiredForOnline = "routable";
+        };
+
+        "30-${cfg.wlanInterface}" = lib.mkIf (cfg.wlanInterface != null) {
+          matchConfig.Name = cfg.wlanInterface;
+          networkConfig = {
+            DHCP = "yes";
+            IgnoreCarrierLoss = "3s";
+            IPv4ReversePathFilter = "loose";
+          };
+          routingPolicyRules = [
+            {
+              From = getHostAddress "pi-wifi";
+              Table = 2;
+            }
+          ];
+          routes = [
+            {
+              Destination = addresses.home.network;
+              Scope = "link";
+              Table = 2;
+            }
+            {
+              Gateway = addresses.home.hosts.vm-network;
+              Table = 2;
+            }
+          ];
+          dhcpV4Config = {
+            RouteMetric = 2048;
+          };
+          linkConfig.RequiredForOnline = "no";
+        };
+      };
     };
 
     services.avahi = {

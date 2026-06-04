@@ -363,14 +363,6 @@ in
           {
             "Networking" = [
               {
-                "Myspeed" = {
-                  icon = "myspeed";
-                  href = "https://${subdomains.vm-monitor.myspeed}.${domain}";
-                  description = "Speed Test Analysis";
-                  siteMonitor = "https://${subdomains.vm-monitor.myspeed}.${domain}";
-                };
-              }
-              {
                 "Pihole" = {
                   icon = "pi-hole";
                   href = "https://${subdomains.vm-network.pihole}.${domain}";

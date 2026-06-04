@@ -8,13 +8,12 @@
 let
   inherit (consts)
     timeZone
-    addresses
     domain
     subdomains
     ports
     hardware
     ;
-  inherit (helpers) getHostAddress mkVirtualHost mkNotifyService;
+  inherit (helpers) mkVirtualHost mkNotifyService;
   cfg = config.custom.services.apps.tools.homeassistant;
   ha-fqdn = "${subdomains.${config.networking.hostName}.homeassistant}.${domain}";
   zwave-fqdn = "${subdomains.${config.networking.hostName}.zwave}.${domain}";
@@ -28,14 +27,10 @@ in
     virtualisation.oci-containers.containers = {
       homeassistant = {
         image = "ghcr.io/home-assistant/home-assistant:stable";
-        ports = [
-          "${getHostAddress config.networking.hostName}:${toString ports.homeassistant}:${toString ports.homeassistant}"
-          "${addresses.localhost}:${toString ports.homeassistant}:${toString ports.homeassistant}"
-          "${addresses.localhost}:${toString ports.zwave}:${toString ports.zwave}"
-        ];
         volumes = [ "/var/lib/home-assistant:/config" ];
         environment.TZ = timeZone;
         devices = [ "/dev/serial/by-id/${hardware.radios.zigbee}:/dev/zigbee" ];
+        networks = [ "host" ];
         extraOptions = [
           "--cap-add=NET_RAW"
           "--cap-add=NET_ADMIN"
@@ -49,7 +44,7 @@ in
         image = "docker.io/zwavejs/zwave-js-ui:latest";
         dependsOn = [ "homeassistant" ];
         volumes = [ "/var/lib/zwave-js-ui:/usr/src/app/store" ];
-        networks = [ "container:homeassistant" ];
+        networks = [ "host" ];
         devices = [
           "/dev/serial/by-id/${hardware.radios.zwave}:/dev/zwave"
         ];
@@ -92,7 +87,10 @@ in
     };
 
     networking.firewall = {
-      allowedTCPPorts = [ ports.matter ];
+      allowedTCPPorts = [
+        ports.homeassistant
+        ports.matter
+      ];
       allowedUDPPorts = [
         ports.mdns
         ports.matter

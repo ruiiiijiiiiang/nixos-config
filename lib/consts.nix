@@ -103,6 +103,13 @@ rec {
         vm-network-v6 = "${addresses.home-prefix-v6}:${toString vlan-ids.home}::1";
         framework = "${addresses.home-prefix}.${toString vlan-ids.home}.10";
         arch = "${addresses.home-prefix}.${toString vlan-ids.home}.11";
+        deco-office = "${addresses.home-prefix}.${toString vlan-ids.home}.40";
+        deco-hallway = "${addresses.home-prefix}.${toString vlan-ids.home}.41";
+        deco-family-room = "${addresses.home-prefix}.${toString vlan-ids.home}.42";
+        deco-main-bedroom = "${addresses.home-prefix}.${toString vlan-ids.home}.43";
+        deco-living-room = "${addresses.home-prefix}.${toString vlan-ids.home}.44";
+        deco-kitchen = "${addresses.home-prefix}.${toString vlan-ids.home}.45";
+        pi-wifi = "${addresses.home-prefix}.${toString vlan-ids.home}.253";
         hypervisor-wifi = "${addresses.home-prefix}.${toString vlan-ids.home}.254";
       };
     };
@@ -257,10 +264,7 @@ rec {
     trivy = 9501;
     unbound = 5335;
     uptimekuma = 3002;
-    vaultwarden = {
-      server = 8222;
-      websocket = 3012;
-    };
+    vaultwarden = 8222;
     wazuh = {
       indexer = 9200;
       manager = 55000;
@@ -343,6 +347,7 @@ rec {
       arch = "28:0c:50:9c:03:2e";
       framework = "ac:f2:3c:63:d9:f3";
       pi = "2c:cf:67:0e:c9:6b";
+      pi-wifi = "2c:cf:67:0e:c9:6c";
       pi-legacy = "b8:27:eb:af:a2:33";
       wan = "58:47:ca:78:a0:7c";
       hypervisor = "c8:a3:62:bf:0b:b3";
@@ -352,6 +357,12 @@ rec {
       vm-monitor = "52:54:00:00:00:02";
       vm-public = "52:54:00:00:00:03";
       vm-cyber = "52:54:00:00:00:04";
+      deco-office = "5c:e9:31:6c:26:90";
+      deco-hallway = "5c:e9:31:6c:26:8c";
+      deco-family-room = "5c:e9:31:6c:26:94";
+      deco-main-bedroom = "e4:fa:c4:8b:d9:1c";
+      deco-living-room = "e4:fa:c4:8b:da:68";
+      deco-kitchen = "e4:fa:c4:8b:da:6c";
     };
 
     radios = {

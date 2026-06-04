@@ -37,6 +37,17 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = lib.elem cfg.vlanId (lib.attrValues vlan-ids);
+        message = "VLAN ID must exist in consts.vlan-ids.";
+      }
+      {
+        assertion = cfg.lanInterface != cfg.wlanInterface;
+        message = "LAN and WLAN interfaces must be different.";
+      }
+    ];
+
     networking = {
       useNetworkd = true;
       useDHCP = false;
@@ -47,9 +58,6 @@ in
         settings = {
           Settings = {
             AutoConnect = false;
-          };
-          Network = {
-            RoutePriorityOffset = 2048;
           };
         };
       };
@@ -118,7 +126,25 @@ in
             Gateway = addresses.infra.hosts.vm-network;
             DNS = [ addresses.infra.vip.dns ];
             Domains = [ domain ];
+            IPv4ReversePathFilter = "loose";
           };
+          routingPolicyRules = [
+            {
+              From = getHostAddress "hypervisor";
+              Table = 20;
+            }
+          ];
+          routes = [
+            {
+              Destination = addresses.infra.network;
+              Scope = "link";
+              Table = 20;
+            }
+            {
+              Gateway = addresses.infra.hosts.vm-network;
+              Table = 20;
+            }
+          ];
           linkConfig.RequiredForOnline = "routable";
         };
 
@@ -128,7 +154,25 @@ in
             Address = "${getHostAddress "hypervisor-wifi"}/24";
             DHCP = "yes";
             IgnoreCarrierLoss = "3s";
+            IPv4ReversePathFilter = "loose";
           };
+          routingPolicyRules = [
+            {
+              From = getHostAddress "hypervisor-wifi";
+              Table = 2;
+            }
+          ];
+          routes = [
+            {
+              Destination = addresses.home.network;
+              Scope = "link";
+              Table = 2;
+            }
+            {
+              Gateway = addresses.home.hosts.vm-network;
+              Table = 2;
+            }
+          ];
           dhcpV4Config = {
             RouteMetric = 2048;
           };

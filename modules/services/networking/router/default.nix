@@ -108,18 +108,22 @@ in
     ];
 
     boot.kernel.sysctl = {
-      "net.ipv4.ip_forward" = 1;
-      "net.ipv6.conf.all.forwarding" = 1;
+      "net.ipv4.ip_forward" = "1";
+      "net.ipv6.conf.all.forwarding" = "1";
+      "net.ipv4.conf.${cfg.wanInterface}.rp_filter" = "2";
+      "net.ipv4.conf.${cfg.lanInterface}.rp_filter" = "2";
+      "net.ipv4.conf.${cfg.infraInterface}.rp_filter" = "2";
+      "net.ipv4.conf.${cfg.dmzInterface}.rp_filter" = "2";
     };
 
     networking = {
+      useDHCP = false;
       networkmanager.enable = false;
 
       interfaces = {
         ${cfg.wanInterface}.useDHCP = true;
 
         ${cfg.lanInterface} = {
-          useDHCP = false;
           ipv4.addresses = [
             {
               address = addresses.home.hosts.${config.networking.hostName};
@@ -135,7 +139,6 @@ in
         };
 
         ${cfg.infraInterface} = {
-          useDHCP = false;
           ipv4.addresses = [
             {
               address = addresses.infra.hosts.${config.networking.hostName};
@@ -151,7 +154,6 @@ in
         };
 
         ${cfg.dmzInterface} = {
-          useDHCP = false;
           ipv4.addresses = [
             {
               address = addresses.dmz.hosts.${config.networking.hostName};

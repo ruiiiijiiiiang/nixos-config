@@ -116,6 +116,7 @@ in
       gdb
       gemini-cli
       github-copilot-cli
+      antigravity-cli
       gnumake
       go
       inputs.windsurf.packages.${stdenv.hostPlatform.system}.codeium-lsp

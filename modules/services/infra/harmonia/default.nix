@@ -73,7 +73,7 @@ in
     age.secrets = {
       harmonia-sign-key = {
         file = ../../../../secrets/harmonia-sign-key.age;
-        mode = "440";
+        mode = "600";
         owner = "harmonia";
         group = "harmonia";
       };
