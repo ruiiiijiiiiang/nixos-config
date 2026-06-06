@@ -1,6 +1,6 @@
 rec {
   timeZone = "America/Chicago";
-  defaultLocale = "en_US.UTF-8";
+  locale = "en_US.UTF-8";
   username = "rui";
   home = "/home/${username}";
   domain = "ruijiang.me";
@@ -129,6 +129,7 @@ rec {
       };
       vip = {
         dns = "${addresses.home-prefix}.${toString vlan-ids.infra}.53";
+        dns-v6 = "${addresses.home-prefix-v6}:${toString vlan-ids.infra}::53";
       };
     };
     dmz = {

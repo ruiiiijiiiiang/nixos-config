@@ -2,7 +2,7 @@
 let
   inherit (consts)
     timeZone
-    defaultLocale
+    locale
     username
     home
     oci-uids
@@ -30,16 +30,16 @@ in
 
   time.timeZone = timeZone;
 
-  i18n.defaultLocale = defaultLocale;
+  i18n.defaultLocale = locale;
   i18n.extraLocaleSettings = {
-    LC_ADDRESS = defaultLocale;
-    LC_IDENTIFICATION = defaultLocale;
-    LC_MEASUREMENT = defaultLocale;
-    LC_MONETARY = defaultLocale;
-    LC_NAME = defaultLocale;
-    LC_NUMERIC = defaultLocale;
-    LC_PAPER = defaultLocale;
-    LC_TELEPHONE = defaultLocale;
-    LC_TIME = defaultLocale;
+    LC_ADDRESS = locale;
+    LC_IDENTIFICATION = locale;
+    LC_MEASUREMENT = locale;
+    LC_MONETARY = locale;
+    LC_NAME = locale;
+    LC_NUMERIC = locale;
+    LC_PAPER = locale;
+    LC_TELEPHONE = locale;
+    LC_TIME = locale;
   };
 }

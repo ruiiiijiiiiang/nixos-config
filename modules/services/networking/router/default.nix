@@ -117,57 +117,9 @@ in
     };
 
     networking = {
+      useNetworkd = true;
       useDHCP = false;
       networkmanager.enable = false;
-
-      interfaces = {
-        ${cfg.wanInterface}.useDHCP = true;
-
-        ${cfg.lanInterface} = {
-          ipv4.addresses = [
-            {
-              address = addresses.home.hosts.${config.networking.hostName};
-              prefixLength = 24;
-            }
-          ];
-          ipv6.addresses = [
-            {
-              address = addresses.home.hosts."${config.networking.hostName}-v6";
-              prefixLength = 64;
-            }
-          ];
-        };
-
-        ${cfg.infraInterface} = {
-          ipv4.addresses = [
-            {
-              address = addresses.infra.hosts.${config.networking.hostName};
-              prefixLength = 24;
-            }
-          ];
-          ipv6.addresses = [
-            {
-              address = addresses.infra.hosts."${config.networking.hostName}-v6";
-              prefixLength = 64;
-            }
-          ];
-        };
-
-        ${cfg.dmzInterface} = {
-          ipv4.addresses = [
-            {
-              address = addresses.dmz.hosts.${config.networking.hostName};
-              prefixLength = 24;
-            }
-          ];
-          ipv6.addresses = [
-            {
-              address = addresses.dmz.hosts."${config.networking.hostName}-v6";
-              prefixLength = 64;
-            }
-          ];
-        };
-      };
 
       nat = {
         enable = true;
@@ -215,19 +167,9 @@ in
 
           iifname "${cfg.dmzInterface}" ip daddr ${addresses.infra.vip.dns} udp dport ${toString ports.dns} accept
           iifname "${cfg.dmzInterface}" ip daddr ${addresses.infra.vip.dns} tcp dport ${toString ports.dns} accept
+          iifname "${cfg.dmzInterface}" ip6 daddr ${addresses.infra.vip.dns-v6} udp dport ${toString ports.dns} accept
+          iifname "${cfg.dmzInterface}" ip6 daddr ${addresses.infra.vip.dns-v6} tcp dport ${toString ports.dns} accept
         '';
-      };
-
-      vlans = {
-        ${cfg.infraInterface} = {
-          id = vlan-ids.infra;
-          interface = cfg.lanInterface;
-        };
-
-        ${cfg.dmzInterface} = {
-          id = vlan-ids.dmz;
-          interface = cfg.lanInterface;
-        };
       };
 
       nftables = {
@@ -249,6 +191,8 @@ in
               iifname "${cfg.dmzInterface}" oifname "${cfg.wanInterface}" accept
               iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip daddr ${addresses.infra.vip.dns} udp dport ${toString ports.dns} accept
               iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip daddr ${addresses.infra.vip.dns} tcp dport ${toString ports.dns} accept
+              iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip6 daddr ${addresses.infra.vip.dns-v6} udp dport ${toString ports.dns} accept
+              iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip6 daddr ${addresses.infra.vip.dns-v6} tcp dport ${toString ports.dns} accept
               iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip daddr ${getHostAddress "vm-app"} tcp dport { ${toString ports.http}, ${toString ports.https} } accept
 
               ${lib.optionalString
@@ -288,6 +232,72 @@ in
               }
             }
           '';
+        };
+      };
+    };
+
+    systemd.network = {
+      enable = true;
+
+      netdevs = {
+        "20-${cfg.infraInterface}" = {
+          netdevConfig = {
+            Name = cfg.infraInterface;
+            Kind = "vlan";
+          };
+          vlanConfig.Id = vlan-ids.infra;
+        };
+
+        "20-${cfg.dmzInterface}" = {
+          netdevConfig = {
+            Name = cfg.dmzInterface;
+            Kind = "vlan";
+          };
+          vlanConfig.Id = vlan-ids.dmz;
+        };
+      };
+
+      networks = {
+        "30-${cfg.lanInterface}" = {
+          matchConfig.Name = cfg.lanInterface;
+          vlan = [
+            cfg.infraInterface
+            cfg.dmzInterface
+          ];
+          networkConfig = {
+            Address = [
+              "${addresses.home.hosts.${config.networking.hostName}}/24"
+              "${addresses.home.hosts."${config.networking.hostName}-v6"}/64"
+            ];
+            LinkLocalAddressing = "ipv6";
+          };
+        };
+
+        "40-${cfg.wanInterface}" = {
+          matchConfig.Name = cfg.wanInterface;
+          networkConfig.DHCP = "yes";
+        };
+
+        "40-${cfg.infraInterface}" = {
+          matchConfig.Name = cfg.infraInterface;
+          networkConfig = {
+            Address = [
+              "${addresses.infra.hosts.${config.networking.hostName}}/24"
+              "${addresses.infra.hosts."${config.networking.hostName}-v6"}/64"
+            ];
+            LinkLocalAddressing = "ipv6";
+          };
+        };
+
+        "40-${cfg.dmzInterface}" = {
+          matchConfig.Name = cfg.dmzInterface;
+          networkConfig = {
+            Address = [
+              "${addresses.dmz.hosts.${config.networking.hostName}}/24"
+              "${addresses.dmz.hosts."${config.networking.hostName}-v6"}/64"
+            ];
+            LinkLocalAddressing = "ipv6";
+          };
         };
       };
     };
@@ -355,6 +365,7 @@ in
               AdvOnLink on;
               AdvAutonomous on;
             };
+            RDNSS ${addresses.infra.vip.dns-v6} { };
           };
 
           interface ${cfg.infraInterface} {
@@ -363,6 +374,7 @@ in
               AdvOnLink on;
               AdvAutonomous on;
             };
+            RDNSS ${addresses.infra.vip.dns-v6} { };
           };
 
           interface ${cfg.dmzInterface} {
@@ -371,6 +383,7 @@ in
               AdvOnLink on;
               AdvAutonomous on;
             };
+            RDNSS ${addresses.infra.vip.dns-v6} { };
           };
         '';
       };

@@ -28,7 +28,9 @@ in
       homeassistant = {
         image = "ghcr.io/home-assistant/home-assistant:stable";
         volumes = [ "/var/lib/home-assistant:/config" ];
-        environment.TZ = timeZone;
+        environment = {
+          TZ = timeZone;
+        };
         devices = [ "/dev/serial/by-id/${hardware.radios.zigbee}:/dev/zigbee" ];
         networks = [ "host" ];
         extraOptions = [
@@ -45,6 +47,10 @@ in
         dependsOn = [ "homeassistant" ];
         volumes = [ "/var/lib/zwave-js-ui:/usr/src/app/store" ];
         networks = [ "host" ];
+        environment = {
+          TZ = timeZone;
+          TRUST_PROXY = "true";
+        };
         devices = [
           "/dev/serial/by-id/${hardware.radios.zwave}:/dev/zwave"
         ];

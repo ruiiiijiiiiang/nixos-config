@@ -3,7 +3,7 @@ readonly POLL_INTERVAL_SECONDS=5
 readonly WAIT_TIMEOUT_SECONDS=300
 
 shutdown_mode="--poweroff"
-shutdown_time="now"
+pre_delay_spec=""
 positional_time_set=false
 
 while [[ $# -gt 0 ]]; do
@@ -12,25 +12,16 @@ while [[ $# -gt 0 ]]; do
       shutdown_mode="--reboot"
       shift
       ;;
-    --time)
-      if [[ $# -lt 2 ]]; then
-        echo "Missing value for --time" >&2
-        exit 64
-      fi
-      shutdown_time="$2"
-      shift 2
-      ;;
     --help)
       cat <<'EOF'
-Usage: shutdown-hypervisor [-r|--reboot] [--time TIME] [TIME]
+Usage: shutdown-hypervisor [-r|--reboot] [+N]
 
 Send `virsh shutdown --mode agent` to all guests, wait until they are off,
 then power off or reboot the hypervisor.
 
 Options:
   -r, --reboot Reboot the hypervisor instead of powering it off
-  --time TIME  Time argument passed to shutdown after guests are off
-  TIME         Positional shutdown time, like `+5` or `22:30`
+  +N           Wait N minutes before starting guest shutdown
 EOF
       exit 0
       ;;
@@ -39,12 +30,23 @@ EOF
         echo "Unexpected extra argument: $1" >&2
         exit 64
       fi
-      shutdown_time="$1"
+      pre_delay_spec="$1"
       positional_time_set=true
       shift
       ;;
   esac
 done
+
+if [[ -n "$pre_delay_spec" ]]; then
+  if [[ "$pre_delay_spec" =~ ^\+[0-9]+$ ]]; then
+    delay_minutes=${pre_delay_spec#+}
+    echo "Waiting ${delay_minutes} minute(s) before starting guest shutdown"
+    sleep $((delay_minutes * 60))
+  else
+    echo "Expected time in +N format, got '$pre_delay_spec'" >&2
+    exit 64
+  fi
+fi
 
 mapfile -t guests < <(tac "$GUEST_LIST_FILE")
 
@@ -82,7 +84,7 @@ while (( SECONDS < deadline )); do
 
   if [[ ${#pending_guests[@]} -eq 0 ]]; then
     echo "All guests are off; invoking host shutdown"
-    shutdown "$shutdown_mode" "$shutdown_time"
+    shutdown "$shutdown_mode" "now"
     exit 0
   fi
 

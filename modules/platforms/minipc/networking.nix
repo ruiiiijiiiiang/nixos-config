@@ -124,7 +124,10 @@ in
           networkConfig = {
             Address = "${getHostAddress "hypervisor"}/24";
             Gateway = addresses.infra.hosts.vm-network;
-            DNS = [ addresses.infra.vip.dns ];
+            DNS = [
+              addresses.infra.vip.dns
+              addresses.infra.vip.dns-v6
+            ];
             Domains = [ domain ];
             IPv4ReversePathFilter = "loose";
           };

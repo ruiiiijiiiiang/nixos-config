@@ -246,6 +246,11 @@ in
           virtualIps = [
             { addr = addresses.infra.vip.dns; }
           ];
+          extraConfig = ''
+            virtual_ipaddress_excluded {
+              ${addresses.infra.vip.dns-v6} dev ${cfg.interface}
+            }
+          '';
           trackScripts = [ "check_dns_health" ];
           unicastSrcIp = addresses.infra.hosts.${config.networking.hostName};
           unicastPeers =
