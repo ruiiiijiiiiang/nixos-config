@@ -2,12 +2,17 @@
   config,
   consts,
   lib,
+  helpers,
   ...
 }:
 let
   inherit (import ../../../lib/keys.nix) ssh;
-  inherit (consts) username hardware;
+  inherit (consts) username addresses domain;
+  inherit (helpers) getHostAddress;
   cfg = config.custom.platforms.vm.networking;
+  hostName = config.networking.hostName;
+  hostIp = getHostAddress hostName;
+  gateway = "${addresses.home-prefix}.${lib.elemAt (lib.splitString "." hostIp) 2}.1";
 in
 {
   options.custom.platforms.vm.networking = with lib; {
@@ -27,18 +32,49 @@ in
   config = lib.mkIf cfg.enable {
     networking = {
       usePredictableInterfaceNames = false;
+      useNetworkd = true;
+      useDHCP = false;
+      networkmanager.enable = false;
     };
 
     systemd.network = {
+      enable = true;
+
       links = {
         "10-lan" = lib.mkIf (cfg.lanInterface != null) {
-          matchConfig.MACAddress = hardware.macs.${config.networking.hostName};
+          matchConfig = {
+            Driver = "virtio_net";
+            Type = "ether";
+          };
           linkConfig.Name = cfg.lanInterface;
         };
 
         "11-wan" = lib.mkIf (cfg.wanInterface != null) {
-          matchConfig.MACAddress = hardware.macs.wan;
+          matchConfig = {
+            Driver = "!virtio_net";
+            Type = "ether";
+          };
           linkConfig.Name = cfg.wanInterface;
+        };
+      };
+
+      networks = lib.mkIf (cfg.lanInterface != null && cfg.wanInterface == null) {
+        "10-${cfg.lanInterface}" = {
+          matchConfig.Name = cfg.lanInterface;
+          networkConfig = {
+            Address = [
+              "${getHostAddress hostName}/24"
+              "${getHostAddress "${hostName}-v6"}/64"
+            ];
+            Gateway = gateway;
+            DNS = [
+              addresses.infra.vip.dns
+              addresses.infra.vip.dns-v6
+            ];
+            Domains = [ domain ];
+            IPv4ReversePathFilter = "loose";
+          };
+          linkConfig.RequiredForOnline = "routable";
         };
       };
     };

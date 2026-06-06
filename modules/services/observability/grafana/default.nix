@@ -68,47 +68,48 @@ let
 
   systemd-logs-dashboard = pkgs.writeText "systemd-logs.json" (lib.readFile ./systemd-logs.json);
 
-  grafana-dashboards = pkgs.runCommand "grafana-dashboards"
-    {
-      nativeBuildInputs = [ pkgs.jq ];
-    }
-    /* bash */ ''
-    mkdir -p $out
-
-    # Sanitize the json data sources since different dashboards use different names.
-    # When adding a new dashboard, make sure to curl the json and check for datasource.uid.
-    # Add the data source name for sanitization if not present.
-    install_dash() {
-      sed -e 's/''${DS_PROMETHEUS-DNTG}/prometheus/g' \
-          -e 's/''${DS_PROMETHEUS}/prometheus/g' \
-          -e 's/''${ds_prometheus}/prometheus/g' \
-      "$1" > "$out/$2"
-    }
-
-    # install_dash ${crowdsec-dashboard} "crowdsec-dashboard.json"
-    install_dash ${kea-exporter-dashboard} "kea-exporter.json"
-    install_dash ${libvirt-exporter-dashboard} "libvirt-exporter.json"
-    install_dash ${nginx-exporter-dashboard} "nginx-exporter.json"
-    install_dash ${node-exporter-dashboard} "node-exporter.json"
-    install_dash ${podman-exporter-dashboard} "podman-exporter.json"
-    install_dash ${restic-exporter-dashboard} "restic-exporter.json"
-    install_dash ${wireguard-exporter-dashboard} "wireguard-exporter.json"
-    jq '
-      (.templating.list[] | select(.name == "instance")) |= . + {
-        datasource: {type: "prometheus", uid: "prometheus"},
-        definition: "label_values(nginx_up, instance)",
-        query: "label_values(nginx_up, instance)",
-        options: [],
-        hide: 0,
-        sort: 1,
-        skipUrlSync: false,
-        allValue: ".*",
-        current: {selected: true, text: "All", value: "$__all"}
+  grafana-dashboards =
+    pkgs.runCommand "grafana-dashboards"
+      {
+        nativeBuildInputs = [ pkgs.jq ];
       }
-    ' "$out/nginx-exporter.json" > "$out/nginx-exporter.json.tmp"
-    mv "$out/nginx-exporter.json.tmp" "$out/nginx-exporter.json"
-    cp ${systemd-logs-dashboard} $out/systemd-logs.json
-  '';
+      /* bash */ ''
+        mkdir -p $out
+
+        # Sanitize the json data sources since different dashboards use different names.
+        # When adding a new dashboard, make sure to curl the json and check for datasource.uid.
+        # Add the data source name for sanitization if not present.
+        install_dash() {
+          sed -e 's/''${DS_PROMETHEUS-DNTG}/prometheus/g' \
+              -e 's/''${DS_PROMETHEUS}/prometheus/g' \
+              -e 's/''${ds_prometheus}/prometheus/g' \
+          "$1" > "$out/$2"
+        }
+
+        # install_dash ${crowdsec-dashboard} "crowdsec-dashboard.json"
+        install_dash ${kea-exporter-dashboard} "kea-exporter.json"
+        install_dash ${libvirt-exporter-dashboard} "libvirt-exporter.json"
+        install_dash ${nginx-exporter-dashboard} "nginx-exporter.json"
+        install_dash ${node-exporter-dashboard} "node-exporter.json"
+        install_dash ${podman-exporter-dashboard} "podman-exporter.json"
+        install_dash ${restic-exporter-dashboard} "restic-exporter.json"
+        install_dash ${wireguard-exporter-dashboard} "wireguard-exporter.json"
+        jq '
+          (.templating.list[] | select(.name == "instance")) |= . + {
+            datasource: {type: "prometheus", uid: "prometheus"},
+            definition: "label_values(nginx_up, instance)",
+            query: "label_values(nginx_up, instance)",
+            options: [],
+            hide: 0,
+            sort: 1,
+            skipUrlSync: false,
+            allValue: ".*",
+            current: {selected: true, text: "All", value: "$__all"}
+          }
+        ' "$out/nginx-exporter.json" > "$out/nginx-exporter.json.tmp"
+        mv "$out/nginx-exporter.json.tmp" "$out/nginx-exporter.json"
+        cp ${systemd-logs-dashboard} $out/systemd-logs.json
+      '';
 
 in
 {

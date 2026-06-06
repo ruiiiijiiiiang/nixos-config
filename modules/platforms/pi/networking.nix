@@ -86,7 +86,10 @@ in
         "20-${vlanInterface}" = {
           matchConfig.Name = vlanInterface;
           networkConfig = {
-            Address = "${getHostAddress "pi"}/24";
+            Address = [
+              "${getHostAddress "pi"}/24"
+              "${getHostAddress "pi-v6"}/64"
+            ];
             Gateway = addresses.infra.hosts.vm-network;
             DNS = [
               addresses.infra.vip.dns
@@ -118,13 +121,21 @@ in
         "30-${cfg.wlanInterface}" = lib.mkIf (cfg.wlanInterface != null) {
           matchConfig.Name = cfg.wlanInterface;
           networkConfig = {
-            DHCP = "yes";
+            Address = [
+              "${getHostAddress "pi-wifi"}/24"
+              "${getHostAddress "pi-wifi-v6"}/64"
+            ];
+            DHCP = "ipv4";
             IgnoreCarrierLoss = "3s";
             IPv4ReversePathFilter = "loose";
           };
           routingPolicyRules = [
             {
               From = getHostAddress "pi-wifi";
+              Table = 2;
+            }
+            {
+              From = getHostAddress "pi-wifi-v6";
               Table = 2;
             }
           ];
@@ -135,7 +146,16 @@ in
               Table = 2;
             }
             {
+              Destination = addresses.home.network-v6;
+              Scope = "link";
+              Table = 2;
+            }
+            {
               Gateway = addresses.home.hosts.vm-network;
+              Table = 2;
+            }
+            {
+              Gateway = addresses.home.hosts.vm-network-v6;
               Table = 2;
             }
           ];

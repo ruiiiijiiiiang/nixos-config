@@ -49,12 +49,15 @@ in
         appendHttpConfig = ''
           allow ${addresses.localhost};
           allow ${addresses.localhost-v6};
-          allow ${addresses.private-blocks.class-a};
-          allow ${addresses.private-blocks.class-b};
-          allow ${addresses.private-blocks.class-c};
+          allow ${addresses.home.network};
           allow ${addresses.home.network-v6};
+          allow ${addresses.infra.network};
           allow ${addresses.infra.network-v6};
+          allow ${addresses.dmz.network};
           allow ${addresses.dmz.network-v6};
+          allow ${addresses.wg.network};
+          allow ${addresses.wg.network-v6};
+          allow ${addresses.podman.network};
           deny all;
 
           ${lib.optionalString config.custom.services.observability.prometheus.exporters.nginx.enable ''

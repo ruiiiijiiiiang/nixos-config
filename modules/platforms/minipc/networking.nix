@@ -122,7 +122,10 @@ in
         "30-${vlanInterface}" = {
           matchConfig.Name = vlanInterface;
           networkConfig = {
-            Address = "${getHostAddress "hypervisor"}/24";
+            Address = [
+              "${getHostAddress "hypervisor"}/24"
+              "${getHostAddress "hypervisor-v6"}/64"
+            ];
             Gateway = addresses.infra.hosts.vm-network;
             DNS = [
               addresses.infra.vip.dns
@@ -154,14 +157,21 @@ in
         "40-${cfg.wlanInterface}" = lib.mkIf (cfg.wlanInterface != null) {
           matchConfig.Name = cfg.wlanInterface;
           networkConfig = {
-            Address = "${getHostAddress "hypervisor-wifi"}/24";
-            DHCP = "yes";
+            Address = [
+              "${getHostAddress "hypervisor-wifi"}/24"
+              "${getHostAddress "hypervisor-wifi-v6"}/64"
+            ];
+            DHCP = "ipv4";
             IgnoreCarrierLoss = "3s";
             IPv4ReversePathFilter = "loose";
           };
           routingPolicyRules = [
             {
               From = getHostAddress "hypervisor-wifi";
+              Table = 2;
+            }
+            {
+              From = getHostAddress "hypervisor-wifi-v6";
               Table = 2;
             }
           ];
@@ -172,7 +182,16 @@ in
               Table = 2;
             }
             {
+              Destination = addresses.home.network-v6;
+              Scope = "link";
+              Table = 2;
+            }
+            {
               Gateway = addresses.home.hosts.vm-network;
+              Table = 2;
+            }
+            {
+              Gateway = addresses.home.hosts.vm-network-v6;
               Table = 2;
             }
           ];

@@ -36,8 +36,11 @@ in
       type = types.listOf types.str;
       default = [
         addresses.infra.network
+        addresses.infra.network-v6
         addresses.dmz.network
+        addresses.dmz.network-v6
         addresses.wg.network
+        addresses.wg.network-v6
       ];
       description = "Subnets routed through the WireGuard tunnel.";
     };
@@ -69,8 +72,13 @@ in
 
     networking.wg-quick.interfaces.${cfg.wgInterface} = {
       inherit (cfg) privateKeyFile;
-      address = [ "${cfg.address}/32" ];
-      dns = [ addresses.infra.vip.dns ];
+      address = [
+        "${cfg.address}/32"
+      ] ++ lib.optional (lib.hasAttr "${config.networking.hostName}-v6" addresses.wg.hosts) "${addresses.wg.hosts."${config.networking.hostName}-v6"}/128";
+      dns = [
+        addresses.infra.vip.dns
+        addresses.infra.vip.dns-v6
+      ];
       peers = [
         {
           inherit (wg.vm-network) publicKey;

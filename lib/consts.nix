@@ -86,11 +86,6 @@ rec {
     any = "0.0.0.0";
     localhost = "127.0.0.1";
     localhost-v6 = "::1";
-    private-blocks = {
-      class-a = "10.0.0.0/8";
-      class-b = "172.16.0.0/12";
-      class-c = "192.168.0.0/16";
-    };
     home-prefix = "192.168";
     home-prefix-v6 = "fd00:0:0";
     home = {
@@ -102,15 +97,13 @@ rec {
         vm-network = "${addresses.home-prefix}.${toString vlan-ids.home}.1";
         vm-network-v6 = "${addresses.home-prefix-v6}:${toString vlan-ids.home}::1";
         framework = "${addresses.home-prefix}.${toString vlan-ids.home}.10";
+        framework-v6 = "${addresses.home-prefix-v6}:${toString vlan-ids.home}::10";
         arch = "${addresses.home-prefix}.${toString vlan-ids.home}.11";
-        deco-office = "${addresses.home-prefix}.${toString vlan-ids.home}.40";
-        deco-hallway = "${addresses.home-prefix}.${toString vlan-ids.home}.41";
-        deco-family-room = "${addresses.home-prefix}.${toString vlan-ids.home}.42";
-        deco-main-bedroom = "${addresses.home-prefix}.${toString vlan-ids.home}.43";
-        deco-living-room = "${addresses.home-prefix}.${toString vlan-ids.home}.44";
-        deco-kitchen = "${addresses.home-prefix}.${toString vlan-ids.home}.45";
+        arch-v6 = "${addresses.home-prefix-v6}:${toString vlan-ids.home}::11";
         pi-wifi = "${addresses.home-prefix}.${toString vlan-ids.home}.253";
+        pi-wifi-v6 = "${addresses.home-prefix-v6}:${toString vlan-ids.home}::253";
         hypervisor-wifi = "${addresses.home-prefix}.${toString vlan-ids.home}.254";
+        hypervisor-wifi-v6 = "${addresses.home-prefix-v6}:${toString vlan-ids.home}::254";
       };
     };
     infra = {
@@ -122,10 +115,15 @@ rec {
         vm-network = "${addresses.home-prefix}.${toString vlan-ids.infra}.1";
         vm-network-v6 = "${addresses.home-prefix-v6}:${toString vlan-ids.infra}::1";
         vm-app = "${addresses.home-prefix}.${toString vlan-ids.infra}.2";
+        vm-app-v6 = "${addresses.home-prefix-v6}:${toString vlan-ids.infra}::2";
         vm-monitor = "${addresses.home-prefix}.${toString vlan-ids.infra}.3";
+        vm-monitor-v6 = "${addresses.home-prefix-v6}:${toString vlan-ids.infra}::3";
         pi = "${addresses.home-prefix}.${toString vlan-ids.infra}.51";
+        pi-v6 = "${addresses.home-prefix-v6}:${toString vlan-ids.infra}::51";
         pi-legacy = "${addresses.home-prefix}.${toString vlan-ids.infra}.52";
+        pi-legacy-v6 = "${addresses.home-prefix-v6}:${toString vlan-ids.infra}::52";
         hypervisor = "${addresses.home-prefix}.${toString vlan-ids.infra}.254";
+        hypervisor-v6 = "${addresses.home-prefix-v6}:${toString vlan-ids.infra}::254";
       };
       vip = {
         dns = "${addresses.home-prefix}.${toString vlan-ids.infra}.53";
@@ -141,17 +139,25 @@ rec {
         vm-network = "${addresses.home-prefix}.${toString vlan-ids.dmz}.1";
         vm-network-v6 = "${addresses.home-prefix-v6}:${toString vlan-ids.dmz}::1";
         vm-public = "${addresses.home-prefix}.${toString vlan-ids.dmz}.2";
+        vm-public-v6 = "${addresses.home-prefix-v6}:${toString vlan-ids.dmz}::2";
         vm-cyber = "${addresses.home-prefix}.${toString vlan-ids.dmz}.10";
+        vm-cyber-v6 = "${addresses.home-prefix-v6}:${toString vlan-ids.dmz}::10";
       };
     };
     wg = {
       network = "${addresses.home-prefix}.${toString vlan-ids.wg}.0/24";
+      network-v6 = "${addresses.home-prefix-v6}:${toString vlan-ids.wg}::/64";
       hosts = {
         vm-network = "${addresses.home-prefix}.${toString vlan-ids.wg}.1";
+        vm-network-v6 = "${addresses.home-prefix-v6}:${toString vlan-ids.wg}::1";
         framework = "${addresses.home-prefix}.${toString vlan-ids.wg}.2";
+        framework-v6 = "${addresses.home-prefix-v6}:${toString vlan-ids.wg}::2";
         pixel-7 = "${addresses.home-prefix}.${toString vlan-ids.wg}.3";
+        pixel-7-v6 = "${addresses.home-prefix-v6}:${toString vlan-ids.wg}::3";
         iphone-17 = "${addresses.home-prefix}.${toString vlan-ids.wg}.4";
+        iphone-17-v6 = "${addresses.home-prefix-v6}:${toString vlan-ids.wg}::4";
         github-action = "${addresses.home-prefix}.${toString vlan-ids.wg}.5";
+        github-action-v6 = "${addresses.home-prefix-v6}:${toString vlan-ids.wg}::5";
       };
     };
     podman = {
@@ -345,25 +351,11 @@ rec {
     };
 
     macs = {
-      arch = "28:0c:50:9c:03:2e";
-      framework = "ac:f2:3c:63:d9:f3";
-      pi = "2c:cf:67:0e:c9:6b";
-      pi-wifi = "2c:cf:67:0e:c9:6c";
-      pi-legacy = "b8:27:eb:af:a2:33";
-      wan = "58:47:ca:78:a0:7c";
-      hypervisor = "c8:a3:62:bf:0b:b3";
-      hypervisor-wifi = "bc:f1:71:d5:46:c5";
       vm-network = "52:54:00:00:00:00";
       vm-app = "52:54:00:00:00:01";
       vm-monitor = "52:54:00:00:00:02";
       vm-public = "52:54:00:00:00:03";
       vm-cyber = "52:54:00:00:00:04";
-      deco-office = "5c:e9:31:6c:26:90";
-      deco-hallway = "5c:e9:31:6c:26:8c";
-      deco-family-room = "5c:e9:31:6c:26:94";
-      deco-main-bedroom = "e4:fa:c4:8b:d9:1c";
-      deco-living-room = "e4:fa:c4:8b:da:68";
-      deco-kitchen = "e4:fa:c4:8b:da:6c";
     };
 
     radios = {

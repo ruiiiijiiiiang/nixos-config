@@ -10,7 +10,6 @@ let
   inherit (consts)
     addresses
     ports
-    hardware
     vlan-ids
     ;
   inherit (helpers) getHostAddress;
@@ -19,19 +18,10 @@ let
 
   mkSubnet =
     network:
-    let
-      inherit (addresses.${network}) hosts;
-      reservations = lib.map (hostname: {
-        hw-address = hardware.macs.${hostname};
-        ip-address = hosts.${hostname};
-        inherit hostname;
-      }) (lib.filter (hostname: lib.hasAttr hostname hosts) (lib.attrNames hardware.macs));
-    in
     {
       id = vlan-ids.${network};
       subnet = addresses.${network}.network;
       pools = [ { pool = "${addresses.${network}.dhcp-min} - ${addresses.${network}.dhcp-max}"; } ];
-      inherit reservations;
       option-data = [
         {
           name = "routers";
@@ -43,6 +33,32 @@ let
         }
       ];
     };
+
+  mkVlanNetwork =
+    subnetName: interfaceName: {
+      "40-${interfaceName}" = {
+        matchConfig.Name = interfaceName;
+        networkConfig = {
+          Address = [
+            "${addresses.${subnetName}.hosts.${config.networking.hostName}}/24"
+            "${addresses.${subnetName}.hosts."${config.networking.hostName}-v6"}/64"
+          ];
+          LinkLocalAddressing = "ipv6";
+        };
+      };
+    };
+
+  mkRadvdInterface =
+    interface: prefix: ''
+      interface ${interface} {
+        AdvSendAdvert on;
+        prefix ${prefix} {
+          AdvOnLink on;
+          AdvAutonomous on;
+        };
+        RDNSS ${addresses.infra.vip.dns-v6} { };
+      };
+    '';
 in
 {
   options.custom.services.networking.router = with lib; {
@@ -135,8 +151,8 @@ in
         enable = true;
         interfaces = {
           ${cfg.wanInterface} = {
-            allowedTCPPorts = [ ];
-            allowedUDPPorts = [ ];
+            allowedTCPPorts = lib.mkForce [ ];
+            allowedUDPPorts = lib.mkForce [ ];
           };
 
           ${cfg.lanInterface} = {
@@ -224,12 +240,6 @@ in
                   iifname "${cfg.wgInterface}" oifname "${cfg.dmzInterface}" accept
                 ''
               }
-
-              ${lib.optionalString nixosConfigurations.pi.config.custom.services.apps.tools.homeassistant.enable
-                /* bash */ ''
-                  iifname "${cfg.infraInterface}" oifname "${cfg.lanInterface}" ether saddr ${hardware.macs.pi} accept
-                ''
-              }
             }
           '';
         };
@@ -257,49 +267,31 @@ in
         };
       };
 
-      networks = {
-        "30-${cfg.lanInterface}" = {
-          matchConfig.Name = cfg.lanInterface;
-          vlan = [
-            cfg.infraInterface
-            cfg.dmzInterface
-          ];
-          networkConfig = {
-            Address = [
-              "${addresses.home.hosts.${config.networking.hostName}}/24"
-              "${addresses.home.hosts."${config.networking.hostName}-v6"}/64"
+      networks = lib.foldl' lib.recursiveUpdate { } [
+        {
+          "30-${cfg.lanInterface}" = {
+            matchConfig.Name = cfg.lanInterface;
+            vlan = [
+              cfg.infraInterface
+              cfg.dmzInterface
             ];
-            LinkLocalAddressing = "ipv6";
+            networkConfig = {
+              Address = [
+                "${addresses.home.hosts.${config.networking.hostName}}/24"
+                "${addresses.home.hosts."${config.networking.hostName}-v6"}/64"
+              ];
+              LinkLocalAddressing = "ipv6";
+            };
           };
-        };
 
-        "40-${cfg.wanInterface}" = {
-          matchConfig.Name = cfg.wanInterface;
-          networkConfig.DHCP = "yes";
-        };
-
-        "40-${cfg.infraInterface}" = {
-          matchConfig.Name = cfg.infraInterface;
-          networkConfig = {
-            Address = [
-              "${addresses.infra.hosts.${config.networking.hostName}}/24"
-              "${addresses.infra.hosts."${config.networking.hostName}-v6"}/64"
-            ];
-            LinkLocalAddressing = "ipv6";
+          "40-${cfg.wanInterface}" = {
+            matchConfig.Name = cfg.wanInterface;
+            networkConfig.DHCP = "yes";
           };
-        };
-
-        "40-${cfg.dmzInterface}" = {
-          matchConfig.Name = cfg.dmzInterface;
-          networkConfig = {
-            Address = [
-              "${addresses.dmz.hosts.${config.networking.hostName}}/24"
-              "${addresses.dmz.hosts."${config.networking.hostName}-v6"}/64"
-            ];
-            LinkLocalAddressing = "ipv6";
-          };
-        };
-      };
+        }
+        (mkVlanNetwork "infra" cfg.infraInterface)
+        (mkVlanNetwork "dmz" cfg.dmzInterface)
+      ];
     };
 
     services = {
@@ -358,34 +350,11 @@ in
 
       radvd = {
         enable = true;
-        config = /* bash */ ''
-          interface ${cfg.lanInterface} {
-            AdvSendAdvert on;
-            prefix ${addresses.home.network-v6} {
-              AdvOnLink on;
-              AdvAutonomous on;
-            };
-            RDNSS ${addresses.infra.vip.dns-v6} { };
-          };
-
-          interface ${cfg.infraInterface} {
-            AdvSendAdvert on;
-            prefix ${addresses.infra.network-v6} {
-              AdvOnLink on;
-              AdvAutonomous on;
-            };
-            RDNSS ${addresses.infra.vip.dns-v6} { };
-          };
-
-          interface ${cfg.dmzInterface} {
-            AdvSendAdvert on;
-            prefix ${addresses.dmz.network-v6} {
-              AdvOnLink on;
-              AdvAutonomous on;
-            };
-            RDNSS ${addresses.infra.vip.dns-v6} { };
-          };
-        '';
+        config = lib.concatStringsSep "\n" [
+          (mkRadvdInterface cfg.lanInterface addresses.home.network-v6)
+          (mkRadvdInterface cfg.infraInterface addresses.infra.network-v6)
+          (mkRadvdInterface cfg.dmzInterface addresses.dmz.network-v6)
+        ];
       };
     };
   };

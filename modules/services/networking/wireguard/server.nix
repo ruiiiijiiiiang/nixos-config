@@ -94,6 +94,7 @@ in
       wireguard.interfaces.${cfg.wgInterface} = {
         ips = [
           "${addresses.wg.hosts.${config.networking.hostName}}/32"
+          "${addresses.wg.hosts."${config.networking.hostName}-v6"}/128"
         ];
         listenPort = ports.wireguard;
         inherit (cfg) privateKeyFile;
@@ -101,7 +102,10 @@ in
         peers = map (peer: {
           inherit (wg.${peer.hostName}) publicKey;
           inherit (peer) presharedKeyFile;
-          allowedIPs = [ "${addresses.wg.hosts.${peer.hostName}}/32" ];
+          allowedIPs = [
+            "${addresses.wg.hosts.${peer.hostName}}/32"
+            "${addresses.wg.hosts."${peer.hostName}-v6"}/128"
+          ];
         }) cfg.peers;
       };
 
