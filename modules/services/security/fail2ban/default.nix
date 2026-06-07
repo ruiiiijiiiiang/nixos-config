@@ -1,6 +1,11 @@
-{ config, lib, ... }:
+{
+  config,
+  consts,
+  lib,
+  ...
+}:
 let
-  inherit (import ../../../../lib/consts.nix) addresses;
+  inherit (consts) addresses;
   cfg = config.custom.services.security.fail2ban;
 in
 {

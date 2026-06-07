@@ -1,11 +1,12 @@
 {
   config,
-  lib,
+  consts,
   helpers,
+  lib,
   ...
 }:
 let
-  inherit (import ../../../../../lib/consts.nix)
+  inherit (consts)
     addresses
     domain
     subdomains

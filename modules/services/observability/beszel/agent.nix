@@ -1,8 +1,13 @@
-{ config, lib, ... }:
+{
+  config,
+  consts,
+  keys,
+  lib,
+  ...
+}:
 let
-  inherit (lib) mkIf mkForce;
-  inherit (import ../../../../lib/consts.nix) domain ports;
-  inherit (import ../../../../lib/keys.nix) ssh;
+  inherit (consts) domain ports;
+  inherit (keys) ssh;
   cfg = config.custom.services.observability.beszel.agent;
 in
 {
@@ -15,7 +20,7 @@ in
     };
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     assertions = [
       {
         assertion = cfg.interface == null || cfg.interface != "";
@@ -43,7 +48,7 @@ in
           allowedTCPPorts = [ ports.beszel.agent ];
         };
 
-    systemd.services.beszel-agent.serviceConfig = {
+    systemd.services.beszel-agent.serviceConfig = with lib; {
       User = mkForce "root";
       Group = mkForce "root";
       DynamicUser = mkForce false;

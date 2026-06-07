@@ -1,11 +1,12 @@
 {
   config,
-  lib,
+  consts,
   helpers,
+  lib,
   ...
 }:
 let
-  inherit (import ../../../../lib/consts.nix)
+  inherit (consts)
     email
     addresses
     domain
@@ -13,15 +14,11 @@ let
     ;
   inherit (helpers) getEnabledServices;
   cfg = config.custom.services.networking.nginx;
-  subdomainList =
-    let
-      inherit (lib) unique attrValues;
-    in
-    unique (
-      attrValues (getEnabledServices {
-        inherit config;
-      })
-    );
+  subdomainList = lib.unique (
+    lib.attrValues (getEnabledServices {
+      inherit config;
+    })
+  );
 in
 {
   options.custom.services.networking.nginx = with lib; {

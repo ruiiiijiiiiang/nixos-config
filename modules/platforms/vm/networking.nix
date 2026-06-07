@@ -1,14 +1,15 @@
 {
   config,
   consts,
-  lib,
+  keys,
   helpers,
+  lib,
   ...
 }:
 let
-  inherit (import ../../../lib/keys.nix) ssh;
   inherit (consts) username addresses domain;
   inherit (helpers) getHostAddress;
+  inherit (keys) ssh;
   cfg = config.custom.platforms.vm.networking;
   hostName = config.networking.hostName;
   hostIp = getHostAddress hostName;

@@ -2,12 +2,13 @@
   config,
   consts,
   inputs,
+  keys,
   lib,
   ...
 }:
 let
-  inherit (import ../../../lib/keys.nix) ssh;
   inherit (consts) username ports;
+  inherit (keys) ssh;
   cfg = config.custom.roles.headless.networking;
   termixEnabled =
     inputs.self.nixosConfigurations.vm-monitor.config.custom.services.observability.termix.enable;

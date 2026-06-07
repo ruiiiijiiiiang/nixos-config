@@ -1,12 +1,13 @@
 {
   config,
+  consts,
   lib,
-  pkgs,
   helpers,
+  pkgs,
   ...
 }:
 let
-  inherit (import ../../../../lib/consts.nix) ports;
+  inherit (consts) ports;
   inherit (helpers) ensureFile getHostAddress;
   cfg = config.custom.services.security.wazuh.agent;
 

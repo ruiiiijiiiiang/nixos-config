@@ -84,6 +84,7 @@ rec {
 
   addresses = {
     any = "0.0.0.0";
+    any-v6 = "::";
     localhost = "127.0.0.1";
     localhost-v6 = "::1";
     home-prefix = "192.168";

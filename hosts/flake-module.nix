@@ -1,6 +1,7 @@
 { inputs, lib, ... }:
 let
   consts = import ../lib/consts.nix;
+  keys = import ../lib/keys.nix;
 
   pkgs = inputs.nixpkgs.legacyPackages."x86_64-linux";
   helpers = import ../lib/helpers.nix {
@@ -31,6 +32,7 @@ let
             consts
             inputs
             helpers
+            keys
             dotfilesRoot
             ;
         };
@@ -52,7 +54,7 @@ let
     inputs.nixpkgs.lib.nixosSystem {
       inherit system;
       specialArgs = {
-        inherit consts inputs helpers;
+        inherit consts inputs helpers keys;
       };
       modules = [
         ../modules

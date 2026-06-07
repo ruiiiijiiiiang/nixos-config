@@ -2,10 +2,11 @@
   config,
   consts,
   lib,
+  keys,
   ...
 }:
 let
-  inherit (import ../../../../lib/keys.nix) wg;
+  inherit (keys) wg;
   inherit (consts) addresses ports;
   cfg = config.custom.services.networking.wireguard.server;
 in

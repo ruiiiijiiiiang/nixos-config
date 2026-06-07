@@ -1,10 +1,5 @@
-{
-  config,
-  consts,
-  ...
-}:
+{ config, ... }:
 let
-  inherit (consts) addresses;
   hostName = "framework";
   wgInterface = "wg0";
 in
@@ -45,10 +40,10 @@ in
 
       networking.wireguard.client = {
         enable = true;
-        inherit wgInterface;
-        address = addresses.wg.hosts.framework;
+        inherit hostName wgInterface;
         privateKeyFile = config.age.secrets.wireguard-framework-private-key.path;
         presharedKeyFile = config.age.secrets.wireguard-framework-preshared-key.path;
+        fullTunnel = true;
       };
 
       security.wazuh.agent.enable = true;
