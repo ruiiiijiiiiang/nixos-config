@@ -16,49 +16,45 @@ let
   inherit (inputs.self) nixosConfigurations;
   cfg = config.custom.services.networking.router;
 
-  mkSubnet =
-    network:
-    {
-      id = vlan-ids.${network};
-      subnet = addresses.${network}.network;
-      pools = [ { pool = "${addresses.${network}.dhcp-min} - ${addresses.${network}.dhcp-max}"; } ];
-      option-data = [
-        {
-          name = "routers";
-          data = addresses.${network}.hosts.${config.networking.hostName};
-        }
-        {
-          name = "domain-name-servers";
-          data = addresses.infra.vip.dns;
-        }
-      ];
-    };
+  mkSubnet = network: {
+    id = vlan-ids.${network};
+    subnet = addresses.${network}.network;
+    pools = [ { pool = "${addresses.${network}.dhcp-min} - ${addresses.${network}.dhcp-max}"; } ];
+    option-data = [
+      {
+        name = "routers";
+        data = addresses.${network}.hosts.${config.networking.hostName};
+      }
+      {
+        name = "domain-name-servers";
+        data = addresses.infra.vip.dns;
+      }
+    ];
+  };
 
-  mkVlanNetwork =
-    subnetName: interfaceName: {
-      "40-${interfaceName}" = {
-        matchConfig.Name = interfaceName;
-        networkConfig = {
-          Address = [
-            "${addresses.${subnetName}.hosts.${config.networking.hostName}}/24"
-            "${addresses.${subnetName}.hosts."${config.networking.hostName}-v6"}/64"
-          ];
-          LinkLocalAddressing = "ipv6";
-        };
+  mkVlanNetwork = subnetName: interfaceName: {
+    "40-${interfaceName}" = {
+      matchConfig.Name = interfaceName;
+      networkConfig = {
+        Address = [
+          "${addresses.${subnetName}.hosts.${config.networking.hostName}}/24"
+          "${addresses.${subnetName}.hosts."${config.networking.hostName}-v6"}/64"
+        ];
+        LinkLocalAddressing = "ipv6";
       };
     };
+  };
 
-  mkRadvdInterface =
-    interface: prefix: ''
-      interface ${interface} {
-        AdvSendAdvert on;
-        prefix ${prefix} {
-          AdvOnLink on;
-          AdvAutonomous on;
-        };
-        RDNSS ${addresses.infra.vip.dns-v6} { };
+  mkRadvdInterface = interface: prefix: ''
+    interface ${interface} {
+      AdvSendAdvert on;
+      prefix ${prefix} {
+        AdvOnLink on;
+        AdvAutonomous on;
       };
-    '';
+      RDNSS ${addresses.infra.vip.dns-v6} { };
+    };
+  '';
 in
 {
   options.custom.services.networking.router = with lib; {
@@ -151,8 +147,8 @@ in
         enable = true;
         interfaces = {
           ${cfg.wanInterface} = {
-            allowedTCPPorts = lib.mkForce [ ];
-            allowedUDPPorts = lib.mkForce [ ];
+            allowedTCPPorts = [ ];
+            allowedUDPPorts = [ ];
           };
 
           ${cfg.lanInterface} = {
