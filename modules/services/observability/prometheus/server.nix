@@ -1,9 +1,9 @@
 {
   config,
   consts,
+  helpers,
   inputs,
   lib,
-  helpers,
   ...
 }:
 let

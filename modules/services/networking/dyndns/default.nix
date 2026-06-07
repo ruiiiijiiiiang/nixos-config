@@ -1,7 +1,7 @@
 {
   config,
-  lib,
   consts,
+  lib,
   ...
 }:
 let

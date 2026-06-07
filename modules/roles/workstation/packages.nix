@@ -1,7 +1,7 @@
 {
   config,
-  lib,
   inputs,
+  lib,
   pkgs,
   ...
 }:

@@ -1,8 +1,8 @@
 {
   config,
+  inputs,
   lib,
   pkgs,
-  inputs,
   ...
 }:
 let

@@ -1,8 +1,8 @@
 {
   config,
   consts,
-  lib,
   keys,
+  lib,
   ...
 }:
 let

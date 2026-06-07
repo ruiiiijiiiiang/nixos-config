@@ -1,9 +1,9 @@
 {
   config,
   consts,
-  lib,
-  inputs,
   helpers,
+  inputs,
+  lib,
   ...
 }:
 let
@@ -45,7 +45,7 @@ let
     };
   };
 
-  mkRadvdInterface = interface: prefix: ''
+  mkRadvdInterface = interface: prefix: /* bash */ ''
     interface ${interface} {
       AdvSendAdvert on;
       prefix ${prefix} {

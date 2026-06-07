@@ -1,9 +1,9 @@
 {
   config,
   consts,
+  inputs,
   lib,
   pkgs,
-  inputs,
   ...
 }:
 let
