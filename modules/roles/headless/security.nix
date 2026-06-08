@@ -37,6 +37,7 @@ in
     };
 
     security = {
+      polkit.enable = true;
       protectKernelImage = true;
       apparmor = {
         enable = true;

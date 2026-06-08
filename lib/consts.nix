@@ -17,6 +17,7 @@ rec {
     };
     vm-network = {
       pihole = "pihole";
+      netalertx = "netalertx";
     };
     vm-app = {
       lidarr = "lidarr";
@@ -228,6 +229,7 @@ rec {
     monit = 2812;
     myspeed = 5216;
     ntfy = 2586;
+    netalertx = 8099;
     nfs = 2049;
     nginx = {
       stub = 8082;
@@ -246,7 +248,6 @@ rec {
       alertmanager = 8000;
       exporters = {
         crowdsec = 6060;
-        kea = 9547;
         libvirt = 9177;
         nginx = 9113;
         node = 9100;
@@ -314,6 +315,7 @@ rec {
     changedetection = 921;
     mealie = 922;
     pricebuddy = 923;
+    netalertx = 924;
     user = 1000;
     nobody = 65534;
 

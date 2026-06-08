@@ -153,6 +153,9 @@ in
       "net.ipv4.ip_forward" = "1";
       "net.ipv6.conf.all.forwarding" = "1";
 
+      "net.ipv4.conf.all.arp_ignore" = "1";
+      "net.ipv4.conf.all.arp_announce" = "2";
+
       "net.ipv4.conf.${cfg.wanInterface}.rp_filter" = "2";
       "net.ipv4.conf.${cfg.lanInterface}.rp_filter" = "2";
       "net.ipv4.conf.${cfg.infraInterface}.rp_filter" = "2";
@@ -415,7 +418,7 @@ in
           };
         };
 
-        ctrl-agent = lib.mkIf config.custom.services.observability.prometheus.exporters.kea.enable {
+        ctrl-agent = {
           enable = true;
           settings = {
             http-host = addresses.localhost;

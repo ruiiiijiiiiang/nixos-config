@@ -86,6 +86,7 @@ rec {
         microbin = config.custom.services.apps.tools.microbin.enable;
         myspeed = config.custom.services.observability.myspeed.enable;
         ntfy = config.custom.services.observability.ntfy.enable;
+        netalertx = config.custom.services.observability.netalertx.enable;
         nextcloud = config.custom.services.apps.office.nextcloud.enable;
         onlyoffice = config.custom.services.apps.office.opencloud.enable;
         opencloud = config.custom.services.apps.office.opencloud.enable;

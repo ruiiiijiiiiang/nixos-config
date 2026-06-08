@@ -175,8 +175,8 @@ in
           enable = true;
           serverAddress = getHostAddress "vm-monitor";
         };
+        netalertx.enable = true;
         prometheus.exporters = {
-          kea.enable = true;
           nginx.enable = true;
           node.enable = true;
           podman.enable = true;

@@ -13,7 +13,6 @@ in
 {
   options.custom.services.observability.prometheus.exporters = with lib; {
     crowdsec.enable = mkEnableOption "Enable Prometheus CrowdSec exporter";
-    kea.enable = mkEnableOption "Enable Prometheus Kea exporter";
     libvirt.enable = mkEnableOption "Enable Prometheus Libvirt exporter";
     nginx.enable = mkEnableOption "Enable Prometheus Nginx exporter";
     node.enable = mkEnableOption "Enable Prometheus Node exporter";
@@ -32,10 +31,6 @@ in
       {
         assertion = cfg.interface == null || cfg.interface != "";
         message = "Prometheus exporters interface must not be empty when set.";
-      }
-      {
-        assertion = (!cfg.kea.enable) || config.custom.services.networking.router.enable;
-        message = "Prometheus Kea exporter requires networking.router.enable.";
       }
       {
         assertion = (!cfg.libvirt.enable) || config.custom.services.infra.hypervisor.enable;
@@ -61,12 +56,6 @@ in
 
     services = {
       prometheus.exporters = {
-        kea = lib.mkIf cfg.kea.enable {
-          enable = true;
-          port = ports.prometheus.exporters.kea;
-          targets = [ "http://${addresses.localhost}:${toString ports.kea.ctrl-agent}" ];
-        };
-
         libvirt = lib.mkIf cfg.libvirt.enable {
           enable = true;
           port = ports.prometheus.exporters.libvirt;
@@ -133,7 +122,6 @@ in
       let
         exporterPorts =
           (optional cfg.crowdsec.enable ports.prometheus.exporters.crowdsec)
-          ++ (optional cfg.kea.enable ports.prometheus.exporters.kea)
           ++ (optional cfg.libvirt.enable ports.prometheus.exporters.libvirt)
           ++ (optional cfg.nginx.enable ports.prometheus.exporters.nginx)
           ++ (optional cfg.node.enable ports.prometheus.exporters.node)

@@ -24,7 +24,6 @@ let
   monitoredExporters = {
     inherit (ports.prometheus.exporters)
       # crowdsec
-      kea
       libvirt
       nginx
       node
@@ -83,7 +82,7 @@ in
               }
             ];
             rules = [
-              ''
+              /* yaml */ ''
                 groups:
                   - name: system
                     rules:

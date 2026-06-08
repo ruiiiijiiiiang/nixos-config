@@ -363,6 +363,14 @@ in
           {
             "Networking" = [
               {
+                "NetAlertX" = {
+                  icon = "netalertx";
+                  href = "https://${subdomains.vm-network.netalertx}.${domain}";
+                  description = "Network Intruder Detector";
+                  siteMonitor = "https://${subdomains.vm-network.netalertx}.${domain}";
+                };
+              }
+              {
                 "Pihole" = {
                   icon = "pi-hole";
                   href = "https://${subdomains.vm-network.pihole}.${domain}";
