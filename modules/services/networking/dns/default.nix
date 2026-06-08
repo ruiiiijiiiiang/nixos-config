@@ -14,7 +14,7 @@ let
     subdomains
     ports
     ;
-  inherit (helpers) mkVirtualHost;
+  inherit (helpers) getHostAddress mkVirtualHost;
   cfg = config.custom.services.networking.dns;
   fqdn = "${subdomains.${config.networking.hostName}.pihole}.${domain}";
 
@@ -43,7 +43,12 @@ let
       generatedEntries = mapAttrsToList hostEntry allHosts;
 
       manualEntries = [
-        "${addresses.home.hosts.vm-network} ${endpoints.vpn-server}"
+        "${
+          getHostAddress {
+            hostName = "vm-network";
+            network = "home";
+          }
+        } ${endpoints.vpn-server}"
       ];
     in
     concatStringsSep "\n" (filter (s: s != "") (generatedEntries ++ manualEntries));
@@ -110,7 +115,8 @@ in
         message = "DNS VRRP priority must be between 1 and 254.";
       }
       {
-        assertion = (!cfg.vrrp.enable) || lib.hasAttr config.networking.hostName addresses.infra.hosts;
+        assertion =
+          (!cfg.vrrp.enable) || lib.hasAttrByPath [ "infra" "hosts" config.networking.hostName ] addresses;
         message = "DNS VRRP requires hostName to exist in addresses.infra.hosts.";
       }
     ];
@@ -252,13 +258,19 @@ in
             }
           '';
           trackScripts = [ "check_dns_health" ];
-          unicastSrcIp = addresses.infra.hosts.${config.networking.hostName};
+          unicastSrcIp = getHostAddress {
+            inherit (config.networking) hostName;
+            network = "infra";
+          };
           unicastPeers =
             let
               allNodes = [
-                addresses.infra.hosts.vm-network
-                addresses.infra.hosts.pi
-                addresses.infra.hosts.pi-legacy
+                (getHostAddress {
+                  hostName = "vm-network";
+                  network = "infra";
+                })
+                (getHostAddress "pi")
+                (getHostAddress "pi-legacy")
               ];
             in
             lib.filter (ip: ip != config.services.keepalived.vrrpInstances.dns_ha.unicastSrcIp) allNodes;

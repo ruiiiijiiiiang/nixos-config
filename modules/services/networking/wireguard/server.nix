@@ -1,11 +1,13 @@
 {
   config,
   consts,
+  helpers,
   keys,
   lib,
   ...
 }:
 let
+  inherit (helpers) getHostAddress;
   inherit (keys) wg;
   inherit (consts) addresses ports;
   cfg = config.custom.services.networking.wireguard.server;
@@ -68,7 +70,8 @@ in
         assertion =
           let
             invalid = lib.filter (
-              peer: !(lib.hasAttr peer.hostName wg) || !(lib.hasAttr peer.hostName addresses.wg.hosts)
+              peer:
+              !(lib.hasAttr peer.hostName wg) || !(lib.hasAttrByPath [ "wg" "hosts" peer.hostName ] addresses)
             ) cfg.peers;
           in
           invalid == [ ];
@@ -94,8 +97,19 @@ in
     networking = {
       wireguard.interfaces.${cfg.wgInterface} = {
         ips = [
-          "${addresses.wg.hosts.${config.networking.hostName}}/32"
-          "${addresses.wg.hosts."${config.networking.hostName}-v6"}/128"
+          "${
+            getHostAddress {
+              inherit (config.networking) hostName;
+              network = "wg";
+            }
+          }/32"
+          "${
+            getHostAddress {
+              inherit (config.networking) hostName;
+              network = "wg";
+              isV6 = true;
+            }
+          }/128"
         ];
         listenPort = ports.wireguard;
         inherit (cfg) privateKeyFile;
@@ -104,8 +118,19 @@ in
           inherit (wg.${peer.hostName}) publicKey;
           inherit (peer) presharedKeyFile;
           allowedIPs = [
-            "${addresses.wg.hosts.${peer.hostName}}/32"
-            "${addresses.wg.hosts."${peer.hostName}-v6"}/128"
+            "${
+              getHostAddress {
+                inherit (peer) hostName;
+                network = "wg";
+              }
+            }/32"
+            "${
+              getHostAddress {
+                inherit (peer) hostName;
+                network = "wg";
+                isV6 = true;
+              }
+            }/128"
           ];
         }) cfg.peers;
       };

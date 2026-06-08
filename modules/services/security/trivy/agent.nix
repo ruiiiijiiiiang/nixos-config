@@ -8,10 +8,10 @@
   ...
 }:
 let
+  inherit (config.networking) hostName;
   inherit (consts) daily-tasks ports endpoints;
   inherit (helpers) dailyTaskToSystemd getHostAddress;
   cfg = config.custom.services.security.trivy.scanning;
-  hostName = config.networking.hostName;
   ntfyEnabled =
     inputs.self.nixosConfigurations.vm-monitor.config.custom.services.observability.ntfy.enable;
 

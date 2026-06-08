@@ -15,7 +15,12 @@ let
         "home"
         "dmz"
       ];
-      makeHostEntry = hostName: ip: "${ip} ${hostName}";
+      makeHostEntry =
+        hostName: ip:
+        if lib.hasSuffix "-v6" hostName then
+          "${ip} ${hostName} ${lib.removeSuffix "-v6" hostName}"
+        else
+          "${ip} ${hostName}";
     in
     concatStringsSep "\n" (mapAttrsToList makeHostEntry mergedHosts);
 in

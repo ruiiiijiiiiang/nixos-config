@@ -44,8 +44,18 @@ in
         image = "docker.io/library/postgres:14";
         ports = [
           "${addresses.localhost}:${toString ports.forgejo.server}:${toString ports.forgejo.server}"
-          "${getHostAddress config.networking.hostName}:${toString ports.forgejo.server}:${toString ports.forgejo.server}"
-          "${getHostAddress config.networking.hostName}:${toString ports.forgejo.ssh}:${toString ports.forgejo.ssh}"
+          "${
+            getHostAddress {
+              inherit (config.networking) hostName;
+              network = "infra";
+            }
+          }:${toString ports.forgejo.server}:${toString ports.forgejo.server}"
+          "${
+            getHostAddress {
+              inherit (config.networking) hostName;
+              network = "infra";
+            }
+          }:${toString ports.forgejo.ssh}:${toString ports.forgejo.ssh}"
         ];
         environmentFiles = [ config.age.secrets.forgejo-env.path ];
         volumes = [ "/var/lib/forgejo/postgres:/var/lib/postgresql/data" ];
@@ -88,7 +98,12 @@ in
           "/var/lib/forgejo/cache:/.cache"
         ];
         environment = {
-          GITEA_INSTANCE_URL = "http://${getHostAddress config.networking.hostName}:${toString ports.forgejo.server}";
+          GITEA_INSTANCE_URL = "http://${
+            getHostAddress {
+              inherit (config.networking) hostName;
+              network = "infra";
+            }
+          }:${toString ports.forgejo.server}";
           GITEA_RUNNER_NAME = "forgejo-runner";
         };
         environmentFiles = [ config.age.secrets.forgejo-env.path ];

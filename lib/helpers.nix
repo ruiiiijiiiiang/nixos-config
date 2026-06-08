@@ -114,31 +114,72 @@ rec {
     in
     filterAttrs (key: value: serviceEnabled.${key} or false) subdomainSet;
 
-  getHostAddressFromNetworks =
-    networkNames: hostname:
+  resolveHostArgs =
+    args:
     let
-      inherit (lib)
-        attrByPath
-        findFirst
-        hasAttr
-        concatStringsSep
-        ;
-      hostScopes = map (networkName: attrByPath [ networkName "hosts" ] { } addresses) networkNames;
-      matchingHosts = findFirst (hosts: hasAttr hostname hosts) null hostScopes;
-      searchedNetworks = concatStringsSep ", " (
-        map (networkName: "addresses.${networkName}.hosts") networkNames
-      );
+      argsSet = if builtins.isAttrs args then args else { hostName = args; };
+      inherit (argsSet) hostName;
+      network = argsSet.network or null;
+      isV6 = argsSet.isV6 or false;
+      resolvedHostName = if isV6 && !lib.hasSuffix "-v6" hostName then "${hostName}-v6" else hostName;
     in
-    if matchingHosts == null then
-      builtins.throw "No address found for host `${hostname}` in ${searchedNetworks}"
-    else
-      matchingHosts.${hostname};
+    {
+      hostName = resolvedHostName;
+      inherit network isV6;
+    };
 
-  getHostAddress = getHostAddressFromNetworks [
-    "infra"
-    "home"
-    "dmz"
-  ];
+  getHostNetwork =
+    args:
+    let
+      resolved = resolveHostArgs args;
+      baseHostName =
+        if lib.hasSuffix "-v6" resolved.hostName then
+          lib.removeSuffix "-v6" resolved.hostName
+        else
+          resolved.hostName;
+    in
+    lib.findFirst (net: lib.hasAttrByPath [ net "hosts" baseHostName ] addresses) null [
+      "infra"
+      "home"
+      "dmz"
+    ];
+
+  getHostAddress =
+    args:
+    let
+      resolved = resolveHostArgs args;
+      net = if resolved.network != null then resolved.network else getHostNetwork resolved.hostName;
+    in
+    if net != null && lib.hasAttrByPath [ net "hosts" resolved.hostName ] addresses then
+      addresses.${net}.hosts.${resolved.hostName}
+    else if (builtins.isAttrs args && args ? network) then
+      builtins.throw "No address found for host `${resolved.hostName}` in addresses.${args.network}.hosts"
+    else
+      builtins.throw "No address found for host `${resolved.hostName}` in any network (infra, home, dmz)";
+
+  getGatewayAddress =
+    args:
+    let
+      resolved = resolveHostArgs args;
+      net = if resolved.network != null then resolved.network else getHostNetwork resolved.hostName;
+      gatewayHost =
+        if resolved.isV6 || lib.hasSuffix "-v6" resolved.hostName then "vm-network-v6" else "vm-network";
+    in
+    if net != null then
+      addresses.${net}.hosts.${gatewayHost}
+    else
+      builtins.throw "No network found for host `${resolved.hostName}` to determine gateway";
+
+  getHostSubnet =
+    args:
+    let
+      resolved = resolveHostArgs args;
+      net = getHostNetwork resolved;
+    in
+    if net != null then
+      addresses.${net}.${if resolved.isV6 then "network-v6" else "network"}
+    else
+      builtins.throw "No network found for host `${resolved.hostName}` to determine subnet";
 
   mkNotifyService =
     {

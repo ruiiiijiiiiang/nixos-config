@@ -133,6 +133,15 @@ The network is physically connected via two interfaces, but logically segmented 
 - **WireGuard (VLAN 128):** Secure remote access tunnel.
   - _Routing:_ Authenticated peers get full access to Home, Infra, and DMZ networks.
 
+### Dual-Stack IPv4/IPv6 Routing
+
+The homelab runs a **fully dual-stack IPv4/IPv6 network topology**, with address allocation and routing parameters managed centrally on the `vm-network` router:
+
+- **IPv4 Address Allocation (Kea DHCPv4)**: Distributed via the **Kea DHCPv4** daemon, which manages separate pools and dynamic subnets for the Home (VLAN 2), Infra (VLAN 20), and DMZ (VLAN 88) security zones.
+- **IPv6 Autoconfiguration (radvd & SLAAC)**: Stateless configuration is handled by the **Router Advertisement Daemon (radvd)** across all internal VLAN interfaces. It broadcasts:
+  - **SLAAC Prefixes**: Static `fd00:0:0:vlan::/64` subnets per VLAN, plus delegated prefixes (`::/64`) dynamically obtained from the WAN interface for the Home LAN.
+  - **IPv6 DNS (RDNSS)**: Auto-configures clients to use the high-availability DNS cluster Virtual IP (`fd00:0:0:20::53`).
+
 ### High-Availability DNS
 
 The network relies on a high-availability DNS cluster between `vm-network` and `pi` to ensure that ad-blocking and name resolution never sleep.

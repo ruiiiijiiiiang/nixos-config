@@ -25,7 +25,10 @@ let
       option-data = [
         {
           name = "routers";
-          data = addresses.${network}.hosts.${config.networking.hostName};
+          data = getHostAddress {
+            inherit (config.networking) hostName;
+            inherit network;
+          };
         }
         {
           name = "domain-name-servers";
@@ -41,8 +44,19 @@ let
         matchConfig.Name = interfaceName;
         networkConfig = {
           Address = [
-            "${addresses.${subnetName}.hosts.${config.networking.hostName}}/24"
-            "${addresses.${subnetName}.hosts."${config.networking.hostName}-v6"}/64"
+            "${
+              getHostAddress {
+                inherit (config.networking) hostName;
+                network = subnetName;
+              }
+            }/24"
+            "${
+              getHostAddress {
+                inherit (config.networking) hostName;
+                network = subnetName;
+                isV6 = true;
+              }
+            }/64"
           ];
           LinkLocalAddressing = "ipv6";
         };
@@ -128,9 +142,9 @@ in
       }
       {
         assertion =
-          lib.hasAttr config.networking.hostName addresses.home.hosts
-          && lib.hasAttr config.networking.hostName addresses.infra.hosts
-          && lib.hasAttr config.networking.hostName addresses.dmz.hosts;
+          lib.hasAttrByPath [ "home" "hosts" config.networking.hostName ] addresses
+          && lib.hasAttrByPath [ "infra" "hosts" config.networking.hostName ] addresses
+          && lib.hasAttrByPath [ "dmz" "hosts" config.networking.hostName ] addresses;
         message = "Router hostName must exist in addresses.home/infra/dmz host maps.";
       }
     ];
@@ -138,11 +152,13 @@ in
     boot.kernel.sysctl = {
       "net.ipv4.ip_forward" = "1";
       "net.ipv6.conf.all.forwarding" = "1";
-      "net.ipv6.conf.${cfg.wanInterface}.accept_ra" = "2";
+
       "net.ipv4.conf.${cfg.wanInterface}.rp_filter" = "2";
       "net.ipv4.conf.${cfg.lanInterface}.rp_filter" = "2";
       "net.ipv4.conf.${cfg.infraInterface}.rp_filter" = "2";
       "net.ipv4.conf.${cfg.dmzInterface}.rp_filter" = "2";
+
+      "net.ipv6.conf.${cfg.wanInterface}.accept_ra" = "2";
     };
 
     networking = {
@@ -223,13 +239,23 @@ in
               iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip6 daddr ${addresses.infra.vip.dns-v6} udp dport ${toString ports.dns} accept
               iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip6 daddr ${addresses.infra.vip.dns-v6} tcp dport ${toString ports.dns} accept
               iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip daddr ${getHostAddress "vm-app"} tcp dport { ${toString ports.http}, ${toString ports.https} } accept
-              iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip6 daddr ${getHostAddress "vm-app-v6"} tcp dport { ${toString ports.http}, ${toString ports.https} } accept
+              iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip6 daddr ${
+                getHostAddress {
+                  hostName = "vm-app";
+                  isV6 = true;
+                }
+              } tcp dport { ${toString ports.http}, ${toString ports.https} } accept
 
               ${lib.optionalString
                 nixosConfigurations.vm-monitor.config.custom.services.observability.loki.server.enable
                 /* bash */ ''
                   iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip daddr ${getHostAddress "vm-monitor"} tcp dport ${toString ports.loki.server} accept
-                  iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip6 daddr ${getHostAddress "vm-monitor-v6"} tcp dport ${toString ports.loki.server} accept
+                  iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip6 daddr ${
+                    getHostAddress {
+                      hostName = "vm-monitor";
+                      isV6 = true;
+                    }
+                  } tcp dport ${toString ports.loki.server} accept
                 ''
               }
 
@@ -237,7 +263,12 @@ in
                 nixosConfigurations.vm-monitor.config.custom.services.security.wazuh.server.enable
                 /* bash */ ''
                   iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip daddr ${getHostAddress "vm-monitor"} tcp dport { ${toString ports.wazuh.agent.connection}, ${toString ports.wazuh.agent.enrollment} } accept
-                  iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip6 daddr ${getHostAddress "vm-monitor-v6"} tcp dport { ${toString ports.wazuh.agent.connection}, ${toString ports.wazuh.agent.enrollment} } accept
+                  iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip6 daddr ${
+                    getHostAddress {
+                      hostName = "vm-monitor";
+                      isV6 = true;
+                    }
+                  } tcp dport { ${toString ports.wazuh.agent.connection}, ${toString ports.wazuh.agent.enrollment} } accept
                 ''
               }
 
@@ -245,7 +276,12 @@ in
                 nixosConfigurations.vm-monitor.config.custom.services.security.trivy.server.enable
                 /* bash */ ''
                   iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip daddr ${getHostAddress "vm-monitor"} tcp dport ${toString ports.trivy} accept
-                  iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip6 daddr ${getHostAddress "vm-monitor-v6"} tcp dport ${toString ports.trivy} accept
+                  iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip6 daddr ${
+                    getHostAddress {
+                      hostName = "vm-monitor";
+                      isV6 = true;
+                    }
+                  } tcp dport ${toString ports.trivy} accept
                 ''
               }
 
@@ -294,8 +330,19 @@ in
             ];
             networkConfig = {
               Address = [
-                "${addresses.home.hosts.${config.networking.hostName}}/24"
-                "${addresses.home.hosts."${config.networking.hostName}-v6"}/64"
+                "${
+                  getHostAddress {
+                    inherit (config.networking) hostName;
+                    network = "home";
+                  }
+                }/24"
+                "${
+                  getHostAddress {
+                    inherit (config.networking) hostName;
+                    network = "home";
+                    isV6 = true;
+                  }
+                }/64"
               ];
               LinkLocalAddressing = "ipv6";
               DHCPPrefixDelegation = "yes";

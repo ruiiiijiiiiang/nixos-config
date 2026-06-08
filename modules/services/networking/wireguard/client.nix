@@ -1,6 +1,7 @@
 {
   config,
   consts,
+  helpers,
   keys,
   lib,
   pkgs,
@@ -8,6 +9,7 @@
 }:
 let
   inherit (consts) addresses ports endpoints;
+  inherit (helpers) getHostAddress;
   inherit (keys) wg;
   cfg = config.custom.services.networking.wireguard.client;
 
@@ -20,8 +22,19 @@ let
       inherit autostart;
       inherit (cfg) privateKeyFile;
       address = [
-        "${addresses.wg.hosts.${cfg.hostName}}/32"
-        "${addresses.wg.hosts."${cfg.hostName}-v6"}/128"
+        "${
+          getHostAddress {
+            inherit (cfg) hostName;
+            network = "wg";
+          }
+        }/32"
+        "${
+          getHostAddress {
+            inherit (cfg) hostName;
+            network = "wg";
+            isV6 = true;
+          }
+        }/128"
       ];
       dns = [
         addresses.infra.vip.dns
@@ -102,7 +115,8 @@ in
         assertions = [
           {
             assertion =
-              lib.hasAttr cfg.hostName addresses.wg.hosts && lib.hasAttr "${cfg.hostName}-v6" addresses.wg.hosts;
+              lib.hasAttrByPath [ "wg" "hosts" cfg.hostName ] addresses
+              && lib.hasAttrByPath [ "wg" "hosts" "${cfg.hostName}-v6" ] addresses;
             message = "WireGuard client hostName '${cfg.hostName}' and '${cfg.hostName}-v6' must exist in consts.addresses.wg.hosts.";
           }
           {

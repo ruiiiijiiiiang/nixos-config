@@ -7,13 +7,11 @@
   ...
 }:
 let
+  inherit (config.networking) hostName;
   inherit (consts) username addresses domain;
-  inherit (helpers) getHostAddress;
+  inherit (helpers) getHostAddress getGatewayAddress;
   inherit (keys) ssh;
   cfg = config.custom.platforms.vm.networking;
-  hostName = config.networking.hostName;
-  hostIp = getHostAddress hostName;
-  gateway = "${addresses.home-prefix}.${lib.elemAt (lib.splitString "." hostIp) 2}.1";
 in
 {
   options.custom.platforms.vm.networking = with lib; {
@@ -65,9 +63,20 @@ in
           networkConfig = {
             Address = [
               "${getHostAddress hostName}/24"
-              "${getHostAddress "${hostName}-v6"}/64"
+              "${
+                getHostAddress {
+                  inherit hostName;
+                  isV6 = true;
+                }
+              }/64"
             ];
-            Gateway = gateway;
+            Gateway = [
+              (getGatewayAddress hostName)
+              (getGatewayAddress {
+                inherit hostName;
+                isV6 = true;
+              })
+            ];
             DNS = [
               addresses.infra.vip.dns
               addresses.infra.vip.dns-v6

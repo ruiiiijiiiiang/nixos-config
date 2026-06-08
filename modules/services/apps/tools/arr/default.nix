@@ -44,7 +44,12 @@ in
         image = "lscr.io/linuxserver/lidarr:latest";
         ports = [
           "${addresses.localhost}:${toString ports.arr.lidarr}:${toString ports.arr.lidarr}"
-          "${getHostAddress config.networking.hostName}:${toString ports.arr.lidarr}:${toString ports.arr.lidarr}"
+          "${
+            getHostAddress {
+              inherit (config.networking) hostName;
+              network = "infra";
+            }
+          }:${toString ports.arr.lidarr}:${toString ports.arr.lidarr}"
         ];
         environment = {
           TZ = timeZone;
@@ -65,7 +70,12 @@ in
         image = "lscr.io/linuxserver/radarr:latest";
         ports = [
           "${addresses.localhost}:${toString ports.arr.radarr}:${toString ports.arr.radarr}"
-          "${getHostAddress config.networking.hostName}:${toString ports.arr.radarr}:${toString ports.arr.radarr}"
+          "${
+            getHostAddress {
+              inherit (config.networking) hostName;
+              network = "infra";
+            }
+          }:${toString ports.arr.radarr}:${toString ports.arr.radarr}"
         ];
         environment = {
           TZ = timeZone;
@@ -86,7 +96,12 @@ in
         image = "lscr.io/linuxserver/sonarr:latest";
         ports = [
           "${addresses.localhost}:${toString ports.arr.sonarr}:${toString ports.arr.sonarr}"
-          "${getHostAddress config.networking.hostName}:${toString ports.arr.sonarr}:${toString ports.arr.sonarr}"
+          "${
+            getHostAddress {
+              inherit (config.networking) hostName;
+              network = "infra";
+            }
+          }:${toString ports.arr.sonarr}:${toString ports.arr.sonarr}"
         ];
         environment = {
           TZ = timeZone;
@@ -107,7 +122,12 @@ in
         image = "lscr.io/linuxserver/prowlarr:latest";
         ports = [
           "${addresses.localhost}:${toString ports.arr.prowlarr}:${toString ports.arr.prowlarr}"
-          "${getHostAddress config.networking.hostName}:${toString ports.arr.prowlarr}:${toString ports.arr.prowlarr}"
+          "${
+            getHostAddress {
+              inherit (config.networking) hostName;
+              network = "infra";
+            }
+          }:${toString ports.arr.prowlarr}:${toString ports.arr.prowlarr}"
         ];
         environment = {
           TZ = timeZone;

@@ -1,11 +1,13 @@
 {
   config,
   consts,
+  helpers,
   lib,
   ...
 }:
 let
-  inherit (consts) addresses ports;
+  inherit (consts) ports;
+  inherit (helpers) getHostAddress;
   cfg = config.custom.services.infra.nfs.server;
 
   commonOptions = "rw,nohide,no_subtree_check,fsid=0";
@@ -22,8 +24,8 @@ in
     allowedHosts = mkOption {
       type = types.listOf types.str;
       default = [
-        addresses.home.hosts.framework
-        addresses.home.hosts.arch
+        (getHostAddress "framework")
+        (getHostAddress "arch")
       ];
       description = "Hosts allowed to access file server.";
     };

@@ -6,8 +6,9 @@
   ...
 }:
 let
+  inherit (config.networking) hostName;
   inherit (consts) domain addresses vlan-ids;
-  inherit (helpers) getHostAddress;
+  inherit (helpers) getHostAddress getGatewayAddress getHostSubnet;
   cfg = config.custom.platforms.minipc.networking;
   vlanInterface = "${cfg.lanBridge}.${toString cfg.vlanId}";
 in
@@ -123,10 +124,21 @@ in
           matchConfig.Name = vlanInterface;
           networkConfig = {
             Address = [
-              "${getHostAddress "hypervisor"}/24"
-              "${getHostAddress "hypervisor-v6"}/64"
+              "${getHostAddress hostName}/24"
+              "${
+                getHostAddress {
+                  inherit hostName;
+                  isV6 = true;
+                }
+              }/64"
             ];
-            Gateway = addresses.infra.hosts.vm-network;
+            Gateway = [
+              (getGatewayAddress hostName)
+              (getGatewayAddress {
+                inherit hostName;
+                isV6 = true;
+              })
+            ];
             DNS = [
               addresses.infra.vip.dns
               addresses.infra.vip.dns-v6
@@ -136,18 +148,40 @@ in
           };
           routingPolicyRules = [
             {
-              From = getHostAddress "hypervisor";
+              From = getHostAddress hostName;
+              Table = 20;
+            }
+            {
+              From = getHostAddress {
+                inherit hostName;
+                isV6 = true;
+              };
               Table = 20;
             }
           ];
           routes = [
             {
-              Destination = addresses.infra.network;
+              Destination = getHostSubnet hostName;
               Scope = "link";
               Table = 20;
             }
             {
-              Gateway = addresses.infra.hosts.vm-network;
+              Destination = getHostSubnet {
+                inherit hostName;
+                isV6 = true;
+              };
+              Scope = "link";
+              Table = 20;
+            }
+            {
+              Gateway = getGatewayAddress hostName;
+              Table = 20;
+            }
+            {
+              Gateway = getGatewayAddress {
+                inherit hostName;
+                isV6 = true;
+              };
               Table = 20;
             }
           ];
@@ -158,8 +192,13 @@ in
           matchConfig.Name = cfg.wlanInterface;
           networkConfig = {
             Address = [
-              "${getHostAddress "hypervisor-wifi"}/24"
-              "${getHostAddress "hypervisor-wifi-v6"}/64"
+              "${getHostAddress "${hostName}-wifi"}/24"
+              "${
+                getHostAddress {
+                  hostName = "${hostName}-wifi";
+                  isV6 = true;
+                }
+              }/64"
             ];
             DHCP = "ipv4";
             IgnoreCarrierLoss = "3s";
@@ -167,35 +206,47 @@ in
           };
           routingPolicyRules = [
             {
-              From = getHostAddress "hypervisor-wifi";
+              From = getHostAddress "${hostName}-wifi";
               Table = 2;
             }
             {
-              From = getHostAddress "hypervisor-wifi-v6";
+              From = getHostAddress {
+                hostName = "${hostName}-wifi";
+                isV6 = true;
+              };
               Table = 2;
             }
           ];
           routes = [
             {
-              Destination = addresses.home.network;
+              Destination = getHostSubnet "${hostName}-wifi";
               Scope = "link";
               Table = 2;
             }
             {
-              Destination = addresses.home.network-v6;
+              Destination = getHostSubnet {
+                hostName = "${hostName}-wifi";
+                isV6 = true;
+              };
               Scope = "link";
               Table = 2;
             }
             {
-              Gateway = addresses.home.hosts.vm-network;
+              Gateway = getGatewayAddress "${hostName}-wifi";
               Table = 2;
             }
             {
-              Gateway = addresses.home.hosts.vm-network-v6;
+              Gateway = getGatewayAddress {
+                hostName = "${hostName}-wifi";
+                isV6 = true;
+              };
               Table = 2;
             }
           ];
           dhcpV4Config = {
+            RouteMetric = 2048;
+          };
+          ipv6AcceptRAConfig = {
             RouteMetric = 2048;
           };
           linkConfig.RequiredForOnline = "no";
