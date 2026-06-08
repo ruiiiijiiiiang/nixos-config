@@ -16,45 +16,61 @@ let
   inherit (inputs.self) nixosConfigurations;
   cfg = config.custom.services.networking.router;
 
-  mkSubnet = network: {
-    id = vlan-ids.${network};
-    subnet = addresses.${network}.network;
-    pools = [ { pool = "${addresses.${network}.dhcp-min} - ${addresses.${network}.dhcp-max}"; } ];
-    option-data = [
-      {
-        name = "routers";
-        data = addresses.${network}.hosts.${config.networking.hostName};
-      }
-      {
-        name = "domain-name-servers";
-        data = addresses.infra.vip.dns;
-      }
-    ];
-  };
+  mkSubnet =
+    { network }:
+    {
+      id = vlan-ids.${network};
+      subnet = addresses.${network}.network;
+      pools = [ { pool = "${addresses.${network}.dhcp-min} - ${addresses.${network}.dhcp-max}"; } ];
+      option-data = [
+        {
+          name = "routers";
+          data = addresses.${network}.hosts.${config.networking.hostName};
+        }
+        {
+          name = "domain-name-servers";
+          data = addresses.infra.vip.dns;
+        }
+      ];
+    };
 
-  mkVlanNetwork = subnetName: interfaceName: {
-    "40-${interfaceName}" = {
-      matchConfig.Name = interfaceName;
-      networkConfig = {
-        Address = [
-          "${addresses.${subnetName}.hosts.${config.networking.hostName}}/24"
-          "${addresses.${subnetName}.hosts."${config.networking.hostName}-v6"}/64"
-        ];
-        LinkLocalAddressing = "ipv6";
+  mkVlanNetwork =
+    { subnetName, interfaceName }:
+    {
+      "40-${interfaceName}" = {
+        matchConfig.Name = interfaceName;
+        networkConfig = {
+          Address = [
+            "${addresses.${subnetName}.hosts.${config.networking.hostName}}/24"
+            "${addresses.${subnetName}.hosts."${config.networking.hostName}-v6"}/64"
+          ];
+          LinkLocalAddressing = "ipv6";
+        };
       };
     };
-  };
 
-  mkRadvdInterface = interface: prefix: /* bash */ ''
-    interface ${interface} {
-      AdvSendAdvert on;
-      prefix ${prefix} {
-        AdvOnLink on;
-        AdvAutonomous on;
+  mkRadvdInterface =
+    {
+      interface,
+      prefix,
+      enablePD,
+    }:
+    /* bash */ ''
+      interface ${interface} {
+        AdvSendAdvert on;
+        prefix ${prefix} {
+          AdvOnLink on;
+          AdvAutonomous on;
+        };
+        ${lib.optionalString enablePD /* bash */ ''
+          prefix ::/64 {
+            AdvOnLink on;
+            AdvAutonomous on;
+          };
+        ''}
+        RDNSS ${addresses.infra.vip.dns-v6} { };
       };
-      RDNSS ${addresses.infra.vip.dns-v6} { };
-    };
-  '';
+    '';
 in
 {
   options.custom.services.networking.router = with lib; {
@@ -122,6 +138,7 @@ in
     boot.kernel.sysctl = {
       "net.ipv4.ip_forward" = "1";
       "net.ipv6.conf.all.forwarding" = "1";
+      "net.ipv6.conf.${cfg.wanInterface}.accept_ra" = "2";
       "net.ipv4.conf.${cfg.wanInterface}.rp_filter" = "2";
       "net.ipv4.conf.${cfg.lanInterface}.rp_filter" = "2";
       "net.ipv4.conf.${cfg.infraInterface}.rp_filter" = "2";
@@ -206,11 +223,13 @@ in
               iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip6 daddr ${addresses.infra.vip.dns-v6} udp dport ${toString ports.dns} accept
               iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip6 daddr ${addresses.infra.vip.dns-v6} tcp dport ${toString ports.dns} accept
               iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip daddr ${getHostAddress "vm-app"} tcp dport { ${toString ports.http}, ${toString ports.https} } accept
+              iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip6 daddr ${getHostAddress "vm-app-v6"} tcp dport { ${toString ports.http}, ${toString ports.https} } accept
 
               ${lib.optionalString
                 nixosConfigurations.vm-monitor.config.custom.services.observability.loki.server.enable
                 /* bash */ ''
                   iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip daddr ${getHostAddress "vm-monitor"} tcp dport ${toString ports.loki.server} accept
+                  iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip6 daddr ${getHostAddress "vm-monitor-v6"} tcp dport ${toString ports.loki.server} accept
                 ''
               }
 
@@ -218,6 +237,7 @@ in
                 nixosConfigurations.vm-monitor.config.custom.services.security.wazuh.server.enable
                 /* bash */ ''
                   iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip daddr ${getHostAddress "vm-monitor"} tcp dport { ${toString ports.wazuh.agent.connection}, ${toString ports.wazuh.agent.enrollment} } accept
+                  iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip6 daddr ${getHostAddress "vm-monitor-v6"} tcp dport { ${toString ports.wazuh.agent.connection}, ${toString ports.wazuh.agent.enrollment} } accept
                 ''
               }
 
@@ -225,6 +245,7 @@ in
                 nixosConfigurations.vm-monitor.config.custom.services.security.trivy.server.enable
                 /* bash */ ''
                   iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip daddr ${getHostAddress "vm-monitor"} tcp dport ${toString ports.trivy} accept
+                  iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip6 daddr ${getHostAddress "vm-monitor-v6"} tcp dport ${toString ports.trivy} accept
                 ''
               }
 
@@ -277,16 +298,34 @@ in
                 "${addresses.home.hosts."${config.networking.hostName}-v6"}/64"
               ];
               LinkLocalAddressing = "ipv6";
+              DHCPPrefixDelegation = "yes";
+            };
+            dhcpPrefixDelegationConfig = {
+              UplinkInterface = cfg.wanInterface;
+              SubnetId = 0;
+              Announce = "yes";
             };
           };
 
           "40-${cfg.wanInterface}" = {
             matchConfig.Name = cfg.wanInterface;
-            networkConfig.DHCP = "yes";
+            networkConfig = {
+              DHCP = "yes";
+              IPv6AcceptRA = "yes";
+            };
+            dhcpV6Config = {
+              PrefixDelegationHint = "::/60";
+            };
           };
         }
-        (mkVlanNetwork "infra" cfg.infraInterface)
-        (mkVlanNetwork "dmz" cfg.dmzInterface)
+        (mkVlanNetwork {
+          subnetName = "infra";
+          interfaceName = cfg.infraInterface;
+        })
+        (mkVlanNetwork {
+          subnetName = "dmz";
+          interfaceName = cfg.dmzInterface;
+        })
       ];
     };
 
@@ -316,7 +355,7 @@ in
               ];
             };
             valid-lifetime = 86400;
-            subnet4 = map mkSubnet [
+            subnet4 = map (network: mkSubnet { inherit network; }) [
               "home"
               "infra"
               "dmz"
@@ -347,9 +386,21 @@ in
       radvd = {
         enable = true;
         config = lib.concatStringsSep "\n" [
-          (mkRadvdInterface cfg.lanInterface addresses.home.network-v6)
-          (mkRadvdInterface cfg.infraInterface addresses.infra.network-v6)
-          (mkRadvdInterface cfg.dmzInterface addresses.dmz.network-v6)
+          (mkRadvdInterface {
+            interface = cfg.lanInterface;
+            prefix = addresses.home.network-v6;
+            enablePD = true;
+          })
+          (mkRadvdInterface {
+            interface = cfg.infraInterface;
+            prefix = addresses.infra.network-v6;
+            enablePD = false;
+          })
+          (mkRadvdInterface {
+            interface = cfg.dmzInterface;
+            prefix = addresses.dmz.network-v6;
+            enablePD = false;
+          })
         ];
       };
     };

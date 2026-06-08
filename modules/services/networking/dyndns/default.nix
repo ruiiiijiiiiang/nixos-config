@@ -24,6 +24,7 @@ in
       enable = true;
       apiTokenFile = config.age.secrets.cloudflare-dns-token.path;
       domains = [ endpoints.vpn-server ];
+      ipv6 = true;
       proxied = false;
     };
   };
