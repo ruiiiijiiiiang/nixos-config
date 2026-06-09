@@ -18,6 +18,7 @@ in
     node.enable = mkEnableOption "Enable Prometheus Node exporter";
     podman.enable = mkEnableOption "Enable Prometheus Podman exporter";
     restic.enable = mkEnableOption "Enable Prometheus Restic exporter";
+    smartctl.enable = mkEnableOption "Enable Prometheus Smartctl exporter";
     wireguard.enable = mkEnableOption "Enable Prometheus WireGuard exporter";
     interface = mkOption {
       type = types.nullOr types.str;
@@ -47,6 +48,10 @@ in
       {
         assertion = (!cfg.restic.enable) || config.custom.services.infra.restic.enable;
         message = "Prometheus Restic exporter requires infra.restic.enable.";
+      }
+      {
+        assertion = (!cfg.smartctl.enable) || config.custom.services.infra.smartd.enable;
+        message = "Prometheus Smartctl exporter requires infra.smartd.enable.";
       }
       {
         assertion = (!cfg.wireguard.enable) || config.custom.services.networking.wireguard.server.enable;
@@ -84,6 +89,11 @@ in
           inherit (config.services.restic.backups."data-local") repository passwordFile;
           refreshInterval = 7200;
           user = "root";
+        };
+
+        smartctl = lib.mkIf cfg.smartctl.enable {
+          enable = true;
+          port = ports.prometheus.exporters.smartctl;
         };
 
         wireguard = lib.mkIf cfg.wireguard.enable {
@@ -127,6 +137,7 @@ in
           ++ (optional cfg.node.enable ports.prometheus.exporters.node)
           ++ (optional cfg.podman.enable ports.prometheus.exporters.podman)
           ++ (optional cfg.restic.enable ports.prometheus.exporters.restic)
+          ++ (optional cfg.smartctl.enable ports.prometheus.exporters.smartctl)
           ++ (optional cfg.wireguard.enable ports.prometheus.exporters.wireguard);
       in
       if cfg.interface != null then

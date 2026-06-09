@@ -253,6 +253,7 @@ rec {
         node = 9100;
         podman = 9882;
         restic = 9753;
+        smartctl = 9633;
         wireguard = 9586;
       };
     };
@@ -396,6 +397,7 @@ rec {
       podman-update = "03:00";
       trivy-scan = "03:10";
       restic-backup = "06:30";
+      smartd-test = "02:00";
     };
     pi = {
       podman-update = "03:00";

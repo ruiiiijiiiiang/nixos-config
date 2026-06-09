@@ -74,6 +74,7 @@ in
           enable = true;
           repo = backupPath;
         };
+        smartd.enable = true;
       };
 
       networking.nginx.enable = true;
@@ -97,6 +98,7 @@ in
           nginx.enable = true;
           node.enable = true;
           podman.enable = true;
+          smartctl.enable = true;
           interface = vlanInterface;
         };
       };

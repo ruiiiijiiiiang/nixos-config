@@ -5,5 +5,6 @@
     ./nfs
     ./podman
     ./restic
+    ./smartd
   ];
 }

@@ -29,6 +29,7 @@ let
       node
       podman
       restic
+      smartctl
       wireguard
       ;
   };

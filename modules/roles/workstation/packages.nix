@@ -42,7 +42,6 @@ in
         jq
         nix-search-cli
         onefetch
-        silver-searcher
         tldr
         zed-editor
       ];

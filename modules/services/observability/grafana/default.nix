@@ -60,6 +60,12 @@ let
     sha256 = "0p06z60gxcnv1xswq228583apr8p2m8k8czbqw0hx5031rmgdjwc";
   };
 
+  smartd-exporter-dashboard = pkgs.fetchurl {
+    name = "smartd-exporter.json";
+    url = "https://grafana.com/api/dashboards/22604/revisions/2/download";
+    sha256 = "1kx311bdm6nqxynddai3blhi8ysm9p9m2s5121nyjryzdl9icbvj";
+  };
+
   wireguard-exporter-dashboard = pkgs.fetchurl {
     name = "wireguard-exporter.json";
     url = "https://grafana.com/api/dashboards/17251/revisions/1/download";
@@ -93,6 +99,7 @@ let
         install_dash ${node-exporter-dashboard} "node-exporter.json"
         install_dash ${podman-exporter-dashboard} "podman-exporter.json"
         install_dash ${restic-exporter-dashboard} "restic-exporter.json"
+        install_dash ${smartd-exporter-dashboard} "smartd-exporter.json"
         install_dash ${wireguard-exporter-dashboard} "wireguard-exporter.json"
         jq '
           (.templating.list[] | select(.name == "instance")) |= . + {
