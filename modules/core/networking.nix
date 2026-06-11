@@ -1,6 +1,6 @@
 { consts, lib, ... }:
 let
-  inherit (consts) addresses domain username;
+  inherit (consts) addresses domain;
   inherit (lib)
     foldl'
     mkDefault
@@ -31,7 +31,6 @@ in
     nftables.enable = mkDefault true;
     extraHosts = getExtraHosts;
     useDHCP = mkDefault true;
-    networkmanager.enable = mkDefault true;
 
     timeServers = [
       "162.159.200.1"
@@ -43,8 +42,6 @@ in
       "3.nixos.pool.ntp.org"
     ];
   };
-
-  users.users.${username}.extraGroups = [ "networkmanager" ];
 
   services.resolved.enable = mkDefault true;
 }

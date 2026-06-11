@@ -28,11 +28,10 @@ in
       rustscan
 
       # Desktop Environment: Niri
-      catppuccin-cursors.frappeLavender
-      inputs.noctalia.packages.${stdenv.hostPlatform.system}.default
-      networkmanagerapplet
       wl-clipboard
       xwayland-satellite
+      catppuccin-cursors.frappeLavender
+      inputs.noctalia.packages.${stdenv.hostPlatform.system}.default
 
       # Desktop Environment: KDE Plasma
       catppuccin-kde

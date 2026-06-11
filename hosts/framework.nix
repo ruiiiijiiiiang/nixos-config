@@ -16,6 +16,7 @@ in
     platforms.framework = {
       disks.enable = true;
       kernel.enable = true;
+      networking.enable = true;
       services.enable = true;
     };
 
