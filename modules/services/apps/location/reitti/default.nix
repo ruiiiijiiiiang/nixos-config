@@ -55,7 +55,7 @@ in
       };
 
       reitti-tile-cache = {
-        image = "docker.io/dedicatedcode/reitti-tile-cache:next";
+        image = "docker.io/dedicatedcode/reitti-tile-cache:latest";
         dependsOn = [ "reitti-postgis" ];
         networks = [ "container:reitti-postgis" ];
         environment = {
@@ -69,7 +69,7 @@ in
       };
 
       reitti-server = {
-        image = "docker.io/dedicatedcode/reitti:next";
+        image = "docker.io/dedicatedcode/reitti:latest";
         dependsOn = [ "reitti-postgis" ];
         networks = [ "container:reitti-postgis" ];
         environment = {
@@ -104,6 +104,7 @@ in
     services.nginx.virtualHosts."${fqdn}" = mkVirtualHost {
       inherit fqdn;
       port = ports.reitti;
+      extraConfig = "client_max_body_size 200M;";
     };
   };
 }

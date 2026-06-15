@@ -30,6 +30,7 @@ in
           PORT = ports.pocketid;
           TRUST_PROXY = true;
           ANALYTICS_DISABLED = true;
+          DISABLE_RATE_LIMITING = true;
         };
         credentials = {
           ENCRYPTION_KEY = config.age.secrets.pocketid-encryption-key.path;

@@ -46,10 +46,15 @@ in
         "amdgpu"
       ];
 
+      blacklistedKernelModules = [
+        "ucsi_acpi"
+      ];
+
       kernelParams = [
         "quiet"
         "splash"
         "resume=/dev/disk/by-label/NIXSWAP"
+        "amdgpu.abmlevel=1"
       ];
     };
 

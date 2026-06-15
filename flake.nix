@@ -32,10 +32,7 @@
       url = "github:AshleyYakeley/NixVirt";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    noctalia = {
-      url = "github:noctalia-dev/noctalia/legacy-v4";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    noctalia.url = "github:noctalia-dev/noctalia/legacy-v4";
     rs-top.url = "github:ruiiiijiiiiang/rs-top";
     rust-overlay = {
       url = "github:oxalica/rust-overlay";
@@ -43,10 +40,7 @@
     };
     sdctl.url = "github:ruiiiijiiiiang/sdctl";
     website.url = "github:ruiiiijiiiiang/website";
-    wezterm = {
-      url = "github:wezterm/wezterm?dir=nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    wezterm.url = "github:wezterm/wezterm?dir=nix";
     windsurf.url = "github:Exafunction/windsurf.nvim";
     zen-browser.url = "github:0xc000022070/zen-browser-flake";
   };

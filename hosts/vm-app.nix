@@ -55,9 +55,7 @@ in
           bytestash.enable = true;
           forgejo.enable = true;
         };
-        location = {
-          reitti.enable = true;
-        };
+        location.reitti.enable = true;
         media = {
           immich = {
             enable = true;

@@ -18,7 +18,7 @@ let
   cfg = config.custom.services.observability.gatus;
   fqdn = "${subdomains.${config.networking.hostName}.gatus}.${domain}";
 
-  interval = "1m";
+  interval = "10m";
   conditions = [ "[STATUS] == 200" ];
   extraPaths = {
     krawl = "/krawl-honeypot-dashboard";
