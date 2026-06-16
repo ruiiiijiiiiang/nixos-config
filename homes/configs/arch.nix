@@ -1,7 +1,7 @@
 { config, ... }:
 {
   imports = [
-    ../modules/files
+    ../files
   ];
 
   age.secrets = {
