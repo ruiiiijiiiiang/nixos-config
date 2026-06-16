@@ -62,6 +62,10 @@ in
     publicKeys = ssh.vm-public;
     armor = true;
   };
+  "mcp-config.age" = {
+    publicKeys = ssh.framework ++ ssh.arch;
+    armor = true;
+  };
   "mealie-env.age" = {
     publicKeys = ssh.vm-app;
     armor = true;
@@ -72,6 +76,10 @@ in
   };
   "onlyoffice-secret.age" = {
     publicKeys = ssh.vm-app;
+    armor = true;
+  };
+  "opencode-config.age" = {
+    publicKeys = ssh.framework ++ ssh.arch;
     armor = true;
   };
   "opencloud-env.age" = {

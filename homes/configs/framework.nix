@@ -1,11 +1,18 @@
-{ consts, ... }:
+{ consts, config, ... }:
 let
   inherit (consts) ports endpoints;
 in
 {
   imports = [
-    ../modules/files
+    ../files
   ];
+
+  home.file = {
+    ".gemini/config/mcp_config.json".source =
+      config.lib.file.mkOutOfStoreSymlink "/run/agenix/mcp-config";
+    ".config/opencode/opencode.jsonc".source =
+      config.lib.file.mkOutOfStoreSymlink "/run/agenix/opencode-config";
+  };
 
   programs.ssh = {
     enable = true;

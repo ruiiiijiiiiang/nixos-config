@@ -10,6 +10,14 @@ in
   age.secrets = {
     wireguard-framework-private-key.file = ../secrets/wireguard/framework-private-key.age;
     wireguard-framework-preshared-key.file = ../secrets/wireguard/framework-preshared-key.age;
+    mcp-config = {
+      file = ../secrets/mcp-config.age;
+      owner = "rui";
+    };
+    opencode-config = {
+      file = ../secrets/opencode-config.age;
+      owner = "rui";
+    };
   };
 
   custom = {

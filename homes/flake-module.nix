@@ -13,6 +13,7 @@ let
     {
       homeConfig,
       dotfiles ? "local",
+      extraModules ? [ ],
     }:
     let
       dotfilesRoot =
@@ -34,7 +35,8 @@ let
       modules = [
         ../homes/modules
         homeConfig
-      ];
+      ]
+      ++ extraModules;
     };
 in
 {
@@ -42,6 +44,7 @@ in
     arch = mkHome {
       homeConfig = ../homes/configs/arch.nix;
       dotfiles = "local";
+      extraModules = [ inputs.agenix.homeManagerModules.default ];
     };
   };
 }
