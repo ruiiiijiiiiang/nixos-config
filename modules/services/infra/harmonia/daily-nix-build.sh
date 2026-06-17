@@ -4,7 +4,7 @@ readonly NTFY_SERVER=@NTFY_SERVER@
 readonly NTFY_ENABLED=@NTFY_ENABLED@
 readonly NTFY_TOPIC=@NTFY_TOPIC@
 
-CPT_DEB="$HOME_DIR/Sync/CiscoPacketTracer_900_Ubuntu_64bit.deb"
+CPT_DEB="$HOME_DIR/CiscoPacketTracer_900_Ubuntu_64bit.deb"
 failed_hosts=()
 
 notify_build_failures() {

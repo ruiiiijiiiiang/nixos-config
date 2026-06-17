@@ -43,10 +43,7 @@ in
     services = {
       apps = {
         tools.microbin.enable = true;
-        web = {
-          searxng.enable = true;
-          website.enable = true;
-        };
+        web.website.enable = true;
       };
 
       infra = {

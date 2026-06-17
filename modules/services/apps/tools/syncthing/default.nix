@@ -45,6 +45,9 @@ in
             "Rui-Desktop" = {
               id = "A3QHGMY-JKQQREB-KZCSOHS-2N3IXTL-2WZ2TMV-MZRWGIN-BISZOYK-AQGQIAF";
             };
+            "pixel-7" = {
+              id = "AEIUHYY-ILD6DGM-M65BRTC-QLHS2KT-UVM46P5-QRYA3P2-57AZFBZ-R3S7EQX";
+            };
           };
 
           folders = {
@@ -56,6 +59,17 @@ in
                 "framework"
                 "vm-app"
                 "Rui-Desktop"
+              ];
+            };
+            "obsidian" = {
+              id = "obsidian";
+              path = "~/obsidian";
+              devices = [
+                "arch"
+                "framework"
+                "vm-app"
+                "Rui-Desktop"
+                "pixel-7"
               ];
             };
             "dotfiles" = {

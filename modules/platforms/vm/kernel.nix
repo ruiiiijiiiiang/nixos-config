@@ -29,6 +29,9 @@ in
         systemd-boot.enable = true;
       };
       growPartition = true;
+      kernel.sysctl = {
+        "vm.swappiness" = 10;
+      };
 
       initrd = {
         availableKernelModules = [
