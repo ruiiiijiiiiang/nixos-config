@@ -127,6 +127,29 @@ in
       };
     };
 
+    # Temporary fix until upstream issue gets resolved: https://github.com/ngosang/restic-exporter/
+    nixpkgs.overlays = lib.mkIf cfg.restic.enable [
+      (final: prev: {
+        prometheus-restic-exporter = prev.prometheus-restic-exporter.override {
+          restic = final.writeShellScriptBin "restic" ''
+            is_stats=0
+            for arg in "$@"; do
+              if [ "$arg" = "stats" ]; then
+                is_stats=1
+                break
+              fi
+            done
+            if [ "$is_stats" -eq 1 ]; then
+              ${prev.restic}/bin/restic "$@" | ${final.gnugrep}/bin/grep -v -E '^\[[0-9:]+\]'
+              exit ''${PIPESTATUS[0]}
+            else
+              exec ${prev.restic}/bin/restic "$@"
+            fi
+          '';
+        };
+      })
+    ];
+
     networking.firewall =
       with lib;
       let

@@ -54,7 +54,12 @@ let
     inputs.nixpkgs.lib.nixosSystem {
       inherit system;
       specialArgs = {
-        inherit consts inputs helpers keys;
+        inherit
+          consts
+          inputs
+          helpers
+          keys
+          ;
       };
       modules = [
         ../modules

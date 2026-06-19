@@ -158,6 +158,7 @@ in
 
             private-domain = [ domain ];
             domain-insecure = [ domain ];
+            prefer-ip6 = true;
           };
 
           forward-zone = [
@@ -167,6 +168,8 @@ in
               forward-addr = [
                 "9.9.9.9@853#dns.quad9.net"
                 "149.112.112.112@853#dns.quad9.net"
+                "2620:fe::fe@853#dns.quad9.net"
+                "2620:fe::9@853#dns.quad9.net"
               ];
             }
           ];
@@ -278,16 +281,40 @@ in
       };
     };
 
-    systemd.services.pihole-ftl.restartTriggers = [
-      config.networking.extraHosts
-    ];
+    systemd = {
+      services.pihole-ftl.restartTriggers = [
+        config.networking.extraHosts
+      ];
 
-    users.users.keepalived_script = lib.mkIf cfg.vrrp.enable {
-      isSystemUser = true;
-      group = "keepalived_script";
-      description = "User for Keepalived health checks";
+      services.pihole-update-gravity = {
+        description = "Update Pi-hole Gravity";
+        after = [ "pihole-ftl.service" ];
+        requires = [ "pihole-ftl.service" ];
+        serviceConfig = {
+          Type = "oneshot";
+          ExecStart = "${config.services.pihole-ftl.pihole}/bin/pihole gravity";
+        };
+      };
+
+      timers.pihole-update-gravity = {
+        description = "Timer to update Pi-hole Gravity weekly";
+        wantedBy = [ "timers.target" ];
+        timerConfig = {
+          OnCalendar = "Sun *-*-* 04:00:00";
+          Persistent = true;
+          RandomizedDelaySec = "5m";
+        };
+      };
     };
 
-    users.groups.keepalived_script = lib.mkIf cfg.vrrp.enable { };
+    users = {
+      users.keepalived_script = lib.mkIf cfg.vrrp.enable {
+        isSystemUser = true;
+        group = "keepalived_script";
+        description = "User for Keepalived health checks";
+      };
+
+      groups.keepalived_script = lib.mkIf cfg.vrrp.enable { };
+    };
   };
 }
