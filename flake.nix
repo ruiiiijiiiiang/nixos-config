@@ -66,6 +66,7 @@
         ./hosts/flake-module.nix
         ./homes/flake-module.nix
         ./shells/flake-module.nix
+        ./topology/flake-module.nix
       ];
     };
 }

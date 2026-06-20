@@ -114,6 +114,12 @@ This infrastructure is engineered following a rigorous **Domain-Driven Design** 
              +-------------------------------------|-------------------------------------+
 ```
 
+### Visual Topology Diagram
+
+![Network Topology](./topology/topology.png)
+
+_(Automatically generated from Nix configuration)_
+
 ### The Cybernetic Nexus
 
 The `vm-network` VM serves as the nerve center of the home network. It replaces consumer-grade router firmware with a fully software-defined, hardened networking appliance that routes every packet, enforces strict firewall rules, and inspects traffic for threats.

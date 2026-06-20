@@ -1,0 +1,440 @@
+# D2 Network Topology Diagram
+# Auto-generated from NixOS configuration. DO NOT EDIT.
+
+direction: down
+
+vars: {
+  d2-config: {
+    theme-id: 200
+  }
+}
+
+style: {
+  fill: "#232634"
+}
+
+# Global Styles
+classes: {
+  physical: {
+    style: {
+      fill: "#303446"
+      stroke: "#51576D"
+      stroke-width: 3
+      font-color: "#c6d0f5"
+    }
+  }
+  vm: {
+    style: {
+      fill: "#292C3C"
+      stroke: "#414559"
+      stroke-width: 2
+      font-color: "#a5adce"
+    }
+  }
+  network: {
+    style: {
+      stroke-width: 2
+      stroke-dash: 5
+    }
+  }
+  service: {
+    width: 120
+    height: 100
+    style: {
+      fill: "#414559"
+      stroke: "#51576D"
+      stroke-width: 2
+      font-color: "#c6d0f5"
+    }
+  }
+}
+
+# Network Segments
+home: "HOME VLAN\n192.168.2.0/24" {
+  shape: cloud
+  style.fill: "#253046"
+  style.stroke: "#8CAAEE"
+  style.font-color: "#c6d0f5"
+}
+
+infra: "INFRA VLAN\n192.168.20.0/24" {
+  shape: cloud
+  style.fill: "#322644"
+  style.stroke: "#CA9EE6"
+  style.font-color: "#c6d0f5"
+}
+
+dmz: "DMZ VLAN\n192.168.88.0/24" {
+  shape: cloud
+  style.fill: "#3d252a"
+  style.stroke: "#E78284"
+  style.font-color: "#c6d0f5"
+}
+
+wg: "WG VLAN\n192.168.128.0/24" {
+  shape: cloud
+  style.fill: "#233227"
+  style.stroke: "#A6D189"
+  style.font-color: "#c6d0f5"
+}
+
+
+# Physical and Virtual Infrastructure
+framework: "Framework Laptop\n(Workstation)" {
+  class: physical
+  grid-columns: 1
+  
+  
+}
+
+hypervisor: "Mini PC Hypervisor" {
+  class: physical
+  direction: right
+  mgmt: "Host Management" {
+  style.fill: "#303446"
+  style.stroke: "#414559"
+  style.font-color: "#c6d0f5"
+  grid-columns: 1
+  cockpit: "Cockpit" {
+    class: service
+    icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/cockpit.png"
+  }
+}
+
+vm-network: "vm-network\n(Gateway Router)" {
+  class: vm
+  grid-rows: 4
+  grid-columns: 3
+                      netalertx: "netalertx" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/netalertx.png"
+}
+
+                    pihole: "pihole" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/pi-hole.png"
+}
+
+}
+
+                vm-app: "vm-app\n(Application Server)" {
+  class: vm
+  grid-rows: 4
+  grid-columns: 3
+                      atuin: "atuin" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/atuin.png"
+}
+
+                    bazarr: "bazarr" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/bazarr.png"
+}
+
+                    bytestash: "bytestash" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/bytestash.png"
+}
+
+                    changedetection: "changedetection" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/changedetection.png"
+}
+
+                    forgejo: "forgejo" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/forgejo.png"
+}
+
+                    harmonia: "harmonia" {
+  class: service
+  icon: "https://avatars.githubusercontent.com/u/33221035"
+}
+
+                    homepage: "homepage" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/homepage.png"
+}
+
+                    immich: "immich" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/immich.png"
+}
+
+                    jellyfin: "jellyfin" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/jellyfin.png"
+}
+
+                    karakeep: "karakeep" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/karakeep.png"
+}
+
+                    librechat: "librechat" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/librechat.png"
+}
+
+                    lidarr: "lidarr" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/lidarr.png"
+}
+
+                    mealie: "mealie" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/mealie.png"
+}
+
+                    memos: "memos" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/memos.png"
+}
+
+                    onlyoffice: "onlyoffice" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/onlyoffice.png"
+}
+
+                    opencloud: "opencloud" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/open-cloud.png"
+}
+
+                    ovumcy: "ovumcy" {
+  class: service
+  icon: "https://raw.githubusercontent.com/ovumcy/ovumcy-web/refs/heads/main/web/static/brand/ovumcy-icon-dark.svg"
+}
+
+                    paperless: "paperless" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/paperless.png"
+}
+
+                    pocketid: "pocketid" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/pocket-id.png"
+}
+
+                    pricebuddy: "pricebuddy" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/price-buddy.png"
+}
+
+                    prowlarr: "prowlarr" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/prowlarr.png"
+}
+
+                    qbittorrent: "qbittorrent" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/qbittorrent.png"
+}
+
+                    radarr: "radarr" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/radarr.png"
+}
+
+                    reitti: "reitti" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/selfhst/icons@main/png/reitti.png"
+}
+
+                    sonarr: "sonarr" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/sonarr.png"
+}
+
+                    syncthing: "syncthing" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/syncthing.png"
+}
+
+                    vaultwarden: "vaultwarden" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/vaultwarden.png"
+}
+
+}
+
+                vm-monitor: "vm-monitor\n(Monitoring & Security)" {
+  class: vm
+  grid-rows: 4
+  grid-columns: 3
+                      beszel: "beszel" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/beszel.png"
+}
+
+                    dockhand: "dockhand" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/selfhst/icons@main/png/dockhand.png"
+}
+
+                    gatus: "gatus" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/gatus.png"
+}
+
+                    grafana: "grafana" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/grafana.png"
+}
+
+                    ntfy: "ntfy" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/ntfy.png"
+}
+
+                    prometheus: "prometheus" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/prometheus.png"
+}
+
+                    termix: "termix" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/termix.png"
+}
+
+                    wazuh: "wazuh" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/wazuh.png"
+}
+
+}
+
+                vm-public: "vm-public\n(Public Services)" {
+  class: vm
+  grid-rows: 4
+  grid-columns: 3
+                      krawl: "krawl" {
+  class: service
+  icon: "https://raw.githubusercontent.com/BlessedRebuS/Krawl/refs/heads/main/img/krawl-svg.svg"
+}
+
+                    microbin: "microbin" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/microbin.png"
+}
+
+                    public: "public" {
+  class: service
+  icon: "https://avatars.githubusercontent.com/u/79236386"
+}
+
+}
+
+                vm-cyber: "vm-cyber\n(Security Lab)" {
+  class: vm
+  grid-rows: 4
+  grid-columns: 3
+  
+}
+
+  
+}
+
+pi: "Raspberry Pi 4\n(IoT & Core DNS)" {
+  class: physical
+  grid-columns: 1
+  
+    homeassistant: "homeassistant" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/home-assistant.png"
+}
+
+  pihole: "pihole" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/pi-hole.png"
+}
+
+  zwave: "zwave" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/z-wave-js-ui.png"
+}
+
+}
+
+
+
+
+
+
+
+
+# Network Interconnections
+home -- framework: "192.168.2.10" {
+  style.stroke: "#8CAAEE"
+  style.stroke-width: 2
+  style.font-color: "#c6d0f5"
+}
+
+wg -- framework: "192.168.128.2" {
+  style.stroke: "#A6D189"
+  style.stroke-width: 2
+  style.font-color: "#c6d0f5"
+}
+
+infra -- hypervisor.mgmt: "192.168.20.254" {
+  style.stroke: "#CA9EE6"
+  style.stroke-width: 2
+  style.font-color: "#c6d0f5"
+}
+
+infra -- pi: "192.168.20.51" {
+  style.stroke: "#CA9EE6"
+  style.stroke-width: 2
+  style.font-color: "#c6d0f5"
+}
+
+infra -- hypervisor.vm-app: "192.168.20.2" {
+  style.stroke: "#CA9EE6"
+  style.stroke-width: 2
+  style.font-color: "#c6d0f5"
+}
+
+dmz -- hypervisor.vm-cyber: "192.168.88.10" {
+  style.stroke: "#E78284"
+  style.stroke-width: 2
+  style.font-color: "#c6d0f5"
+}
+
+infra -- hypervisor.vm-monitor: "192.168.20.3" {
+  style.stroke: "#CA9EE6"
+  style.stroke-width: 2
+  style.font-color: "#c6d0f5"
+}
+
+dmz -- hypervisor.vm-network: "192.168.88.1" {
+  style.stroke: "#E78284"
+  style.stroke-width: 2
+  style.font-color: "#c6d0f5"
+}
+
+home -- hypervisor.vm-network: "192.168.2.1" {
+  style.stroke: "#8CAAEE"
+  style.stroke-width: 2
+  style.font-color: "#c6d0f5"
+}
+
+infra -- hypervisor.vm-network: "192.168.20.1" {
+  style.stroke: "#CA9EE6"
+  style.stroke-width: 2
+  style.font-color: "#c6d0f5"
+}
+
+wg -- hypervisor.vm-network: "192.168.128.1" {
+  style.stroke: "#A6D189"
+  style.stroke-width: 2
+  style.font-color: "#c6d0f5"
+}
+
+dmz -- hypervisor.vm-public: "192.168.88.2" {
+  style.stroke: "#E78284"
+  style.stroke-width: 2
+  style.font-color: "#c6d0f5"
+}
+
+
+
