@@ -162,10 +162,10 @@ in
             source = "${
               pkgs.writeShellApplication {
                 name = "wg-toggle";
-                runtimeInputs = [
-                  pkgs.networkmanager
-                  pkgs.systemd
-                  pkgs.util-linux
+                runtimeInputs = with pkgs; [
+                  networkmanager
+                  systemd
+                  util-linux
                 ];
                 text = ''
                   INTERFACE="$1"
