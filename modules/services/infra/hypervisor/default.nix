@@ -1,80 +1,24 @@
 {
   config,
   consts,
-  helpers,
   inputs,
   lib,
   pkgs,
   ...
 }:
 let
-  inherit (consts) username ports hardware;
-  inherit (helpers) parsePciAddress;
-  inherit (inputs.self) nixosConfigurations;
+  inherit (consts)
+    username
+    ports
+    hardware
+    virtualization
+    vlan-ids
+    ;
   cfg = config.custom.services.infra.hypervisor;
   vlanInterface = "${cfg.lanBridge}.${toString cfg.vlanId}";
   spicePorts = lib.mapAttrsToList (_: port: port) ports.spice;
 
-  selfFlakePath = inputs.self.outPath;
-  guestListFile = pkgs.writeText "hypervisor-guests" (lib.concatLines cfg.guestVms);
-  guestSizeFile = pkgs.writeText "hypervisor-guest-sizes" (
-    lib.concatLines (
-      map (
-        guest: "${guest}:${toString nixosConfigurations.${guest}.config.custom.platforms.vm.disks.size}G"
-      ) cfg.guestVms
-    )
-  );
-  provisionVmScriptText =
-    lib.replaceStrings
-      [
-        "@SELF_FLAKE_PATH@"
-        "@VOLUME_GROUP@"
-        "@GUEST_LIST_FILE@"
-        "@GUEST_SIZE_FILE@"
-      ]
-      [
-        (lib.escapeShellArg selfFlakePath)
-        (lib.escapeShellArg cfg.volumeGroup)
-        (lib.escapeShellArg guestListFile)
-        (lib.escapeShellArg guestSizeFile)
-      ]
-      (lib.readFile ./provision-vm.sh);
-
-  shutdownHypervisorScriptText =
-    lib.replaceStrings [ "@GUEST_LIST_FILE@" ] [ (lib.escapeShellArg guestListFile) ]
-      (lib.readFile ./shutdown-hypervisor.sh);
-
-  getPassthroughGuest =
-    hardware:
-    let
-      guestConfigs = lib.filterAttrs (name: _: lib.elem name cfg.guestVms) nixosConfigurations;
-      matching = lib.filterAttrs (
-        _: nixosConfiguration:
-        nixosConfiguration.config.custom.platforms.vm.kernel.hardwarePassthrough == hardware
-      ) guestConfigs;
-    in
-    if matching == { } then null else lib.head (lib.attrNames matching);
-
-  passthroughIds =
-    lib.concatMap (hw: lib.optional (getPassthroughGuest hw != null) hardware.${hw}.id)
-      [
-        "gpu"
-        "nic"
-      ];
-
-  gpuGuest = getPassthroughGuest "gpu";
-
-  provisionVmScript = pkgs.writeShellApplication {
-    name = "provision-vm";
-    runtimeInputs = with pkgs; [
-      coreutils
-      lvm2
-      nix
-      systemd
-      util-linux
-    ];
-    text = provisionVmScriptText;
-  };
+  shutdownHypervisorScriptText = lib.readFile ./shutdown-hypervisor.sh;
 
   shutdownHypervisorScript = pkgs.writeShellApplication {
     name = "shutdown-hypervisor";
@@ -87,122 +31,156 @@ let
     text = shutdownHypervisorScriptText;
   };
 
-  mkLibvirtBase =
-    { guest, libvirtCfg }:
-    let
-      escapeLvmName = name: lib.replaceStrings [ "-" ] [ "--" ] name;
-    in
+  nixvirtDefaults = {
+    memoryBacking = {
+      source.type = "memfd";
+      access.mode = "shared";
+    };
+    devices = {
+      filesystem = lib.mapAttrsToList (name: _: {
+        type = "mount";
+        accessmode = "passthrough";
+        driver.type = "virtiofs";
+        binary.xattr = true;
+        source.dir = "/mnt/external/${name}";
+        target.dir = name;
+      }) hardware.storage.external;
+    };
+  };
+
+  mkGuest =
+    name: extra:
     {
-      vcpu.placement = "static";
+      nixosConfig = inputs.self.nixosConfigurations.${name};
+      cpu = virtualization.cpus.${name};
+      memory = virtualization.memory.${name};
+      storage = virtualization.storage.${name};
+      uuid = virtualization.uuids.${name};
+    }
+    // extra;
 
-      os = {
-        loader = {
-          readonly = true;
-          secure = false;
-          type = "pflash";
-          # This path needs to be hardcoded otherwise it defaults to edk2-x86_64-secure-code.fd and enables secure boot.
-          # I've tried other methods to disable secure boot and setting this path is the only way that worked.
-          path = "/run/libvirt/nix-ovmf/edk2-x86_64-code.fd";
-        };
-      };
+  mkInterface = name: vlan: {
+    type = "bridge";
+    mac.address = virtualization.mac.${name};
+    source.bridge = cfg.lanBridge;
+    model.type = "virtio";
+    inherit vlan;
+  };
 
-      memoryBacking = {
-        source.type = "memfd";
-        access.mode = "shared";
-      };
-
-      devices = {
-        disk = [
-          {
-            type = "block";
-            device = "disk";
-            driver = {
-              name = "qemu";
-              type = "raw";
-              cache = "none";
-              io = "native";
-              discard = "unmap";
-            };
-            source.dev = "/dev/mapper/${escapeLvmName cfg.volumeGroup}-${escapeLvmName guest}";
-            target = {
-              dev = "vda";
-              bus = "virtio";
-            };
-          }
-        ];
-
-        filesystem = lib.mapAttrsToList (name: _: {
-          type = "mount";
-          accessmode = "passthrough";
-          driver.type = "virtiofs";
-          binary.xattr = true;
-          source.dir = "/mnt/external/${name}";
-          target.dir = name;
-        }) hardware.storage.external;
-
-        interface = [
-          {
-            type = "bridge";
-            mac = {
-              address = hardware.macs.${guest};
-            };
-            source = {
-              bridge = cfg.lanBridge;
-            };
-            vlan = {
-              tag = [ { id = libvirtCfg.vlanId; } ];
-            };
-            model = {
-              type = "virtio";
-            };
-          }
-        ];
-
-        hostdev =
-          let
-            inherit (nixosConfigurations.${guest}.config.custom.platforms.vm.kernel) hardwarePassthrough;
-          in
-          lib.optionals (hardwarePassthrough != null) [
-            {
-              mode = "subsystem";
-              type = "pci";
-              managed = true;
-              source = {
-                address = parsePciAddress hardware.${hardwarePassthrough}.address;
-              };
-            }
-          ];
-
-        serial = [
-          {
-            type = "pty";
-            target = {
-              type = "isa-serial";
-              port = 0;
-            };
-          }
-        ];
-
-        console = [
-          {
-            type = "pty";
-            target = {
-              type = "serial";
-              port = 0;
-            };
-          }
-        ];
-
-        panic = [
-          {
-            model = "isa";
-          }
+  guests = {
+    vm-network = mkGuest "vm-network" {
+      pciDevices = [
+        {
+          address = hardware.nic.address;
+          id = hardware.nic.id;
+        }
+      ];
+      nixvirtExtraConfigs = {
+        devices.interface = [
+          (mkInterface "vm-network" {
+            trunk = true;
+            tag = [
+              {
+                id = vlan-ids.home;
+                nativeMode = "untagged";
+              }
+              { id = vlan-ids.infra; }
+              { id = vlan-ids.dmz; }
+            ];
+          })
         ];
       };
     };
+
+    vm-app = mkGuest "vm-app" {
+      autoStart = false;
+      pciDevices = [
+        {
+          address = hardware.gpu.address;
+          id = hardware.gpu.id;
+        }
+      ];
+      nixvirtExtraConfigs = {
+        devices.interface = [
+          (mkInterface "vm-app" {
+            tag = [ { id = vlan-ids.infra; } ];
+          })
+        ];
+      };
+    };
+
+    vm-monitor = mkGuest "vm-monitor" {
+      nixvirtExtraConfigs = {
+        devices.interface = [
+          (mkInterface "vm-monitor" {
+            tag = [ { id = vlan-ids.infra; } ];
+          })
+        ];
+      };
+    };
+
+    vm-public = mkGuest "vm-public" {
+      nixvirtExtraConfigs = {
+        devices.interface = [
+          (mkInterface "vm-public" {
+            tag = [ { id = vlan-ids.dmz; } ];
+          })
+        ];
+      };
+    };
+
+    vm-cyber = mkGuest "vm-cyber" {
+      autoStart = false;
+      nixvirtExtraConfigs = {
+        devices = {
+          interface = [
+            (mkInterface "vm-cyber" {
+              tag = [ { id = vlan-ids.dmz; } ];
+            })
+          ];
+          graphics = [
+            {
+              type = "spice";
+              autoport = false;
+              port = consts.ports.spice.vm-cyber;
+              listen = {
+                type = "address";
+                address = consts.addresses.any;
+              };
+            }
+          ];
+          channel = [
+            {
+              type = "spicevmc";
+              target = {
+                type = "virtio";
+                name = "com.redhat.spice.0";
+              };
+            }
+            {
+              type = "unix";
+              target = {
+                type = "virtio";
+                name = "org.qemu.guest_agent.0";
+              };
+            }
+          ];
+        };
+      };
+    };
+  };
+
+  gpuGuest =
+    let
+      gpuGuests = lib.filterAttrs (
+        _: guest: lib.any (dev: dev.id == consts.hardware.gpu.id) (guest.pciDevices or [ ])
+      ) guests;
+    in
+    if gpuGuests == { } then null else lib.head (lib.attrNames gpuGuests);
 in
 {
   imports = [
+    inputs.nixos-vm-provisioner.nixosModules.host-base
     inputs.NixVirt.nixosModules.default
   ];
 
@@ -223,45 +201,11 @@ in
       default = "vg-nvme";
       description = "LVM volume group name.";
     };
-    guestVms = mkOption {
-      type = types.listOf types.str;
-      default = [ ];
-      description = "Guest VM names to define.";
-    };
   };
 
   config = lib.mkIf cfg.enable {
-    assertions = [
-      {
-        assertion =
-          let
-            missing = lib.filter (guest: !(lib.hasAttr guest nixosConfigurations)) cfg.guestVms;
-          in
-          missing == [ ];
-        message = "Unknown nixosConfigurations entries found in libvirt.guestVms.";
-      }
-      {
-        assertion = lib.all (
-          guest:
-          (lib.hasAttr guest nixosConfigurations)
-          && (nixosConfigurations.${guest}.config.custom.platforms.vm.libvirt.enable or false)
-        ) cfg.guestVms;
-        message = "Every libvirt guest must enable custom.platforms.vm.libvirt.";
-      }
-      {
-        assertion = lib.all (
-          guest:
-          (lib.hasAttr guest nixosConfigurations)
-          && (nixosConfigurations.${guest}.config.custom.platforms.vm.disks.enable or false)
-          && (nixosConfigurations.${guest}.config.system.build ? diskoImages)
-        ) cfg.guestVms;
-        message = "Every libvirt guest must enable custom.platforms.vm.disks and expose system.build.diskoImages.";
-      }
-    ];
-
     environment.systemPackages = with pkgs; [
       pciutils
-      provisionVmScript
       shutdownHypervisorScript
       usbutils
       virtiofsd
@@ -270,66 +214,17 @@ in
     virtualisation = {
       libvirtd = {
         qemu = {
-          runAsRoot = true;
-          package = pkgs.qemu_kvm;
           vhostUserPackages = with pkgs; [ virtiofsd ];
-          verbatimConfig = ''
-            user = "root"
-            group = "root"
-          '';
         };
         dbus.enable = true;
         allowedBridges = [ cfg.lanBridge ];
       };
 
-      libvirt = {
+      nixos-vm-provisioner = {
         enable = true;
-        connections."qemu:///system" = {
-          domains = map (
-            guest:
-            let
-              inherit (nixosConfigurations.${guest}) config;
-              libvirtCfg = config.custom.platforms.vm.libvirt;
-            in
-            {
-              active = libvirtCfg.autoStart;
-              definition = inputs.NixVirt.lib.domain.writeXML (
-                lib.foldl' lib.recursiveUpdate { } [
-                  (inputs.NixVirt.lib.domain.templates.linux {
-                    name = guest;
-                    uuid = hardware.uuids.${guest};
-                    vcpu.count = libvirtCfg.cpu;
-                    memory = {
-                      count = libvirtCfg.memory;
-                      unit = "GiB";
-                    };
-                    virtio_video = null;
-                  })
-                  (mkLibvirtBase { inherit guest libvirtCfg; })
-                  libvirtCfg.extraConfigs
-                ]
-              );
-            }
-          ) cfg.guestVms;
-        };
+        inherit (cfg) volumeGroup;
+        inherit nixvirtDefaults guests;
       };
-    };
-
-    boot = lib.mkIf (passthroughIds != [ ]) {
-      kernelParams = [
-        "amd_iommu=on"
-        "iommu=pt"
-        "vfio"
-        "vfio_pci"
-        "vfio-pci.ids=${lib.concatStringsSep "," passthroughIds}"
-        "vfio_iommu_type1"
-        "video=efifb:off"
-      ];
-      initrd.kernelModules = [
-        "vfio"
-        "vfio_pci"
-        "vfio_iommu_type1"
-      ];
     };
 
     users.users = {
@@ -343,6 +238,7 @@ in
       };
     };
 
+    # In case I ever need to plug in an HDMI cable to natively troubleshoot
     systemd.services."delayed-gpu-guest-start" = lib.mkIf (gpuGuest != null) {
       description = "Start ${gpuGuest} with a 5-minute delay";
       after = [ "libvirtd.service" ];
@@ -351,18 +247,6 @@ in
         Type = "oneshot";
         ExecStart = "${pkgs.bash}/bin/bash -c 'sleep 300 && ${pkgs.libvirt}/bin/virsh start ${gpuGuest}'";
         RemainAfterExit = true;
-      };
-    };
-
-    systemd.services."provision-vm@" = {
-      description = "Provision VM disk for %i";
-      after = [
-        "local-fs.target"
-        "lvm2-monitor.service"
-      ];
-      serviceConfig = {
-        Type = "oneshot";
-        ExecStart = "${provisionVmScript}/bin/provision-vm %i";
       };
     };
   };

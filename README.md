@@ -223,16 +223,6 @@ Every server host (`pi`, `vm-network`, `vm-app`, `vm-monitor`) comes equipped wi
 - **Dockhand Agent (Hawser):** Lightweight container agent for OCI container monitoring and management.
 - **Wazuh Agent:** Enterprise-grade security monitoring and intrusion detection.
 
-## Security Configuration
-
-**Ironclad Defense.**
-
-Security isn't a feature; it's the foundation. Every server is hardened against modern threat vectors at the kernel level:
-
-- **Hardened Kernel:** IP Spoofing protection, hidden kernel pointers, and BPF JIT hardening.
-- **Memory Defense:** Disabled core dumps, Scudo hardened allocator, and strict PAM limits.
-- **Active Defense:** **Fail2Ban** actively bans intruders, while **Wazuh** provides continuous security auditing.
-
 ## Secret Management
 
 **Vault-Grade Secrets.**
@@ -244,6 +234,12 @@ No more `.env` files leaking in git history. Sensitive data is encrypted at rest
 **Atomic. Reproducible. Resilient.**
 
 The operational layer transforms manual sysadmin workflows into deterministic, code-driven automation. Every deployment is atomic, every rollback is instantaneous, and data is continuously protected.
+
+### Declarative VM Orchestration (`nixos-vm-provisioner`)
+
+Standard virtualization tools assume you want to manage VMs imperatively, clicking through UIs or running manual command-line sequences. To bridge the gap between static Nix declarations and live stateful VMs, the hypervisor runs [nixos-vm-provisioner](https://github.com/ruiiiijiiiiang/nixos-vm-provisioner)—a fully custom-built, zero-intervention NixOS module.
+
+Instead of manual disk preparation and interactive guest configurations, the provisioner acts as the host's control plane. It dynamically orchestrates the host's physical storage (carving out thin-provisioned LVM volumes on the fly) and compiles centralized hardware constants—vCPU allocations, RAM limits, MAC addresses, and passthrough PCIe devices—directly into running NixVirt/QEMU guest domain configurations. One configuration file. Zero manual setups. Complete host-to-guest alignment.
 
 ### Binary Cache & Pre-Built Artifacts
 
@@ -259,12 +255,3 @@ The infrastructure employs a dual CI/CD strategy, enabling both local-first and 
 - **Remote Pipeline (GitHub Actions):** Establishes a WireGuard tunnel into the homelab for external access. Deploys to all hosts including `pi` using ARM-native runners. Accessible from anywhere. Environment independence.
 
 The local Forgejo instance doubles as a private **OCI container registry**. CI pipelines build, push, and version container images for personal projects, creating a self-contained artifact ecosystem consumed across the entire infrastructure.
-
-### Automated Backup
-
-**Continuous Data Protection.**
-
-Critical data is protected through a multi-tier backup strategy:
-
-- **Database Backup:** **db-auto-backup** automatically dumps all containerized databases via the Podman socket.
-- **Filesystem Backup:** **Restic** performs incremental, encrypted snapshots of critical paths with intelligent retention.

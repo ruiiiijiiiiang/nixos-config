@@ -39,6 +39,7 @@ in
           "virtio_blk"
           "virtio_net"
           "virtio_fs"
+          "virtio_console"
           "sd_mod"
           "sr_mod"
         ]
@@ -50,7 +51,7 @@ in
           ++ (lib.optionals cfg.workstation [ "virtio_gpu" ]);
       };
       kernelParams = [
-        "console=tty1"
+        "console=tty0"
         "console=ttyS0"
       ]
       ++ lib.optionals (cfg.hardwarePassthrough == "gpu") [

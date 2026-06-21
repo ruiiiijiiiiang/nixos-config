@@ -1,32 +1,29 @@
-{ consts, ... }:
+{ inputs, ... }:
 let
-  inherit (consts) vlan-ids;
   hostName = "vm-monitor";
   lanInterface = "lan0";
-  vlanId = vlan-ids.infra;
   backupPath = "/mnt/usb-hdd-1/${hostName}/backup";
 in
 {
+  imports = [
+    inputs.nixos-vm-provisioner.nixosModules.guest-base
+  ];
+
   system.stateVersion = "25.11";
   networking.hostName = hostName;
+
+  nixos-vm-provisioner.guest.enable = true;
 
   custom = {
     platforms.vm = {
       kernel.enable = true;
-
-      libvirt = {
-        enable = true;
-        cpu = 4;
-        memory = 6;
-        inherit vlanId;
-        autoStart = true;
-      };
-
       disks = {
         enable = true;
-        size = 100;
+        swap = {
+          enable = true;
+          size = 4096;
+        };
       };
-
       networking = {
         enable = true;
         inherit lanInterface;

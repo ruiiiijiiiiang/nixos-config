@@ -325,16 +325,8 @@ rec {
   };
 
   hardware = {
-    uuids = {
-      vm-app = "532ea825-4ca3-46a2-b15d-ba8af70ba733";
-      vm-monitor = "26a3e5f9-5c4a-4956-8ee4-b680f507d3cc";
-      vm-network = "2b7de5db-e0e6-4f81-b5f4-4efc928ee475";
-      vm-public = "ec5663c9-bac8-4d69-b120-b2b63a456a67";
-      vm-cyber = "008d571b-aa7c-4050-96d8-7185f5ea2a95";
-    };
-
     gpu = {
-      id = "1002:1682";
+      id = "1002:1681";
       address = "0000:e5:00.0";
     };
 
@@ -354,41 +346,66 @@ rec {
       };
     };
 
-    macs = {
+    radios = {
+      zigbee = "usb-1a86_USB_Serial-if00-port0";
+      zwave = "usb-Silicon_Labs_CP2102N_USB_to_UART_Bridge_Controller_80edec297b57ed1193f12ef21c62bc44-if00-port0";
+    };
+  };
+
+  virtualization = {
+    uuids = {
+      vm-app = "532ea825-4ca3-46a2-b15d-ba8af70ba733";
+      vm-monitor = "26a3e5f9-5c4a-4956-8ee4-b680f507d3cc";
+      vm-network = "2b7de5db-e0e6-4f81-b5f4-4efc928ee475";
+      vm-public = "ec5663c9-bac8-4d69-b120-b2b63a456a67";
+      vm-cyber = "008d571b-aa7c-4050-96d8-7185f5ea2a95";
+    };
+
+    cpus = {
+      vm-network = 4;
+      vm-app = 10;
+      vm-monitor = 4;
+      vm-public = 4;
+      vm-cyber = 4;
+    };
+
+    memory = {
+      vm-network = 2048;
+      vm-app = 12288;
+      vm-monitor = 6144;
+      vm-public = 2048;
+      vm-cyber = 4096;
+    };
+
+    storage = {
+      vm-network = {
+        type = "lvm";
+        size = "50G";
+      };
+      vm-app = {
+        type = "lvm";
+        size = "300G";
+      };
+      vm-monitor = {
+        type = "lvm";
+        size = "100G";
+      };
+      vm-public = {
+        type = "lvm";
+        size = "20G";
+      };
+      vm-cyber = {
+        type = "lvm";
+        size = "50G";
+      };
+    };
+
+    mac = {
       vm-network = "52:54:00:00:00:00";
       vm-app = "52:54:00:00:00:01";
       vm-monitor = "52:54:00:00:00:02";
       vm-public = "52:54:00:00:00:03";
       vm-cyber = "52:54:00:00:00:04";
-    };
-
-    radios = {
-      zigbee = "usb-1a86_USB_Serial-if00-port0";
-      zwave = "usb-Silicon_Labs_CP2102N_USB_to_UART_Bridge_Controller_80edec297b57ed1193f12ef21c62bc44-if00-port0";
-    };
-
-    partitions = {
-      ESP = {
-        priority = 1;
-        name = "ESP";
-        size = "512M";
-        type = "EF00";
-        content = {
-          type = "filesystem";
-          format = "vfat";
-          mountpoint = "/boot";
-          mountOptions = [ "umask=0077" ];
-        };
-      };
-
-      root = {
-        size = "100%";
-        content = {
-          type = "filesystem";
-          format = "ext4";
-          mountpoint = "/";
-        };
-      };
     };
   };
 

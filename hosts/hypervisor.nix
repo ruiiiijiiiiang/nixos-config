@@ -9,17 +9,10 @@ let
   lanBridge = "br0";
   vlanId = vlan-ids.infra;
   vlanInterface = "${lanBridge}.${toString vlanId}";
-
-  guestVms = [
-    "vm-network"
-    "vm-app"
-    "vm-monitor"
-    "vm-public"
-    "vm-cyber"
-  ];
   backupPath = "/mnt/external/usb-hdd-1/${hostName}/backup";
 in
 {
+
   system.stateVersion = "25.11";
   networking.hostName = hostName;
 
@@ -28,7 +21,7 @@ in
       kernel.enable = true;
       disks = {
         enable = true;
-        inherit volumeGroup guestVms;
+        inherit volumeGroup;
       };
       networking = {
         enable = true;
@@ -63,7 +56,6 @@ in
             lanBridge
             vlanId
             volumeGroup
-            guestVms
             ;
         };
         podman = {

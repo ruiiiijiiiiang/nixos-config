@@ -1,6 +1,5 @@
-readonly GUEST_LIST_FILE=@GUEST_LIST_FILE@
 readonly POLL_INTERVAL_SECONDS=5
-readonly WAIT_TIMEOUT_SECONDS=300
+readonly GUEST_TIMEOUT_SECONDS=90
 
 shutdown_mode="--poweroff"
 pre_delay_spec=""
@@ -16,8 +15,9 @@ while [[ $# -gt 0 ]]; do
       cat <<'EOF'
 Usage: shutdown-hypervisor [-r|--reboot] [+N]
 
-Send `virsh shutdown --mode agent` to all guests, wait until they are off,
-then power off or reboot the hypervisor.
+Send shutdown requests to guests in a strict order:
+vm-public, vm-monitor, vm-app, vm-network.
+Non-core guests are shut down first concurrently.
 
 Options:
   -r, --reboot Reboot the hypervisor instead of powering it off
@@ -48,49 +48,125 @@ if [[ -n "$pre_delay_spec" ]]; then
   fi
 fi
 
-mapfile -t guests < <(tac "$GUEST_LIST_FILE")
+readonly CORE_ORDER=("vm-public" "vm-monitor" "vm-app" "vm-network")
 
-for guest in "${guests[@]}"; do
+# Helper function to gracefully shut down a single guest and wait for it to stop
+shutdown_guest_and_wait() {
+  local guest="$1"
+  local timeout="$2"
+
   if ! virsh dominfo "$guest" >/dev/null 2>&1; then
-    echo "Skipping undefined guest $guest"
-    continue
+    echo "Core guest $guest does not exist, skipping."
+    return 0
   fi
 
-  state="$(virsh domstate "$guest" | tr -d '\r' | sed 's/^ *//;s/ *$//')"
+  local state
+  state="$(virsh domstate "$guest" 2>/dev/null | tr -d '\r' | sed 's/^ *//;s/ *$//' || true)"
   if [[ "$state" == "shut off" ]]; then
-    echo "Guest $guest is already off"
-    continue
+    echo "Guest $guest is already off."
+    return 0
   fi
 
   echo "Requesting guest agent shutdown for $guest"
-  virsh shutdown "$guest" --mode agent
-done
+  # Try agent shutdown, fallback to ACPI shutdown if it fails immediately
+  if ! virsh shutdown "$guest" --mode agent; then
+    echo "Agent shutdown request failed for $guest, sending ACPI shutdown request..."
+    virsh shutdown "$guest"
+  fi
 
-deadline=$((SECONDS + WAIT_TIMEOUT_SECONDS))
+  local deadline=$((SECONDS + timeout))
+  local agent_fallback_tried=false
 
-while (( SECONDS < deadline )); do
-  pending_guests=()
-
-  for guest in "${guests[@]}"; do
-    if ! virsh dominfo "$guest" >/dev/null 2>&1; then
-      continue
+  while (( SECONDS < deadline )); do
+    state="$(virsh domstate "$guest" 2>/dev/null | tr -d '\r' | sed 's/^ *//;s/ *$//' || true)"
+    if [[ "$state" == "shut off" ]]; then
+      echo "Guest $guest is off."
+      return 0
     fi
 
-    state="$(virsh domstate "$guest" | tr -d '\r' | sed 's/^ *//;s/ *$//')"
-    if [[ "$state" != "shut off" ]]; then
-      pending_guests+=("$guest:$state")
+    # Fallback to ACPI shutdown if agent shutdown is not stopping the VM after 30 seconds
+    if [[ "$agent_fallback_tried" == false ]] && (( SECONDS > deadline - timeout + 30 )); then
+      echo "Guest $guest still running after 30 seconds; sending ACPI shutdown request..."
+      virsh shutdown "$guest"
+      agent_fallback_tried=true
+    fi
+
+    sleep "$POLL_INTERVAL_SECONDS"
+  done
+
+  echo "Timeout reached for guest $guest. Force-destroying..."
+  virsh destroy "$guest"
+}
+
+# 1. Get all running guests
+mapfile -t running_guests < <(virsh list --name | grep -v '^$' || true)
+
+# 2. Separate into non-core and core lists
+non_core_guests=()
+for guest in "${running_guests[@]}"; do
+  is_core=false
+  for core in "${CORE_ORDER[@]}"; do
+    if [[ "$guest" == "$core" ]]; then
+      is_core=true
+      break
+    fi
+  done
+  if [[ "$is_core" == false ]]; then
+    non_core_guests+=("$guest")
+  fi
+done
+
+# 3. Shut down non-core guests concurrently first
+if [[ ${#non_core_guests[@]} -gt 0 ]]; then
+  echo "Shutting down non-core guests concurrently: ${non_core_guests[*]}"
+  for guest in "${non_core_guests[@]}"; do
+    if virsh shutdown "$guest" --mode agent; then
+      echo "Requested guest agent shutdown for non-core $guest"
+    else
+      echo "Agent shutdown request failed for $guest, sending ACPI shutdown request..."
+      virsh shutdown "$guest"
     fi
   done
 
-  if [[ ${#pending_guests[@]} -eq 0 ]]; then
-    echo "All guests are off; invoking host shutdown"
-    shutdown "$shutdown_mode" "now"
-    exit 0
-  fi
+  # Wait for non-core guests to turn off
+  deadline=$((SECONDS + 90))
+  while (( SECONDS < deadline )); do
+    pending=()
+    for guest in "${non_core_guests[@]}"; do
+      state="$(virsh domstate "$guest" 2>/dev/null | tr -d '\r' | sed 's/^ *//;s/ *$//' || true)"
+      if [[ "$state" != "shut off" ]] && [[ -n "$state" ]]; then
+        pending+=("$guest")
+      fi
+    done
+    if [[ ${#pending[@]} -eq 0 ]]; then
+      break
+    fi
+    echo "Waiting for non-core guests: ${pending[*]}"
+    sleep "$POLL_INTERVAL_SECONDS"
+  done
 
-  echo "Waiting for guests to stop: ${pending_guests[*]}"
-  sleep "$POLL_INTERVAL_SECONDS"
+  # Force destroy any remaining non-core guests
+  for guest in "${non_core_guests[@]}"; do
+    state="$(virsh domstate "$guest" 2>/dev/null | tr -d '\r' | sed 's/^ *//;s/ *$//' || true)"
+    if [[ "$state" != "shut off" ]] && [[ -n "$state" ]]; then
+      echo "Timeout reached for non-core guest $guest. Force-destroying..."
+      virsh destroy "$guest"
+    fi
+  done
+fi
+
+# 4. Shut down core guests sequentially in the exact specified order
+for guest in "${CORE_ORDER[@]}"; do
+  # Check if guest is currently running
+  state="$(virsh domstate "$guest" 2>/dev/null | tr -d '\r' | sed 's/^ *//;s/ *$//' || true)"
+  if [[ "$state" != "shut off" ]] && [[ -n "$state" ]]; then
+    echo "Shutting down core guest sequentially: $guest"
+    shutdown_guest_and_wait "$guest" "$GUEST_TIMEOUT_SECONDS"
+  else
+    echo "Core guest $guest is already off or does not exist."
+  fi
 done
 
-echo "Timed out waiting for guests to shut down" >&2
-exit 1
+# 5. Invoke host shutdown
+echo "All guests are off; invoking host shutdown"
+shutdown "$shutdown_mode" "now"

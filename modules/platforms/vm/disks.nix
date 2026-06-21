@@ -1,7 +1,6 @@
 {
   config,
   consts,
-  inputs,
   lib,
   ...
 }:
@@ -10,34 +9,24 @@ let
   cfg = config.custom.platforms.vm.disks;
 in
 {
-  imports = [
-    inputs.disko.nixosModules.disko
-  ];
-
   options.custom.platforms.vm.disks = with lib; {
     enable = mkEnableOption "Enable VM disk layout";
-    size = mkOption {
-      type = types.ints.positive;
-      default = 50;
-      description = "Primary disk size for the guest VM in GB.";
+    swap = {
+      enable = mkEnableOption "Enable swap file";
+      size = mkOption {
+        type = types.ints.positive;
+        default = 4096;
+        description = "Swap file size in MB.";
+      };
+      priority = mkOption {
+        type = types.ints.positive;
+        default = 1;
+        description = "Swap priority.";
+      };
     };
   };
 
   config = lib.mkIf cfg.enable {
-    disko.devices.disk = {
-      primary = {
-        type = "disk";
-        device = "/dev/vda";
-        imageSize = "${toString cfg.size}G";
-        content = {
-          type = "gpt";
-          partitions = {
-            inherit (hardware.partitions) ESP root;
-          };
-        };
-      };
-    };
-
     fileSystems = lib.mapAttrs' (
       name: _:
       lib.nameValuePair "/mnt/${name}" {
@@ -49,5 +38,12 @@ in
         ];
       }
     ) hardware.storage.external;
+
+    swapDevices = lib.mkIf cfg.swap.enable [
+      {
+        device = "/var/lib/swapfile";
+        inherit (cfg.swap) size priority;
+      }
+    ];
   };
 }

@@ -303,14 +303,6 @@ in
                 };
               }
               {
-                "Librechat" = {
-                  icon = "librechat";
-                  href = "https://${subdomains.vm-app.librechat}.${domain}";
-                  description = "Chatbot";
-                  siteMonitor = "https://${subdomains.vm-app.librechat}.${domain}";
-                };
-              }
-              {
                 "Reitti" = {
                   icon = "https://cdn.jsdelivr.net/gh/selfhst/icons@main/png/reitti.png";
                   href = "https://${subdomains.vm-app.reitti}.${domain}";

@@ -28,6 +28,10 @@
     nix-flatpak.url = "github:gmodena/nix-flatpak";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     niri.url = "github:sodiboo/niri-flake";
+    nixos-vm-provisioner = {
+      url = "github:ruiiiijiiiiang/nixos-vm-provisioner";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     NixVirt = {
       url = "github:AshleyYakeley/NixVirt";
       inputs.nixpkgs.follows = "nixpkgs";

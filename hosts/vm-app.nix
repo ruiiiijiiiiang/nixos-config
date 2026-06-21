@@ -1,17 +1,21 @@
-{ consts, helpers, ... }:
+{ helpers, inputs, ... }:
 let
-  inherit (consts) vlan-ids;
   inherit (helpers) getHostAddress;
   hostName = "vm-app";
   lanInterface = "lan0";
-  vlanId = vlan-ids.infra;
   storagePath = "/mnt/usb-hdd-0/${hostName}/storage";
   mediaPath = "/mnt/usb-hdd-0/${hostName}/media";
   backupPath = "/mnt/usb-hdd-1/${hostName}/backup";
 in
 {
+  imports = [
+    inputs.nixos-vm-provisioner.nixosModules.guest-base
+  ];
+
   system.stateVersion = "25.11";
   networking.hostName = hostName;
+
+  nixos-vm-provisioner.guest.enable = true;
 
   custom = {
     platforms.vm = {
@@ -19,19 +23,13 @@ in
         enable = true;
         hardwarePassthrough = "gpu";
       };
-
-      libvirt = {
-        enable = true;
-        cpu = 10;
-        memory = 12;
-        inherit vlanId;
-      };
-
       disks = {
         enable = true;
-        size = 300;
+        swap = {
+          enable = true;
+          size = 8192;
+        };
       };
-
       networking = {
         enable = true;
         inherit lanInterface;
@@ -85,7 +83,6 @@ in
           atuin.enable = true;
           changedetection.enable = true;
           karakeep.enable = true;
-          librechat.enable = true;
           mealie.enable = true;
           ovumcy.enable = true;
           pricebuddy.enable = true;

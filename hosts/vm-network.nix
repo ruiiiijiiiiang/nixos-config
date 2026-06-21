@@ -1,14 +1,11 @@
 {
   config,
-  consts,
   helpers,
   inputs,
   ...
 }:
 let
-  inherit (consts) hardware vlan-ids;
   inherit (helpers) getHostAddress;
-  inherit (inputs.self) nixosConfigurations;
   hostName = "vm-network";
   wanInterface = "wan0";
   lanInterface = "lan0";
@@ -19,8 +16,14 @@ let
   backupPath = "/mnt/usb-hdd-1/${hostName}/backup";
 in
 {
+  imports = [
+    inputs.nixos-vm-provisioner.nixosModules.guest-base
+  ];
+
   system.stateVersion = "25.11";
   networking.hostName = hostName;
+
+  nixos-vm-provisioner.guest.enable = true;
 
   age.secrets = {
     wireguard-server-private-key.file = ../secrets/wireguard/server-private-key.age;
@@ -36,45 +39,7 @@ in
         enable = true;
         hardwarePassthrough = "nic";
       };
-
-      libvirt = {
-        enable = true;
-        cpu = 4;
-        memory = 2;
-        autoStart = true;
-        extraConfigs = {
-          devices = {
-            interface = [
-              {
-                type = "bridge";
-                mac = {
-                  address = hardware.macs.vm-network;
-                };
-                source = {
-                  bridge = nixosConfigurations.hypervisor.config.custom.services.infra.hypervisor.lanBridge;
-                };
-                vlan = {
-                  trunk = true;
-                  tag = [
-                    {
-                      id = vlan-ids.home;
-                      nativeMode = "untagged";
-                    }
-                    { id = vlan-ids.infra; }
-                    { id = vlan-ids.dmz; }
-                  ];
-                };
-                model = {
-                  type = "virtio";
-                };
-              }
-            ];
-          };
-        };
-      };
-
       disks.enable = true;
-
       networking = {
         enable = true;
         inherit wanInterface lanInterface;

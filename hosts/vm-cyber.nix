@@ -1,11 +1,13 @@
-{ consts, ... }:
-let
-  inherit (consts) addresses ports vlan-ids;
-  vlanId = vlan-ids.dmz;
-in
+{ inputs, ... }:
 {
+  imports = [
+    inputs.nixos-vm-provisioner.nixosModules.guest-base
+  ];
+
   system.stateVersion = "25.11";
   networking.hostName = "vm-cyber";
+
+  nixos-vm-provisioner.guest.enable = true;
 
   custom = {
     platforms.vm = {
@@ -13,40 +15,7 @@ in
         enable = true;
         workstation = true;
       };
-
-      libvirt = {
-        enable = true;
-        cpu = 4;
-        memory = 4;
-        inherit vlanId;
-        extraConfigs = {
-          devices = {
-            graphics = [
-              {
-                type = "spice";
-                autoport = false;
-                port = ports.spice.vm-cyber;
-                listen = {
-                  type = "address";
-                  address = addresses.any;
-                };
-              }
-            ];
-            channel = [
-              {
-                type = "spicevmc";
-                target = {
-                  type = "virtio";
-                  name = "com.redhat.spice.0";
-                };
-              }
-            ];
-          };
-        };
-      };
-
       disks.enable = true;
-
       networking = {
         enable = true;
         lanInterface = "lan0";

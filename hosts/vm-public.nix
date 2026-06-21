@@ -1,32 +1,23 @@
-{ consts, helpers, ... }:
+{ helpers, inputs, ... }:
 let
-  inherit (consts) vlan-ids;
   inherit (helpers) getHostAddress;
   hostName = "vm-public";
   lanInterface = "lan0";
-  vlanId = vlan-ids.dmz;
 in
 {
+  imports = [
+    inputs.nixos-vm-provisioner.nixosModules.guest-base
+  ];
+
   system.stateVersion = "25.11";
   networking.hostName = hostName;
+
+  nixos-vm-provisioner.guest.enable = true;
 
   custom = {
     platforms.vm = {
       kernel.enable = true;
-
-      libvirt = {
-        enable = true;
-        cpu = 4;
-        memory = 2;
-        inherit vlanId;
-        autoStart = true;
-      };
-
-      disks = {
-        enable = true;
-        size = 20;
-      };
-
+      disks.enable = true;
       networking = {
         enable = true;
         inherit lanInterface;

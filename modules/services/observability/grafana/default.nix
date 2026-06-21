@@ -24,12 +24,6 @@ let
     sha256 = "1dggzvx2ircakkv1whb2yzvnxsfy7a2iy5jxq42a2q9hlnzx5xp1";
   };
 
-  kea-exporter-dashboard = pkgs.fetchurl {
-    name = "kea-exporter.json";
-    url = "https://grafana.com/api/dashboards/12688/revisions/4/download";
-    sha256 = "1rq8yax192s5knf6lw3sl9rq55xirm1di8ngnqc07b7mmf5gjj7x";
-  };
-
   libvirt-exporter-dashboard = pkgs.fetchurl {
     name = "libvirt-exporter.json";
     url = "https://grafana.com/api/dashboards/23230/revisions/1/download";
@@ -93,7 +87,6 @@ let
         }
 
         # install_dash ${crowdsec-dashboard} "crowdsec-dashboard.json"
-        install_dash ${kea-exporter-dashboard} "kea-exporter.json"
         install_dash ${libvirt-exporter-dashboard} "libvirt-exporter.json"
         install_dash ${nginx-exporter-dashboard} "nginx-exporter.json"
         install_dash ${node-exporter-dashboard} "node-exporter.json"
