@@ -87,12 +87,11 @@ in
           type = "lvm_vg";
           lvs = {
             root = {
-              size = "100%";
+              size = "50G";
               content = {
                 type = "filesystem";
                 format = "ext4";
                 mountpoint = "/";
-                size = "50G";
               };
             };
           }

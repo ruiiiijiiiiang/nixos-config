@@ -40,6 +40,7 @@ Containerized services must follow these repository conventions:
 - **Network & Port Bindings:** Keep container ports bound to `localhost` (e.g., `${addresses.localhost}:${toString ports.<name>}:<container-port>`) and expose them via Nginx. For sidecar setups, configure sidecars to use network dependencies (e.g., using `networks = [ "container:<main-container>" ]` so they reuse the main container's network namespace).
 - **Reverse Proxy:** Set up Nginx virtual hosts using the `helpers.mkVirtualHost` template.
 - **getEnabledServices Integration:** Add the service mapping to the `getEnabledServices` helper in [lib/helpers.nix](file:///home/rui/nixos-config/lib/helpers.nix) so that enabled services can be dynamically resolved on their respective hosts.
+- **Native Module Options over `extraOptions`:** Whenever there is a need to add raw configuration flags to a container using `extraOptions`, always check if a native NixOS `virtualisation.oci-containers` module option exists (e.g., `hostname`, `user`, `workdir`) and prefer using the native option.
 
 ### Environment Assumptions
 
@@ -49,6 +50,7 @@ Containerized services must follow these repository conventions:
 ### SSH Access
 
 - Unless otherwise specified, an AI agent may always assume to have SSH access from the current host into any of the servers declared in [hosts](file:///home/rui/nixos-config/hosts).
+- Note: All hosts use the `fish` shell by default.
 
 ### Centralized Constants (`lib/consts.nix`)
 
@@ -61,6 +63,17 @@ Common logic (e.g., Nginx virtual host templates, PCI address parsing, systemd t
 ### Secret Management
 
 Secrets are managed using `agenix` and stored as `.age` files in the `secrets/` directory. They are decrypted at runtime by the respective hosts using SSH host keys.
+
+### Nix Coding Style Guidelines
+
+To maintain configuration readability and clean Nix codebase structure, the following formatting styles must be adhered to:
+
+- **Grouped Attribute Sets:** Attribute sets should be nested/grouped together whenever possible rather than using dot-separated paths.
+  - _Preferred:_ `set = { opt1 = true; opt2 = true; };`
+  - _Discouraged:_ `set.opt1 = true; set.opt2 = true;`
+- **Use `inherit`:** Use the `inherit` keyword whenever possible to import variables into scopes or attribute sets.
+- **`with` Keyword Threshold:** The `with` keyword should be used in scopes only when the imported namespace/attribute set is referenced **more than 5 times**.
+- **Code Formatting:** Always use `nixfmt` to clean up and format Nix code after editing.
 
 ## Directory Structure Highlights
 

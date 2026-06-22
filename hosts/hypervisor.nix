@@ -1,6 +1,11 @@
 { consts, helpers, ... }:
 let
-  inherit (consts) vlan-ids;
+  inherit (consts)
+    vlan-ids
+    ports
+    addresses
+    hardware
+    ;
   inherit (helpers) getHostAddress;
   hostName = "hypervisor";
   volumeGroup = "vg-nvme";
@@ -57,6 +62,90 @@ in
             vlanId
             volumeGroup
             ;
+          guests = {
+            vm-network = {
+              pciDevices = [
+                {
+                  address = hardware.nic.address;
+                  id = hardware.nic.id;
+                }
+              ];
+              vlan = {
+                trunk = true;
+                tag = [
+                  {
+                    id = vlan-ids.home;
+                    nativeMode = "untagged";
+                  }
+                  { id = vlan-ids.infra; }
+                  { id = vlan-ids.dmz; }
+                ];
+              };
+            };
+
+            vm-app = {
+              autoStart = false;
+              pciDevices = [
+                {
+                  address = hardware.gpu.address;
+                  id = hardware.gpu.id;
+                }
+              ];
+              vlan = {
+                tag = [ { id = vlan-ids.infra; } ];
+              };
+            };
+
+            vm-monitor = {
+              vlan = {
+                tag = [ { id = vlan-ids.infra; } ];
+              };
+            };
+
+            vm-public = {
+              vlan = {
+                tag = [ { id = vlan-ids.dmz; } ];
+              };
+            };
+
+            vm-cyber = {
+              autoStart = false;
+              vlan = {
+                tag = [ { id = vlan-ids.dmz; } ];
+              };
+              nixvirtExtraConfigs = {
+                devices = {
+                  graphics = [
+                    {
+                      type = "spice";
+                      autoport = false;
+                      port = ports.spice.vm-cyber;
+                      listen = {
+                        type = "address";
+                        address = addresses.any;
+                      };
+                    }
+                  ];
+                  channel = [
+                    {
+                      type = "spicevmc";
+                      target = {
+                        type = "virtio";
+                        name = "com.redhat.spice.0";
+                      };
+                    }
+                    {
+                      type = "unix";
+                      target = {
+                        type = "virtio";
+                        name = "org.qemu.guest_agent.0";
+                      };
+                    }
+                  ];
+                };
+              };
+            };
+          };
         };
         podman = {
           enable = true;

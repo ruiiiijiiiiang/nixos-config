@@ -48,127 +48,36 @@ let
     };
   };
 
-  mkGuest =
-    name: extra:
-    {
-      nixosConfig = inputs.self.nixosConfigurations.${name};
-      cpu = virtualization.cpus.${name};
-      memory = virtualization.memory.${name};
-      storage = virtualization.storage.${name};
-      uuid = virtualization.uuids.${name};
-    }
-    // extra;
-
   mkInterface = name: vlan: {
     type = "bridge";
-    mac.address = virtualization.mac.${name};
+    mac.address = (virtualization.${name} or { }).mac or "";
     source.bridge = cfg.lanBridge;
     model.type = "virtio";
     inherit vlan;
   };
 
-  guests = {
-    vm-network = mkGuest "vm-network" {
-      pciDevices = [
-        {
-          address = hardware.nic.address;
-          id = hardware.nic.id;
-        }
-      ];
-      nixvirtExtraConfigs = {
-        devices.interface = [
-          (mkInterface "vm-network" {
-            trunk = true;
-            tag = [
-              {
-                id = vlan-ids.home;
-                nativeMode = "untagged";
-              }
-              { id = vlan-ids.infra; }
-              { id = vlan-ids.dmz; }
-            ];
-          })
-        ];
-      };
-    };
-
-    vm-app = mkGuest "vm-app" {
-      autoStart = false;
-      pciDevices = [
-        {
-          address = hardware.gpu.address;
-          id = hardware.gpu.id;
-        }
-      ];
-      nixvirtExtraConfigs = {
-        devices.interface = [
-          (mkInterface "vm-app" {
-            tag = [ { id = vlan-ids.infra; } ];
-          })
-        ];
-      };
-    };
-
-    vm-monitor = mkGuest "vm-monitor" {
-      nixvirtExtraConfigs = {
-        devices.interface = [
-          (mkInterface "vm-monitor" {
-            tag = [ { id = vlan-ids.infra; } ];
-          })
-        ];
-      };
-    };
-
-    vm-public = mkGuest "vm-public" {
-      nixvirtExtraConfigs = {
-        devices.interface = [
-          (mkInterface "vm-public" {
-            tag = [ { id = vlan-ids.dmz; } ];
-          })
-        ];
-      };
-    };
-
-    vm-cyber = mkGuest "vm-cyber" {
-      autoStart = false;
-      nixvirtExtraConfigs = {
+  mkGuest =
+    name: guestCfg:
+    let
+      networkInterface = lib.optional (guestCfg.vlan != null) (mkInterface name guestCfg.vlan);
+      mergedNixvirtConfigs = lib.recursiveUpdate guestCfg.nixvirtExtraConfigs {
         devices = {
-          interface = [
-            (mkInterface "vm-cyber" {
-              tag = [ { id = vlan-ids.dmz; } ];
-            })
-          ];
-          graphics = [
-            {
-              type = "spice";
-              autoport = false;
-              port = consts.ports.spice.vm-cyber;
-              listen = {
-                type = "address";
-                address = consts.addresses.any;
-              };
-            }
-          ];
-          channel = [
-            {
-              type = "spicevmc";
-              target = {
-                type = "virtio";
-                name = "com.redhat.spice.0";
-              };
-            }
-            {
-              type = "unix";
-              target = {
-                type = "virtio";
-                name = "org.qemu.guest_agent.0";
-              };
-            }
-          ];
+          interface = networkInterface ++ (guestCfg.nixvirtExtraConfigs.devices.interface or [ ]);
         };
       };
+      vmVirt = virtualization.${name} or { };
+    in
+    {
+      nixosConfig = inputs.self.nixosConfigurations.${name};
+      cpu = vmVirt.cpu or 1;
+      memory = vmVirt.memory or 512;
+      storage = vmVirt.storage or { };
+      uuid = vmVirt.uuid or "";
+      inherit (guestCfg) autoStart pciDevices;
+      nixvirtExtraConfigs = mergedNixvirtConfigs;
     };
-  };
+
+  guests = lib.mapAttrs mkGuest cfg.guests;
 
   gpuGuest =
     let
@@ -201,9 +110,71 @@ in
       default = "vg-nvme";
       description = "LVM volume group name.";
     };
+    guests = mkOption {
+      type = types.attrsOf (
+        types.submodule {
+          options = {
+            autoStart = mkOption {
+              type = types.bool;
+              default = true;
+              description = "Whether to start the VM automatically.";
+            };
+            pciDevices = mkOption {
+              type = types.listOf types.attrs;
+              default = [ ];
+              description = "PCI devices to pass through to the VM.";
+            };
+            vlan = mkOption {
+              type = types.nullOr types.attrs;
+              default = null;
+              description = "VLAN bridge configuration.";
+            };
+            nixvirtExtraConfigs = mkOption {
+              type = types.attrs;
+              default = { };
+              description = "Extra nixvirt configurations.";
+            };
+          };
+        }
+      );
+      default = { };
+      description = "Attribute set of VM names and their configurations.";
+    };
+    guestVms = mkOption {
+      type = types.listOf types.str;
+      default = builtins.attrNames cfg.guests;
+      defaultText = "builtins.attrNames config.custom.services.infra.hypervisor.guests";
+      description = "List of guest VM names.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
+    assertions =
+      let
+        guestNames = builtins.attrNames cfg.guests;
+      in
+      (map (name: {
+        assertion = builtins.hasAttr name virtualization;
+        message = "The guest VM '${name}' configured under 'custom.services.infra.hypervisor.guests' is not defined in the 'virtualization' constants inside 'lib/consts.nix'.";
+      }) guestNames)
+      ++ (map (name: {
+        assertion =
+          !(builtins.hasAttr name virtualization)
+          || (
+            builtins.hasAttr "cpu" virtualization.${name}
+            && builtins.hasAttr "memory" virtualization.${name}
+            && builtins.hasAttr "storage" virtualization.${name}
+            && builtins.hasAttr "uuid" virtualization.${name}
+          );
+        message = "The guest VM '${name}' inside 'virtualization' constants must define 'cpu', 'memory', 'storage', and 'uuid'.";
+      }) guestNames)
+      ++ (map (name: {
+        assertion =
+          !(builtins.hasAttr name virtualization && cfg.guests.${name}.vlan != null)
+          || (builtins.hasAttr "mac" virtualization.${name});
+        message = "The guest VM '${name}' has VLAN networking configured but does not define a 'mac' address inside 'virtualization' constants.";
+      }) guestNames);
+
     environment.systemPackages = with pkgs; [
       pciutils
       shutdownHypervisorScript

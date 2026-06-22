@@ -292,7 +292,7 @@ in
         requires = [ "pihole-ftl.service" ];
         serviceConfig = {
           Type = "oneshot";
-          ExecStart = "${config.services.pihole-ftl.pihole}/bin/pihole gravity";
+          ExecStart = "${pkgs.bash}/bin/bash ${config.services.pihole-ftl.pihole}/bin/pihole -g";
         };
       };
 

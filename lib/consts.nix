@@ -353,59 +353,55 @@ rec {
   };
 
   virtualization = {
-    uuids = {
-      vm-app = "532ea825-4ca3-46a2-b15d-ba8af70ba733";
-      vm-monitor = "26a3e5f9-5c4a-4956-8ee4-b680f507d3cc";
-      vm-network = "2b7de5db-e0e6-4f81-b5f4-4efc928ee475";
-      vm-public = "ec5663c9-bac8-4d69-b120-b2b63a456a67";
-      vm-cyber = "008d571b-aa7c-4050-96d8-7185f5ea2a95";
-    };
-
-    cpus = {
-      vm-network = 4;
-      vm-app = 10;
-      vm-monitor = 4;
-      vm-public = 4;
-      vm-cyber = 4;
-    };
-
-    memory = {
-      vm-network = 2048;
-      vm-app = 12288;
-      vm-monitor = 6144;
-      vm-public = 2048;
-      vm-cyber = 4096;
-    };
-
-    storage = {
-      vm-network = {
+    vm-network = {
+      uuid = "2b7de5db-e0e6-4f81-b5f4-4efc928ee475";
+      cpu = 4;
+      memory = 2048;
+      storage = {
         type = "lvm";
         size = "50G";
       };
-      vm-app = {
+      mac = "52:54:00:00:00:00";
+    };
+    vm-app = {
+      uuid = "532ea825-4ca3-46a2-b15d-ba8af70ba733";
+      cpu = 10;
+      memory = 12288;
+      storage = {
         type = "lvm";
         size = "300G";
       };
-      vm-monitor = {
+      mac = "52:54:00:00:00:01";
+    };
+    vm-monitor = {
+      uuid = "26a3e5f9-5c4a-4956-8ee4-b680f507d3cc";
+      cpu = 4;
+      memory = 6144;
+      storage = {
         type = "lvm";
         size = "100G";
       };
-      vm-public = {
+      mac = "52:54:00:00:00:02";
+    };
+    vm-public = {
+      uuid = "ec5663c9-bac8-4d69-b120-b2b63a456a67";
+      cpu = 4;
+      memory = 2048;
+      storage = {
         type = "lvm";
         size = "20G";
       };
-      vm-cyber = {
+      mac = "52:54:00:00:00:03";
+    };
+    vm-cyber = {
+      uuid = "008d571b-aa7c-4050-96d8-7185f5ea2a95";
+      cpu = 4;
+      memory = 4096;
+      storage = {
         type = "lvm";
         size = "50G";
       };
-    };
-
-    mac = {
-      vm-network = "52:54:00:00:00:00";
-      vm-app = "52:54:00:00:00:01";
-      vm-monitor = "52:54:00:00:00:02";
-      vm-public = "52:54:00:00:00:03";
-      vm-cyber = "52:54:00:00:00:04";
+      mac = "52:54:00:00:00:04";
     };
   };
 

@@ -80,6 +80,7 @@ in
           "/var/wazuh/certs/wazuh-manager.pem:/etc/ssl/wazuh_certs/wazuh-manager.pem"
           "/var/wazuh/certs/wazuh-manager-key.pem:/etc/ssl/wazuh_certs/wazuh-manager-key.pem"
         ];
+        hostname = "wazuh-manager";
       };
 
       wazuh-dashboard = {
