@@ -1,0 +1,7 @@
+{
+  imports = [
+    ./librechat
+    ./llm
+    ./zeroclaw
+  ];
+}

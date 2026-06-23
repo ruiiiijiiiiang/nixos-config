@@ -67,6 +67,7 @@ in
           server.enable = true;
           agent.enable = true;
         };
+        myspeed.enable = true;
         ntfy.enable = true;
         prometheus = {
           server.enable = true;

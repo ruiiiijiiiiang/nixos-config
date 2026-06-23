@@ -15,11 +15,11 @@ let
     endpoints
     ;
   inherit (helpers) mkOciUser mkVirtualHost mkNotifyService;
-  cfg = config.custom.services.apps.tools.librechat;
+  cfg = config.custom.services.apps.ai.librechat;
   fqdn = "${subdomains.${config.networking.hostName}.librechat}.${domain}";
 in
 {
-  options.custom.services.apps.tools.librechat = with lib; {
+  options.custom.services.apps.ai.librechat = with lib; {
     enable = mkEnableOption "Enable LibreChat";
   };
 

@@ -101,23 +101,7 @@ hypervisor: "Mini PC Hypervisor" {
   }
 }
 
-vm-network: "vm-network\n(Gateway Router)" {
-  class: vm
-  grid-rows: 4
-  grid-columns: 3
-                      netalertx: "netalertx" {
-  class: service
-  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/netalertx.png"
-}
-
-                    pihole: "pihole" {
-  class: service
-  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/pi-hole.png"
-}
-
-}
-
-                vm-app: "vm-app\n(Application Server)" {
+vm-app: "vm-app\n(Application Server)" {
   class: vm
   grid-rows: 4
   grid-columns: 3
@@ -258,6 +242,13 @@ vm-network: "vm-network\n(Gateway Router)" {
 
 }
 
+                vm-cyber: "vm-cyber\n(Security Lab)" {
+  class: vm
+  grid-rows: 4
+  grid-columns: 3
+  
+}
+
                 vm-monitor: "vm-monitor\n(Monitoring & Security)" {
   class: vm
   grid-rows: 4
@@ -282,6 +273,11 @@ vm-network: "vm-network\n(Gateway Router)" {
   icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/grafana.png"
 }
 
+                    myspeed: "myspeed" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/myspeed.png"
+}
+
                     ntfy: "ntfy" {
   class: service
   icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/ntfy.png"
@@ -300,6 +296,22 @@ vm-network: "vm-network\n(Gateway Router)" {
                     wazuh: "wazuh" {
   class: service
   icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/wazuh.png"
+}
+
+}
+
+                vm-network: "vm-network\n(Gateway Router)" {
+  class: vm
+  grid-rows: 4
+  grid-columns: 3
+                      netalertx: "netalertx" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/netalertx.png"
+}
+
+                    pihole: "pihole" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/pi-hole.png"
 }
 
 }
@@ -323,13 +335,16 @@ vm-network: "vm-network\n(Gateway Router)" {
   icon: "https://avatars.githubusercontent.com/u/79236386"
 }
 
+                    searxng: "searxng" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/searxng.png"
 }
 
-                vm-cyber: "vm-cyber\n(Security Lab)" {
-  class: vm
-  grid-rows: 4
-  grid-columns: 3
-  
+                    zeroclaw: "zeroclaw" {
+  class: service
+  icon: "https://zeroclaws.io/images/zeroclaw-hero.webp"
+}
+
 }
 
   

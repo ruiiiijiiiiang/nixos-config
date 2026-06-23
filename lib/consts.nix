@@ -73,6 +73,7 @@ rec {
       searxng = "searxng";
       krawl = "krawl";
       public = "public";
+      zeroclaw = "zeroclaw";
     };
   };
 
@@ -287,6 +288,7 @@ rec {
     website = 6969;
     wireguard = 51820;
     yourls = 8081;
+    zeroclaw = 42617;
     zwave = 8091;
   };
 
@@ -317,6 +319,7 @@ rec {
     mealie = 922;
     pricebuddy = 923;
     netalertx = 924;
+    zeroclaw = 925;
     user = 1000;
     nobody = 65534;
 

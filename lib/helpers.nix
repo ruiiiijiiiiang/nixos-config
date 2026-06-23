@@ -79,7 +79,7 @@ rec {
         jellyfin = config.custom.services.apps.media.jellyfin.enable;
         karakeep = config.custom.services.apps.tools.karakeep.enable;
         krawl = config.custom.services.security.krawl.enable;
-        librechat = config.custom.services.apps.tools.librechat.enable;
+        librechat = config.custom.services.apps.ai.librechat.enable;
         magicmirror = config.custom.services.apps.web.magicmirror.enable;
         mealie = config.custom.services.apps.tools.mealie.enable;
         memos = config.custom.services.apps.office.memos.enable;
@@ -90,7 +90,7 @@ rec {
         nextcloud = config.custom.services.apps.office.nextcloud.enable;
         onlyoffice = config.custom.services.apps.office.opencloud.enable;
         opencloud = config.custom.services.apps.office.opencloud.enable;
-        openwebui = config.custom.services.apps.tools.llm.enable;
+        openwebui = config.custom.services.apps.ai.llm.enable;
         paperless = config.custom.services.apps.office.paperless.enable;
         ovumcy = config.custom.services.apps.tools.ovumcy.enable;
         pricebuddy = config.custom.services.apps.tools.pricebuddy.enable;
@@ -109,6 +109,7 @@ rec {
         vaultwarden = config.custom.services.apps.auth.vaultwarden.enable;
         wazuh = config.custom.services.security.wazuh.server.enable;
         yourls = config.custom.services.apps.web.yourls.enable;
+        zeroclaw = config.custom.services.apps.ai.zeroclaw.enable;
         zwave = config.custom.services.apps.tools.homeassistant.enable;
       };
       subdomainSet = subdomains.${config.networking.hostName} or { };

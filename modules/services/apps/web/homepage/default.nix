@@ -311,6 +311,14 @@ in
                 };
               }
               {
+                "LibreChat" = {
+                  icon = "librechat";
+                  href = "https://${subdomains.vm-app.librechat}.${domain}";
+                  description = "AI Chat";
+                  siteMonitor = "https://${subdomains.vm-app.librechat}.${domain}";
+                };
+              }
+              {
                 "Ovumcy" = {
                   icon = "https://raw.githubusercontent.com/ovumcy/ovumcy-web/refs/heads/main/web/static/brand/ovumcy-icon-dark.svg";
                   href = "https://${subdomains.vm-app.ovumcy}.${domain}";
@@ -342,10 +350,34 @@ in
                   siteMonitor = "https://${subdomains.vm-app.mealie}.${domain}";
                 };
               }
+              {
+                "SearXNG" = {
+                  icon = "searxng";
+                  href = "https://${subdomains.vm-public.searxng}.${domain}";
+                  description = "Metasearch engine";
+                  siteMonitor = "https://${subdomains.vm-public.searxng}.${domain}";
+                };
+              }
+              {
+                "ZeroClaw" = {
+                  icon = "https://zeroclaws.io/images/zeroclaw-hero.webp";
+                  href = "https://${subdomains.vm-public.zeroclaw}.${domain}";
+                  description = "Personal AI Assistant";
+                  siteMonitor = "https://${subdomains.vm-public.zeroclaw}.${domain}";
+                };
+              }
             ];
           }
           {
             "Networking" = [
+              {
+                "Myspeed" = {
+                  icon = "myspeed";
+                  href = "https://${subdomains.vm-monitor.myspeed}.${domain}";
+                  description = "Network Speed Test";
+                  siteMonitor = "https://${subdomains.vm-monitor.myspeed}.${domain}";
+                };
+              }
               {
                 "NetAlertX" = {
                   icon = "netalertx";

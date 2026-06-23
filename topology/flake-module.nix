@@ -75,6 +75,8 @@
         onlyoffice = "onlyoffice";
         nextcloud = "nextcloud";
         public = "https://avatars.githubusercontent.com/u/79236386";
+        searxng = "searxng";
+        zeroclaw = "https://zeroclaws.io/images/zeroclaw-hero.webp";
       };
 
       getIconUrl =

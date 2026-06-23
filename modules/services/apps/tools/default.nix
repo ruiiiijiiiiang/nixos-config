@@ -5,8 +5,6 @@
     ./changedetection
     ./homeassistant
     ./karakeep
-    ./librechat
-    ./llm
     ./mealie
     ./microbin
     ./ovumcy

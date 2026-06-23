@@ -45,6 +45,7 @@ in
 
     services = {
       apps = {
+        ai.librechat.enable = true;
         auth = {
           pocketid.enable = true;
           vaultwarden.enable = true;
