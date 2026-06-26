@@ -4,7 +4,7 @@
 
 This repository is a **fully declarative, reproducible infrastructure** definition for my personal homelab. Built on **NixOS** and **Nix Flakes**, it represents a complete paradigm shift from fragile, imperative administration to a robust, code-driven ecosystem. Every layer — from CPU/RAM allocation, disk partitioning, VLAN assignment, to application services, container orchestration, and secret management — is defined in code. Version controlled and GitOps-friendly, it emphasizes **stability** through atomic rollbacks, **observability** via a comprehensive monitoring stack, and **security** with hardened services and isolated networking.
 
-The hardware? A mini PC, a Raspberry Pi, an unmanaged switch, and some old hard drives. No enterprise racks. No excessive power draw. The goal is **maximum software efficiency** — proving that proper architecture, deliberate design, and disciplined engineering matter far more than raw specs. This setup runs a full production-grade stack: VLAN-segmented networks, VPN for remote access, high-availability DNS cluster, intrusion detection systems, centralized logging and monitoring, IPv4/IPv6 dual-stack networking, encrypted backups, CI/CD pipelines, private code repositories, local binary cache, SSO authentication, reverse proxies with automatic TLS, media servers, document management, smart home automation, and more.
+The hardware? A mini PC, a Raspberry Pi, an unmanaged switch, and some old hard drives. No enterprise racks. No excessive power draw. The goal is **maximum software efficiency** — proving that proper architecture, deliberate design, and disciplined engineering matter far more than raw specs. This setup runs a full production-grade stack: [virtual machine orchestration](./modules/services/infra/hypervisor/default.nix), [IPv4/IPv6 dual-stack VLAN-segmented networking](./modules/services/networking/router/default.nix), [VPN for remote access](./modules/services/networking/wireguard/server.nix), [high-availability DNS cluster](./modules/services/networking/dns/default.nix), [centralized logging and monitoring](./modules/services/observability/), [encrypted backups](./modules/services/infra/restic/default.nix), [private code repositories with CI/CD pipelines](./modules/services/apps/development/forgejo/default.nix), [local binary cache](./modules/services/infra/harmonia/default.nix), [reverse proxies with automatic TLS](./modules/services/networking/nginx/default.nix), [SIEM platform](./modules/services/security/wazuh/server.nix), media servers, document management, smart home automation, and more.
 
 The beauty of this setup? **Total vertical alignment.** The entire infrastructure is declared in one monolithic Nix flake and accessible to all hosts. Change a VM's VLAN assignment? Update one value in Nix, rebuild, and the entire networking stack reconfigures. Need to migrate a service between hosts? Move the configuration block and redeploy — the entire dependency chain follows atomically.
 
@@ -16,51 +16,19 @@ The beauty of this setup? **Total vertical alignment.** The entire infrastructur
 
 This infrastructure is engineered following a rigorous **Domain-Driven Design** philosophy. The modules are organized into four distinct, composable layers:
 
-1. **core (`modules/core`):** The foundational DNA. Universal baselines shared across all systems, defining the essential "NixOS-ness" of the fleet.
-2. **platform (`modules/platforms`):** The hardware abstraction layer. Whether it's a Raspberry Pi ARM chip or a virtualized x86 hypervisor, this layer handles the metal. Disk partitioning is fully declarative using **Disko**, defining GPT layouts, LVM volume groups for guest VM disks, and filesystem mounts.
-3. **roles (`modules/roles`):** The personality injection. A host is defined by its mission: a hardened **Headless Server** guarding the network, or a feature-rich **Workstation** designed for development.
-4. **services (`modules/services`):** The functional payload. Granular, plug-and-play applications categorized by domain:
-   - **infra:** The backbone utilities (binary cache, hypervisor, backup).
-   - **networking:** The mesh that connects it all (DNS, routing, VPN).
-   - **observability:** The eyes and ears (monitoring, logging, tracking agents).
-   - **security:** The active defense perimeter (Fail2Ban, Wazuh, Suricata, CrowdSec).
-   - **apps:** The user experience, grouped by function (office, tools, media, authentication, development).
+1. **core ([`modules/core`](./modules/core)):** The foundational DNA. Universal baselines shared across all systems, defining the essential "NixOS-ness" of the fleet.
+2. **platform ([`modules/platforms`](./modules/platforms)):** The hardware abstraction layer. Whether it's a Raspberry Pi ARM chip or a virtualized x86 hypervisor, this layer handles the metal. Disk partitioning is fully declarative using **Disko**, defining GPT layouts, LVM volume groups for guest VM disks, and filesystem mounts.
+3. **roles ([`modules/roles`](./modules/roles)):** The personality injection. A host is defined by its mission: a hardened **Headless Server** guarding the network, or a feature-rich **Workstation** designed for development.
+4. **services ([`modules/services`](./modules/services)):** The functional payload. Granular, plug-and-play applications categorized by domain:
+   - [**infra**](./modules/services/infra): The backbone utilities (binary cache, hypervisor, backup).
+   - [**networking**](./modules/services/networking): The mesh that connects it all (DNS, routing, VPN).
+   - [**observability**](./modules/services/observability): The eyes and ears (monitoring, logging, tracking agents).
+   - [**security**](./modules/services/security): The active defense perimeter (Fail2Ban, Wazuh, Suricata, CrowdSec).
+   - [**apps**](./modules/services/apps): The user experience, grouped by function (office, tools, media, authentication, development).
 
 ## Network Architecture
 
-### Physical Topology
-
-```ascii
-              +-----------+
-              | ISP Modem |
-              +-----------+
-                    |
-                  (WAN)
-                    |
-               +---------+
-               | Mini PC |
-               +---------+
-                    |
-                  (LAN)
-                    |
-           +------------------+
-           | Unmanaged Switch |
-           +------------------+
-                    |
-          +---------+-----------+
-          |                     |
-  +--------------+  +-----------------------+
-  | Raspberry Pi |  | Wireless Access Point |
-  +--------------+  +-----------------------+
-                                |
-                              (WiFi)
-                                |
-                        +--------------+
-                        | Home Devices |
-                        +--------------+
-```
-
-### Logical Architecture
+### Logical Topology
 
 ```ascii
                   +--------------+        +-----------------+        +--------------------+
@@ -114,11 +82,9 @@ This infrastructure is engineered following a rigorous **Domain-Driven Design** 
              +-------------------------------------|-------------------------------------+
 ```
 
-### Visual Topology Diagram
+### Visual Topology
 
 ![Network Topology](./topology/topology.png)
-
-_(Automatically generated from Nix configuration)_
 
 ### The Cybernetic Nexus
 
@@ -141,12 +107,10 @@ The network is physically connected via two interfaces, but logically segmented 
 
 ### Dual-Stack IPv4/IPv6 Routing
 
-The homelab runs a **fully dual-stack IPv4/IPv6 network topology**, with address allocation and routing parameters managed centrally on the `vm-network` router:
+The homelab runs a dual-stack IPv4/IPv6 network managed by the `vm-network` router:
 
-- **IPv4 Address Allocation (Kea DHCPv4)**: Distributed via the **Kea DHCPv4** daemon, which manages separate pools and dynamic subnets for the Home (VLAN 2), Infra (VLAN 20), and DMZ (VLAN 88) security zones.
-- **IPv6 Autoconfiguration (radvd & SLAAC)**: Stateless configuration is handled by the **Router Advertisement Daemon (radvd)** across all internal VLAN interfaces. It broadcasts:
-  - **SLAAC Prefixes**: Static `fd00:0:0:vlan::/64` subnets per VLAN, plus delegated prefixes (`::/64`) dynamically obtained from the WAN interface for the Home LAN.
-  - **IPv6 DNS (RDNSS)**: Auto-configures clients to use the high-availability DNS cluster Virtual IP (`fd00:0:0:20::53`).
+- **IPv4 Allocation**: Managed by **Kea DHCPv4**, providing separate pools and subnets for each VLAN security zone.
+- **IPv6 Autoconfiguration**: Handled via stateless **SLAAC** and the **Router Advertisement Daemon (radvd)**, distributing static Unique Local Addresses (ULA) per VLAN, dynamic global prefixes from the WAN, and configuring the high-availability DNS cluster Virtual IP via RDNSS.
 
 ### High-Availability DNS
 
@@ -165,48 +129,48 @@ Furthermore, all web-facing services are placed behind an **Nginx reverse proxy*
 
 This infrastructure comprises eight distinct hosts. Here's the breakdown:
 
-### `framework`
+### [`framework`](./hosts/framework.nix)
 
 - **The Command Center.** The primary development workstation, tailored for code, creativity, and control.
 - **Network:** Home (Native)
 
-### `pi`
+### [`pi`](./hosts/pi.nix)
 
 - **The Physical Bridge.** Armed with **Z-Wave** and **Zigbee** radios, acting as the smart hub running Home Assistant while standing watch as a backup DNS node.
 - **Hardware**: Raspberry Pi 4 with 2GB RAM
 - **Network:** Infra (VLAN 20)
 
-### `hypervisor`
+### [`hypervisor`](./hosts/hypervisor.nix)
 
-- **The Bedrock.** This mini PC runs **NixOS with libvirt** as a headless hypervisor host. It spawns and manages four virtual machines (`vm-network`, `vm-app`, `vm-monitor`, `vm-cyber`), powered by the NixVirt module. The entire virtualization stack — from VLAN-filtered bridges to PCI passthrough to VM lifecycle management — is defined declaratively.
+- **The Bedrock.** This mini PC runs **NixOS with libvirt** as a headless hypervisor host. It spawns and manages four virtual machines (`vm-network`, `vm-app`, `vm-monitor`, `vm-cyber`), powered by the [NixVirt module](./modules/services/infra/hypervisor/default.nix). The entire virtualization stack — from VLAN-filtered bridges to PCI passthrough to VM lifecycle management — is defined declaratively.
 - **Hardware**: AMD 6900HX, 32GB RAM
 - **Network:** Infra (VLAN 20)
 
-### `vm-network`
+### [`vm-network`](./hosts/vm-network.nix)
 
 - **The Sentinel.** The primary router, firewall, and DNS authority. It manages the Cloudflare Tunnels, WireGuard VPNs, and Suricata IDS/IPS. A physical NIC is passed through from the hypervisor to serve as the WAN interface, providing direct hardware access for maximum throughput and security.
 - **Hardware**: 4 vCPU cores, 2GB RAM, NIC passthrough (WAN)
 - **Network:** Gateway (WAN, Home, Infra, DMZ)
 
-### `vm-app`
+### [`vm-app`](./hosts/vm-app.nix)
 
 - **The Powerhouse.** The main application server. GPU passthrough enables hardware-accelerated transcoding for Jellyfin. It runs my complete suite of user-facing services: Immich for photos, Paperless-ngx for documents, Forgejo for code, and more.
 - **Hardware**: 10 vCPU cores, 12GB RAM, GPU passthrough
 - **Network:** Infra (VLAN 20)
 
-### `vm-monitor`
+### [`vm-monitor`](./hosts/vm-monitor.nix)
 
 - **The Watchtower.** Dedicated to keeping the lights on. It hosts the **Beszel Hub**, **Prometheus**, **Loki**, **Wazuh Server**, and **Gatus** to visualize the health and security of the entire infrastructure.
 - **Hardware**: 4 vCPU cores, 4GB RAM
 - **Network:** Infra (VLAN 20)
 
-### `vm-public`
+### [`vm-public`](./hosts/vm-public.nix)
 
 - **The Public Face.** A DMZ-hosted server exposing personal projects and services to the world.
 - **Hardware**: 4 vCPU cores, 2GB RAM
 - **Network:** DMZ (VLAN 88)
 
-### `vm-cyber`
+### [`vm-cyber`](./hosts/vm-cyber.nix)
 
 - **The Armory.** A specialized, security-focused desktop environment loaded with tools for penetration testing, forensics, and reverse engineering.
 - **Hardware**: 4 vCPU cores, 4GB RAM
@@ -237,9 +201,9 @@ The operational layer transforms manual sysadmin workflows into deterministic, c
 
 ### Declarative VM Orchestration (`nixos-vm-provisioner`)
 
-Standard virtualization tools assume you want to manage VMs imperatively, clicking through UIs or running manual command-line sequences. To bridge the gap between static Nix declarations and live stateful VMs, the hypervisor runs [nixos-vm-provisioner](https://github.com/ruiiiijiiiiang/nixos-vm-provisioner)—a fully custom-built, zero-intervention NixOS module.
+Standard virtualization tools assume you want to manage VMs imperatively, clicking through UIs or running manual command-line sequences. To bridge the gap between static Nix declarations and live stateful VMs, the hypervisor runs [nixos-vm-provisioner](https://github.com/ruiiiijiiiiang/nixos-vm-provisioner) — a fully custom-built, zero-intervention NixOS module.
 
-Instead of manual disk preparation and interactive guest configurations, the provisioner acts as the host's control plane. It dynamically orchestrates the host's physical storage (carving out thin-provisioned LVM volumes on the fly) and compiles centralized hardware constants—vCPU allocations, RAM limits, MAC addresses, and passthrough PCIe devices—directly into running NixVirt/QEMU guest domain configurations. One configuration file. Zero manual setups. Complete host-to-guest alignment.
+Instead of manual disk preparation and interactive guest configurations, the provisioner acts as the host's control plane. It dynamically orchestrates the host's physical storage (carving out thin-provisioned LVM volumes on the fly) and compiles centralized hardware constants — vCPU allocations, RAM limits, MAC addresses, and passthrough PCIe devices — directly into running NixVirt/QEMU guest domain configurations. One configuration file. Zero manual setups. Complete host-to-guest alignment.
 
 ### Binary Cache & Pre-Built Artifacts
 
