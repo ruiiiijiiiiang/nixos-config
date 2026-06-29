@@ -103,6 +103,8 @@ rec {
         framework-v6 = "${addresses.home-prefix-v6}:${toString vlan-ids.home}::10";
         arch = "${addresses.home-prefix}.${toString vlan-ids.home}.11";
         arch-v6 = "${addresses.home-prefix-v6}:${toString vlan-ids.home}::11";
+        windows = "${addresses.home-prefix}.${toString vlan-ids.home}.12";
+        windows-v6 = "${addresses.home-prefix-v6}:${toString vlan-ids.home}::12";
         pi-wifi = "${addresses.home-prefix}.${toString vlan-ids.home}.253";
         pi-wifi-v6 = "${addresses.home-prefix-v6}:${toString vlan-ids.home}::253";
         hypervisor-wifi = "${addresses.home-prefix}.${toString vlan-ids.home}.254";

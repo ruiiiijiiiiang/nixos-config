@@ -91,7 +91,7 @@ in
       ${username} = {
         linger = true;
         openssh.authorizedKeys.keys =
-          lib.optionals termixEnabled [ ssh.termix ] ++ ssh.arch ++ ssh.framework;
+          lib.optionals termixEnabled [ ssh.termix ] ++ ssh.arch ++ ssh.framework ++ ssh.windows;
       };
 
       root.openssh.authorizedKeys.keys = [
@@ -99,7 +99,8 @@ in
         ssh.forgejo-runner
       ]
       ++ ssh.arch
-      ++ ssh.framework;
+      ++ ssh.framework
+      ++ ssh.windows;
     };
   };
 }

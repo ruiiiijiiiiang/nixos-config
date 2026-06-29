@@ -118,16 +118,17 @@ in
       ports.wazuh.agent.enrollment
     ];
 
-    system.activationScripts.wazuh-dashboard-init = ''
-      ${ensureFile {
-        source = initialFile;
-        destination = dashboardsFile;
-        mode = "644";
-      }}
-    '';
-
-    systemd = {
-      services.podman-wazuh-indexer = mkNotifyService { };
+    systemd.services = {
+      podman-wazuh-indexer = mkNotifyService { };
+      podman-wazuh-dashboard = {
+        preStart = lib.mkAfter ''
+          ${ensureFile {
+            source = initialFile;
+            destination = dashboardsFile;
+            mode = "0644";
+          }}
+        '';
+      };
     };
   };
 }

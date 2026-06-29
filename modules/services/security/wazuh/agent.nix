@@ -98,18 +98,20 @@ in
           ];
         };
 
-    system.activationScripts.wazuh-agent-init = /* bash */ ''
-      ${ensureFile {
-        source = initialFile;
-        destination = ossecFile;
-      }}
-      if [ ! -f ${keysFile} ]; then
-        echo "Initializing empty ${keysFile} ..."
-        touch ${keysFile}
-        chmod 666 ${keysFile}
-      else
-        echo "${keysFile} already exists. Preserving identity."
-      fi
-    '';
+    systemd.services.podman-wazuh-agent = {
+      preStart = lib.mkAfter ''
+        ${ensureFile {
+          source = initialFile;
+          destination = ossecFile;
+        }}
+        if [ ! -f ${keysFile} ]; then
+          echo "Initializing empty ${keysFile} ..."
+          touch ${keysFile}
+          chmod 0666 ${keysFile}
+        else
+          echo "${keysFile} already exists. Preserving identity."
+        fi
+      '';
+    };
   };
 }

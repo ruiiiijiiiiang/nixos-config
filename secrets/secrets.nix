@@ -114,6 +114,10 @@ in
     publicKeys = ssh.hypervisor ++ ssh.vm-network ++ ssh.vm-app ++ ssh.vm-monitor;
     armor = true;
   };
+  "searxng-env.age" = {
+    publicKeys = ssh.vm-public;
+    armor = true;
+  };
   "termix-env.age" = {
     publicKeys = ssh.vm-monitor;
     armor = true;

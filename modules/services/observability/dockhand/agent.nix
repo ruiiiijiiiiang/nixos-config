@@ -59,6 +59,7 @@ in
           TLS_CERT = "/certs/server.crt";
           TLS_KEY = "/certs/server.key";
           AGENT_NAME = config.networking.hostName;
+          ALLOW_INSECURE_NO_AUTH = "true";
         };
         labels = {
           "io.containers.autoupdate" = "registry";

@@ -142,7 +142,7 @@ This infrastructure comprises eight distinct hosts. Here's the breakdown:
 
 ### [`hypervisor`](./hosts/hypervisor.nix)
 
-- **The Bedrock.** This mini PC runs **NixOS with libvirt** as a headless hypervisor host. It spawns and manages four virtual machines (`vm-network`, `vm-app`, `vm-monitor`, `vm-cyber`), powered by the [NixVirt module](./modules/services/infra/hypervisor/default.nix). The entire virtualization stack — from VLAN-filtered bridges to PCI passthrough to VM lifecycle management — is defined declaratively.
+- **The Bedrock.** This mini PC runs **NixOS with libvirt** as a headless hypervisor host. It spawns and manages four virtual machines (`vm-network`, `vm-app`, `vm-monitor`, `vm-cyber`), powered by the NixVirt module. The entire virtualization stack — from VLAN-filtered bridges to PCI passthrough to VM lifecycle management — is defined declaratively.
 - **Hardware**: AMD 6900HX, 32GB RAM
 - **Network:** Infra (VLAN 20)
 

@@ -73,6 +73,8 @@ To maintain configuration readability and clean Nix codebase structure, the foll
   - _Discouraged:_ `set.opt1 = true; set.opt2 = true;`
 - **Use `inherit`:** Use the `inherit` keyword whenever possible to import variables into scopes or attribute sets.
 - **`with` Keyword Threshold:** The `with` keyword should be used in scopes only when the imported namespace/attribute set is referenced **more than 5 times**.
+- **Syntax Highlighting in Strings:** When writing non-Nix syntax (such as YAML, Bash, or JSON) inside a Nix string, always add a language comment (e.g., `/* yaml */`, `/* bash */`) in front of the string to ensure proper syntax highlighting in editors.
+  - _Example:_ `settingsFile = pkgs.writeText "settings.yml" /* yaml */ ''...'';`
 - **Code Formatting:** Always use `nixfmt` to clean up and format Nix code after editing.
 
 ## Directory Structure Highlights

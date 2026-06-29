@@ -129,7 +129,17 @@ in
         "d ${cfg.storagePath}/opencloud 0755 ${toString oci-uids.opencloud} ${toString oci-uids.opencloud} - -"
       ];
 
-      services.podman-opencloud = mkNotifyService { timeout = 600; };
+      services.podman-opencloud = (mkNotifyService { timeout = 600; }) // {
+        preStart = lib.mkAfter ''
+          ${ensureFile {
+            source = initialFile;
+            destination = cspFile;
+            user = toString oci-uids.opencloud;
+            group = toString oci-uids.opencloud;
+            mode = "0644";
+          }}
+        '';
+      };
     };
 
     services.nginx.virtualHosts = {
@@ -142,13 +152,5 @@ in
         port = ports.onlyoffice;
       };
     };
-
-    system.activationScripts.opencloud-init = ''
-      ${ensureFile {
-        source = initialFile;
-        destination = cspFile;
-        mode = "644";
-      }}
-    '';
   };
 }

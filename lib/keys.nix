@@ -7,6 +7,9 @@
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIM9m3eaPWXrwynrF4hS5Llwfxm/FpNMjgoz41WnNfCUg rui@framework"
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMmlTX40GMTcBjzv1dkUCXJvXovAYkuhRm0993iZ8ffW root@framework"
     ];
+    windows = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIN4IAcvPUaBJYGKYLD3FfeNcIpYeN2OzgJ9k/+3tn849 rui@Rui-Desktop"
+    ];
     pi = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMIJNc2DNOvGnp388Mr2WNYa4/pUq/kbyrpTJkc5Q8Oe rui@pi"
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK4UQIyLo0sqjKZjBAPD/G3xHy/qT4DlbF34J5krTKBn root@pi"
