@@ -26,8 +26,12 @@ let
         foldl'
         mapAttrsToList
         filter
+        hasSuffix
+        removeSuffix
         ;
-      hostFqdns = hostName: map (sub: "${sub}.${domain}") (attrValues (subdomains.${hostName} or { }));
+      hostNameBase = hostName: if hasSuffix "-v6" hostName then removeSuffix "-v6" hostName else hostName;
+      hostFqdns =
+        hostName: map (sub: "${sub}.${domain}") (attrValues (subdomains.${hostNameBase hostName} or { }));
       hostEntry =
         hostName: ip:
         let
@@ -47,6 +51,13 @@ let
           getHostAddress {
             hostName = "vm-network";
             network = "home";
+          }
+        } ${endpoints.vpn-server}"
+        "${
+          getHostAddress {
+            hostName = "vm-network";
+            network = "home";
+            isV6 = true;
           }
         } ${endpoints.vpn-server}"
       ];
@@ -126,10 +137,8 @@ in
       extraHosts = getFullExtraHosts;
 
       firewall = {
-        # This rule can be replaced by `services.keepalived.openFirewall = true;` once the following PR is merged:
-        # https://github.com/NixOS/nixpkgs/pull/457523
         extraInputRules = lib.mkIf cfg.vrrp.enable ''
-          ip protocol vrrp accept
+          iifname "${cfg.interface}" meta l4proto { vrrp, ah } accept
         '';
         interfaces."${cfg.interface}" = {
           allowedTCPPorts = [ ports.dns ];
@@ -145,9 +154,15 @@ in
         enable = true;
         settings = {
           server = {
-            interface = [ addresses.localhost ];
+            interface = [
+              addresses.localhost
+              addresses.localhost-v6
+            ];
             port = ports.unbound;
-            access-control = [ "${addresses.localhost}/8 allow" ];
+            access-control = [
+              "${addresses.localhost}/8 allow"
+              "${addresses.localhost-v6}/128 allow"
+            ];
 
             qname-minimisation = true;
             prefetch = true;
@@ -292,6 +307,7 @@ in
         requires = [ "pihole-ftl.service" ];
         serviceConfig = {
           Type = "oneshot";
+          ExecStartPre = "${pkgs.coreutils}/bin/sleep 30";
           ExecStart = "${pkgs.bash}/bin/bash ${config.services.pihole-ftl.pihole}/bin/pihole -g";
         };
       };

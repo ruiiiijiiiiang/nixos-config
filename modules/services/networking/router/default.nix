@@ -176,7 +176,13 @@ in
           cfg.lanInterface
           cfg.infraInterface
           cfg.dmzInterface
-        ];
+        ]
+        ++
+          lib.optionals
+            nixosConfigurations.vm-network.config.custom.services.networking.wireguard.server.enable
+            [
+              cfg.wgInterface
+            ];
       };
 
       firewall = {
@@ -294,6 +300,7 @@ in
                   iifname "${cfg.wgInterface}" oifname "${cfg.lanInterface}" accept
                   iifname "${cfg.wgInterface}" oifname "${cfg.infraInterface}" accept
                   iifname "${cfg.wgInterface}" oifname "${cfg.dmzInterface}" accept
+                  iifname "${cfg.wgInterface}" oifname "${cfg.wanInterface}" accept
                 ''
               }
             }

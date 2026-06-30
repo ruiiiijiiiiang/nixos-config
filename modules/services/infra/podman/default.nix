@@ -55,6 +55,20 @@ in
             dates = "weekly";
             flags = [ "--all" ];
           };
+          defaultNetwork.settings = {
+            dns_enabled = true;
+            ipv6_enabled = true;
+            subnets = [
+              {
+                subnet = addresses.podman.network;
+                gateway = addresses.podman.gateway;
+              }
+              {
+                subnet = addresses.podman.network-v6;
+                gateway = addresses.podman.gateway-v6;
+              }
+            ];
+          };
         };
 
         containers.containersConf.settings = {

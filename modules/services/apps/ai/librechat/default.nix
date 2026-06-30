@@ -70,6 +70,7 @@ in
         environment = {
           DB_HOST = addresses.localhost;
           RAG_PORT = "8000";
+          EMBEDDINGS_PROVIDER = "google_genai";
         };
         environmentFiles = [ config.age.secrets.librechat-env.path ];
         labels = {

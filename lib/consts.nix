@@ -167,6 +167,9 @@ rec {
     };
     podman = {
       network = "10.88.0.0/16";
+      gateway = "10.88.0.1";
+      network-v6 = "fd00:0:0:8888::/64";
+      gateway-v6 = "fd00:0:0:8888::1";
     };
   };
 

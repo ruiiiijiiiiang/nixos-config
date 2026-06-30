@@ -55,6 +55,7 @@ in
           allow ${addresses.wg.network};
           allow ${addresses.wg.network-v6};
           allow ${addresses.podman.network};
+          allow ${addresses.podman.network-v6};
           deny all;
 
           ${lib.optionalString config.custom.services.observability.prometheus.exporters.nginx.enable ''

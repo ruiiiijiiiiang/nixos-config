@@ -170,7 +170,7 @@ This infrastructure comprises eight distinct hosts. Here's the breakdown:
 - **Hardware**: 4 vCPU cores, 2GB RAM
 - **Network:** DMZ (VLAN 88)
 
-### [`vm-cyber`](./hosts/vm-cyber.nix)
+### [`vm-cyber`](./hosts/vm-cyber.nix) (on-demand)
 
 - **The Armory.** A specialized, security-focused desktop environment loaded with tools for penetration testing, forensics, and reverse engineering.
 - **Hardware**: 4 vCPU cores, 4GB RAM

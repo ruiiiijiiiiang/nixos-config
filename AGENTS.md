@@ -8,6 +8,16 @@ This repository contains a fully declarative and reproducible NixOS configuratio
 - **Infrastructure Management:** `disko` (disk partitioning), `agenix` (secret management), `NixVirt` (libvirt virtualization).
 - **Home Environment:** `home-manager` for user-specific configurations and dotfiles.
 - **Hardware:** Framework Laptop (Workstation), Raspberry Pi 4 (IoT/DNS), and a Mini PC (Hypervisor) running multiple specialized VMs.
+- **Domain Info:** The primary domain `ruijiang.me` is purchased through Namecheap (expires annually on June 28th), but all DNS records for the domain and its subdomains are handled by Cloudflare.
+
+## Directory Structure Highlights
+
+- `homes/`: Home-manager configurations and modules.
+- `hosts/`: Host-specific NixOS configurations and flake-module entry point.
+- `lib/`: Shared constants and helper functions.
+- `modules/`: The core of the NixOS modular system (core, platforms, roles, services).
+- `secrets/`: Encrypted secrets (agenix).
+- `shells/`: Development shells defined as flakes.
 
 ### Architectural Layers (`modules/`)
 
@@ -20,6 +30,7 @@ This repository contains a fully declarative and reproducible NixOS configuratio
 
 - **Explicit Command Ban:** Under no circumstances should an AI agent attempt to run commands involving `nix build`, `nixos-rebuild`, or any other Nix build/deployment tools (including remote execution over SSH).
 - **Strictly Manual Deployments:** All building, testing, and deployments are handled manually by the user. The agent's output is strictly limited to making configuration changes.
+- **Strict Investigation & Modification Flow:** When tasked to investigate an issue, the agent must always report findings first and present a proposed solution. Under no circumstances should the agent update any codebase or configuration files directly without receiving explicit manual confirmation from the user for the proposed changes.
 
 ## Development Conventions
 
@@ -76,12 +87,3 @@ To maintain configuration readability and clean Nix codebase structure, the foll
 - **Syntax Highlighting in Strings:** When writing non-Nix syntax (such as YAML, Bash, or JSON) inside a Nix string, always add a language comment (e.g., `/* yaml */`, `/* bash */`) in front of the string to ensure proper syntax highlighting in editors.
   - _Example:_ `settingsFile = pkgs.writeText "settings.yml" /* yaml */ ''...'';`
 - **Code Formatting:** Always use `nixfmt` to clean up and format Nix code after editing.
-
-## Directory Structure Highlights
-
-- `homes/`: Home-manager configurations and modules.
-- `hosts/`: Host-specific NixOS configurations and flake-module entry point.
-- `lib/`: Shared constants and helper functions.
-- `modules/`: The core of the NixOS modular system (core, platforms, roles, services).
-- `secrets/`: Encrypted secrets (agenix).
-- `shells/`: Development shells defined as flakes.

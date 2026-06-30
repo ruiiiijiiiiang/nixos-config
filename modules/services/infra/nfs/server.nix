@@ -26,6 +26,14 @@ in
       default = [
         (getHostAddress "framework")
         (getHostAddress "arch")
+        (getHostAddress {
+          hostName = "framework";
+          isV6 = true;
+        })
+        (getHostAddress {
+          hostName = "arch";
+          isV6 = true;
+        })
       ];
       description = "Hosts allowed to access file server.";
     };
