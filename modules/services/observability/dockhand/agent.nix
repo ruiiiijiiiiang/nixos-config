@@ -49,6 +49,12 @@ in
         user = "${toString oci-uids.dockhand}:${toString oci-uids.dockhand}";
         ports = [
           "${getHostAddress config.networking.hostName}:${toString ports.dockhand.agent}:${toString ports.dockhand.agent}"
+          "[${
+            getHostAddress {
+              hostName = config.networking.hostName;
+              isV6 = true;
+            }
+          }]:${toString ports.dockhand.agent}:${toString ports.dockhand.agent}"
         ];
         volumes = [
           "/run/podman/podman.sock:/var/run/docker.sock"

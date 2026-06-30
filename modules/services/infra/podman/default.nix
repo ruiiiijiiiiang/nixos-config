@@ -56,7 +56,7 @@ in
             flags = [ "--all" ];
           };
           defaultNetwork.settings = {
-            dns_enabled = true;
+            dns_enabled = false;
             ipv6_enabled = true;
             subnets = [
               {

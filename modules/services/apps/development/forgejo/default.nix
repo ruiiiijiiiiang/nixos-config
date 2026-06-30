@@ -56,6 +56,20 @@ in
               network = "infra";
             }
           }:${toString ports.forgejo.ssh}:${toString ports.forgejo.ssh}"
+          "[${
+            getHostAddress {
+              inherit (config.networking) hostName;
+              network = "infra";
+              isV6 = true;
+            }
+          }]:${toString ports.forgejo.server}:${toString ports.forgejo.server}"
+          "[${
+            getHostAddress {
+              inherit (config.networking) hostName;
+              network = "infra";
+              isV6 = true;
+            }
+          }]:${toString ports.forgejo.ssh}:${toString ports.forgejo.ssh}"
         ];
         environmentFiles = [ config.age.secrets.forgejo-env.path ];
         volumes = [ "/var/lib/forgejo/postgres:/var/lib/postgresql/data" ];
