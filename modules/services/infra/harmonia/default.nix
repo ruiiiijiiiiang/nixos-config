@@ -28,6 +28,7 @@ let
     "vm-app"
     "vm-monitor"
     "vm-public"
+    "vm-cyber"
   ];
   gcRoot = "/var/lib/nix-cache-roots";
   ntfyEnabled =

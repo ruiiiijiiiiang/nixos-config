@@ -63,7 +63,6 @@ in
       # Misc
       ouch
       python3
-      remmina
       unrar
       unzip
     ];

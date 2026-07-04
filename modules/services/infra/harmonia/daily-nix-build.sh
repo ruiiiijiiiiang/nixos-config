@@ -4,7 +4,6 @@ readonly NTFY_SERVER=@NTFY_SERVER@
 readonly NTFY_ENABLED=@NTFY_ENABLED@
 readonly NTFY_TOPIC=@NTFY_TOPIC@
 
-CPT_DEB="$HOME_DIR/CiscoPacketTracer_900_Ubuntu_64bit.deb"
 failed_hosts=()
 
 notify_build_failures() {
@@ -18,11 +17,6 @@ notify_build_failures() {
     "https://$NTFY_SERVER/$NTFY_TOPIC" > /dev/null || echo "Failed to send ntfy notification" >&2
 }
 
-if [ -f "$CPT_DEB" ]; then
-  echo "Ensuring Cisco Packet Tracer is in store..."
-  nix-store --add-fixed sha256 "$CPT_DEB" > /dev/null
-fi
-
 nix flake update --no-warn-dirty --refresh
 
 for host in @HOSTS@; do
@@ -30,7 +24,7 @@ for host in @HOSTS@; do
   echo "Building system closure for: $host"
   echo "=========================================="
 
-  if ! nix build ".#nixosConfigurations.$host.config.system.build.toplevel" \
+  if ! nix build "$HOME_DIR/nixos-config/#nixosConfigurations.$host.config.system.build.toplevel" \
     --no-warn-dirty \
     --out-link "$GC_ROOT/$host"; then
     failed_hosts+=("$host")

@@ -215,6 +215,8 @@ rec {
     {
       useACMEHost = fqdn;
       forceSSL = true;
+      http3 = true;
+      quic = true;
       locations."/" = {
         proxyPass = "http://${addresses.localhost}:${toString port}";
         proxyWebsockets = true;

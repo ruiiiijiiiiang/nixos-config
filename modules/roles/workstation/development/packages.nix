@@ -71,7 +71,6 @@ in
 
       # Desktop Apps
       cava
-      cisco-packet-tracer_9
       easyeffects
       inputs.zen-browser.packages.${stdenv.hostPlatform.system}.default
       kdePackages.filelight

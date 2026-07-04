@@ -56,6 +56,9 @@ in
                 ports.http
                 ports.https
               ];
+              allowedUDPPorts = [
+                ports.https
+              ];
             });
           }
         else
@@ -63,6 +66,9 @@ in
             allowedTCPPorts = [
               ports.ssh
               ports.http
+              ports.https
+            ];
+            allowedUDPPorts = [
               ports.https
             ];
           }

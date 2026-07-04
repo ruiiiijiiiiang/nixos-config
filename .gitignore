@@ -1,6 +1,7 @@
 result
 result-*
 
+logs
 .direnv
 .stfolder
 .gemini
