@@ -8,6 +8,7 @@
 }:
 let
   inherit (consts)
+    timeZone
     addresses
     domain
     subdomains
@@ -156,6 +157,9 @@ in
             reporting_enabled = false;
             check_for_updates = false;
             check_for_plugin_updates = false;
+          };
+          date_formats = {
+            default_timezone = timeZone;
           };
         };
 

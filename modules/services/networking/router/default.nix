@@ -417,25 +417,6 @@ in
               "infra"
               "dmz"
             ];
-
-            control-socket = {
-              socket-type = "unix";
-              socket-name = "/run/kea/kea-dhcp4.socket";
-            };
-          };
-        };
-
-        ctrl-agent = {
-          enable = true;
-          settings = {
-            http-host = addresses.localhost;
-            http-port = ports.kea.ctrl-agent;
-            control-sockets = {
-              dhcp4 = {
-                socket-type = "unix";
-                socket-name = "/run/kea/kea-dhcp4.socket";
-              };
-            };
           };
         };
       };

@@ -173,6 +173,7 @@ in
 
             private-domain = [ domain ];
             domain-insecure = [ domain ];
+            local-zone = [ "\"${domain}\" static" ];
             prefer-ip6 = true;
           };
 

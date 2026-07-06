@@ -219,9 +219,6 @@ rec {
     immich = 2283;
     jellyfin = 8096;
     karakeep = 8084;
-    kea = {
-      ctrl-agent = 8002;
-    };
     krawl = 5002;
     librechat = 3080;
     loki = {

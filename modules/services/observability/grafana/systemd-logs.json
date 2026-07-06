@@ -2,7 +2,7 @@
   "uid": "systemd-logs-viewer",
   "title": "Systemd Logs Viewer",
   "tags": ["loki", "systemd"],
-  "timezone": "browser",
+  "timezone": "",
   "refresh": "10s",
   "templating": {
     "list": [
