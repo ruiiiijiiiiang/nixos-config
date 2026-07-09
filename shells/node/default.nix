@@ -2,7 +2,6 @@
 with pkgs;
 mkShell {
   buildInputs = [
-    nodejs_24
     pnpm
     svelte-language-server
     tailwindcss-language-server

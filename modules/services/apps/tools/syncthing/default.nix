@@ -42,7 +42,7 @@ in
             "vm-app" = {
               id = "TKAXHBY-LFRMNI5-NE4Z3GL-QCNH2ZY-KIVYTYI-LZPSQHN-4NIFJDC-6TPHFAI";
             };
-            "Rui-Desktop" = {
+            "windows" = {
               id = "A3QHGMY-JKQQREB-KZCSOHS-2N3IXTL-2WZ2TMV-MZRWGIN-BISZOYK-AQGQIAF";
             };
             "pixel-7" = {
@@ -58,7 +58,7 @@ in
                 "desktop"
                 "framework"
                 "vm-app"
-                "Rui-Desktop"
+                "windows"
                 "pixel-7"
               ];
             };
@@ -69,7 +69,7 @@ in
                 "desktop"
                 "framework"
                 "vm-app"
-                "Rui-Desktop"
+                "windows"
                 "pixel-7"
               ];
             };

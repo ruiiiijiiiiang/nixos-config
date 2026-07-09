@@ -50,6 +50,7 @@ in
     programs = {
       firefox.enable = true;
       htop.enable = true;
+      nix-ld.enable = true;
       neovim.package = inputs.neovim-nightly-overlay.packages.${pkgs.system}.default;
       nix-index.enable = true;
     };

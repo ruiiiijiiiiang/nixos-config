@@ -62,6 +62,16 @@ let
         paths = [ ".config/lsd" ];
       }
       {
+        name = "niri";
+        paths = [ ".config/niri/config.kdl" ];
+      }
+      {
+        name = "noctalia";
+        paths = [
+          ".config/noctalia/colorschemes"
+        ];
+      }
+      {
         name = "noxdir";
         paths = [ ".noxdir" ];
       }
@@ -127,7 +137,6 @@ let
       {
         name = "niri";
         paths = [
-          ".config/niri/config.kdl"
           {
             src = ".config/niri/host-desktop.kdl";
             target = ".config/niri/host.kdl";
@@ -137,7 +146,6 @@ let
       {
         name = "noctalia";
         paths = [
-          ".config/noctalia/colorschemes"
           {
             src = ".config/noctalia/settings-desktop.json";
             target = ".config/noctalia/settings.json";
@@ -152,7 +160,6 @@ let
       {
         name = "niri";
         paths = [
-          ".config/niri/config.kdl"
           {
             src = ".config/niri/host-framework.kdl";
             target = ".config/niri/host.kdl";
@@ -162,7 +169,6 @@ let
       {
         name = "noctalia";
         paths = [
-          ".config/noctalia/colorschemes"
           {
             src = ".config/noctalia/settings-framework.json";
             target = ".config/noctalia/settings.json";

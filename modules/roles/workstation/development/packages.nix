@@ -125,6 +125,7 @@ in
       marksman
       nil
       nixfmt
+      nodejs
       opencode
       pyright
       python313
