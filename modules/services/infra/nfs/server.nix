@@ -25,13 +25,13 @@ in
       type = types.listOf types.str;
       default = [
         (getHostAddress "framework")
-        (getHostAddress "arch")
+        (getHostAddress "desktop")
         (getHostAddress {
           hostName = "framework";
           isV6 = true;
         })
         (getHostAddress {
-          hostName = "arch";
+          hostName = "desktop";
           isV6 = true;
         })
       ];

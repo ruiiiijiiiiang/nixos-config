@@ -92,7 +92,6 @@ in
       telegram-desktop
       vivaldi
       vlc
-      anki
 
       # Fun stuff
       astroterm
@@ -109,15 +108,12 @@ in
       bash-language-server
       cmake
       codex
-      deno
       gcc
       gdb
       gemini-cli
       github-copilot-cli
       antigravity-cli
       gnumake
-      go
-      inputs.windsurf.packages.${stdenv.hostPlatform.system}.codeium-lsp
       lldb
       lua-language-server
       lua55Packages.luarocks
@@ -125,7 +121,6 @@ in
       marksman
       nil
       nixfmt
-      nodejs
       opencode
       pyright
       python313
@@ -137,14 +132,8 @@ in
       shfmt
       statix
       stylua
-      svelte-language-server
-      tailwindcss-language-server
       taplo
-      typescript-language-server
       uv
-      vscode-js-debug
-      vscode-langservers-extracted
-      vtsls
       yaml-language-server
     ];
 

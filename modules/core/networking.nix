@@ -1,6 +1,6 @@
 { consts, lib, ... }:
 let
-  inherit (consts) addresses domain;
+  inherit (consts) username addresses domain;
   inherit (lib)
     foldl'
     mkDefault
@@ -27,6 +27,7 @@ in
 {
   networking = {
     inherit domain;
+    networkmanager.enable = mkDefault true;
     firewall.enable = mkDefault true;
     nftables.enable = mkDefault true;
     extraHosts = getExtraHosts;
@@ -44,4 +45,6 @@ in
   };
 
   services.resolved.enable = mkDefault true;
+
+  users.users.${username}.extraGroups = [ "networkmanager" ];
 }

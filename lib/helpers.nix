@@ -280,4 +280,60 @@ rec {
         }
       ) paths
     );
+
+  adjustTime =
+    offset: time:
+    let
+      sign = builtins.substring 0 1 offset;
+      rest = builtins.substring 1 (builtins.stringLength offset - 1) offset;
+      len = builtins.stringLength rest;
+      unit = builtins.substring (len - 1) 1 rest;
+      amountStr = builtins.substring 0 (len - 1) rest;
+      validSign =
+        if
+          builtins.elem sign [
+            "+"
+            "-"
+          ]
+        then
+          true
+        else
+          throw "adjustTime: offset must start with '+' or '-', got '${sign}' in '${offset}'";
+      validUnit =
+        if
+          builtins.elem unit [
+            "m"
+            "h"
+          ]
+        then
+          true
+        else
+          throw "adjustTime: offset must end with 'm' (minutes) or 'h' (hours), got '${unit}' in '${offset}'";
+      stripZero =
+        str:
+        if builtins.substring 0 1 str == "0" && builtins.stringLength str > 1 then
+          builtins.substring 1 (builtins.stringLength str - 1) str
+        else
+          str;
+      toInt = str: (builtins.fromTOML "x = ${stripZero str}").x;
+      amount = toInt amountStr;
+      hour = toInt (builtins.substring 0 2 time);
+      minute = toInt (builtins.substring 3 2 time);
+      offsetMinutes = if unit == "h" then amount * 60 else amount;
+      totalMinutes = hour * 60 + minute;
+      adjustedMinutes =
+        if sign == "+" then totalMinutes + offsetMinutes else totalMinutes - offsetMinutes;
+      mod = a: b: a - (b * (a / b));
+      moddedMinutes =
+        let
+          m = adjustedMinutes;
+          mPositive = if m < 0 then m + (1440 * ((-m / 1440) + 1)) else m;
+        in
+        mod mPositive 1440;
+      finalHour = moddedMinutes / 60;
+      finalMinute = mod moddedMinutes 60;
+      pad = n: if n < 10 then "0" + builtins.toString n else builtins.toString n;
+    in
+    assert validSign && validUnit;
+    "${pad finalHour}:${pad finalMinute}";
 }

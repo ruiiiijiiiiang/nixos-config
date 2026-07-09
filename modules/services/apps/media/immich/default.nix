@@ -18,7 +18,7 @@ let
   cfg = config.custom.services.apps.media.immich;
   fqdn = "${subdomains.${config.networking.hostName}.immich}.${domain}";
   hasGpuPassthrough = config.custom.platforms.vm.kernel.hardwarePassthrough == "gpu";
-  immich-version = "v2.7.5";
+  immich-version = "v3.0.1";
 in
 {
   options.custom.services.apps.media.immich = with lib; {

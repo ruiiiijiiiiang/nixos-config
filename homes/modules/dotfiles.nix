@@ -122,15 +122,15 @@ let
     ]
   );
 
-  archLinks = lib.foldl' lib.recursiveUpdate { } (
+  desktopLinks = lib.foldl' lib.recursiveUpdate { } (
     map mkDotfileLink [
       {
         name = "niri";
         paths = [
           ".config/niri/config.kdl"
           {
-            src = ".config/niri/noctalia-arch.kdl";
-            target = ".config/niri/noctalia.kdl";
+            src = ".config/niri/host-desktop.kdl";
+            target = ".config/niri/host.kdl";
           }
         ];
       }
@@ -139,7 +139,7 @@ let
         paths = [
           ".config/noctalia/colorschemes"
           {
-            src = ".config/noctalia/settings-arch.json";
+            src = ".config/noctalia/settings-desktop.json";
             target = ".config/noctalia/settings.json";
           }
         ];
@@ -154,8 +154,8 @@ let
         paths = [
           ".config/niri/config.kdl"
           {
-            src = ".config/niri/noctalia-framework.kdl";
-            target = ".config/niri/noctalia.kdl";
+            src = ".config/niri/host-framework.kdl";
+            target = ".config/niri/host.kdl";
           }
         ];
       }
@@ -189,7 +189,7 @@ in
     host = mkOption {
       type = types.nullOr (
         types.enum [
-          "arch"
+          "desktop"
           "framework"
         ]
       );
@@ -202,7 +202,7 @@ in
     home.file =
       headlessLinks
       // lib.optionalAttrs (cfg.role == "workstation") workstationLinks
-      // lib.optionalAttrs (cfg.host == "arch") archLinks
+      // lib.optionalAttrs (cfg.host == "desktop") desktopLinks
       // lib.optionalAttrs (cfg.host == "framework") frameworkLinks;
   };
 }

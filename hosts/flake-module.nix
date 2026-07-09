@@ -2,6 +2,8 @@
 let
   consts = import ../lib/consts.nix;
   keys = import ../lib/keys.nix;
+  secrets = import ../secrets/secrets.nix;
+  secretsDir = ../secrets;
 
   pkgs = inputs.nixpkgs.legacyPackages."x86_64-linux";
   helpers = import ../lib/helpers.nix {
@@ -59,6 +61,8 @@ let
           inputs
           helpers
           keys
+          secrets
+          secretsDir
           ;
       };
       modules = [
@@ -78,6 +82,11 @@ in
       hardware = [ inputs.nixos-hardware.nixosModules.framework-13-7040-amd ];
       dotfilesSource = "local";
       homeConfig = ../homes/configs/framework.nix;
+    };
+
+    desktop = mkHost "desktop" {
+      dotfilesSource = "local";
+      homeConfig = ../homes/configs/desktop.nix;
     };
 
     pi = mkHost "pi" {

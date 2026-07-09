@@ -182,10 +182,10 @@ in
               name = ".";
               forward-tls-upstream = true;
               forward-addr = [
-                "9.9.9.9@853#dns.quad9.net"
-                "149.112.112.112@853#dns.quad9.net"
-                "2620:fe::fe@853#dns.quad9.net"
-                "2620:fe::9@853#dns.quad9.net"
+                "9.9.9.9@${toString ports.dot}#dns.quad9.net"
+                "149.112.112.112@${toString ports.dot}#dns.quad9.net"
+                "2620:fe::fe@${toString ports.dot}#dns.quad9.net"
+                "2620:fe::9@${toString ports.dot}#dns.quad9.net"
               ];
             }
           ];

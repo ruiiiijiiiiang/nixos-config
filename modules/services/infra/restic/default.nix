@@ -7,8 +7,28 @@
 }:
 let
   inherit (consts) username daily-tasks;
-  inherit (helpers) dailyTaskToSystemd;
+  inherit (helpers) dailyTaskToSystemd adjustTime;
   cfg = config.custom.services.infra.restic;
+
+  sharedConfig = {
+    initialize = true;
+    passwordFile = config.age.secrets.restic-password.path;
+    paths = [
+      "/etc/ssh/ssh_host_*"
+      "/home/${username}/.ssh/id_*"
+      "/var/lib"
+    ]
+    ++ cfg.extraPaths;
+
+    exclude = [
+      "/var/lib/containers"
+      "/var/lib/systemd"
+      "/var/lib/machines"
+      "**/.cache"
+    ];
+
+    extraBackupArgs = [ "--exclude-caches" ];
+  };
 in
 {
   options.custom.services.infra.restic = with lib; {
@@ -38,39 +58,34 @@ in
 
     age.secrets = {
       restic-password.file = ../../../../secrets/restic-password.age;
+      rclone-conf.file = ../../../../secrets/rclone-conf.age;
     };
 
-    services.restic.backups."data-local" = {
-      initialize = true;
-      repository = "${cfg.repo}/restic-repo";
-      passwordFile = config.age.secrets.restic-password.path;
-      paths = [
-        "/etc/ssh/ssh_host_*"
-        "/home/${username}/.ssh/id_*"
-        "/var/lib"
-      ]
-      ++ cfg.extraPaths;
-
-      exclude = [
-        "/var/lib/containers"
-        "/var/lib/systemd"
-        "/var/lib/machines"
-        "**/.cache"
-      ];
-
-      extraBackupArgs = [
-        "--exclude-caches"
-      ];
-
-      timerConfig = {
-        OnCalendar = dailyTaskToSystemd daily-tasks.${config.networking.hostName}.restic-backup;
+    services.restic.backups = {
+      "data-local" = sharedConfig // {
+        repository = "${cfg.repo}/restic-repo";
+        timerConfig = {
+          OnCalendar = dailyTaskToSystemd daily-tasks.${config.networking.hostName}.restic-backup;
+        };
+        pruneOpts = [
+          "--keep-daily 4"
+          "--keep-weekly 2"
+          "--keep-monthly 1"
+        ];
       };
 
-      pruneOpts = [
-        "--keep-daily 4"
-        "--keep-weekly 2"
-        "--keep-monthly 1"
-      ];
+      "data-proton" = sharedConfig // {
+        repository = "rclone:proton-drive:restic-repo-${config.networking.hostName}";
+        rcloneConfigFile = config.age.secrets.rclone-conf.path;
+        timerConfig = {
+          OnCalendar = dailyTaskToSystemd (
+            adjustTime "+15m" daily-tasks.${config.networking.hostName}.restic-backup
+          );
+        };
+        pruneOpts = [
+          "--keep-last 3"
+        ];
+      };
     };
 
     systemd.tmpfiles.rules = [

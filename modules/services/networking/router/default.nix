@@ -16,6 +16,21 @@ let
   inherit (inputs.self) nixosConfigurations;
   cfg = config.custom.services.networking.router;
 
+  dnsIps = [
+    addresses.infra.vip.dns
+    addresses.infra.hosts.vm-network
+    addresses.infra.hosts.pi
+    addresses.infra.hosts.pi-legacy
+  ];
+  dnsIpsV6 = [
+    addresses.infra.vip.dns-v6
+    addresses.infra.hosts.vm-network-v6
+    addresses.infra.hosts.pi-v6
+    addresses.infra.hosts.pi-legacy-v6
+  ];
+  dnsIpsStr = lib.concatStringsSep ", " dnsIps;
+  dnsIpsV6Str = lib.concatStringsSep ", " dnsIpsV6;
+
   mkSubnet =
     { network }:
     {
@@ -235,6 +250,11 @@ in
               ct state established,related accept
 
               ip6 nexthdr icmpv6 accept
+
+              ip saddr != { ${dnsIpsStr} } oifname "${cfg.wanInterface}" udp dport { ${toString ports.dns}, ${toString ports.dot} } reject
+              ip saddr != { ${dnsIpsStr} } oifname "${cfg.wanInterface}" tcp dport { ${toString ports.dns}, ${toString ports.dot} } reject
+              ip6 saddr != { ${dnsIpsV6Str} } oifname "${cfg.wanInterface}" udp dport { ${toString ports.dns}, ${toString ports.dot} } reject
+              ip6 saddr != { ${dnsIpsV6Str} } oifname "${cfg.wanInterface}" tcp dport { ${toString ports.dns}, ${toString ports.dot} } reject
 
               iifname "${cfg.lanInterface}" accept
 

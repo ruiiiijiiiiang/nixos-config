@@ -63,7 +63,7 @@ in
     armor = true;
   };
   "mcp-config.age" = {
-    publicKeys = ssh.framework ++ ssh.arch;
+    publicKeys = ssh.framework ++ ssh.desktop;
     armor = true;
   };
   "mealie-env.age" = {
@@ -79,7 +79,7 @@ in
     armor = true;
   };
   "opencode-config.age" = {
-    publicKeys = ssh.framework ++ ssh.arch;
+    publicKeys = ssh.framework ++ ssh.desktop;
     armor = true;
   };
   "opencloud-env.age" = {
@@ -104,6 +104,10 @@ in
   };
   "pricebuddy-env.age" = {
     publicKeys = ssh.vm-app;
+    armor = true;
+  };
+  "rclone-conf.age" = {
+    publicKeys = ssh.hypervisor ++ ssh.vm-network ++ ssh.vm-app ++ ssh.vm-monitor;
     armor = true;
   };
   "reitti-env.age" = {

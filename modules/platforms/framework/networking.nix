@@ -1,12 +1,10 @@
 {
   config,
-  consts,
   lib,
   pkgs,
   ...
 }:
 let
-  inherit (consts) username;
   cfg = config.custom.platforms.framework.networking;
 in
 {
@@ -17,8 +15,6 @@ in
   config = lib.mkIf cfg.enable {
     networking = {
       networkmanager = {
-        enable = true;
-
         dispatcherScripts = [
           {
             source = "${
@@ -55,7 +51,5 @@ in
         ];
       };
     };
-
-    users.users.${username}.extraGroups = [ "networkmanager" ];
   };
 }

@@ -1,0 +1,20 @@
+name: Renovate Dashboard
+on:
+  schedule:
+    - cron: '0 3 * * *' # Run automatically every day at 3:00 AM
+  workflow_dispatch: # Enable manual run button in the Forgejo Actions UI
+
+jobs:
+  renovate:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/renovatebot/renovate:latest
+    steps:
+      - name: Run Renovate
+        run: renovate
+        env:
+          RENOVATE_PLATFORM: 'gitea' # Forgejo uses the Gitea API driver
+          RENOVATE_ENDPOINT: 'https://git.ruijiang.me/api/v1/'
+          RENOVATE_TOKEN: '${{ secrets.RENOVATE_TOKEN }}'
+          RENOVATE_AUTODISCOVER: 'false'
+          RENOVATE_REPOSITORIES: '${{ github.repository }}'

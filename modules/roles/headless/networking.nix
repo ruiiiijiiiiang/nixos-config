@@ -97,14 +97,14 @@ in
       ${username} = {
         linger = true;
         openssh.authorizedKeys.keys =
-          lib.optionals termixEnabled [ ssh.termix ] ++ ssh.arch ++ ssh.framework ++ ssh.windows;
+          lib.optionals termixEnabled [ ssh.termix ] ++ ssh.desktop ++ ssh.framework ++ ssh.windows;
       };
 
       root.openssh.authorizedKeys.keys = [
         ssh.github-runner
         ssh.forgejo-runner
       ]
-      ++ ssh.arch
+      ++ ssh.desktop
       ++ ssh.framework
       ++ ssh.windows;
     };

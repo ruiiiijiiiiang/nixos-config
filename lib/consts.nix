@@ -101,8 +101,8 @@ rec {
         vm-network-v6 = "${addresses.home-prefix-v6}:${toString vlan-ids.home}::1";
         framework = "${addresses.home-prefix}.${toString vlan-ids.home}.10";
         framework-v6 = "${addresses.home-prefix-v6}:${toString vlan-ids.home}::10";
-        arch = "${addresses.home-prefix}.${toString vlan-ids.home}.11";
-        arch-v6 = "${addresses.home-prefix-v6}:${toString vlan-ids.home}::11";
+        desktop = "${addresses.home-prefix}.${toString vlan-ids.home}.11";
+        desktop-v6 = "${addresses.home-prefix-v6}:${toString vlan-ids.home}::11";
         windows = "${addresses.home-prefix}.${toString vlan-ids.home}.12";
         windows-v6 = "${addresses.home-prefix-v6}:${toString vlan-ids.home}::12";
         pi-wifi = "${addresses.home-prefix}.${toString vlan-ids.home}.253";
@@ -179,6 +179,7 @@ rec {
     dhcp = 67;
     http = 80;
     https = 443;
+    dot = 853;
     mdns = 5353;
 
     arr = {

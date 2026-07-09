@@ -7,7 +7,6 @@ in
   home = {
     inherit username;
     homeDirectory = home;
-    stateVersion = "25.05";
 
     sessionVariables = {
       EDITOR = "nvim";

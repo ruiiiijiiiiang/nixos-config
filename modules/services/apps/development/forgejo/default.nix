@@ -106,6 +106,7 @@ in
       forgejo-runner = {
         image = "docker.io/gitea/act_runner:latest";
         user = "${toString oci-uids.forgejo}:${toString oci-uids.forgejo}";
+        dependsOn = [ "forgejo-server" ];
         volumes = [
           "/run/podman/podman.sock:/var/run/docker.sock"
           "/var/lib/forgejo/runner:/data"
@@ -141,7 +142,19 @@ in
         "d /var/lib/forgejo/cache 0700 ${toString oci-uids.forgejo} ${toString oci-uids.forgejo} - -"
       ];
 
-      services.podman-forgejo-postgres = mkNotifyService { };
+      services = {
+        podman-forgejo-postgres = mkNotifyService { };
+        podman-forgejo-server = mkNotifyService { };
+        podman-forgejo-runner = lib.recursiveUpdate (mkNotifyService { }) {
+          serviceConfig = {
+            RestartSec = "15s";
+          };
+          unitConfig = {
+            StartLimitIntervalSec = 90;
+            StartLimitBurst = 5;
+          };
+        };
+      };
     };
 
     services = {
