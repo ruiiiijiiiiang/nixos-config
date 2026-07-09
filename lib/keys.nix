@@ -1,7 +1,8 @@
 {
   ssh = {
     desktop = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMsyTs7DiG/Emm8B/fPqDh5LIEc+1V7DkF/ICIxPy68O rui@desktop"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID3MW91tF7Y8NCF0qyGT7zXW7RXozvpKi5qaXn4+O5bB rui@desktop"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIISQNWynwZLxeD9KzWSmEgzvkejJkQDl2LUsUbIva4Dl root@desktop"
     ];
     framework = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIM9m3eaPWXrwynrF4hS5Llwfxm/FpNMjgoz41WnNfCUg rui@framework"

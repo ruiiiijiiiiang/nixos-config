@@ -22,6 +22,7 @@ let
   cfg = config.custom.services.infra.harmonia;
   fqdn = "${subdomains.${config.networking.hostName}.harmonia}.${domain}";
   hosts = [
+    "desktop"
     "framework"
     "hypervisor"
     "vm-network"

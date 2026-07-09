@@ -33,8 +33,8 @@ in
         dataDir = "${home}/Syncthing";
         settings = {
           devices = {
-            "arch" = {
-              id = "DIKD4FJ-4SE2EKP-3Y23ROB-YAKQJP7-KHN2GRN-CTHD2OF-ECAXI3P-JGSYFQM";
+            "desktop" = {
+              id = "EXNOSMW-CCMVP5W-IH2UTQ6-OX6JUOF-5QTG6TF-T3MHVIF-6CIDQUX-QZZ6JAD";
             };
             "framework" = {
               id = "WCWDE6A-TKMGJSW-BGAQIPO-U23NZOW-MI7IXKX-6T65RK4-CAGQJ56-YWL3CQJ";
@@ -55,17 +55,18 @@ in
               id = "default";
               path = "~/Sync";
               devices = [
-                "arch"
+                "desktop"
                 "framework"
                 "vm-app"
                 "Rui-Desktop"
+                "pixel-7"
               ];
             };
             "obsidian" = {
               id = "obsidian";
               path = "~/obsidian";
               devices = [
-                "arch"
+                "desktop"
                 "framework"
                 "vm-app"
                 "Rui-Desktop"
@@ -76,7 +77,7 @@ in
               id = "dotfiles";
               path = "~/dotfiles";
               devices = [
-                "arch"
+                "desktop"
                 "framework"
                 "vm-app"
               ];
@@ -85,7 +86,7 @@ in
               id = "nixos-config";
               path = "~/nixos-config";
               devices = [
-                "arch"
+                "desktop"
                 "framework"
                 "vm-app"
               ];
