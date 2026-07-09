@@ -104,15 +104,19 @@ in
       nix-inspect
       nix-tree
 
+      # AI
+      gemini-cli
+      github-copilot-cli
+      antigravity-cli
+      copilot-language-server
+      inputs.windsurf.packages.${stdenv.hostPlatform.system}.codeium-lsp
+
       # Development Tools
       bash-language-server
       cmake
       codex
       gcc
       gdb
-      gemini-cli
-      github-copilot-cli
-      antigravity-cli
       gnumake
       lldb
       lua-language-server

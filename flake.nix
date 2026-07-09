@@ -45,6 +45,7 @@
     sdctl.url = "github:ruiiiijiiiiang/sdctl";
     website.url = "github:ruiiiijiiiiang/website";
     wezterm.url = "github:wezterm/wezterm?dir=nix";
+    windsurf.url = "github:Exafunction/windsurf.nvim";
     zen-browser.url = "github:0xc000022070/zen-browser-flake";
   };
 
