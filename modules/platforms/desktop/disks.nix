@@ -2,6 +2,7 @@
   config,
   inputs,
   lib,
+  consts,
   ...
 }:
 let
@@ -14,23 +15,13 @@ in
 
   options.custom.platforms.desktop.disks = with lib; {
     enable = mkEnableOption "Enable Desktop disk layout";
-    device = mkOption {
-      type = types.str;
-      default = "/dev/nvme0n1";
-      description = "Disk device to partition.";
-    };
-    swapSize = mkOption {
-      type = types.str;
-      default = "32G";
-      description = "Swap partition size.";
-    };
   };
 
   config = lib.mkIf cfg.enable {
     disko.devices = {
       disk = {
         main = {
-          inherit (cfg) device;
+          device = "/dev/disk/by-id/${consts.hardware.storage.desktop.nvme-ssd-0}";
           type = "disk";
           content = {
             type = "gpt";
@@ -55,7 +46,7 @@ in
                 };
               };
               swap = {
-                size = cfg.swapSize;
+                size = "32G";
                 content = {
                   type = "swap";
                   randomEncryption = false;
@@ -66,6 +57,15 @@ in
           };
         };
       };
+    };
+
+    fileSystems."/mnt/storage" = {
+      device = "/dev/disk/by-id/${consts.hardware.storage.desktop.sata-ssd-0}-part1";
+      fsType = "ext4";
+      options = [
+        "defaults"
+        "nofail"
+      ];
     };
   };
 }

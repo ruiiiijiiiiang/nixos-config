@@ -38,7 +38,7 @@ in
       disk = {
         nvme0 = {
           type = "disk";
-          device = "/dev/disk/by-id/${hardware.storage.internal.nvme-ssd-0}";
+          device = "/dev/disk/by-id/${hardware.storage.minipc.nvme-ssd-0}";
           content = {
             type = "gpt";
             partitions = {
@@ -66,7 +66,7 @@ in
 
         nvme1 = {
           type = "disk";
-          device = "/dev/disk/by-id/${hardware.storage.internal.nvme-ssd-1}";
+          device = "/dev/disk/by-id/${hardware.storage.minipc.nvme-ssd-1}";
           content = {
             type = "gpt";
             partitions = {

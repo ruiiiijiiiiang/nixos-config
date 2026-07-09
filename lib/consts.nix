@@ -342,9 +342,13 @@ rec {
     };
 
     storage = {
-      internal = {
+      minipc = {
         nvme-ssd-0 = "nvme-WD_PC_SN810_SDCPNRY-512G-1006_23302N805496";
         nvme-ssd-1 = "nvme-Netac_NVMe_SSD_256GB_AA20251013256G327033";
+      };
+      desktop = {
+        nvme-ssd-0 = "nvme-TEAM_TM8FP6512G_TPBF2409020100200448";
+        sata-ssd-0 = "ata-ZTSSD-S10-240G-TB_1B0607691D0805876831";
       };
       external = {
         usb-hdd-0 = "ata-WDC_WD30PURX-64AKYY0_WD-WX22DB1D35NH";
