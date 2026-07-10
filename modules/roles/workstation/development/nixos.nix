@@ -39,5 +39,7 @@ in
         wantedBy = [ "timers.target" ];
       };
     };
+
+    system.autoUpgrade.enable = true;
   };
 }

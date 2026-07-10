@@ -1,13 +1,11 @@
 {
   config,
-  consts,
   inputs,
   lib,
   ...
 }:
 let
   cfg = config.custom.roles.workstation.catppuccin;
-  inherit (consts) home;
 in
 {
   imports = [
@@ -24,12 +22,6 @@ in
       autoEnable = true;
       flavor = "frappe";
       accent = "lavender";
-      sddm = {
-        font = "Maple Mono";
-        fontSize = "12";
-        loginBackground = true;
-        background = "${home}/Pictures/wallpaper.png";
-      };
     };
   };
 }

@@ -4,11 +4,11 @@
   ...
 }:
 let
-  cfg = config.custom.platforms.framework.services;
+  cfg = config.custom.platforms.laptop.services;
 in
 {
-  options.custom.platforms.framework.services = with lib; {
-    enable = mkEnableOption "Enable Framework services";
+  options.custom.platforms.laptop.services = with lib; {
+    enable = mkEnableOption "Enable laptop services";
   };
 
   config = lib.mkIf cfg.enable {
@@ -32,14 +32,7 @@ in
     };
 
     security.pam.services = {
-      login = {
-        fprintAuth = true;
-        kwallet.enable = true;
-      };
-      sddm = {
-        fprintAuth = true;
-        kwallet.enable = true;
-      };
+      login.fprintAuth = true;
       kdewallet.fprintAuth = true;
       polkit-1.fprintAuth = true;
       sudo.fprintAuth = true;

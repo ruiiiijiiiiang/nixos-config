@@ -1,11 +1,5 @@
-{
-  config,
-  consts,
-  lib,
-  ...
-}:
+{ config, lib, ... }:
 let
-  inherit (consts) username;
   cfg = config.custom.platforms.desktop.services;
 in
 {
@@ -14,12 +8,6 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    networking = {
-      networkmanager.enable = true;
-    };
-
-    users.users.${username}.extraGroups = [ "networkmanager" ];
-
     services = {
       fwupd.enable = true;
 

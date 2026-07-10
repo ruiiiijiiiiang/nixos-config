@@ -4,11 +4,11 @@
   ...
 }:
 let
-  cfg = config.custom.platforms.framework.disks;
+  cfg = config.custom.platforms.laptop.disks;
 in
 {
-  options.custom.platforms.framework.disks = with lib; {
-    enable = mkEnableOption "Enable Framework disk layout";
+  options.custom.platforms.laptop.disks = with lib; {
+    enable = mkEnableOption "Enable laptop disk layout";
   };
 
   config = lib.mkIf cfg.enable {

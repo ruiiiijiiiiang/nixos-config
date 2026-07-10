@@ -57,15 +57,15 @@ This infrastructure is engineered following a rigorous **Domain-Driven Design** 
 | Desc: Trusted Clients   |    | Desc: Servers & Infrastructure      |    | Desc: Untrusted Workloads   |
 +-------------------------+    +-------------------------------------+    +-----------------------------+
 | +---------------------+ |    | +---------------------------------+ |    | +-------------------------+ |
-| | [framework]         | |    | | [hypervisor] (libvirt host)     | |    | | [vm-public] (libvirt VM)| |
-| | (Laptop)            | |    | | AMD 6900HX, 32GB DDR5 RAM       | |    | | 4 vCPU, 2GB RAM         | |
-| +---------------------+ |    | | Hosts: All virtual machines     | |    | | Hosts: Public endpoints | |
-|                         |    | +---------------------------------+ |    | +-------------------------+ |
+| | [desktop]           | |    | | [hypervisor] (libvirt host)     | |    | | [vm-public] (libvirt VM)| |
+| | AMD 3600, 32GB RAM  | |    | | AMD 6900HX, 32GB RAM            | |    | | 4 vCPU, 2GB RAM         | |
+| | AMD Radeon RX 570   | |    | | Hosts: All virtual machines     | |    | | Hosts: Public endpoints | |
+| +---------------------+ |    | +---------------------------------+ |    | +-------------------------+ |
+| +---------------------+ |    | +---------------------------------+ |    | +-------------------------+ |
+| | [framework]         | |    | | [vm-app] (libvirt VM)           | |    | | [vm-cyber] (libvirt VM) | |
+| | AMD 7640U, 32GB RAM | |    | | 10 vCPU, 12GB RAM, GPU Passthru | |    | | 4 vCPU, 4GB RAM         | |
+| +---------------------+ |    | | Hosts: Jellyfin, Immich, etc    | |    | | Role: Security Research | |
 | (Other clients...)      |    | +---------------------------------+ |    | +-------------------------+ |
-|                         |    | | [vm-app] (libvirt VM)           | |    | | [vm-cyber] (libvirt VM) | |
-|                         |    | | 10 vCPU, 12GB RAM, GPU Passthru | |    | | 4 vCPU, 4GB RAM         | |
-|                         |    | | Hosts: Jellyfin, Immich, etc    | |    | | Role: Security Research | |
-|                         |    | +---------------------------------+ |    | +-------------------------+ |
 |                         |    | +---------------------------------+ |    |                             |
 |                         |    | | [vm-monitor] (libvirt VM)       | |    |                             |
 |                         |    | | 4 vCPU, 4GB RAM                 | |    |                             |
@@ -96,7 +96,7 @@ The network is physically connected via two interfaces, but logically segmented 
 
 - **WAN:** The shield against the public internet.
 - **LAN:** The physical trunk carrying multiple logical networks:
-  - **Home/Native (VLAN 2):** Trusted user devices (e.g., `framework`).
+  - **Home/Native (VLAN 2):** Trusted user devices (e.g., `desktop`, `framework`).
     - _Routing:_ Unrestricted access to WAN, Infra, DMZ, and VPN.
   - **Infra (VLAN 20):** Dedicated management lane for servers and critical infrastructure (e.g., `pi`, `vm-app`, `vm-monitor`).
     - _Routing:_ Access to WAN. Isolated from Home.
@@ -127,12 +127,19 @@ Furthermore, all web-facing services are placed behind an **Nginx reverse proxy*
 
 ## The Fleet
 
-This infrastructure comprises eight distinct hosts. Here's the breakdown:
+This infrastructure comprises 9 distinct hosts. Here's the breakdown:
+
+### [`desktop`](./hosts/desktop.nix)
+
+- **The Command Center.** The primary high-performance development workstation, acting as the main anchor for local coding and daily work.
+- **Hardware**: AMD 3600, 32GB RAM, AMD Radeon RX 570
+- **Network:** Home (Native)
 
 ### [`framework`](./hosts/framework.nix)
 
-- **The Command Center.** The primary development workstation, tailored for code, creativity, and control.
-- **Network:** Home (Native)
+- **The Mobile Outpost.** A portable laptop configured for on-the-go development, remote operations, and on-site troubleshooting.
+- **Hardware**: AMD 7640U, 32GB RAM
+- **Network:** Home (Native), WireGuard (VLAN 128)
 
 ### [`pi`](./hosts/pi.nix)
 

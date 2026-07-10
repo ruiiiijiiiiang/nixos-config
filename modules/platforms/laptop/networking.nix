@@ -5,11 +5,11 @@
   ...
 }:
 let
-  cfg = config.custom.platforms.framework.networking;
+  cfg = config.custom.platforms.laptop.networking;
 in
 {
-  options.custom.platforms.framework.networking = with lib; {
-    enable = mkEnableOption "Enable Framework networking settings";
+  options.custom.platforms.laptop.networking = with lib; {
+    enable = mkEnableOption "Enable laptop networking settings";
   };
 
   config = lib.mkIf cfg.enable {

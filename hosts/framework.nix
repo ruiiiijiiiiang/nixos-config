@@ -21,7 +21,7 @@ in
   };
 
   custom = {
-    platforms.framework = {
+    platforms.laptop = {
       disks.enable = true;
       kernel.enable = true;
       networking.enable = true;

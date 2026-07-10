@@ -87,6 +87,7 @@ in
           settings = {
             bind = "[::]:${toString ports.harmonia}";
             sign_key_paths = [ config.age.secrets.harmonia-sign-key.path ];
+            priority = 10;
           };
         };
       };

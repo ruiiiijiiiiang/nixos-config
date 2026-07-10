@@ -5,11 +5,11 @@
   ...
 }:
 let
-  cfg = config.custom.platforms.framework.kernel;
+  cfg = config.custom.platforms.laptop.kernel;
 in
 {
-  options.custom.platforms.framework.kernel = with lib; {
-    enable = mkEnableOption "Enable Framework kernel settings";
+  options.custom.platforms.laptop.kernel = with lib; {
+    enable = mkEnableOption "Enable laptop kernel settings";
   };
 
   imports = [

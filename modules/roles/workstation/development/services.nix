@@ -24,14 +24,23 @@ in
       desktopManager.plasma6.enable = true;
     };
 
-    system.autoUpgrade.enable = true;
-
     xdg.portal = {
       enable = true;
       config.common.default-portal = "kde";
       extraPortals = [
         pkgs.kdePackages.xdg-desktop-portal-kde
       ];
+    };
+
+    systemd.services = {
+      display-manager = {
+        restartIfChanged = false;
+        stopIfChanged = false;
+      };
+    };
+
+    security.pam.services = {
+      login.kwallet.enable = true;
     };
   };
 }

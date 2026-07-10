@@ -1,7 +1,7 @@
 {
   imports = [
     ./desktop
-    ./framework
+    ./laptop
     ./minipc
     ./pi
     ./vm
