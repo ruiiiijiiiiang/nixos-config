@@ -16,6 +16,6 @@ jobs:
           RENOVATE_PLATFORM: "forgejo"
           RENOVATE_ENDPOINT: "https://git.ruijiang.me/api/v1/"
           RENOVATE_TOKEN: "${{ secrets.RENOVATE_TOKEN }}"
-          RENOVATE_GITHUB_TOKEN: "${{ secrets.RENOVATE_GITHUB_TOKEN }}"
+          RENOVATE_GITHUB_COM_TOKEN: "${{ secrets.RENOVATE_GITHUB_TOKEN }}"
           RENOVATE_AUTODISCOVER: "false"
           RENOVATE_REPOSITORIES: "${{ github.repository }}"
