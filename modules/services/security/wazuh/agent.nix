@@ -16,6 +16,10 @@ let
       <log_format>apache</log_format>
       <location>/var/log/nginx/error.log</location>
     </localfile>
+    <localfile>
+      <log_format>apache</log_format>
+      <location>/var/log/nginx/access.log</location>
+    </localfile>
   '';
 
   suricataXml = ''

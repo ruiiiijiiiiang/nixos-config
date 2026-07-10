@@ -13,7 +13,7 @@ jobs:
       - name: Run Renovate
         run: renovate
         env:
-          RENOVATE_PLATFORM: 'gitea' # Forgejo uses the Gitea API driver
+          RENOVATE_PLATFORM: 'forgejo'
           RENOVATE_ENDPOINT: 'https://git.ruijiang.me/api/v1/'
           RENOVATE_TOKEN: '${{ secrets.RENOVATE_TOKEN }}'
           RENOVATE_AUTODISCOVER: 'false'
