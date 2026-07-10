@@ -1,7 +1,7 @@
 name: Renovate Dashboard
 on:
   schedule:
-    - cron: '0 3 * * *' # Run automatically every day at 3:00 AM
+    - cron: "0 3 * * *" # Run automatically every day at 3:00 AM
   workflow_dispatch: # Enable manual run button in the Forgejo Actions UI
 
 jobs:
@@ -10,17 +10,12 @@ jobs:
     container:
       image: ghcr.io/renovatebot/renovate:latest
     steps:
-      - name: Debug Secret Hash
-        run: |
-          echo -n "Secret Hash: "
-          echo -n "$TEST_TOKEN" | sha256sum
-        env:
-          TEST_TOKEN: '${{ secrets.RENOVATE_TOKEN }}'
       - name: Run Renovate
         run: renovate
         env:
-          RENOVATE_PLATFORM: 'forgejo'
-          RENOVATE_ENDPOINT: 'https://git.ruijiang.me/api/v1/'
-          RENOVATE_TOKEN: '${{ secrets.RENOVATE_TOKEN }}'
-          RENOVATE_AUTODISCOVER: 'false'
-          RENOVATE_REPOSITORIES: '${{ github.repository }}'
+          RENOVATE_PLATFORM: "forgejo"
+          RENOVATE_ENDPOINT: "https://git.ruijiang.me/api/v1/"
+          RENOVATE_TOKEN: "${{ secrets.RENOVATE_TOKEN }}"
+          RENOVATE_GITHUB_TOKEN: "${{ secrets.RENOVATE_GITHUB_TOKEN }}"
+          RENOVATE_AUTODISCOVER: "false"
+          RENOVATE_REPOSITORIES: "${{ github.repository }}"
