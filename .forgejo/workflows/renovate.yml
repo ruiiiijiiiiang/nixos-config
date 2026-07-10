@@ -10,6 +10,12 @@ jobs:
     container:
       image: ghcr.io/renovatebot/renovate:latest
     steps:
+      - name: Debug Secret Hash
+        run: |
+          echo -n "Secret Hash: "
+          echo -n "$TEST_TOKEN" | sha256sum
+        env:
+          TEST_TOKEN: '${{ secrets.RENOVATE_TOKEN }}'
       - name: Run Renovate
         run: renovate
         env:
