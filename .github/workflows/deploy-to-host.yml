@@ -21,7 +21,7 @@ jobs:
     runs-on: ${{ inputs.target_host == 'pi' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set Host IP Address
         id: config
@@ -55,7 +55,7 @@ jobs:
           esac
 
       - name: Install Nix
-        uses: cachix/install-nix-action@v27
+        uses: cachix/install-nix-action@v31
         with:
           nix_path: nixpkgs=channel:nixos-unstable
           extra_nix_config: |
