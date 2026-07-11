@@ -5,17 +5,6 @@ in
   system.stateVersion = "26.05";
   networking.hostName = hostName;
 
-  age.secrets = {
-    mcp-config = {
-      file = ../secrets/mcp-config.age;
-      owner = "rui";
-    };
-    opencode-config = {
-      file = ../secrets/opencode-config.age;
-      owner = "rui";
-    };
-  };
-
   custom = {
     platforms.desktop = {
       disks.enable = true;

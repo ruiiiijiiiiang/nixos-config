@@ -10,21 +10,12 @@ in
   age.secrets = {
     wireguard-framework-private-key.file = ../secrets/wireguard/framework-private-key.age;
     wireguard-framework-preshared-key.file = ../secrets/wireguard/framework-preshared-key.age;
-    mcp-config = {
-      file = ../secrets/mcp-config.age;
-      owner = "rui";
-    };
-    opencode-config = {
-      file = ../secrets/opencode-config.age;
-      owner = "rui";
-    };
   };
 
   custom = {
     platforms.laptop = {
       disks.enable = true;
       kernel.enable = true;
-      networking.enable = true;
       services.enable = true;
     };
 
@@ -52,7 +43,6 @@ in
         inherit hostName wgInterface;
         privateKeyFile = config.age.secrets.wireguard-framework-private-key.path;
         presharedKeyFile = config.age.secrets.wireguard-framework-preshared-key.path;
-        fullTunnel = true;
       };
 
       security.wazuh.agent.enable = true;

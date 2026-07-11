@@ -5,6 +5,7 @@
   ...
 }:
 let
+  inherit (config) home;
   inherit (consts) ports endpoints;
   cfg = config.custom.home.development;
 in
@@ -18,11 +19,15 @@ in
   ];
 
   config = lib.mkIf cfg.enable {
-    home.file = {
-      ".gemini/config/mcp_config.json".source =
-        config.lib.file.mkOutOfStoreSymlink "/run/agenix/mcp-config";
-      ".config/opencode/opencode.jsonc".source =
-        config.lib.file.mkOutOfStoreSymlink "/run/agenix/opencode-config";
+    age.secrets = {
+      mcp-config = {
+        file = ../../secrets/mcp-config.age;
+        path = "${home.homeDirectory}/.gemini/config/mcp_config.json";
+      };
+      opencode-config = {
+        file = ../../secrets/opencode-config.age;
+        path = "${home.homeDirectory}/.config/opencode/opencode.jsonc";
+      };
     };
 
     programs.ssh = {

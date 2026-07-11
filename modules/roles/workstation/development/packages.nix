@@ -52,6 +52,7 @@ in
       inputs.rs-top.packages.${stdenv.hostPlatform.system}.default
       kmon
       lazyjournal
+      matcha
       miller
       ncdu
       noxdir

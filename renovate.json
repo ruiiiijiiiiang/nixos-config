@@ -4,6 +4,9 @@
   "nix": {
     "enabled": true
   },
+  "lockFileMaintenance": {
+    "enabled": true
+  },
   "dependencyDashboard": true,
   "dependencyDashboardApproval": true
 }
