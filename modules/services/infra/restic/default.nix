@@ -77,6 +77,12 @@ in
       "data-proton" = sharedConfig // {
         repository = "rclone:proton-drive:restic-repo-${config.networking.hostName}";
         rcloneConfigFile = config.age.secrets.rclone-conf.path;
+        rcloneOptions = {
+          transfers = "1";
+          checkers = "1";
+          tpslimit = "1";
+          protondrive-thread-count = "1";
+        };
         timerConfig = {
           OnCalendar = dailyTaskToSystemd (
             adjustTime "+15m" daily-tasks.${config.networking.hostName}.restic-backup

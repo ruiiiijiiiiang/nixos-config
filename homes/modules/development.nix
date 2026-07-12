@@ -15,7 +15,7 @@ in
   };
 
   imports = [
-    ../files
+    ./files
   ];
 
   config = lib.mkIf cfg.enable {

@@ -25,7 +25,6 @@ in
       mtr
       nmap
       rsync
-      rustscan
 
       # Desktop Environment: Niri
       wl-clipboard
@@ -41,6 +40,7 @@ in
 
       # TUI Apps
       broot
+      cava
       doxx
       dust
       dysk
@@ -54,12 +54,10 @@ in
       lazyjournal
       matcha
       miller
-      ncdu
       noxdir
       ouch
       pastel
       posting
-      presenterm
       smassh
       spicetify-cli
       stow
@@ -71,7 +69,6 @@ in
       yq
 
       # Desktop Apps
-      cava
       easyeffects
       inputs.zen-browser.packages.${stdenv.hostPlatform.system}.default
       kdePackages.filelight
