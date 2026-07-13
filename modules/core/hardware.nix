@@ -17,4 +17,6 @@ in
   nixpkgs.hostPlatform = mkDefault "x86_64-linux";
 
   services.fstrim.enable = mkDefault true;
+
+  hardware.enableRedistributableFirmware = mkDefault true;
 }

@@ -37,6 +37,7 @@ in
 
       systemPackages = with pkgs; [
         bottom
+        comma
         gh
         glow
         jq

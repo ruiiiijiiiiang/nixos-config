@@ -1,9 +1,4 @@
-{
-  config,
-  helpers,
-  inputs,
-  ...
-}:
+{ config, helpers, ... }:
 let
   inherit (helpers) getHostAddress;
   hostName = "vm-network";
@@ -16,10 +11,6 @@ let
   backupPath = "/mnt/usb-hdd-1/${hostName}/backup";
 in
 {
-  imports = [
-    inputs.nixos-vm-provisioner.nixosModules.guest-base
-  ];
-
   system.stateVersion = "25.11";
   networking.hostName = hostName;
 
@@ -35,10 +26,6 @@ in
 
   custom = {
     platforms.vm = {
-      kernel = {
-        enable = true;
-        hardwarePassthrough = "nic";
-      };
       disks.enable = true;
       networking = {
         enable = true;

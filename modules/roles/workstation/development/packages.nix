@@ -103,11 +103,12 @@ in
       nix-tree
 
       # AI
-      gemini-cli
-      github-copilot-cli
       antigravity-cli
       copilot-language-server
+      gemini-cli
+      github-copilot-cli
       inputs.windsurf.packages.${stdenv.hostPlatform.system}.codeium-lsp
+      opencode
 
       # Development Tools
       bash-language-server
@@ -117,25 +118,16 @@ in
       gdb
       gnumake
       lldb
-      lua-language-server
       lua55Packages.luarocks
       markdownlint-cli2
       marksman
       nil
       nixfmt
       nodejs
-      opencode
-      pyright
-      python313
-      python313Packages.debugpy
-      ruby_3_4
-      ruff
       rustup
       shellcheck
       shfmt
       statix
-      stylua
-      taplo
       uv
       yaml-language-server
     ];

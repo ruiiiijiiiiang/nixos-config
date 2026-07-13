@@ -1,4 +1,10 @@
+{ inputs, ... }:
 {
+  imports = [
+    inputs.agenix.homeManagerModules.default
+    ../files
+  ];
+
   home.stateVersion = "25.05";
 
   custom.home = {

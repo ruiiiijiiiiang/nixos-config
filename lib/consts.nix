@@ -376,7 +376,7 @@ rec {
     vm-app = {
       uuid = "532ea825-4ca3-46a2-b15d-ba8af70ba733";
       cpu = 10;
-      memory = 12288;
+      memory = 10240;
       storage = {
         type = "lvm";
         size = "300G";
@@ -406,7 +406,7 @@ rec {
     vm-cyber = {
       uuid = "008d571b-aa7c-4050-96d8-7185f5ea2a95";
       cpu = 4;
-      memory = 4096;
+      memory = 6144;
       storage = {
         type = "lvm";
         size = "50G";

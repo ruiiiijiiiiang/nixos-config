@@ -13,13 +13,17 @@ in
         systemd-boot.enable = true;
         efi.canTouchEfiVariables = true;
       };
+
       kernelModules = [
         "kvm-amd"
-        "vhost_net"
-        "vhost_vsock"
-        "tun"
+      ];
+      kernelParams = [
+        "amd_pstate=active"
+        "amd_iommu=on"
+        "iommu=pt"
       ];
     };
+
     hardware.cpu.amd.updateMicrocode = true;
   };
 }

@@ -1,9 +1,4 @@
-{
-  config,
-  lib,
-  modulesPath,
-  ...
-}:
+{ config, lib, ... }:
 let
   cfg = config.custom.platforms.desktop.kernel;
 in
@@ -11,10 +6,6 @@ in
   options.custom.platforms.desktop.kernel = with lib; {
     enable = mkEnableOption "Enable Desktop kernel settings";
   };
-
-  imports = [
-    (modulesPath + "/installer/scan/not-detected.nix")
-  ];
 
   config = lib.mkIf cfg.enable {
     boot = {
@@ -30,18 +21,16 @@ in
         "usbhid"
         "sd_mod"
       ];
-      initrd.kernelModules = [
-        "amdgpu"
-      ];
-
       kernelParams = [
         "quiet"
         "splash"
+        "amd_pstate=active"
       ];
     };
 
     hardware = {
       cpu.amd.updateMicrocode = true;
+      amdgpu.initrd.enable = true;
       bluetooth.enable = true;
     };
   };

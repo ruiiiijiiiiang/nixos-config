@@ -1,17 +1,15 @@
-{ inputs, ... }:
+let
+  hostName = "vm-cyber";
+in
 {
-  imports = [
-    inputs.nixos-vm-provisioner.nixosModules.guest-base
-  ];
-
   system.stateVersion = "25.11";
-  networking.hostName = "vm-cyber";
+  networking.hostName = hostName;
 
   nixos-vm-provisioner.guest.enable = true;
 
   custom = {
     platforms.vm = {
-      kernel = {
+      hardware = {
         enable = true;
         workstation = true;
       };

@@ -20,12 +20,10 @@ in
         enable = true;
         displayManager.lightdm.enable = true;
         desktopManager.lxqt.enable = true;
-        videoDrivers = [ "modesetting" ];
       };
 
       pipewire.enable = false;
       pulseaudio.enable = true;
-      spice-vdagentd.enable = true;
 
       postgresql = {
         enable = true;
@@ -46,6 +44,16 @@ in
 
       vnstat.enable = true;
     };
+
+    xdg.portal = {
+      enable = true;
+      config.common.default = [ "gtk" ];
+      extraPortals = [
+        pkgs.xdg-desktop-portal-gtk
+      ];
+    };
+
+    environment.etc.hosts.mode = "0644";
 
     users.users.${username}.extraGroups = [
       "audio"

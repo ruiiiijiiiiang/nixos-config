@@ -19,9 +19,9 @@ in
 
   custom = {
     platforms.vm = {
-      kernel = {
+      hardware = {
         enable = true;
-        hardwarePassthrough = "gpu";
+        gpuPassthrough = true;
       };
       disks = {
         enable = true;

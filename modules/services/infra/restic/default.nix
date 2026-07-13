@@ -85,6 +85,7 @@ in
           protondrive-thread-count = "1";
           timeout = "10m";
           contimeout = "2m";
+          protondrive-replace-existing-draft = "true";
         };
         extraBackupArgs = sharedConfig.extraBackupArgs ++ [
           "--pack-size"

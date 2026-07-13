@@ -18,7 +18,6 @@ in
       atuin
       btop
       carapace
-      comma
       delta
       fastfetch
       fzf

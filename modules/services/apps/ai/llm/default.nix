@@ -17,7 +17,7 @@ let
   inherit (helpers) mkOciUser mkVirtualHost mkNotifyService;
   cfg = config.custom.services.apps.ai.llm;
   fqdn = "${subdomains.${config.networking.hostName}.openwebui}.${domain}";
-  hasGpuPassthrough = config.custom.platforms.vm.kernel.hardwarePassthrough == "gpu";
+  hasGpuPassthrough = config.custom.platforms.vm.hardware.gpuPassthrough;
 in
 {
   options.custom.services.apps.ai.llm = with lib; {

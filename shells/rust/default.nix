@@ -1,5 +1,8 @@
-{ pkgs }:
-with pkgs;
+{ pkgs, rust-overlay }:
+let
+  pkgsWithRust = pkgs.extend rust-overlay;
+in
+with pkgsWithRust;
 mkShell {
   buildInputs = [
     (rust-bin.stable.latest.default.override {

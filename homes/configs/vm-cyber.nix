@@ -10,6 +10,7 @@
     dotfiles = {
       enable = true;
       role = "workstation";
+      host = "vm-cyber";
     };
   };
 }

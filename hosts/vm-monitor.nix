@@ -1,14 +1,9 @@
-{ inputs, ... }:
 let
   hostName = "vm-monitor";
   lanInterface = "lan0";
   backupPath = "/mnt/usb-hdd-1/${hostName}/backup";
 in
 {
-  imports = [
-    inputs.nixos-vm-provisioner.nixosModules.guest-base
-  ];
-
   system.stateVersion = "25.11";
   networking.hostName = hostName;
 
@@ -16,7 +11,6 @@ in
 
   custom = {
     platforms.vm = {
-      kernel.enable = true;
       disks = {
         enable = true;
         swap = {

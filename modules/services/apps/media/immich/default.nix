@@ -17,7 +17,7 @@ let
   inherit (helpers) mkOciUser mkVirtualHost mkNotifyService;
   cfg = config.custom.services.apps.media.immich;
   fqdn = "${subdomains.${config.networking.hostName}.immich}.${domain}";
-  hasGpuPassthrough = config.custom.platforms.vm.kernel.hardwarePassthrough == "gpu";
+  hasGpuPassthrough = config.custom.platforms.vm.hardware.gpuPassthrough;
   immich-version = "v3.0.2";
 in
 {

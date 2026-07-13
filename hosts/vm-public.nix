@@ -1,14 +1,10 @@
-{ helpers, inputs, ... }:
+{ helpers, ... }:
 let
   inherit (helpers) getHostAddress;
   hostName = "vm-public";
   lanInterface = "lan0";
 in
 {
-  imports = [
-    inputs.nixos-vm-provisioner.nixosModules.guest-base
-  ];
-
   system.stateVersion = "25.11";
   networking.hostName = hostName;
 
@@ -16,7 +12,6 @@ in
 
   custom = {
     platforms.vm = {
-      kernel.enable = true;
       disks.enable = true;
       networking = {
         enable = true;

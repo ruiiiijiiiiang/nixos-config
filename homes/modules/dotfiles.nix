@@ -141,6 +141,10 @@ let
             src = ".config/niri/host-desktop.kdl";
             target = ".config/niri/host.kdl";
           }
+          {
+            src = ".config/niri/shell-noctalia.kdl";
+            target = ".config/niri/shell.kdl";
+          }
         ];
       }
       {
@@ -164,6 +168,10 @@ let
             src = ".config/niri/host-framework.kdl";
             target = ".config/niri/host.kdl";
           }
+          {
+            src = ".config/niri/shell-noctalia.kdl";
+            target = ".config/niri/shell.kdl";
+          }
         ];
       }
       {
@@ -174,6 +182,15 @@ let
             target = ".config/noctalia/settings.json";
           }
         ];
+      }
+    ]
+  );
+
+  vmCyberLinks = lib.foldl' lib.recursiveUpdate { } (
+    map mkDotfileLink [
+      {
+        name = "openbox";
+        paths = [ ".config/openbox/rc.xml" ];
       }
     ]
   );
@@ -197,6 +214,7 @@ in
         types.enum [
           "desktop"
           "framework"
+          "vm-cyber"
         ]
       );
       default = null;
@@ -209,6 +227,7 @@ in
       headlessLinks
       // lib.optionalAttrs (cfg.role == "workstation") workstationLinks
       // lib.optionalAttrs (cfg.host == "desktop") desktopLinks
-      // lib.optionalAttrs (cfg.host == "framework") frameworkLinks;
+      // lib.optionalAttrs (cfg.host == "framework") frameworkLinks
+      // lib.optionalAttrs (cfg.host == "vm-cyber") vmCyberLinks;
   };
 }

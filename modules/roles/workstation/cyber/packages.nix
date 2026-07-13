@@ -58,6 +58,7 @@ in
       # Reverse Engineering
       binaryninja-free
       ghidra-bin
+      imhex
       radare2
 
       # Misc

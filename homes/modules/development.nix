@@ -5,8 +5,9 @@
   ...
 }:
 let
-  inherit (config.home) homeDirectory;
+  inherit (config) home;
   inherit (consts) ports endpoints;
+  flakePath = "${home.homeDirectory}/nixos-config";
   cfg = config.custom.home.development;
 in
 {
@@ -14,33 +15,40 @@ in
     enable = mkEnableOption "Enable development configs";
   };
 
-  imports = [
-    ./files
-  ];
-
   config = lib.mkIf cfg.enable {
     age.secrets = {
       mcp-config = {
         file = ../../secrets/mcp-config.age;
-        path = "${homeDirectory}/.gemini/config/mcp_config.json";
+        path = "${home.homeDirectory}/.gemini/config/mcp_config.json";
       };
       opencode-config = {
         file = ../../secrets/opencode-config.age;
-        path = "${homeDirectory}/.config/opencode/opencode.jsonc";
+        path = "${home.homeDirectory}/.config/opencode/opencode.jsonc";
       };
     };
 
-    programs.ssh = {
-      enable = true;
-      enableDefaultConfig = false;
-      settings = {
-        "forgejo" = {
-          hostname = endpoints.private-repo;
-          user = "git";
-          port = ports.forgejo.ssh;
+    programs = {
+      nh = {
+        enable = true;
+        flake = flakePath;
+        clean = {
+          enable = true;
+          dates = "weekly";
         };
-        "*" = {
-          identityFile = "~/.ssh/id_ed25519";
+      };
+
+      ssh = {
+        enable = true;
+        enableDefaultConfig = false;
+        settings = {
+          "forgejo" = {
+            hostname = endpoints.private-repo;
+            user = "git";
+            port = ports.forgejo.ssh;
+          };
+          "*" = {
+            identityFile = "~/.ssh/id_ed25519";
+          };
         };
       };
     };

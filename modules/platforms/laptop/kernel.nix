@@ -1,9 +1,4 @@
-{
-  config,
-  lib,
-  modulesPath,
-  ...
-}:
+{ config, lib, ... }:
 let
   cfg = config.custom.platforms.laptop.kernel;
 in
@@ -11,10 +6,6 @@ in
   options.custom.platforms.laptop.kernel = with lib; {
     enable = mkEnableOption "Enable laptop kernel settings";
   };
-
-  imports = [
-    (modulesPath + "/installer/scan/not-detected.nix")
-  ];
 
   config = lib.mkIf cfg.enable {
     assertions = [
@@ -34,18 +25,16 @@ in
     ];
 
     boot = {
-      loader.systemd-boot.enable = true;
-      loader.efi.canTouchEfiVariables = true;
+      loader = {
+        systemd-boot.enable = true;
+        efi.canTouchEfiVariables = true;
+      };
 
       initrd.availableKernelModules = [
         "nvme"
         "xhci_pci"
         "sd_mod"
       ];
-      initrd.kernelModules = [
-        "amdgpu"
-      ];
-
       blacklistedKernelModules = [
         "ucsi_acpi"
       ];
@@ -55,11 +44,13 @@ in
         "splash"
         "resume=/dev/disk/by-label/NIXSWAP"
         "amdgpu.abmlevel=1"
+        "amd_pstate=active"
       ];
     };
 
     hardware = {
       cpu.amd.updateMicrocode = true;
+      amdgpu.initrd.enable = true;
       bluetooth.enable = true;
     };
   };

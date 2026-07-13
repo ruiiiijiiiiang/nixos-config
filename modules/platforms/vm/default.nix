@@ -1,7 +1,7 @@
 {
   imports = [
     ./disks.nix
-    ./kernel.nix
+    ./hardware.nix
     ./networking.nix
   ];
 }

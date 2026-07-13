@@ -63,7 +63,7 @@ This infrastructure is engineered following a rigorous **Domain-Driven Design** 
 | +---------------------+ |    | +---------------------------------+ |    | +-------------------------+ |
 | +---------------------+ |    | +---------------------------------+ |    | +-------------------------+ |
 | | [framework]         | |    | | [vm-app] (libvirt VM)           | |    | | [vm-cyber] (libvirt VM) | |
-| | AMD 7640U, 32GB RAM | |    | | 10 vCPU, 12GB RAM, GPU Passthru | |    | | 4 vCPU, 4GB RAM         | |
+| | AMD 7640U, 32GB RAM | |    | | 10 vCPU, 10GB RAM, GPU Passthru | |    | | 4 vCPU, 6GB RAM         | |
 | +---------------------+ |    | | Hosts: Jellyfin, Immich, etc    | |    | | Role: Security Research | |
 | (Other clients...)      |    | +---------------------------------+ |    | +-------------------------+ |
 |                         |    | +---------------------------------+ |    |                             |
@@ -162,7 +162,7 @@ This infrastructure comprises 9 distinct hosts. Here's the breakdown:
 ### [`vm-app`](./hosts/vm-app.nix)
 
 - **The Powerhouse.** The main application server. GPU passthrough enables hardware-accelerated transcoding for Jellyfin. It runs my complete suite of user-facing services: Immich for photos, Paperless-ngx for documents, Forgejo for code, and more.
-- **Hardware**: 10 vCPU cores, 12GB RAM, GPU passthrough
+- **Hardware**: 10 vCPU cores, 10GB RAM, GPU passthrough
 - **Network:** Infra (VLAN 20)
 
 ### [`vm-monitor`](./hosts/vm-monitor.nix)
@@ -180,7 +180,7 @@ This infrastructure comprises 9 distinct hosts. Here's the breakdown:
 ### [`vm-cyber`](./hosts/vm-cyber.nix)
 
 - **The Armory.** A specialized, security-focused desktop environment loaded with tools for penetration testing, forensics, and reverse engineering.
-- **Hardware**: 4 vCPU cores, 4GB RAM
+- **Hardware**: 4 vCPU cores, 6GB RAM
 - **Network:** DMZ (VLAN 88)
 - **Security:** **None.** This host is intentionally left vulnerable with no defenses to ensure maximum attack efficiency and unrestricted tool usage.
 

@@ -17,7 +17,6 @@ let
   backupPath = "/mnt/external/usb-hdd-1/${hostName}/backup";
 in
 {
-
   system.stateVersion = "25.11";
   networking.hostName = hostName;
 
@@ -130,13 +129,13 @@ in
                     {
                       model = "ich9";
                       audio = {
-                        id = "1";
+                        id = 1;
                       };
                     }
                   ];
                   audio = [
                     {
-                      id = "1";
+                      id = 1;
                       type = "spice";
                     }
                   ];
