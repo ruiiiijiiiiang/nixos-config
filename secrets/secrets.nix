@@ -66,6 +66,10 @@ in
     publicKeys = ssh.framework ++ ssh.desktop;
     armor = true;
   };
+  "nix-conf.age" = {
+    publicKeys = ssh.framework ++ ssh.desktop;
+    armor = true;
+  };
   "mealie-env.age" = {
     publicKeys = ssh.vm-app;
     armor = true;

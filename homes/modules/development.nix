@@ -25,6 +25,10 @@ in
         file = ../../secrets/opencode-config.age;
         path = "${home.homeDirectory}/.config/opencode/opencode.jsonc";
       };
+      nix-conf = {
+        file = ../../secrets/nix-conf.age;
+        path = "${home.homeDirectory}/.config/nix/nix.conf";
+      };
     };
 
     programs = {

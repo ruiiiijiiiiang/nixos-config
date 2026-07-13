@@ -1,14 +1,22 @@
+# Ignore SIGHUP and SIGPIPE to ensure the script continues running if SSH disconnects or standard streams are broken
+trap '' SIGHUP SIGPIPE
+
 readonly POLL_INTERVAL_SECONDS=5
 readonly GUEST_TIMEOUT_SECONDS=90
 
 shutdown_mode="--poweroff"
 pre_delay_spec=""
 positional_time_set=false
+daemonized=false
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
     -r|--reboot)
       shutdown_mode="--reboot"
+      shift
+      ;;
+    --daemonized)
+      daemonized=true
       shift
       ;;
     --help)
@@ -40,6 +48,17 @@ done
 if [[ -n "$pre_delay_spec" ]]; then
   if [[ "$pre_delay_spec" =~ ^\+[0-9]+$ ]]; then
     delay_minutes=${pre_delay_spec#+}
+
+    if [[ "$daemonized" == false ]]; then
+      log_file="/var/log/shutdown-hypervisor.log"
+      echo "Shutdown scheduled in ${delay_minutes} minute(s). Detaching and running in background..."
+      echo "Logs will be written to ${log_file}"
+
+      # Re-execute in background with redirected input/output to prevent SSH from hanging on logout
+      nohup "$0" "$@" --daemonized < /dev/null > "$log_file" 2>&1 &
+      exit 0
+    fi
+
     echo "Waiting ${delay_minutes} minute(s) before starting guest shutdown"
     sleep $((delay_minutes * 60))
   else
