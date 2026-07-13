@@ -32,7 +32,7 @@ in
     };
 
     security.pam.services = {
-      login.fprintAuth = false;
+      login.fprintAuth = true;
       polkit-1.fprintAuth = true;
       sudo.fprintAuth = true;
     };

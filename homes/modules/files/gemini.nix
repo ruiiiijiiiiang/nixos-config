@@ -1,4 +1,3 @@
-{ ... }:
 {
   home.file.".gemini/config/AGENTS.md".text = /* markdown */ ''
     # AI Agent Global Rules

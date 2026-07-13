@@ -126,6 +126,20 @@ in
                       };
                     }
                   ];
+                  sound = [
+                    {
+                      model = "ich9";
+                      audio = {
+                        id = "1";
+                      };
+                    }
+                  ];
+                  audio = [
+                    {
+                      id = "1";
+                      type = "spice";
+                    }
+                  ];
                   channel = [
                     {
                       type = "spicevmc";

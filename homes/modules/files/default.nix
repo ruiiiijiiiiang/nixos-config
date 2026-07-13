@@ -1,7 +1,10 @@
 {
   imports = [
     ./gemini.nix
-    ./vivaldi.desktop.nix
-    ./xwaylandvideobridge.desktop.nix
+    ./kwallet.nix
+    ./protonmail.nix
+    ./vivaldi.nix
+    ./xwaylandvideobridge.nix
+    ./opencloud.nix
   ];
 }

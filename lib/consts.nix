@@ -170,8 +170,6 @@ rec {
       gateway = "10.88.0.1";
       network-v6 = "fd00:0:0:8888::/64";
       gateway-v6 = "fd00:0:0:8888::1";
-      dynamic-network = "10.0.0.0/8";
-      dynamic-network-v6 = "fd00::/8";
     };
   };
 

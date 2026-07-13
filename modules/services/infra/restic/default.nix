@@ -6,6 +6,7 @@
   ...
 }:
 let
+  inherit (config.networking) hostName;
   inherit (consts) username daily-tasks;
   inherit (helpers) dailyTaskToSystemd adjustTime;
   cfg = config.custom.services.infra.restic;
@@ -65,7 +66,7 @@ in
       "data-local" = sharedConfig // {
         repository = "${cfg.repo}/restic-repo";
         timerConfig = {
-          OnCalendar = dailyTaskToSystemd daily-tasks.${config.networking.hostName}.restic-backup;
+          OnCalendar = dailyTaskToSystemd daily-tasks.${hostName}.restic-backup;
         };
         pruneOpts = [
           "--keep-daily 4"
@@ -75,21 +76,26 @@ in
       };
 
       "data-proton" = sharedConfig // {
-        repository = "rclone:proton-drive:restic-repo-${config.networking.hostName}";
+        repository = "rclone:proton-drive:backup/restic-repo-${hostName}";
         rcloneConfigFile = config.age.secrets.rclone-conf.path;
         rcloneOptions = {
           transfers = "1";
           checkers = "1";
           tpslimit = "1";
           protondrive-thread-count = "1";
+          timeout = "10m";
+          contimeout = "2m";
         };
+        extraBackupArgs = sharedConfig.extraBackupArgs ++ [
+          "--pack-size"
+          "8"
+        ];
         timerConfig = {
-          OnCalendar = dailyTaskToSystemd (
-            adjustTime "+15m" daily-tasks.${config.networking.hostName}.restic-backup
-          );
+          OnCalendar = dailyTaskToSystemd (adjustTime "+15m" daily-tasks.${hostName}.restic-backup);
         };
         pruneOpts = [
           "--keep-last 3"
+          "--pack-size 8"
         ];
       };
     };

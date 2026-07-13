@@ -5,7 +5,7 @@
   ...
 }:
 let
-  inherit (config) home;
+  inherit (config.home) homeDirectory;
   inherit (consts) ports endpoints;
   cfg = config.custom.home.development;
 in
@@ -22,11 +22,11 @@ in
     age.secrets = {
       mcp-config = {
         file = ../../secrets/mcp-config.age;
-        path = "${home.homeDirectory}/.gemini/config/mcp_config.json";
+        path = "${homeDirectory}/.gemini/config/mcp_config.json";
       };
       opencode-config = {
         file = ../../secrets/opencode-config.age;
-        path = "${home.homeDirectory}/.config/opencode/opencode.jsonc";
+        path = "${homeDirectory}/.config/opencode/opencode.jsonc";
       };
     };
 

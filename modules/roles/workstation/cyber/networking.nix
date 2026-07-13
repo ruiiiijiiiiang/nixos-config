@@ -46,5 +46,7 @@ in
     ]
     ++ ssh.desktop
     ++ ssh.framework;
+
+    environment.etc.hosts.mode = "0644";
   };
 }
