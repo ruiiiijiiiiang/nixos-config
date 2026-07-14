@@ -17,6 +17,7 @@ let
   inherit (inputs.self) nixosConfigurations;
   cfg = config.custom.services.observability.gatus;
   fqdn = "${subdomains.${config.networking.hostName}.gatus}.${domain}";
+  ntfyEnabled = nixosConfigurations.vm-monitor.config.custom.services.observability.ntfy.enable;
 
   interval = "10m";
   conditions = [ "[STATUS] == 200" ];
@@ -57,14 +58,12 @@ in
         settings = {
           endpoints = gatusEndpoints;
           web.port = ports.gatus;
-          alerting.ntfy =
-            lib.mkIf nixosConfigurations.vm-monitor.config.custom.services.observability.ntfy.enable
-              {
-                url = "https://${endpoints.ntfy-server}";
-                topic = endpoints.ntfy-topics.gatus-alerts;
-                priority = 4;
-                click = "https://${fqdn}";
-              };
+          alerting.ntfy = lib.mkIf ntfyEnabled {
+            url = "https://${endpoints.ntfy-server}";
+            topic = endpoints.ntfy-topics.gatus-alerts;
+            priority = 4;
+            click = "https://${fqdn}";
+          };
         };
       };
 

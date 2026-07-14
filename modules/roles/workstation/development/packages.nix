@@ -80,7 +80,6 @@ in
       kdePackages.yakuake
       kitty
       mission-center
-      neohtop
       obsidian
       onlyoffice-desktopeditors
       opencloud-desktop

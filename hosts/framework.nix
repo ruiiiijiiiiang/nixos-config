@@ -36,13 +36,23 @@ in
     services = {
       apps.tools.syncthing.enable = true;
 
-      infra.podman.enable = true;
+      infra = {
+        podman.enable = true;
+        smartd = {
+          enable = true;
+          workstation = true;
+        };
+      };
 
       networking.wireguard.client = {
         enable = true;
         inherit hostName wgInterface;
         privateKeyFile = config.age.secrets.wireguard-framework-private-key.path;
         presharedKeyFile = config.age.secrets.wireguard-framework-preshared-key.path;
+      };
+
+      observability.prometheus.exporters = {
+        smartctl.enable = true;
       };
 
       security.wazuh.agent.enable = true;

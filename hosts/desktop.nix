@@ -25,10 +25,20 @@ in
         };
       };
     };
-
     services = {
       apps.tools.syncthing.enable = true;
-      infra.podman.enable = true;
+      infra = {
+        podman.enable = true;
+        smartd = {
+          enable = true;
+          workstation = true;
+        };
+      };
+
+      observability.prometheus.exporters = {
+        smartctl.enable = true;
+      };
+
       security.wazuh.agent.enable = true;
     };
   };
