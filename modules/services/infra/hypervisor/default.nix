@@ -182,6 +182,16 @@ in
       virtiofsd
     ];
 
+    boot = {
+      kernelModules = [
+        "kvm-amd"
+      ];
+      kernelParams = [
+        "amd_iommu=on"
+        "iommu=pt"
+      ];
+    };
+
     virtualisation = {
       libvirtd = {
         qemu = {

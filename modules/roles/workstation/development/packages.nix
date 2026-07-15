@@ -120,13 +120,10 @@ in
       lua55Packages.luarocks
       markdownlint-cli2
       marksman
-      nil
-      nixfmt
       nodejs
       rustup
       shellcheck
       shfmt
-      statix
       uv
       yaml-language-server
     ];

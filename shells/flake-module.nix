@@ -1,11 +1,14 @@
 { inputs, ... }:
 {
   perSystem = { pkgs, ... }: {
-    devShells.rust = import ../shells/rust {
-      inherit pkgs;
-      rust-overlay = inputs.rust-overlay.overlays.default;
+    devShells = {
+      nix = import ../shells/nix { inherit pkgs; };
+      node = import ../shells/node { inherit pkgs; };
+      python = import ../shells/python { inherit pkgs; };
+      rust = import ../shells/rust {
+        inherit pkgs;
+        rust-overlay = inputs.rust-overlay.overlays.default;
+      };
     };
-    devShells.node = import ../shells/node { inherit pkgs; };
-    devShells.python = import ../shells/python { inherit pkgs; };
   };
 }

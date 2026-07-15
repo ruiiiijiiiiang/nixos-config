@@ -14,16 +14,22 @@ in
         efi.canTouchEfiVariables = true;
       };
 
-      kernelModules = [
-        "kvm-amd"
+      initrd.availableKernelModules = [
+        "nvme"
+        "xhci_pci"
+        "usbhid"
+        "sd_mod"
       ];
       kernelParams = [
+        "quiet"
+        "splash"
         "amd_pstate=active"
-        "amd_iommu=on"
-        "iommu=pt"
       ];
     };
 
-    hardware.cpu.amd.updateMicrocode = true;
+    hardware = {
+      cpu.amd.updateMicrocode = true;
+      amdgpu.initrd.enable = true;
+    };
   };
 }

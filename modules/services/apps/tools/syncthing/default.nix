@@ -80,6 +80,7 @@ in
                 "desktop"
                 "framework"
                 "vm-app"
+                "windows"
               ];
             };
             "nixos-config" = {
@@ -89,6 +90,7 @@ in
                 "desktop"
                 "framework"
                 "vm-app"
+                "windows"
               ];
             };
           };
