@@ -72,7 +72,7 @@ rec {
       microbin = "bin";
       searxng = "searxng";
       krawl = "krawl";
-      public = "public";
+      website = "public";
       zeroclaw = "zeroclaw";
     };
   };
@@ -365,7 +365,7 @@ rec {
   virtualization = {
     vm-network = {
       uuid = "2b7de5db-e0e6-4f81-b5f4-4efc928ee475";
-      cpu = 4;
+      cpu = 6;
       memory = 2048;
       storage = {
         type = "lvm";
@@ -375,7 +375,7 @@ rec {
     };
     vm-app = {
       uuid = "532ea825-4ca3-46a2-b15d-ba8af70ba733";
-      cpu = 10;
+      cpu = 12;
       memory = 10240;
       storage = {
         type = "lvm";
@@ -385,7 +385,7 @@ rec {
     };
     vm-monitor = {
       uuid = "26a3e5f9-5c4a-4956-8ee4-b680f507d3cc";
-      cpu = 4;
+      cpu = 6;
       memory = 6144;
       storage = {
         type = "lvm";
@@ -405,7 +405,7 @@ rec {
     };
     vm-cyber = {
       uuid = "008d571b-aa7c-4050-96d8-7185f5ea2a95";
-      cpu = 4;
+      cpu = 6;
       memory = 6144;
       storage = {
         type = "lvm";

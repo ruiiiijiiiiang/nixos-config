@@ -41,7 +41,7 @@ This infrastructure is engineered following a rigorous **Domain-Driven Design** 
                          |                         v                           v
 +-------------------------------------------------------------------------------------------------------+
 | [vm-network] (libvirt VM)                                                                             |
-| 4 vCPU, 2GB RAM, NIC Passthru                                                                         |
+| 6 vCPU, 2GB RAM, NIC Passthru                                                                         |
 | Role: Router, Firewall (nftables), DHCP (Kea), DNS master (Pi-hole/Unbound), VPN Gateway (WireGuard)  |
 +-------------------------------------------------------------------------------------------------------+
                                                    ^
@@ -63,12 +63,12 @@ This infrastructure is engineered following a rigorous **Domain-Driven Design** 
 | +---------------------+ |    | +---------------------------------+ |    | +-------------------------+ |
 | +---------------------+ |    | +---------------------------------+ |    | +-------------------------+ |
 | | [framework]         | |    | | [vm-app] (libvirt VM)           | |    | | [vm-cyber] (libvirt VM) | |
-| | AMD 7640U, 32GB RAM | |    | | 10 vCPU, 10GB RAM, GPU Passthru | |    | | 4 vCPU, 6GB RAM         | |
+| | AMD 7640U, 32GB RAM | |    | | 12 vCPU, 10GB RAM, GPU Passthru | |    | | 6 vCPU, 6GB RAM         | |
 | +---------------------+ |    | | Hosts: Jellyfin, Immich, etc    | |    | | Role: Security Research | |
 | (Other clients...)      |    | +---------------------------------+ |    | +-------------------------+ |
 |                         |    | +---------------------------------+ |    |                             |
 |                         |    | | [vm-monitor] (libvirt VM)       | |    |                             |
-|                         |    | | 4 vCPU, 4GB RAM                 | |    |                             |
+|                         |    | | 6 vCPU, 4GB RAM                 | |    |                             |
 |                         |    | | Hosts: Prometheus, Wazuh, etc   | |    |                             |
 |                         |    | +---------------------------------+ |    |                             |
 |                         |    | +---------------------------------+ |    |                             |
@@ -85,6 +85,7 @@ This infrastructure is engineered following a rigorous **Domain-Driven Design** 
 ### Visual Topology
 
 ![Network Topology](./topology/topology.png)
+(Auto-generated from NixOS configuration)
 
 ### The Cybernetic Nexus
 
@@ -156,19 +157,19 @@ This infrastructure comprises 9 distinct hosts. Here's the breakdown:
 ### [`vm-network`](./hosts/vm-network.nix)
 
 - **The Sentinel.** The primary router, firewall, and DNS authority. It manages the Cloudflare Tunnels, WireGuard VPNs, and Suricata IDS/IPS. A physical NIC is passed through from the hypervisor to serve as the WAN interface, providing direct hardware access for maximum throughput and security.
-- **Hardware**: 4 vCPU cores, 2GB RAM, NIC passthrough (WAN)
+- **Hardware**: 6 vCPU cores, 2GB RAM, NIC passthrough (WAN)
 - **Network:** Gateway (WAN, Home, Infra, DMZ)
 
 ### [`vm-app`](./hosts/vm-app.nix)
 
 - **The Powerhouse.** The main application server. GPU passthrough enables hardware-accelerated transcoding for Jellyfin. It runs my complete suite of user-facing services: Immich for photos, Paperless-ngx for documents, Forgejo for code, and more.
-- **Hardware**: 10 vCPU cores, 10GB RAM, GPU passthrough
+- **Hardware**: 12 vCPU cores, 10GB RAM, GPU passthrough
 - **Network:** Infra (VLAN 20)
 
 ### [`vm-monitor`](./hosts/vm-monitor.nix)
 
 - **The Watchtower.** Dedicated to keeping the lights on. It hosts the **Beszel Hub**, **Prometheus**, **Loki**, **Wazuh Server**, and **Gatus** to visualize the health and security of the entire infrastructure.
-- **Hardware**: 4 vCPU cores, 4GB RAM
+- **Hardware**: 6 vCPU cores, 4GB RAM
 - **Network:** Infra (VLAN 20)
 
 ### [`vm-public`](./hosts/vm-public.nix)

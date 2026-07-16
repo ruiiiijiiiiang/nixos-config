@@ -46,6 +46,7 @@
         microbin = "microbin";
         karakeep = "karakeep";
         librechat = "librechat";
+        openwebui = "open-webui";
         reitti = "https://cdn.jsdelivr.net/gh/selfhst/icons@main/png/reitti.png";
         ovumcy = "https://raw.githubusercontent.com/ovumcy/ovumcy-web/refs/heads/main/web/static/brand/ovumcy-icon-dark.svg";
         pricebuddy = "price-buddy";
@@ -70,13 +71,22 @@
         stirlingpdf = "stirling-pdf";
         portainer = "portainer";
         myspeed = "myspeed";
-        scanopy = "scanner";
+        scanopy = "https://raw.githubusercontent.com/scanopy/scanopy/main/media/logo.png";
         yourls = "yourls";
         onlyoffice = "onlyoffice";
         nextcloud = "nextcloud";
-        public = "https://avatars.githubusercontent.com/u/79236386";
+        website = "https://raw.githubusercontent.com/ruiiiijiiiiang/website/refs/heads/main/assets/favicon.ico";
         searxng = "searxng";
-        zeroclaw = "https://zeroclaws.io/images/zeroclaw-hero.webp";
+        zeroclaw = "https://raw.githubusercontent.com/zeroclaw-labs/zeroclaw/master/web/public/logo.png";
+        niri = "https://raw.githubusercontent.com/wiki/niri-wm/niri/logo/niri-logo.svg";
+        noctalia = "https://raw.githubusercontent.com/noctalia-dev/noctalia/main/assets/noctalia.svg";
+        wezterm = "https://raw.githubusercontent.com/wez/wezterm/main/assets/icon/terminal.png";
+        fish = "https://user-images.githubusercontent.com/920838/47693595-844df600-dbb7-11e8-9cfd-bdb8dbcfa233.gif";
+        lxqt = "https://raw.githubusercontent.com/lxqt/wiki/master/docs/lxqt.wiki/_assets/lxqt.svg";
+        nmap = "https://nmap.org/images/sitelogo.png";
+        burpsuite = "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/burpsuite.svg";
+        metasploit = "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/metasploit.svg";
+        wireshark = "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/wireshark.svg";
       };
 
       getIconUrl =
@@ -110,7 +120,32 @@
         in
         {
           inherit guestVms;
-          services = builtins.attrNames enabledServices;
+          services =
+            builtins.attrNames enabledServices
+            ++ (
+              if
+                lib.elem hostName [
+                  "framework"
+                  "desktop"
+                ]
+              then
+                [
+                  "niri"
+                  "noctalia"
+                  "wezterm"
+                  "fish"
+                ]
+              else if hostName == "vm-cyber" then
+                [
+                  "lxqt"
+                  "nmap"
+                  "burpsuite"
+                  "metasploit"
+                  "wireshark"
+                ]
+              else
+                [ ]
+            );
           networks =
             map
               (net: {
@@ -133,12 +168,24 @@
       # Helper: render flat services list
       renderServices =
         indent: services:
-        lib.concatMapStringsSep "\n" (svc: ''
-          ${indent}${svc}: "${svc}" {
-            class: service
-            icon: "${getIconUrl svc}"
-          }
-        '') services;
+        lib.concatMapStringsSep "\n" (
+          svc:
+          let
+            label =
+              if svc == "fish" then
+                "fish shell"
+              else if svc == "burpsuite" then
+                "burp suite"
+              else
+                svc;
+          in
+          ''
+            ${indent}${svc}: "${label}" {
+              class: service
+              icon: "${getIconUrl svc}"
+            }
+          ''
+        ) services;
 
       # 1. Define Network clouds
       networksD2 = ''
@@ -175,10 +222,12 @@
           label =
             if hostName == "framework" then
               "Framework Laptop\\n(Workstation)"
+            else if hostName == "desktop" then
+              "Desktop\\n(Workstation)"
             else if hostName == "pi" then
-              "Raspberry Pi 4\\n(IoT & Core DNS)"
+              "Raspberry Pi 4\\n(IoT)"
             else if hostName == "hypervisor" then
-              "Mini PC Hypervisor"
+              "Mini PC\\n(Hypervisor)"
             else
               hostName;
         in
@@ -328,7 +377,10 @@
     {
       packages.generate-topology = pkgs.writeShellApplication {
         name = "generate-topology";
-        runtimeInputs = [ pkgs.d2 ];
+        runtimeInputs = [
+          pkgs.d2
+          pkgs.inkscape
+        ];
         text = ''
           echo "Generating topology/topology.d2..."
           cat << 'EOF' > topology/topology.d2
@@ -339,7 +391,7 @@
           d2 --layout=elk topology/topology.d2 topology/topology.svg
 
           echo "Rendering topology/topology.png..."
-          d2 --layout=elk topology/topology.d2 topology/topology.png
+          inkscape topology/topology.svg -o topology/topology.png
 
           echo "Done! Diagram files generated: topology/topology.d2, topology/topology.svg, topology/topology.png"
         '';

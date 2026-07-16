@@ -98,7 +98,6 @@ rec {
         pocketid = config.custom.services.apps.auth.pocketid.enable;
         portainer = config.custom.services.observability.portainer.enable;
         prometheus = config.custom.services.observability.prometheus.server.enable;
-        public = config.custom.services.apps.web.website.enable;
         qbittorrent = config.custom.services.networking.torrent.enable;
         reitti = config.custom.services.apps.location.reitti.enable;
         scanopy = config.custom.services.observability.scanopy.server.enable;
@@ -108,6 +107,7 @@ rec {
         termix = config.custom.services.observability.termix.enable;
         vaultwarden = config.custom.services.apps.auth.vaultwarden.enable;
         wazuh = config.custom.services.security.wazuh.server.enable;
+        website = config.custom.services.apps.web.website.enable;
         yourls = config.custom.services.apps.web.yourls.enable;
         zeroclaw = config.custom.services.apps.ai.zeroclaw.enable;
         zwave = config.custom.services.apps.tools.homeassistant.enable;

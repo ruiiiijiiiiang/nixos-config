@@ -28,7 +28,7 @@ This repository contains a fully declarative and reproducible NixOS configuratio
 
 ## Deployment and Build Rules
 
-- **Explicit Command Ban:** Under no circumstances should an AI agent attempt to run commands involving `nix build`, `nixos-rebuild`, or any other Nix build/deployment tools (including remote execution over SSH).
+- **Explicit Command Ban:** Under no circumstances should an AI agent attempt to run commands involving `nix build`, `nixos-rebuild`, or any other Nix build/deployment tools (including remote execution over SSH). The only exception is `nix eval`, which agents are explicitly allowed to execute for inspecting attribute values and expressions.
 - **Strictly Manual Deployments:** All building, testing, and deployments are handled manually by the user. The agent's output is strictly limited to making configuration changes.
 - **Strict Investigation & Modification Flow:** When tasked to investigate an issue, the agent must always report findings first and present a proposed solution. Under no circumstances should the agent update any codebase or configuration files directly without receiving explicit manual confirmation from the user for the proposed changes.
 

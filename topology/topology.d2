@@ -80,14 +80,59 @@ wg: "WG VLAN\n192.168.128.0/24" {
 
 
 # Physical and Virtual Infrastructure
+desktop: "Desktop\n(Workstation)" {
+  class: physical
+  grid-columns: 1
+  
+    niri: "niri" {
+  class: service
+  icon: "https://raw.githubusercontent.com/wiki/niri-wm/niri/logo/niri-logo.svg"
+}
+
+  noctalia: "noctalia" {
+  class: service
+  icon: "https://raw.githubusercontent.com/noctalia-dev/noctalia/main/assets/noctalia.svg"
+}
+
+  wezterm: "wezterm" {
+  class: service
+  icon: "https://raw.githubusercontent.com/wez/wezterm/main/assets/icon/terminal.png"
+}
+
+  fish: "fish shell" {
+  class: service
+  icon: "https://user-images.githubusercontent.com/920838/47693595-844df600-dbb7-11e8-9cfd-bdb8dbcfa233.gif"
+}
+
+}
+
 framework: "Framework Laptop\n(Workstation)" {
   class: physical
   grid-columns: 1
   
-  
+    niri: "niri" {
+  class: service
+  icon: "https://raw.githubusercontent.com/wiki/niri-wm/niri/logo/niri-logo.svg"
 }
 
-hypervisor: "Mini PC Hypervisor" {
+  noctalia: "noctalia" {
+  class: service
+  icon: "https://raw.githubusercontent.com/noctalia-dev/noctalia/main/assets/noctalia.svg"
+}
+
+  wezterm: "wezterm" {
+  class: service
+  icon: "https://raw.githubusercontent.com/wez/wezterm/main/assets/icon/terminal.png"
+}
+
+  fish: "fish shell" {
+  class: service
+  icon: "https://user-images.githubusercontent.com/920838/47693595-844df600-dbb7-11e8-9cfd-bdb8dbcfa233.gif"
+}
+
+}
+
+hypervisor: "Mini PC\n(Hypervisor)" {
   class: physical
   direction: right
   mgmt: "Host Management" {
@@ -185,6 +230,11 @@ vm-app: "vm-app\n(Application Server)" {
   icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/open-cloud.png"
 }
 
+                    openwebui: "openwebui" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/open-webui.png"
+}
+
                     ovumcy: "ovumcy" {
   class: service
   icon: "https://raw.githubusercontent.com/ovumcy/ovumcy-web/refs/heads/main/web/static/brand/ovumcy-icon-dark.svg"
@@ -230,6 +280,11 @@ vm-app: "vm-app\n(Application Server)" {
   icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/sonarr.png"
 }
 
+                    stirlingpdf: "stirlingpdf" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/stirling-pdf.png"
+}
+
                     syncthing: "syncthing" {
   class: service
   icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/syncthing.png"
@@ -246,7 +301,31 @@ vm-app: "vm-app\n(Application Server)" {
   class: vm
   grid-rows: 4
   grid-columns: 3
-  
+                      lxqt: "lxqt" {
+  class: service
+  icon: "https://raw.githubusercontent.com/lxqt/wiki/master/docs/lxqt.wiki/_assets/lxqt.svg"
+}
+
+                    nmap: "nmap" {
+  class: service
+  icon: "https://nmap.org/images/sitelogo.png"
+}
+
+                    burpsuite: "burp suite" {
+  class: service
+  icon: "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/burpsuite.svg"
+}
+
+                    metasploit: "metasploit" {
+  class: service
+  icon: "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/metasploit.svg"
+}
+
+                    wireshark: "wireshark" {
+  class: service
+  icon: "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/wireshark.svg"
+}
+
 }
 
                 vm-monitor: "vm-monitor\n(Monitoring & Security)" {
@@ -286,6 +365,11 @@ vm-app: "vm-app\n(Application Server)" {
                     prometheus: "prometheus" {
   class: service
   icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/prometheus.png"
+}
+
+                    scanopy: "scanopy" {
+  class: service
+  icon: "https://raw.githubusercontent.com/scanopy/scanopy/main/media/logo.png"
 }
 
                     termix: "termix" {
@@ -330,19 +414,19 @@ vm-app: "vm-app\n(Application Server)" {
   icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/microbin.png"
 }
 
-                    public: "public" {
-  class: service
-  icon: "https://avatars.githubusercontent.com/u/79236386"
-}
-
                     searxng: "searxng" {
   class: service
   icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/searxng.png"
 }
 
+                    website: "website" {
+  class: service
+  icon: "https://raw.githubusercontent.com/ruiiiijiiiiang/website/refs/heads/main/assets/favicon.ico"
+}
+
                     zeroclaw: "zeroclaw" {
   class: service
-  icon: "https://zeroclaws.io/images/zeroclaw-hero.webp"
+  icon: "https://raw.githubusercontent.com/zeroclaw-labs/zeroclaw/master/web/public/logo.png"
 }
 
 }
@@ -350,7 +434,7 @@ vm-app: "vm-app\n(Application Server)" {
   
 }
 
-pi: "Raspberry Pi 4\n(IoT & Core DNS)" {
+pi: "Raspberry Pi 4\n(IoT)" {
   class: physical
   grid-columns: 1
   
@@ -379,6 +463,12 @@ pi: "Raspberry Pi 4\n(IoT & Core DNS)" {
 
 
 # Network Interconnections
+home -- desktop: "192.168.2.11" {
+  style.stroke: "#8CAAEE"
+  style.stroke-width: 2
+  style.font-color: "#c6d0f5"
+}
+
 home -- framework: "192.168.2.10" {
   style.stroke: "#8CAAEE"
   style.stroke-width: 2

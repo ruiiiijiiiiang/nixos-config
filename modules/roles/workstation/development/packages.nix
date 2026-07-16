@@ -113,6 +113,7 @@ in
       bash-language-server
       cmake
       codex
+      distrobox
       gcc
       gdb
       gnumake
