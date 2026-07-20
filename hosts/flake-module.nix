@@ -37,6 +37,7 @@ let
             helpers
             keys
             dotfilesRoot
+            secretsDir
             ;
         };
         users.${username}.imports = [

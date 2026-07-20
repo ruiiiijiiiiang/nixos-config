@@ -1,4 +1,5 @@
 {
+  secretsDir,
   config,
   consts,
   helpers,
@@ -28,7 +29,7 @@ in
   config = lib.mkIf cfg.enable {
     age.secrets = {
       cloudflare-token = {
-        file = ../../../../secrets/cloudflare-token.age;
+        file = secretsDir + "/networking/cloudflare/nginx-token.age";
         owner = "acme";
         group = "acme";
         mode = "440";

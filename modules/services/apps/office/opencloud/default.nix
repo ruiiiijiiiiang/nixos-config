@@ -1,4 +1,5 @@
 {
+  secretsDir,
   config,
   consts,
   helpers,
@@ -49,7 +50,7 @@ in
     ];
 
     age.secrets = {
-      opencloud-env.file = ../../../../../secrets/opencloud-env.age;
+      opencloud-env.file = secretsDir + "/apps/opencloud/env.age";
       # WEB_OIDC_CLIENT_ID
       # OC_JWT_SECRET
       # JWT_SECRET

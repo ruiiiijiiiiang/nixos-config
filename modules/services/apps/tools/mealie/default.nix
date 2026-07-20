@@ -1,4 +1,5 @@
 {
+  secretsDir,
   config,
   consts,
   helpers,
@@ -26,7 +27,7 @@ in
 
   config = lib.mkIf cfg.enable {
     age.secrets = {
-      mealie-env.file = ../../../../../secrets/mealie-env.age;
+      mealie-env.file = secretsDir + "/apps/mealie/env.age";
       # OIDC_CLIENT_ID
       # OIDC_CLIENT_SECRET
     };

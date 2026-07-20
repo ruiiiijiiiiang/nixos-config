@@ -1,4 +1,5 @@
 {
+  secretsDir,
   config,
   consts,
   helpers,
@@ -24,7 +25,7 @@ in
 
   config = lib.mkIf cfg.enable {
     age.secrets = {
-      krawl-env.file = ../../../../secrets/krawl-env.age;
+      krawl-env.file = secretsDir + "/security/krawl/env.age";
       # KRAWL_DASHBOARD_PASSWORD
     };
 

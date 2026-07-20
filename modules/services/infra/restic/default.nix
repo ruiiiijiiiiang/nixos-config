@@ -1,4 +1,5 @@
 {
+  secretsDir,
   config,
   consts,
   helpers,
@@ -58,8 +59,8 @@ in
     ];
 
     age.secrets = {
-      restic-password.file = ../../../../secrets/restic-password.age;
-      rclone-conf.file = ../../../../secrets/rclone-conf.age;
+      restic-password.file = secretsDir + "/infra/restic/password.age";
+      rclone-conf.file = secretsDir + "/infra/restic/rclone.conf.age";
     };
 
     services.restic.backups = {

@@ -1,4 +1,5 @@
 {
+  secretsDir,
   config,
   consts,
   helpers,
@@ -23,7 +24,7 @@ in
 
   config = lib.mkIf cfg.enable {
     age.secrets = {
-      yourls-env.file = ../../../../../secrets/yourls-env.age;
+      yourls-env.file = secretsDir + "/apps/yourls/env.age";
       # MYSQL_DATABASE
       # MYSQL_USER
       # MYSQL_ROOT_PASSWORD

@@ -1,4 +1,5 @@
 {
+  secretsDir,
   config,
   consts,
   helpers,
@@ -26,7 +27,7 @@ in
 
   config = lib.mkIf cfg.enable {
     age.secrets = {
-      openwebui-env.file = ../../../../../secrets/openwebui-env.age;
+      openwebui-env.file = secretsDir + "/apps/openwebui/env.age";
       # WEBUI_SECRET_KEY
       # OAUTH_CLIENT_ID
       # OAUTH_CLIENT_SECRET

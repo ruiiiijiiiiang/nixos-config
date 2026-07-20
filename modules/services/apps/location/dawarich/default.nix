@@ -1,4 +1,5 @@
 {
+  secretsDir,
   config,
   consts,
   helpers,
@@ -26,7 +27,7 @@ in
 
   config = lib.mkIf cfg.enable {
     age.secrets = {
-      dawarich-env.file = ../../../../../secrets/dawarich-env.age;
+      dawarich-env.file = secretsDir + "/apps/dawarich/env.age";
       # POSTGRES_DB
       # POSTGRES_USER
       # POSTGRES_PASSWORD

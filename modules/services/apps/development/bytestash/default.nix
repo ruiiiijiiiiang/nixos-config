@@ -1,4 +1,5 @@
 {
+  secretsDir,
   config,
   consts,
   helpers,
@@ -26,7 +27,7 @@ in
 
   config = lib.mkIf cfg.enable {
     age.secrets = {
-      bytestash-env.file = ../../../../../secrets/bytestash-env.age;
+      bytestash-env.file = secretsDir + "/apps/bytestash/env.age";
       # JWT_SECRET
       # OIDC_CLIENT_ID
       # OIDC_CLIENT_SECRET

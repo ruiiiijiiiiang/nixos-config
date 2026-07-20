@@ -1,4 +1,5 @@
 {
+  secretsDir,
   config,
   consts,
   lib,
@@ -16,7 +17,7 @@ in
   config = lib.mkIf cfg.enable {
     age.secrets = {
       cloudflare-dns-token = {
-        file = ../../../../secrets/cloudflare-dns-token.age;
+        file = secretsDir + "/networking/cloudflare/dns-token.age";
       };
     };
 

@@ -1,4 +1,5 @@
 {
+  secretsDir,
   config,
   consts,
   helpers,
@@ -35,7 +36,7 @@ in
 
   config = lib.mkIf cfg.enable {
     age.secrets = {
-      cloudflared-tunnel-token.file = ../../../../secrets/cloudflared-tunnel-token.age;
+      cloudflared-tunnel-token.file = secretsDir + "/networking/cloudflare/tunnel-token.age";
     };
 
     services.cloudflared = {

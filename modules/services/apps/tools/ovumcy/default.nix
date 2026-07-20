@@ -1,4 +1,5 @@
 {
+  secretsDir,
   config,
   consts,
   helpers,
@@ -26,7 +27,7 @@ in
 
   config = lib.mkIf cfg.enable {
     age.secrets = {
-      ovumcy-env.file = ../../../../../secrets/ovumcy-env.age;
+      ovumcy-env.file = secretsDir + "/apps/ovumcy/env.age";
       # OIDC_CLIENT_ID
       # OIDC_CLIENT_SECRET
       # SECRET_KEY
@@ -47,7 +48,7 @@ in
         COOKIE_SECURE = "true";
         TRUST_PROXY_ENABLED = "true";
         PROXY_HEADER = "X-Forwarded-For";
-        TRUSTED_PROXIES = "${addresses.localhost},${addresses.localhost-v6}";
+        TRUSTED_PROXIES = "${addresses.localhost},${addresses.localhost-v6},${addresses.podman.network},${addresses.podman.network-v6}";
 
         OIDC_ENABLED = "true";
         OIDC_ISSUER_URL = "https://${endpoints.oidc-issuer}";

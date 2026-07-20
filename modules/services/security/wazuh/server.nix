@@ -1,4 +1,5 @@
 {
+  secretsDir,
   config,
   consts,
   helpers,
@@ -26,7 +27,7 @@ in
 
   config = lib.mkIf cfg.enable {
     age.secrets = {
-      wazuh-env.file = ../../../../secrets/wazuh-env.age;
+      wazuh-env.file = secretsDir + "/security/wazuh/env.age";
       # INDEXER_USERNAME
       # INDEXER_PASSWORD
     };

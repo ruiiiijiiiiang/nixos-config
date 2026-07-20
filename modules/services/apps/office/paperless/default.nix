@@ -1,4 +1,5 @@
 {
+  secretsDir,
   config,
   consts,
   helpers,
@@ -36,7 +37,7 @@ in
     ];
 
     age.secrets = {
-      paperless-env.file = ../../../../../secrets/paperless-env.age;
+      paperless-env.file = secretsDir + "/apps/paperless/env.age";
       # POSTGRES_DB
       # POSTGRES_USER
       # POSTGRES_PASSWORD

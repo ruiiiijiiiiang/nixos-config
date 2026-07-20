@@ -1,4 +1,5 @@
 {
+  secretsDir,
   config,
   consts,
   helpers,
@@ -132,7 +133,7 @@ in
 
     age.secrets = {
       grafana-secret-key = {
-        file = ../../../../secrets/grafana-secret-key.age;
+        file = secretsDir + "/observability/grafana/secret-key.age";
         mode = "440";
         owner = "grafana";
         group = "grafana";

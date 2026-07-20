@@ -1,4 +1,5 @@
 {
+  secretsDir,
   config,
   consts,
   helpers,
@@ -25,7 +26,7 @@ in
 
   config = lib.mkIf cfg.enable {
     age.secrets = {
-      termix-env.file = ../../../../secrets/termix-env.age;
+      termix-env.file = secretsDir + "/observability/termix/env.age";
       # OIDC_CLIENT_ID
       # OIDC_CLIENT_SECRET
     };

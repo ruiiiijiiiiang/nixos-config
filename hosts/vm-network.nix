@@ -1,4 +1,9 @@
-{ config, helpers, ... }:
+{
+  secretsDir,
+  config,
+  helpers,
+  ...
+}:
 let
   inherit (helpers) getHostAddress;
   hostName = "vm-network";
@@ -17,11 +22,15 @@ in
   nixos-vm-provisioner.guest.enable = true;
 
   age.secrets = {
-    wireguard-server-private-key.file = ../secrets/wireguard/server-private-key.age;
-    wireguard-framework-preshared-key.file = ../secrets/wireguard/framework-preshared-key.age;
-    wireguard-pixel-7-preshared-key.file = ../secrets/wireguard/pixel-7-preshared-key.age;
-    wireguard-iphone-17-preshared-key.file = ../secrets/wireguard/iphone-17-preshared-key.age;
-    wireguard-github-action-preshared-key.file = ../secrets/wireguard/github-action-preshared-key.age;
+    wireguard-server-private-key.file = secretsDir + "/networking/wireguard/server-private-key.age";
+    wireguard-framework-preshared-key.file =
+      secretsDir + "/networking/wireguard/framework-preshared-key.age";
+    wireguard-pixel-7-preshared-key.file =
+      secretsDir + "/networking/wireguard/pixel-7-preshared-key.age";
+    wireguard-iphone-17-preshared-key.file =
+      secretsDir + "/networking/wireguard/iphone-17-preshared-key.age";
+    wireguard-github-action-preshared-key.file =
+      secretsDir + "/networking/wireguard/github-action-preshared-key.age";
   };
 
   custom = {

@@ -16,7 +16,7 @@ let
     ;
   inherit (helpers) mkVirtualHost;
   cfg = config.custom.services.apps.web.website;
-  fqdn = "${subdomains.${config.networking.hostName}.public}.${domain}";
+  fqdn = "${subdomains.${config.networking.hostName}.website}.${domain}";
 in
 {
   options.custom.services.apps.web.website = with lib; {

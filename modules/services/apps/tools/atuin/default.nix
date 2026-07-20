@@ -1,4 +1,5 @@
 {
+  secretsDir,
   config,
   consts,
   helpers,
@@ -24,7 +25,7 @@ in
 
   config = lib.mkIf cfg.enable {
     age.secrets = {
-      atuin-env.file = ../../../../../secrets/atuin-env.age;
+      atuin-env.file = secretsDir + "/apps/atuin/env.age";
       # ATUIN_DB_URI
       # POSTGRES_USER
       # POSTGRES_PASSWORD

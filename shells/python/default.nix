@@ -1,7 +1,6 @@
 { pkgs }:
 pkgs.mkShell {
   packages = with pkgs; [
-    python314
     python314Packages.debugpy
     pyright
     ruff

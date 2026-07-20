@@ -1,4 +1,5 @@
 {
+  secretsDir,
   config,
   consts,
   helpers,
@@ -24,7 +25,7 @@ in
 
   config = lib.mkIf cfg.enable {
     age.secrets = {
-      pricebuddy-env.file = ../../../../../secrets/pricebuddy-env.age;
+      pricebuddy-env.file = secretsDir + "/apps/pricebuddy/env.age";
       # DB_USERNAME
       # DB_PASSWORD
       # DB_DATABASE

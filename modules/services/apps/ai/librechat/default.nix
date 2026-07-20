@@ -1,4 +1,5 @@
 {
+  secretsDir,
   config,
   consts,
   helpers,
@@ -25,7 +26,7 @@ in
 
   config = lib.mkIf cfg.enable {
     age.secrets = {
-      librechat-env.file = ../../../../../secrets/librechat-env.age;
+      librechat-env.file = secretsDir + "/apps/librechat/env.age";
       # POSTGRES_DB
       # POSTGRES_USER
       # POSTGRES_PASSWORD

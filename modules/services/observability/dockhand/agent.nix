@@ -1,4 +1,5 @@
 {
+  secretsDir,
   config,
   consts,
   helpers,
@@ -30,13 +31,13 @@ in
 
     age.secrets = {
       dockhand-agent-crt = {
-        file = ../../../../secrets/dockhand/agent-crt.age;
+        file = secretsDir + "/observability/dockhand/agent-crt.age";
         owner = toString oci-uids.dockhand;
         group = toString oci-uids.dockhand;
         mode = "400";
       };
       dockhand-agent-key = {
-        file = ../../../../secrets/dockhand/agent-key.age;
+        file = secretsDir + "/observability/dockhand/agent-key.age";
         owner = toString oci-uids.dockhand;
         group = toString oci-uids.dockhand;
         mode = "400";

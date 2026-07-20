@@ -122,6 +122,7 @@ in
       markdownlint-cli2
       marksman
       nodejs
+      python3
       rustup
       shellcheck
       shfmt

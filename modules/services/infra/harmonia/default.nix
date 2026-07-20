@@ -1,4 +1,5 @@
 {
+  secretsDir,
   config,
   consts,
   helpers,
@@ -73,7 +74,7 @@ in
   config = lib.mkIf cfg.enable {
     age.secrets = {
       harmonia-sign-key = {
-        file = ../../../../secrets/harmonia-sign-key.age;
+        file = secretsDir + "/infra/harmonia/signing-key.age";
         mode = "600";
         owner = "harmonia";
         group = "harmonia";

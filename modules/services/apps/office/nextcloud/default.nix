@@ -1,4 +1,5 @@
 {
+  secretsDir,
   config,
   consts,
   lib,
@@ -18,9 +19,9 @@ in
 
   config = lib.mkIf cfg.enable {
     age.secrets = {
-      nextcloud-pass.file = ../../../../../secrets/nextcloud-pass.age;
+      nextcloud-pass.file = secretsDir + "/apps/nextcloud/admin-password.age";
       onlyoffice-secret = {
-        file = ../../../../../secrets/onlyoffice-secret.age;
+        file = secretsDir + "/apps/nextcloud/onlyoffice-jwt-secret.age";
         owner = "onlyoffice";
         group = "onlyoffice";
         mode = "0400";

@@ -1,4 +1,5 @@
 {
+  secretsDir,
   config,
   consts,
   helpers,
@@ -29,7 +30,7 @@ in
 
   config = lib.mkIf cfg.enable {
     age.secrets = {
-      forgejo-env.file = ../../../../../secrets/forgejo-env.age;
+      forgejo-env.file = secretsDir + "/apps/forgejo/env.age";
       # POSTGRES_DB
       # POSTGRES_USER
       # POSTGRES_PASSWORD

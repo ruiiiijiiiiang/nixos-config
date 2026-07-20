@@ -1,4 +1,5 @@
 {
+  secretsDir,
   config,
   consts,
   helpers,
@@ -33,7 +34,7 @@ in
 
   config = lib.mkIf cfg.enable {
     age.secrets = {
-      searxng-env.file = ../../../../../secrets/searxng-env.age;
+      searxng-env.file = secretsDir + "/apps/searxng/env.age";
       # SEARXNG_SECRET
     };
 

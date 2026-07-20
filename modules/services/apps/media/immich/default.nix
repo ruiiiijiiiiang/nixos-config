@@ -1,4 +1,5 @@
 {
+  secretsDir,
   config,
   consts,
   helpers,
@@ -38,7 +39,7 @@ in
     ];
 
     age.secrets = {
-      immich-env.file = ../../../../../secrets/immich-env.age;
+      immich-env.file = secretsDir + "/apps/immich/env.age";
       # POSTGRES_USER
       # POSTGRES_DB
       # POSTGRES_PASSWORD

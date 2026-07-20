@@ -1,4 +1,5 @@
 {
+  secretsDir,
   consts,
   config,
   lib,
@@ -17,16 +18,20 @@ in
 
   config = lib.mkIf cfg.enable {
     age.secrets = {
-      mcp-config = {
-        file = ../../secrets/mcp-config.age;
+      copilot-mcp-config = {
+        file = secretsDir + "/personal/copilot/mcp-config.age";
+        path = "${home.homeDirectory}/.copilot/mcp_config.json";
+      };
+      gemini-mcp-config = {
+        file = secretsDir + "/personal/gemini/mcp-config.age";
         path = "${home.homeDirectory}/.gemini/config/mcp_config.json";
       };
       opencode-config = {
-        file = ../../secrets/opencode-config.age;
+        file = secretsDir + "/personal/opencode/config.age";
         path = "${home.homeDirectory}/.config/opencode/opencode.jsonc";
       };
       nix-conf = {
-        file = ../../secrets/nix-conf.age;
+        file = secretsDir + "/personal/nix/nix.conf.age";
         path = "${home.homeDirectory}/.config/nix/nix.conf";
       };
     };

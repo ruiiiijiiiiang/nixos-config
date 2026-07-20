@@ -1,4 +1,9 @@
-{ config, lib, ... }:
+{
+  secretsDir,
+  config,
+  lib,
+  ...
+}:
 let
   cfg = config.custom.services.apps.location.geoipupdate;
 in
@@ -9,7 +14,7 @@ in
 
   config = lib.mkIf cfg.enable {
     age.secrets = {
-      maxmind-license-key.file = ../../../../../secrets/maxmind-license-key.age;
+      maxmind-license-key.file = secretsDir + "/security/maxmind/license-key.age";
     };
 
     services.geoipupdate = {

@@ -1,4 +1,5 @@
 {
+  secretsDir,
   config,
   consts,
   lib,
@@ -25,7 +26,7 @@ in
 
   config = lib.mkIf cfg.enable {
     age.secrets = {
-      karakeep-env.file = ../../../../../secrets/karakeep-env.age;
+      karakeep-env.file = secretsDir + "/apps/karakeep/env.age";
       # OAUTH_CLIENT_ID
       # OAUTH_CLIENT_SECRET
       # OAUTH_WELLKNOWN_URL

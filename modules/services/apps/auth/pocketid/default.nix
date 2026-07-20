@@ -1,4 +1,5 @@
 {
+  secretsDir,
   config,
   consts,
   helpers,
@@ -18,8 +19,8 @@ in
 
   config = lib.mkIf cfg.enable {
     age.secrets = {
-      maxmind-license-key.file = ../../../../../secrets/maxmind-license-key.age;
-      pocketid-encryption-key.file = ../../../../../secrets/pocketid-encryption-key.age;
+      maxmind-license-key.file = secretsDir + "/security/maxmind/license-key.age";
+      pocketid-encryption-key.file = secretsDir + "/apps/pocketid/encryption-key.age";
     };
 
     services = {

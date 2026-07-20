@@ -1,4 +1,5 @@
 {
+  secretsDir,
   config,
   consts,
   keys,
@@ -17,7 +18,7 @@ in
 
   config = lib.mkIf cfg.enable {
     age.secrets = {
-      tryhackme-ovpn.file = ../../../../secrets/tryhackme-ovpn.age;
+      tryhackme-ovpn.file = secretsDir + "/personal/tryhackme/client.ovpn.age";
     };
 
     networking = {

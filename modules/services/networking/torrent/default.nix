@@ -1,4 +1,5 @@
 {
+  secretsDir,
   config,
   consts,
   helpers,
@@ -36,7 +37,7 @@ in
     ];
 
     age.secrets = {
-      wireguard-proton-private-key.file = ../../../../secrets/wireguard/proton-private-key.age;
+      wireguard-proton-private-key.file = secretsDir + "/networking/wireguard/proton-private-key.age";
     };
 
     virtualisation.oci-containers.containers = {

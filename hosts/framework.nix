@@ -1,4 +1,4 @@
-{ config, ... }:
+{ secretsDir, config, ... }:
 let
   hostName = "framework";
   wgInterface = "wg0";
@@ -8,8 +8,10 @@ in
   networking.hostName = hostName;
 
   age.secrets = {
-    wireguard-framework-private-key.file = ../secrets/wireguard/framework-private-key.age;
-    wireguard-framework-preshared-key.file = ../secrets/wireguard/framework-preshared-key.age;
+    wireguard-framework-private-key.file =
+      secretsDir + "/networking/wireguard/framework-private-key.age";
+    wireguard-framework-preshared-key.file =
+      secretsDir + "/networking/wireguard/framework-preshared-key.age";
   };
 
   custom = {

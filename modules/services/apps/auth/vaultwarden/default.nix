@@ -1,4 +1,5 @@
 {
+  secretsDir,
   config,
   consts,
   lib,
@@ -21,7 +22,7 @@ in
 
   config = lib.mkIf cfg.enable {
     age.secrets = {
-      vaultwarden-env.file = ../../../../../secrets/vaultwarden-env.age;
+      vaultwarden-env.file = secretsDir + "/apps/vaultwarden/env.age";
       # ADMIN_TOKEN
       # SMTP_HOST
       # SMTP_PORT

@@ -1,4 +1,5 @@
 {
+  secretsDir,
   config,
   consts,
   helpers,
@@ -25,7 +26,7 @@ in
 
   config = lib.mkIf cfg.enable {
     age.secrets = {
-      reitti-env.file = ../../../../../secrets/reitti-env.age;
+      reitti-env.file = secretsDir + "/apps/reitti/env.age";
       # POSTGRES_USER
       # POSTGRES_DB
       # POSTGRES_PASSWORD

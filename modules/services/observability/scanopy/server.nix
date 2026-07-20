@@ -1,4 +1,5 @@
 {
+  secretsDir,
   config,
   consts,
   helpers,
@@ -23,7 +24,7 @@ in
 
   config = lib.mkIf cfg.enable {
     age.secrets = {
-      scanopy-server-env.file = ../../../../secrets/scanopy/server-env.age;
+      scanopy-server-env.file = secretsDir + "/observability/scanopy/server-env.age";
       # POSTGRES_DB
       # POSTGRES_USER
       # POSTGRES_PASSWORD
