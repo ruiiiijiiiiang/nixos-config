@@ -7,7 +7,7 @@ This repository contains a fully declarative and reproducible NixOS configuratio
 - **Foundational Stack:** NixOS, Nix Flakes, `flake-parts`.
 - **Infrastructure Management:** `disko` (disk partitioning), `agenix` (secret management), `NixVirt` (libvirt virtualization).
 - **Home Environment:** `home-manager` for user-specific configurations and dotfiles.
-- **Hardware:** Framework Laptop (Workstation), Raspberry Pi 4 (IoT/DNS), and a Mini PC (Hypervisor) running multiple specialized VMs.
+- **Hardware:** Desktop (Workstation), Framework Laptop (Workstation), Raspberry Pi 4 (IoT/DNS), and a Mini PC (Hypervisor) running multiple specialized VMs.
 - **Domain Info:** The primary domain `ruijiang.me` is purchased through Namecheap (expires annually on June 28th), but all DNS records for the domain and its subdomains are handled by Cloudflare.
 
 ## Directory Structure Highlights
@@ -52,16 +52,6 @@ Containerized services must follow these repository conventions:
 - **Reverse Proxy:** Set up Nginx virtual hosts using the `helpers.mkVirtualHost` template.
 - **getEnabledServices Integration:** Add the service mapping to the `getEnabledServices` helper in [lib/helpers.nix](file:///home/rui/nixos-config/lib/helpers.nix) so that enabled services can be dynamically resolved on their respective hosts.
 - **Native Module Options over `extraOptions`:** Whenever there is a need to add raw configuration flags to a container using `extraOptions`, always check if a native NixOS `virtualisation.oci-containers` module option exists (e.g., `hostname`, `user`, `workdir`) and prefer using the native option.
-
-### Environment Assumptions
-
-- **Host Environment:** Unless otherwise specified, an AI agent should assume to be running on either the `framework` or `arch` host.
-- **User Dotfiles:** The dotfiles for both systems are symlinked using `home-manager` and will always be accessible to the agent at `~/dotfiles`.
-
-### SSH Access
-
-- Unless otherwise specified, an AI agent may always assume to have SSH access from the current host into any of the servers declared in [hosts](file:///home/rui/nixos-config/hosts).
-- Note: All hosts use the `fish` shell by default.
 
 ### Centralized Constants (`lib/consts.nix`)
 

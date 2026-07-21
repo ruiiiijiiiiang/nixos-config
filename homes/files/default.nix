@@ -1,6 +1,6 @@
 {
   imports = [
-    ./gemini.nix
+    ./agents.nix
     ./kwallet.nix
     ./protonmail.nix
     ./vivaldi.nix
