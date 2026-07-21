@@ -4,13 +4,16 @@
   consts,
   helpers,
   lib,
+  pkgs,
   ...
 }:
 let
   inherit (config.networking) hostName;
   inherit (consts) username daily-tasks;
-  inherit (helpers) dailyTaskToSystemd adjustTime;
+  inherit (helpers) dailyTaskToSystemd;
   cfg = config.custom.services.infra.restic;
+  localRepository = "${cfg.repo}/restic-repo";
+  protonRepository = "proton-drive:backup/restic-repo-${hostName}-mirror";
 
   sharedConfig = {
     initialize = true;
@@ -65,45 +68,69 @@ in
 
     services.restic.backups = {
       "data-local" = sharedConfig // {
-        repository = "${cfg.repo}/restic-repo";
+        repository = localRepository;
         timerConfig = {
           OnCalendar = dailyTaskToSystemd daily-tasks.${hostName}.restic-backup;
         };
         pruneOpts = [
-          "--keep-daily 4"
-          "--keep-weekly 2"
+          "--keep-daily 3"
+          "--keep-weekly 1"
           "--keep-monthly 1"
-        ];
-      };
-
-      "data-proton" = sharedConfig // {
-        repository = "rclone:proton-drive:backup/restic-repo-${hostName}";
-        rcloneConfigFile = config.age.secrets.rclone-conf.path;
-        rcloneOptions = {
-          transfers = "1";
-          checkers = "1";
-          tpslimit = "1";
-          protondrive-thread-count = "1";
-          timeout = "10m";
-          contimeout = "2m";
-          protondrive-replace-existing-draft = "true";
-        };
-        extraBackupArgs = sharedConfig.extraBackupArgs ++ [
-          "--pack-size"
-          "8"
-        ];
-        timerConfig = {
-          OnCalendar = dailyTaskToSystemd (adjustTime "+15m" daily-tasks.${hostName}.restic-backup);
-        };
-        pruneOpts = [
-          "--keep-last 3"
-          "--pack-size 8"
         ];
       };
     };
 
-    systemd.tmpfiles.rules = [
-      "d ${cfg.repo} 0755 - - - -"
-    ];
+    systemd = {
+      services = {
+        restic-backups-data-local = {
+          unitConfig = {
+            OnSuccess = [ "rclone-sync-restic-proton.service" ];
+          };
+        };
+
+        rclone-sync-restic-proton = {
+          description = "Mirror local Restic repository to Proton Drive";
+          after = [ "network-online.target" ];
+          wants = [ "network-online.target" ];
+
+          path = [ pkgs.rclone ];
+
+          environment = {
+            RCLONE_CONFIG = config.age.secrets.rclone-conf.path;
+            RCLONE_TRANSFERS = "1";
+            RCLONE_CHECKERS = "1";
+            RCLONE_TPSLIMIT = "1";
+            RCLONE_TPSLIMIT_BURST = "1";
+            RCLONE_RETRIES = "5";
+            RCLONE_LOW_LEVEL_RETRIES = "20";
+            RCLONE_TIMEOUT = "10m";
+            RCLONE_CONTIMEOUT = "2m";
+            RCLONE_PROTONDRIVE_THREAD_COUNT = "1";
+            RCLONE_PROTONDRIVE_REPLACE_EXISTING_DRAFT = "true";
+          };
+
+          serviceConfig = {
+            Type = "oneshot";
+            ExecCondition = pkgs.writeShellScript "rclone-sync-restic-proton-is-sunday" /* bash */ ''
+              [[ "$(${lib.getExe' pkgs.coreutils "date"} +%u)" == 7 ]]
+            '';
+            Nice = 10;
+            IOSchedulingClass = "idle";
+          };
+
+          script = /* bash */ ''
+            exec rclone sync \
+              ${lib.escapeShellArg localRepository} \
+              ${lib.escapeShellArg protonRepository} \
+              --delete-after \
+              --stats 1m
+          '';
+        };
+      };
+
+      tmpfiles.rules = [
+        "d ${cfg.repo} 0755 - - - -"
+      ];
+    };
   };
 }

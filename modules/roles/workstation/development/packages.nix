@@ -105,7 +105,6 @@ in
       antigravity-cli
       copilot-language-server
       gemini-cli
-      github-copilot-cli
       inputs.windsurf.packages.${stdenv.hostPlatform.system}.codeium-lsp
       opencode
 

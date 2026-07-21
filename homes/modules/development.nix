@@ -20,7 +20,7 @@ in
     age.secrets = {
       copilot-mcp-config = {
         file = secretsDir + "/personal/copilot/mcp-config.age";
-        path = "${home.homeDirectory}/.copilot/mcp_config.json";
+        path = "${home.homeDirectory}/.copilot/mcp-config.json";
       };
       gemini-mcp-config = {
         file = secretsDir + "/personal/gemini/mcp-config.age";
