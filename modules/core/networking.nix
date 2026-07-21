@@ -27,7 +27,6 @@ in
 {
   networking = {
     inherit domain;
-    search = [ domain ];
     networkmanager.enable = mkDefault true;
     firewall.enable = mkDefault true;
     nftables.enable = mkDefault true;
