@@ -1,11 +1,13 @@
 {
   config,
+  consts,
   inputs,
   lib,
   pkgs,
   ...
 }:
 let
+  inherit (consts) username;
   cfg = config.custom.roles.workstation.packages;
 in
 {
@@ -32,9 +34,6 @@ in
         EDITOR = "nvim";
       };
 
-      etc."xdg/menus/applications.menu".source =
-        "${pkgs.kdePackages.plasma-workspace}/etc/xdg/menus/plasma-applications.menu";
-
       systemPackages = with pkgs; [
         bottom
         comma
@@ -53,7 +52,16 @@ in
       htop.enable = true;
       nix-ld.enable = true;
       neovim.package = inputs.neovim-nightly-overlay.packages.${pkgs.system}.default;
-      nix-index.enable = true;
+      wireshark = {
+        enable = true;
+        package = pkgs.wireshark;
+        dumpcap.enable = true;
+      };
     };
+
+    users.users.${username}.extraGroups = [
+      "pcap"
+      "wireshark"
+    ];
   };
 }

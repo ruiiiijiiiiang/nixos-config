@@ -29,11 +29,7 @@ in
       update.auto.onCalendar = "weekly";
 
       packages = [
-        "io.github.milkshiift.GoofCord"
         "com.spotify.Client"
-        "org.upscayl.Upscayl"
-        "com.simplenote.Simplenote"
-        "eu.betterbird.Betterbird"
       ];
     };
   };

@@ -103,6 +103,8 @@ in
         };
 
     systemd.services.podman-wazuh-agent = {
+      restartIfChanged = false;
+
       preStart = lib.mkAfter ''
         ${ensureFile {
           source = initialFile;

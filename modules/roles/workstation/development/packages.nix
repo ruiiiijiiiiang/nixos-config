@@ -20,6 +20,8 @@ in
   config = lib.mkIf cfg.enable {
     nixpkgs.overlays = [ inputs.niri.overlays.niri ];
 
+    virtualisation.vmware.host.enable = true;
+
     environment.systemPackages = with pkgs; [
       iw
       mtr
@@ -52,7 +54,6 @@ in
       inputs.rs-top.packages.${stdenv.hostPlatform.system}.default
       kmon
       lazyjournal
-      matcha
       miller
       noxdir
       ouch
@@ -70,12 +71,14 @@ in
 
       # Desktop Apps
       easyeffects
+      goofcord
       inputs.zen-browser.packages.${stdenv.hostPlatform.system}.default
       kdePackages.filelight
       kdePackages.gwenview
       kdePackages.kate
       kdePackages.kcalc
       kdePackages.kolourpaint
+      kdePackages.ksystemlog
       kdePackages.okular
       kdePackages.yakuake
       kitty
@@ -85,6 +88,7 @@ in
       opencloud-desktop
       protonmail-bridge-gui
       remmina
+      simplenote
       stirling-pdf-desktop
       telegram-desktop
       vivaldi
@@ -140,9 +144,9 @@ in
         enable = true;
         package = pkgs.niri-unstable;
       };
+      nix-index.enable = true;
       obs-studio.enable = true;
       steam.enable = true;
-      wireshark.enable = true;
     };
 
     fonts = {

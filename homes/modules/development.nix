@@ -62,6 +62,8 @@ in
       };
     };
 
+    fonts.fontconfig.enable = false;
+
     xdg.mimeApps = {
       enable = true;
       defaultApplications = {

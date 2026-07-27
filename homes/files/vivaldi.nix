@@ -4,7 +4,7 @@
     [Desktop Entry]
     Version=1.0
     Name=Vivaldi
-    Exec=vivaldi --password-store=kwallet6 --force-dark-mode %U
+    Exec=vivaldi --password-store=kwallet6 --disable-features=DbusSecretPortal --force-dark-mode %U
     StartupNotify=true
     Terminal=false
     Icon=vivaldi
@@ -15,10 +15,10 @@
 
     [Desktop Action new-window]
     Name=New Window
-    Exec=vivaldi --password-store=kwallet6 --force-dark-mode --new-window
+    Exec=vivaldi --password-store=kwallet6 --disable-features=DbusSecretPortal --force-dark-mode --new-window
 
     [Desktop Action new-private-window]
     Name=New Private Window
-    Exec=vivaldi --password-store=kwallet6 --force-dark-mode --incognito
+    Exec=vivaldi --password-store=kwallet6 --disable-features=DbusSecretPortal --force-dark-mode --incognito
   '';
 }

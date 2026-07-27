@@ -3,7 +3,7 @@
     [Desktop Entry]
     Name=OpenCloud Desktop
     GenericName=File Synchronizer
-    Exec=opencloud
+    Exec=env QT_QUICK_CONTROLS_STYLE=Basic opencloud
     Terminal=false
     Icon=opencloud
     Categories=Network

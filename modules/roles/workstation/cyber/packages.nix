@@ -68,10 +68,6 @@ in
       unzip
     ];
 
-    programs = {
-      wireshark.enable = true;
-    };
-
     systemd.tmpfiles.rules = [
       "L /home/${username}/wordlists - - - - /run/current-system/sw/share/wordlists"
     ];

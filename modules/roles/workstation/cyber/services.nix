@@ -54,11 +54,5 @@ in
     };
 
     environment.etc.hosts.mode = "0644";
-
-    users.users.${username}.extraGroups = [
-      "audio"
-      "pcap"
-      "wireshark"
-    ];
   };
 }

@@ -16,7 +16,6 @@ in
     boot.binfmt.emulatedSystems = [ "aarch64-linux" ]; # to build aarch64 kernel for pi
 
     services = {
-      xserver.enable = true;
       displayManager.plasma-login-manager.enable = true;
       desktopManager.plasma6.enable = true;
       gnome.gnome-keyring.enable = lib.mkForce false;
@@ -43,6 +42,11 @@ in
 
     security.pam.services = {
       login.kwallet.enable = true;
+    };
+
+    qt = {
+      enable = true;
+      platformTheme = "kde";
     };
   };
 }
