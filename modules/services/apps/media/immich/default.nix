@@ -20,6 +20,11 @@ let
   fqdn = "${subdomains.${config.networking.hostName}.immich}.${domain}";
   hasGpuPassthrough = config.custom.platforms.vm.hardware.gpuPassthrough;
   immich-version = "v3.0.3";
+  resticExcludePaths = [
+    "/var/lib/immich/model-cache"
+    "${cfg.storagePath}/immich/thumbs"
+    "${cfg.storagePath}/immich/encoded-video"
+  ];
 in
 {
   options.custom.services.apps.media.immich = with lib; {
@@ -152,6 +157,10 @@ in
           send_timeout 600s;
         '';
       };
+    };
+
+    custom.services.infra.restic = {
+      extraExcludes = lib.mkIf config.custom.services.infra.restic.enable resticExcludePaths;
     };
   };
 }

@@ -19,6 +19,11 @@ let
   cfg = config.custom.services.apps.ai.llm;
   fqdn = "${subdomains.${config.networking.hostName}.openwebui}.${domain}";
   hasGpuPassthrough = config.custom.platforms.vm.hardware.gpuPassthrough;
+  resticExcludePaths = [
+    "/var/lib/ollama/.cache"
+    "/var/lib/ollama/.ollama/models"
+    "/var/lib/open-webui/cache"
+  ];
 in
 {
   options.custom.services.apps.ai.llm = with lib; {
@@ -109,6 +114,10 @@ in
         inherit fqdn;
         port = ports.openwebui;
       };
+    };
+
+    custom.services.infra.restic = {
+      extraExcludes = lib.mkIf config.custom.services.infra.restic.enable resticExcludePaths;
     };
   };
 }

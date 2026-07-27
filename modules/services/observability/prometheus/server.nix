@@ -34,6 +34,7 @@ let
       ;
   };
   ntfyEnabled = nixosConfigurations.vm-monitor.config.custom.services.observability.ntfy.enable;
+  resticExcludePaths = [ "/var/lib/${config.services.prometheus.stateDir}" ];
 
   mkScrapeJob = exporterName: port: {
     job_name = "${exporterName}-exporter";
@@ -173,6 +174,10 @@ in
         inherit fqdn;
         port = ports.prometheus.server;
       };
+    };
+
+    custom.services.infra.restic = {
+      extraExcludes = lib.mkIf config.custom.services.infra.restic.enable resticExcludePaths;
     };
   };
 }

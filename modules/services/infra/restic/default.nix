@@ -26,8 +26,9 @@ let
       "/var/lib/containers"
       "/var/lib/systemd"
       "/var/lib/machines"
-      "**/.cache"
-    ];
+      "/var/lib/swapfile"
+    ]
+    ++ cfg.extraExcludes;
 
     extraBackupArgs = [ "--exclude-caches" ];
   };
@@ -44,6 +45,11 @@ in
       default = [ ];
       description = "Extra paths to backup data from.";
     };
+    extraExcludes = mkOption {
+      type = types.listOf types.str;
+      default = [ ];
+      description = "Additional paths contributed by enabled service modules.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -55,6 +61,10 @@ in
       {
         assertion = lib.all (p: lib.hasPrefix "/" p) cfg.extraPaths;
         message = "custom.services.infra.restic.extraPaths must contain only absolute paths.";
+      }
+      {
+        assertion = lib.all (p: lib.hasPrefix "/" p) cfg.extraExcludes;
+        message = "custom.services.infra.restic.extraExcludes must contain only absolute paths.";
       }
     ];
 

@@ -18,6 +18,11 @@ let
   inherit (helpers) mkVirtualHost;
   cfg = config.custom.services.observability.grafana;
   fqdn = "${subdomains.${config.networking.hostName}.grafana}.${domain}";
+  resticExcludePaths = [
+    "${config.services.grafana.dataDir}/plugins"
+    "${config.services.grafana.dataDir}/data/log"
+    "${config.services.grafana.dataDir}/data/unified-search"
+  ];
 
   # Generate the hash by running: nix-prefetch-url <url>
   crowdsec-dashboard = pkgs.fetchurl {
@@ -198,6 +203,10 @@ in
         inherit fqdn;
         port = ports.grafana;
       };
+    };
+
+    custom.services.infra.restic = {
+      extraExcludes = lib.mkIf config.custom.services.infra.restic.enable resticExcludePaths;
     };
   };
 }

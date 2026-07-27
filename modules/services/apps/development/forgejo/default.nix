@@ -22,6 +22,7 @@ let
     ;
   cfg = config.custom.services.apps.development.forgejo;
   fqdn = "${subdomains.${config.networking.hostName}.forgejo}.${domain}";
+  resticExcludePaths = [ "/var/lib/forgejo/cache" ];
 in
 {
   options.custom.services.apps.development.forgejo = with lib; {
@@ -169,6 +170,10 @@ in
           send_timeout 600s;
         '';
       };
+    };
+
+    custom.services.infra.restic = {
+      extraExcludes = lib.mkIf config.custom.services.infra.restic.enable resticExcludePaths;
     };
   };
 }

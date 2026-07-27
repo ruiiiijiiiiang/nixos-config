@@ -21,6 +21,13 @@ let
   sonarr-fqdn = "${subdomains.${config.networking.hostName}.sonarr}.${domain}";
   prowlarr-fqdn = "${subdomains.${config.networking.hostName}.prowlarr}.${domain}";
   bazarr-fqdn = "${subdomains.${config.networking.hostName}.bazarr}.${domain}";
+  resticExcludePaths = [
+    "/var/lib/lidarr/config/logs"
+    "/var/lib/radarr/config/logs"
+    "/var/lib/sonarr/config/logs"
+    "/var/lib/prowlarr/config/logs"
+    "/var/lib/bazarr/config/log"
+  ];
 in
 {
   options.custom.services.apps.tools.arr = with lib; {
@@ -212,6 +219,10 @@ in
         fqdn = bazarr-fqdn;
         port = ports.arr.bazarr;
       };
+    };
+
+    custom.services.infra.restic = {
+      extraExcludes = lib.mkIf config.custom.services.infra.restic.enable resticExcludePaths;
     };
   };
 }

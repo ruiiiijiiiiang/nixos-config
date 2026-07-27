@@ -103,7 +103,7 @@ in
       certs = lib.genAttrs (map (name: "${name}.${domain}") subdomainList) (fqdn: {
         domain = fqdn;
         dnsProvider = "cloudflare";
-        dnsResolver = "1.1.1.1:53";
+        dnsResolver = "${addresses.infra.vip.dns}:${toString ports.dns}";
         environmentFile = config.age.secrets.cloudflare-token.path;
         group = "nginx";
         reloadServices = [ "nginx" ];

@@ -7,6 +7,7 @@
 let
   inherit (consts) addresses ports;
   cfg = config.custom.services.observability.loki.server;
+  resticExcludePaths = [ config.services.loki.dataDir ];
 in
 {
   options.custom.services.observability.loki.server = with lib; {
@@ -57,5 +58,9 @@ in
     };
 
     networking.firewall.allowedTCPPorts = [ ports.loki.server ];
+
+    custom.services.infra.restic = {
+      extraExcludes = lib.mkIf config.custom.services.infra.restic.enable resticExcludePaths;
+    };
   };
 }

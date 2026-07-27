@@ -36,6 +36,7 @@ in
 
       # Desktop Environment: KDE Plasma
       catppuccin-kde
+      candy-icons
       kdePackages.kirigami
       kdePackages.plasma-pa
       kdePackages.qtdeclarative
