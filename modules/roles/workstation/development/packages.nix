@@ -107,16 +107,16 @@ in
       nix-tree
 
       # AI
-      antigravity-cli
-      copilot-language-server
-      gemini-cli
+      inputs.llm-agents.packages.${stdenv.hostPlatform.system}.antigravity-cli
+      inputs.llm-agents.packages.${stdenv.hostPlatform.system}.codex
+      inputs.llm-agents.packages.${stdenv.hostPlatform.system}.copilot-cli
+      inputs.llm-agents.packages.${stdenv.hostPlatform.system}.copilot-language-server
+      inputs.llm-agents.packages.${stdenv.hostPlatform.system}.opencode
       inputs.windsurf.packages.${stdenv.hostPlatform.system}.codeium-lsp
-      opencode
 
       # Development Tools
       bash-language-server
       cmake
-      codex
       distrobox
       gcc
       gdb
