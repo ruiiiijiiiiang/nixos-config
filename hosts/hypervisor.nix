@@ -22,7 +22,7 @@ in
 
   custom = {
     platforms.minipc = {
-      kernel.enable = true;
+      hardware.enable = true;
       disks = {
         enable = true;
         inherit volumeGroup;

@@ -73,7 +73,6 @@ in
       # Desktop Apps
       easyeffects
       goofcord
-      inputs.zen-browser.packages.${stdenv.hostPlatform.system}.default
       kdePackages.filelight
       kdePackages.gwenview
       kdePackages.kate

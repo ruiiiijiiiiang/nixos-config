@@ -8,7 +8,7 @@ in
   custom = {
     platforms.desktop = {
       disks.enable = true;
-      kernel.enable = true;
+      hardware.enable = true;
       services.enable = true;
     };
 

@@ -11,22 +11,22 @@ let
   inherit (consts) username daily-tasks;
   inherit (helpers) dailyTaskToSystemd adjustTime;
   cfg = config.custom.services.infra.restic;
+  paths = [
+    "/etc/ssh/ssh_host_*"
+    "/home/${username}/.ssh/id_*"
+    "/var/lib"
+  ];
 
   sharedConfig = {
     initialize = true;
     passwordFile = config.age.secrets.restic-password.path;
-    paths = [
-      "/etc/ssh/ssh_host_*"
-      "/home/${username}/.ssh/id_*"
-      "/var/lib"
-    ]
-    ++ cfg.extraPaths;
 
     exclude = [
       "/var/lib/containers"
       "/var/lib/systemd"
       "/var/lib/machines"
       "/var/lib/swapfile"
+      "**/.cache"
     ]
     ++ cfg.extraExcludes;
 
@@ -40,10 +40,15 @@ in
       type = types.str;
       description = "Base path to store the Restic repository.";
     };
-    extraPaths = mkOption {
+    localPaths = mkOption {
       type = types.listOf types.str;
       default = [ ];
-      description = "Extra paths to backup data from.";
+      description = "Additional paths included only in the local backup.";
+    };
+    remotePaths = mkOption {
+      type = types.listOf types.str;
+      default = [ ];
+      description = "Additional paths included only in the remote backup.";
     };
     extraExcludes = mkOption {
       type = types.listOf types.str;
@@ -59,8 +64,12 @@ in
         message = "custom.services.infra.restic.repo must be an absolute path.";
       }
       {
-        assertion = lib.all (p: lib.hasPrefix "/" p) cfg.extraPaths;
-        message = "custom.services.infra.restic.extraPaths must contain only absolute paths.";
+        assertion = lib.all (p: lib.hasPrefix "/" p) cfg.localPaths;
+        message = "custom.services.infra.restic.localPaths must contain only absolute paths.";
+      }
+      {
+        assertion = lib.all (p: lib.hasPrefix "/" p) cfg.remotePaths;
+        message = "custom.services.infra.restic.remotePaths must contain only absolute paths.";
       }
       {
         assertion = lib.all (p: lib.hasPrefix "/" p) cfg.extraExcludes;
@@ -75,6 +84,7 @@ in
 
     services.restic.backups = {
       "data-local" = sharedConfig // {
+        paths = paths ++ cfg.localPaths;
         repository = "${cfg.repo}/restic-repo";
         timerConfig = {
           OnCalendar = dailyTaskToSystemd daily-tasks.${hostName}.restic-backup;
@@ -87,6 +97,7 @@ in
       };
 
       "data-proton" = sharedConfig // {
+        paths = paths ++ cfg.remotePaths;
         repository = "rclone:proton-drive:backup/restic-repo-${hostName}";
         rcloneConfigFile = config.age.secrets.rclone-conf.path;
         rcloneOptions = {

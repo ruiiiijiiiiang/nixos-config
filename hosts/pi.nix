@@ -17,7 +17,7 @@ in
 
   custom = {
     platforms.pi = {
-      kernel.enable = true;
+      hardware.enable = true;
       networking = {
         enable = true;
         inherit lanInterface wlanInterface vlanId;

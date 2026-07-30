@@ -1,10 +1,10 @@
 { config, lib, ... }:
 let
-  cfg = config.custom.platforms.laptop.kernel;
+  cfg = config.custom.platforms.laptop.hardware;
 in
 {
-  options.custom.platforms.laptop.kernel = with lib; {
-    enable = mkEnableOption "Enable laptop kernel settings";
+  options.custom.platforms.laptop.hardware = with lib; {
+    enable = mkEnableOption "Enable laptop hardware settings";
   };
 
   config = lib.mkIf cfg.enable {

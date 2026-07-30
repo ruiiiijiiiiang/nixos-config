@@ -1,10 +1,10 @@
 { config, lib, ... }:
 let
-  cfg = config.custom.platforms.desktop.kernel;
+  cfg = config.custom.platforms.minipc.hardware;
 in
 {
-  options.custom.platforms.desktop.kernel = with lib; {
-    enable = mkEnableOption "Enable Desktop kernel settings";
+  options.custom.platforms.minipc.hardware = with lib; {
+    enable = mkEnableOption "Enable MiniPC hardware settings";
   };
 
   config = lib.mkIf cfg.enable {
@@ -17,7 +17,6 @@ in
       initrd.availableKernelModules = [
         "nvme"
         "xhci_pci"
-        "ahci"
         "usbhid"
         "sd_mod"
       ];
@@ -31,7 +30,6 @@ in
     hardware = {
       cpu.amd.updateMicrocode = true;
       amdgpu.initrd.enable = true;
-      bluetooth.enable = true;
     };
   };
 }

@@ -17,7 +17,7 @@ in
   custom = {
     platforms.laptop = {
       disks.enable = true;
-      kernel.enable = true;
+      hardware.enable = true;
       services.enable = true;
     };
 

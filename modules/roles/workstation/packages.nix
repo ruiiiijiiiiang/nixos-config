@@ -50,7 +50,13 @@ in
     programs = {
       firefox.enable = true;
       htop.enable = true;
-      nix-ld.enable = true;
+      nix-ld = {
+        enable = true;
+        libraries = [
+          pkgs.glib
+          pkgs.libsecret
+        ];
+      };
       neovim.package = inputs.neovim-nightly-overlay.packages.${pkgs.system}.default;
       wireshark = {
         enable = true;

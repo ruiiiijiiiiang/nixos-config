@@ -6,6 +6,7 @@ let
   storagePath = "/mnt/usb-hdd-0/${hostName}/storage";
   mediaPath = "/mnt/usb-hdd-0/${hostName}/media";
   backupPath = "/mnt/usb-hdd-1/${hostName}/backup";
+  databaseBackupPath = "${backupPath}/databases";
 in
 {
   imports = [
@@ -104,13 +105,14 @@ in
           autoUpdate.enable = true;
           autoBackup = {
             enable = true;
-            path = backupPath;
+            path = databaseBackupPath;
           };
         };
         restic = {
           enable = true;
           repo = backupPath;
-          extraPaths = [ storagePath ];
+          localPaths = [ storagePath ];
+          remotePaths = [ databaseBackupPath ];
         };
       };
 
