@@ -1,6 +1,29 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
+  "customDatasources": {
+    "proton-drive": {
+      "defaultRegistryUrlTemplate": "https://proton.me/download/drive/cli/version.json",
+      "format": "json",
+      "transformTemplates": [
+        "{\"releases\": $map(Releases[CategoryName = 'Stable'], function($release) { {\"version\": $release.Version, \"digest\": $release.Files[Platform = 'linux/x64'].Sha512CheckSum} })}"
+      ]
+    }
+  },
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^modules/services/infra/proton-drive/default\\.nix$/"
+      ],
+      "matchStrings": [
+        "proton-drive-version = \"(?<currentValue>[^\"]+)\";\\s+proton-drive-sha512 = \"(?<currentDigest>[a-f0-9]+)\";"
+      ],
+      "depNameTemplate": "proton-drive",
+      "datasourceTemplate": "custom.proton-drive",
+      "versioningTemplate": "semver"
+    }
+  ],
   "nix": {
     "enabled": true
   },
@@ -8,5 +31,11 @@
     "enabled": true
   },
   "dependencyDashboard": true,
-  "dependencyDashboardApproval": true
+  "dependencyDashboardApproval": true,
+  "packageRules": [
+    {
+      "matchPackageNames": ["proton-drive"],
+      "dependencyDashboardApproval": false
+    }
+  ]
 }

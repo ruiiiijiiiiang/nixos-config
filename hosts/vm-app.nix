@@ -108,6 +108,7 @@ in
             path = databaseBackupPath;
           };
         };
+        protondrive.enable = true;
         restic = {
           enable = true;
           repo = backupPath;

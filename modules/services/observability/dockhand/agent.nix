@@ -48,6 +48,7 @@ in
       dockhand-agent = {
         image = "ghcr.io/finsys/hawser:latest";
         user = "${toString oci-uids.dockhand}:${toString oci-uids.dockhand}";
+        podman.sdnotify = "healthy";
         ports = [
           "${getHostAddress config.networking.hostName}:${toString ports.dockhand.agent}:${toString ports.dockhand.agent}"
           "[${

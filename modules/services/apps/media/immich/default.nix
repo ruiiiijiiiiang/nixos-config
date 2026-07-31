@@ -159,8 +159,17 @@ in
       };
     };
 
-    custom.services.infra.restic = {
-      extraExcludes = lib.mkIf config.custom.services.infra.restic.enable resticExcludePaths;
+    custom.services.infra = {
+      protondrive.uploads = {
+        immich = {
+          sourcePaths = [
+            "${cfg.storagePath}/immich/upload"
+            "${cfg.storagePath}/immich/library"
+          ];
+          remotePath = "immich";
+        };
+      };
+      restic.extraExcludes = lib.mkIf config.custom.services.infra.restic.enable resticExcludePaths;
     };
   };
 }

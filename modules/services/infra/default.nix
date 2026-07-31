@@ -4,6 +4,7 @@
     ./hypervisor
     ./nfs
     ./podman
+    ./protondrive
     ./restic
     ./smartd
   ];

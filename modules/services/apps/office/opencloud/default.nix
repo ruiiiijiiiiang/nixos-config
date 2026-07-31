@@ -153,5 +153,12 @@ in
         port = ports.onlyoffice;
       };
     };
+
+    custom.services.infra.protondrive.uploads = {
+      opencloud = {
+        sourcePaths = [ "${cfg.storagePath}/opencloud/storage/users" ];
+        remotePath = "opencloud";
+      };
+    };
   };
 }

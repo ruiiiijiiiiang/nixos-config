@@ -436,6 +436,7 @@ rec {
       restic-backup = "04:00";
       container-db-backup = "03:30";
       nix-build = "05:30";
+      proton-drive-upload = "06:00";
     };
     vm-monitor = {
       podman-update = "03:30";

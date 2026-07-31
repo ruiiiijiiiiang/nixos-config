@@ -127,5 +127,12 @@ in
         client_max_body_size 500M;
       '';
     };
+
+    custom.services.infra.protondrive.uploads = {
+      paperless = {
+        sourcePaths = [ "${cfg.storagePath}/paperless/media/documents/originals" ];
+        remotePath = "paperless";
+      };
+    };
   };
 }
