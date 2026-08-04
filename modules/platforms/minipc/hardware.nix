@@ -31,5 +31,12 @@ in
       cpu.amd.updateMicrocode = true;
       amdgpu.initrd.enable = true;
     };
+
+    services.chrony = {
+      enableRTCTrimming = false;
+      extraConfig = ''
+        rtcsync
+      '';
+    };
   };
 }

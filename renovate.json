@@ -14,7 +14,7 @@
     {
       "customType": "regex",
       "managerFilePatterns": [
-        "/^modules/services/infra/proton-drive/default\\.nix$/"
+        "/^modules/services/infra/protondrive/default\\.nix$/"
       ],
       "matchStrings": [
         "proton-drive-version = \"(?<currentValue>[^\"]+)\";\\s+proton-drive-sha512 = \"(?<currentDigest>[a-f0-9]+)\";"

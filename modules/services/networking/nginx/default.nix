@@ -107,6 +107,7 @@ in
         environmentFile = config.age.secrets.cloudflare-token.path;
         group = "nginx";
         reloadServices = [ "nginx" ];
+        extraLegoFlags = [ "--dns.propagation-wait=30s" ];
         extraLegoRenewFlags = [ "--ari-disable" ];
       });
     };

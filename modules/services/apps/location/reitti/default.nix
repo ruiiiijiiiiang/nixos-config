@@ -105,7 +105,9 @@ in
     services.nginx.virtualHosts."${fqdn}" = mkVirtualHost {
       inherit fqdn;
       port = ports.reitti;
-      extraConfig = "client_max_body_size 200M;";
+      extraConfig = ''
+        client_max_body_size 200M;
+      '';
     };
   };
 }

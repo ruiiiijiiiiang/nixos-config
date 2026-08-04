@@ -170,11 +170,11 @@ in
             do-not-query-localhost = false;
             hide-identity = true;
             hide-version = true;
+            prefer-ip6 = true;
 
             private-domain = [ domain ];
             domain-insecure = [ domain ];
-            local-zone = [ "\"${domain}\" static" ];
-            prefer-ip6 = true;
+            local-zone = [ "\"${domain}\" transparent" ];
           };
 
           forward-zone = [

@@ -1,15 +1,11 @@
 {
   config,
-  consts,
-  helpers,
   lib,
   pkgs,
   ...
 }:
 let
   inherit (config.networking) hostName;
-  inherit (consts) daily-tasks;
-  inherit (helpers) dailyTaskToSystemd;
   cfg = config.custom.services.infra.protondrive;
 
   serviceName = "proton-drive-upload";
@@ -37,14 +33,16 @@ let
     lib.mapAttrsToList (
       name: upload:
       "upload ${lib.escapeShellArg name} "
+      + lib.escapeShellArg (builtins.toJSON upload.ignoredFailures)
+      + " "
       + lib.concatMapStringsSep " " lib.escapeShellArg upload.sourcePaths
       + " ${lib.escapeShellArg (remotePathFor upload)}"
     ) cfg.uploads
   );
 
   # renovate: datasource=custom.proton-drive depName=proton-drive versioning=semver
-  proton-drive-version = "0.6.0";
-  proton-drive-sha512 = "e77f5b27a51a81063c23c15ac0a9f07e0ec5c868e78670f34b45b3c3c2e679ed769e6225796b900d0d02735a0c52a21eba72356f3ad617de076c405532e698dc";
+  proton-drive-version = "0.7.0";
+  proton-drive-sha512 = "5a5affcbec04ea926a32d10e236c1342227f1b6d416cb797f88f943b2c4f1dcf53b5897a115f1c1aa9ce8ce92fd637e1c50bd223b04866577681f0584eccdbc6";
 
   proton-drive = pkgs.stdenvNoCC.mkDerivation {
     pname = "proton-drive";
@@ -150,6 +148,7 @@ let
     runtimeInputs = [
       proton-drive
       pkgs.gnupg
+      pkgs.jq
       pkgs.pass
     ];
     text = /* bash */ ''
@@ -157,17 +156,53 @@ let
 
       upload() {
         local label="$1"
-        shift
+        local ignored_failures="$2"
+        local summary
+        local summary_file
+        shift 2
 
         echo "Uploading $label originals to Proton Drive"
-        if ! proton-drive filesystem upload \
+        summary_file="$(mktemp)"
+        if proton-drive filesystem upload \
+          --json \
           --folder-conflict-strategy merge \
           --file-conflict-strategy merge \
           --skip-thumbnails \
-          "$@"; then
-          echo "Failed to upload $label originals" >&2
-          status=1
+          "$@" | tee "$summary_file"; then
+          rm -f "$summary_file"
+          return
         fi
+
+        summary="$(
+          jq -Rsc \
+            '[split("\n")[] | fromjson? | select(type == "object" and has("failures"))] | last' \
+            "$summary_file"
+        )"
+        rm -f "$summary_file"
+
+        if [[ "$summary" != "null" ]] &&
+          printf '%s\n' "$summary" | jq --exit-status \
+            --argjson ignored "$ignored_failures" \
+            '(.failedItems > 0)
+              and ((.failures | length) == .failedItems)
+              and all(
+                .failures[];
+                . as $failure
+                | any(
+                    $ignored[];
+                    . as $rule
+                    | ($failure.name | test($rule.filePattern))
+                      and ($failure.error | test($rule.errorPattern))
+                  )
+              )' >/dev/null; then
+          echo "Ignoring expected $label upload failures:" >&2
+          printf '%s\n' "$summary" | jq --raw-output \
+            '.failures[] | "  - \(.name): \(.error)"' >&2
+          return
+        fi
+
+        echo "Failed to upload $label originals" >&2
+        status=1
       }
 
       ${uploadCommands}
@@ -201,6 +236,11 @@ in
 {
   options.custom.services.infra.protondrive = with lib; {
     enable = mkEnableOption "Enable original-file uploads to Proton Drive";
+    schedule = mkOption {
+      type = types.str;
+      description = "Systemd calendar expression controlling original-file uploads.";
+      example = "Mon *-*-* 06:00:00";
+    };
     remoteRoot = mkOption {
       type = types.str;
       default = "/my-files/backup/files";
@@ -217,6 +257,24 @@ in
             remotePath = mkOption {
               type = types.str;
               description = "Destination path relative to remoteRoot.";
+            };
+            ignoredFailures = mkOption {
+              type = types.listOf (
+                types.submodule {
+                  options = {
+                    filePattern = mkOption {
+                      type = types.str;
+                      description = "Regular expression matching an expected failed filename.";
+                    };
+                    errorPattern = mkOption {
+                      type = types.str;
+                      description = "Regular expression matching the expected upload error.";
+                    };
+                  };
+                }
+              );
+              default = [ ];
+              description = "Upload failures that do not make this upload definition fail.";
             };
           };
         }
@@ -245,10 +303,6 @@ in
       {
         assertion = lib.all (upload: validRemotePath upload.remotePath) uploadDefinitions;
         message = "Each Proton Drive upload remotePath must be a safe relative path.";
-      }
-      {
-        assertion = lib.hasAttr "proton-drive-upload" daily-tasks.${hostName};
-        message = "daily-tasks.${hostName}.proton-drive-upload must be defined.";
       }
     ];
 
@@ -282,8 +336,6 @@ in
 
         unitConfig = {
           RequiresMountsFor = sourcePaths;
-          StartLimitBurst = 3;
-          StartLimitIntervalSec = "2h";
         };
 
         serviceConfig = {
@@ -321,19 +373,18 @@ in
 
           IOSchedulingClass = "idle";
           Nice = 10;
-          Restart = "on-failure";
-          RestartSec = "15min";
           TimeoutStartSec = "infinity";
         };
       };
 
       timers.${serviceName} = {
-        description = "Daily original-file upload to Proton Drive";
+        description = "Scheduled original-file upload to Proton Drive";
         wantedBy = [ "timers.target" ];
         timerConfig = {
-          OnCalendar = dailyTaskToSystemd daily-tasks.${hostName}.proton-drive-upload;
+          OnCalendar = cfg.schedule;
           Persistent = true;
           RandomizedDelaySec = 0;
+          DeferReactivation = true;
         };
       };
     };

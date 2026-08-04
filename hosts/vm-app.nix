@@ -108,7 +108,10 @@ in
             path = databaseBackupPath;
           };
         };
-        protondrive.enable = true;
+        protondrive = {
+          enable = true;
+          schedule = "Mon *-*-* 06:00:00";
+        };
         restic = {
           enable = true;
           repo = backupPath;

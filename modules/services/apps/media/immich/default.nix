@@ -167,6 +167,12 @@ in
             "${cfg.storagePath}/immich/library"
           ];
           remotePath = "immich";
+          ignoredFailures = [
+            {
+              filePattern = "[.]xmp$";
+              errorPattern = ''^ValidationError: The mime type of the file is invalid \("application/x-dosexec"\)[.] Allowed mime types are "application/octet-stream"[.]$'';
+            }
+          ];
         };
       };
       restic.extraExcludes = lib.mkIf config.custom.services.infra.restic.enable resticExcludePaths;

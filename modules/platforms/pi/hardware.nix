@@ -35,5 +35,9 @@ in
     nixpkgs.hostPlatform = "aarch64-linux";
 
     nix.settings.filter-syscalls = false;
+
+    services.chrony = {
+      enableRTCTrimming = false;
+    };
   };
 }

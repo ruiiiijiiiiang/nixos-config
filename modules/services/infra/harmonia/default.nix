@@ -96,6 +96,10 @@ in
       nginx.virtualHosts."${fqdn}" = mkVirtualHost {
         inherit fqdn;
         port = ports.harmonia;
+        extraConfig = ''
+          proxy_buffering off;
+          proxy_max_temp_file_size 0;
+        '';
       };
     };
 

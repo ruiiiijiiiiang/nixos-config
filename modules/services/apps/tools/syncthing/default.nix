@@ -105,7 +105,9 @@ in
       nginx.virtualHosts."${fqdn}" = lib.mkIf cfg.proxied (mkVirtualHost {
         inherit fqdn;
         port = ports.syncthing;
-        extraConfig = "proxy_read_timeout 86400s;";
+        extraConfig = ''
+          proxy_read_timeout 86400s;
+        '';
       });
     };
   };
