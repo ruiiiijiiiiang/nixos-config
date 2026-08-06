@@ -110,7 +110,7 @@ in
           contimeout = "2m";
           protondrive-replace-existing-draft = "true";
         };
-        extraOptions = [ "rclone.connections=1" ];
+        extraOptions = [ "rclone.connections=2" ];
         extraBackupArgs = sharedConfig.extraBackupArgs ++ [
           "--pack-size"
           "8"

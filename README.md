@@ -180,10 +180,9 @@ This infrastructure comprises 9 distinct hosts. Here's the breakdown:
 
 ### [`vm-cyber`](./hosts/vm-cyber.nix)
 
-- **The Armory.** A specialized, security-focused desktop environment loaded with tools for penetration testing, forensics, and reverse engineering.
+- **The Armory.** A specialized, security-focused desktop environment loaded with tools for penetration testing, forensics, and reverse engineering. Isolated in VLAN 88 (DMZ) with no access to Home or Infra subnets, designated exclusively for isolated security research and offensive tooling.
 - **Hardware**: 4 vCPU cores, 6GB RAM
 - **Network:** DMZ (VLAN 88)
-- **Security:** **None.** This host is intentionally left vulnerable with no defenses to ensure maximum attack efficiency and unrestricted tool usage.
 
 ### Shared Services
 
