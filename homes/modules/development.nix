@@ -67,10 +67,10 @@ in
     xdg.mimeApps = {
       enable = true;
       defaultApplications = {
-        "application/pdf" = "okularApplication_pdf.desktop";
-        "application/epub+zip" = "okularApplication_epub.desktop";
-        "application/x-cbz" = "okularApplication_comicbook.desktop";
-        "application/x-cbr" = "okularApplication_comicbook.desktop";
+        "application/pdf" = "org.kde.okular.desktop";
+        "application/epub+zip" = "org.kde.okular.desktop";
+        "application/x-cbz" = "org.kde.okular.desktop";
+        "application/x-cbr" = "org.kde.okular.desktop";
 
         "application/x-7z-compressed" = "org.kde.ark.desktop";
         "application/x-rar" = "org.kde.ark.desktop";

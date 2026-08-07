@@ -1,6 +1,8 @@
-{ inputs, ... }:
+{ inputs, pkgs, ... }:
 
 {
+  imports = [ inputs.nixos-cis-validator.nixosModules.default ];
+
   nix = {
     nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
     registry.nixpkgs.flake = inputs.nixpkgs;
@@ -51,5 +53,11 @@
       dates = "daily";
       options = "--delete-older-than 7d";
     };
+  };
+
+  security.cisValidator = {
+    enable = pkgs.stdenv.hostPlatform.isx86_64;
+    profile = "ubuntu-24.04-l1-server";
+    failureMode = "warn";
   };
 }

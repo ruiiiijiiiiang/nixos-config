@@ -26,9 +26,13 @@
     lazynmap.url = "github:ruiiiijiiiiang/lazynmap";
     llm-agents.url = "github:numtide/llm-agents.nix";
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
-    nix-flatpak.url = "github:gmodena/nix-flatpak";
-    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     niri.url = "github:sodiboo/niri-flake";
+    nix-flatpak.url = "github:gmodena/nix-flatpak";
+    nixos-cis-validator = {
+      url = "github:ruiiiijiiiiang/nixos-cis-validator";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     nixos-vm-provisioner = {
       url = "github:ruiiiijiiiiang/nixos-vm-provisioner";
       inputs.nixpkgs.follows = "nixpkgs";
