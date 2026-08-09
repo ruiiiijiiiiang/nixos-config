@@ -22,10 +22,10 @@ in
         # 1. Local Exploitation & Reverse Engineering
         # Disables kernel protections to aid in debugging and exploit dev
         # =====================================================================
-        "kernel.dmesg_restrict" = 0; # Read kernel logs/panics without sudo
-        "kernel.kptr_restrict" = 0; # Expose kernel memory addresses for exploit offsets
-        "kernel.yama.ptrace_scope" = 0; # Attach debuggers (GDB/Frida) to any user-owned process
-        "fs.suid_dumpable" = 2; # Generate core dumps when crashing setuid binaries
+        "kernel.dmesg_restrict" = lib.mkForce 0; # Read kernel logs/panics without sudo
+        "kernel.kptr_restrict" = lib.mkForce 0; # Expose kernel memory addresses for exploit offsets
+        "kernel.yama.ptrace_scope" = lib.mkForce 0; # Attach debuggers (GDB/Frida) to any user-owned process
+        "fs.suid_dumpable" = lib.mkForce 2; # Generate core dumps when crashing setuid binaries
 
         # =====================================================================
         # 2. Advanced Payloads & Container Escapes
@@ -34,6 +34,7 @@ in
         "kernel.unprivileged_bpf_disabled" = 0; # Write/load eBPF tracing programs as a standard user
         "kernel.unprivileged_userns_clone" = 1; # Create user namespaces (crucial for container escapes)
         "kernel.modules_disabled" = 0; # Allow dynamic loading of custom drivers/rootkits
+        "net.core.bpf_jit_harden" = lib.mkForce 0; # Permit unrestricted BPF JIT behavior
 
         # =====================================================================
         # 3. Unprivileged Network Operations
@@ -48,8 +49,6 @@ in
         # =====================================================================
         "net.ipv4.ip_forward" = 1; # Route intercepted IPv4 traffic during ARP spoofing
         "net.ipv6.conf.all.forwarding" = 1; # Route intercepted IPv6 traffic during MitM
-        "net.ipv4.conf.all.accept_redirects" = 0; # Ignore hostile IPv4 ICMP redirects (Defense)
-        "net.ipv6.conf.all.accept_redirects" = 0; # Ignore hostile IPv6 ICMP redirects (Defense)
         "net.ipv4.conf.all.send_redirects" = 0; # Prevent accidental leaking of routing changes
 
         # =====================================================================
@@ -66,7 +65,7 @@ in
     };
 
     security = {
-      apparmor.enable = false;
+      apparmor.enable = lib.mkForce false;
       sudo.wheelNeedsPassword = false;
       rtkit.enable = true;
       lockKernelModules = false;

@@ -1,12 +1,15 @@
 {
+  secretsDir,
   config,
   consts,
+  keys,
   lib,
   pkgs,
   ...
 }:
 let
   inherit (consts) username;
+  inherit (keys) ssh;
   cfg = config.custom.roles.workstation.cyber.services;
 in
 {
@@ -15,7 +18,23 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    age.secrets = {
+      tryhackme-ovpn.file = secretsDir + "/personal/tryhackme/client.ovpn.age";
+    };
+
     services = {
+      openvpn.servers.tryhackme = {
+        config = "config ${config.age.secrets.tryhackme-ovpn.path}";
+      };
+
+      openssh = {
+        enable = true;
+        settings = {
+          PermitRootLogin = "prohibit-password";
+          PasswordAuthentication = false;
+        };
+      };
+
       xserver = {
         enable = true;
         displayManager.lightdm.enable = true;
@@ -53,6 +72,12 @@ in
       ];
     };
 
-    environment.etc.hosts.mode = "0644";
+    users.users.${username}.openssh.authorizedKeys.keys = ssh.desktop ++ ssh.framework;
+    users.users.root.openssh.authorizedKeys.keys = [
+      ssh.github-runner
+      ssh.forgejo-runner
+    ]
+    ++ ssh.desktop
+    ++ ssh.framework;
   };
 }

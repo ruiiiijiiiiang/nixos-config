@@ -2,15 +2,13 @@
   config,
   consts,
   helpers,
-  keys,
   lib,
   ...
 }:
 let
   inherit (config.networking) hostName;
-  inherit (consts) username addresses domain;
+  inherit (consts) addresses domain;
   inherit (helpers) getHostAddress getGatewayAddress;
-  inherit (keys) ssh;
   cfg = config.custom.platforms.vm.networking;
 in
 {
@@ -88,8 +86,5 @@ in
         };
       };
     };
-
-    users.users.${username}.openssh.authorizedKeys.keys = ssh.hypervisor;
-    users.users.root.openssh.authorizedKeys.keys = ssh.hypervisor;
   };
 }

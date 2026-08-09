@@ -19,6 +19,8 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    virtualisation.nixos-vm-provisioner.guest.enable = true;
+
     boot = {
       initrd = {
         availableKernelModules = lib.optionals cfg.workstation [ "virtio_gpu" ];
@@ -28,6 +30,20 @@ in
       kernelParams = lib.optionals cfg.gpuPassthrough [
         "amdgpu.cwsr_enable=0"
         "amdgpu.gpu_recovery=1"
+      ];
+
+      blacklistedKernelModules = [
+        "atm"
+        "can"
+        "cramfs"
+        "dccp"
+        "freevxfs"
+        "hfs"
+        "hfsplus"
+        "jffs2"
+        "rds"
+        "sctp"
+        "tipc"
       ];
     };
 

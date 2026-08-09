@@ -19,8 +19,6 @@ in
   system.stateVersion = "25.11";
   networking.hostName = hostName;
 
-  virtualisation.nixos-vm-provisioner.guest.enable = true;
-
   age.secrets = {
     wireguard-server-private-key.file = secretsDir + "/networking/wireguard/server-private-key.age";
     wireguard-framework-preshared-key.file =
@@ -36,6 +34,7 @@ in
   custom = {
     platforms.vm = {
       disks.enable = true;
+      hardware.enable = true;
       networking = {
         enable = true;
         inherit wanInterface lanInterface;

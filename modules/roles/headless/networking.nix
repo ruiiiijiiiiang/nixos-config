@@ -1,17 +1,12 @@
 {
   config,
   consts,
-  inputs,
-  keys,
   lib,
   ...
 }:
 let
-  inherit (consts) username ports;
-  inherit (keys) ssh;
+  inherit (consts) ports;
   cfg = config.custom.roles.headless.networking;
-  termixEnabled =
-    inputs.self.nixosConfigurations.vm-monitor.config.custom.services.observability.termix.enable;
 in
 {
   options.custom.roles.headless.networking = with lib; {
@@ -77,36 +72,6 @@ in
         enable = true;
         internalInterfaces = [ "podman0" ];
       };
-    };
-
-    services = {
-      openssh = {
-        enable = true;
-        openFirewall = false;
-        settings = {
-          PasswordAuthentication = false;
-          PermitRootLogin = "prohibit-password";
-          KbdInteractiveAuthentication = false;
-          AllowTcpForwarding = false;
-          X11Forwarding = false;
-        };
-      };
-    };
-
-    users.users = {
-      ${username} = {
-        linger = true;
-        openssh.authorizedKeys.keys =
-          lib.optionals termixEnabled [ ssh.termix ] ++ ssh.desktop ++ ssh.framework ++ ssh.windows;
-      };
-
-      root.openssh.authorizedKeys.keys = [
-        ssh.github-runner
-        ssh.forgejo-runner
-      ]
-      ++ ssh.desktop
-      ++ ssh.framework
-      ++ ssh.windows;
     };
   };
 }

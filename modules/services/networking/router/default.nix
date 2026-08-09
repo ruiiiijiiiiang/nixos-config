@@ -144,6 +144,21 @@ in
       }
       {
         assertion =
+          let
+            wanFirewall = config.networking.firewall.interfaces.${cfg.wanInterface};
+          in
+          lib.all (allowed: allowed == [ ]) [
+            wanFirewall.allowedTCPPorts
+            wanFirewall.allowedTCPPortRanges
+            wanFirewall.allowedUDPPortRanges
+          ]
+          &&
+            lib.unique wanFirewall.allowedUDPPorts
+            == lib.optional config.custom.services.networking.wireguard.server.enable ports.wireguard;
+        message = "Router WAN interface may only expose the WireGuard UDP port when the WireGuard server is enabled; all other WAN ports and port ranges must remain closed.";
+      }
+      {
+        assertion =
           lib.length (
             lib.unique [
               cfg.wanInterface
