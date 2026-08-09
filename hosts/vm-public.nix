@@ -8,7 +8,7 @@ in
   system.stateVersion = "25.11";
   networking.hostName = hostName;
 
-  nixos-vm-provisioner.guest.enable = true;
+  virtualisation.nixos-vm-provisioner.guest.enable = true;
 
   custom = {
     platforms.vm = {

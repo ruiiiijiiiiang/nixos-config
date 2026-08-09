@@ -9,19 +9,11 @@ let
   cfg = config.custom.roles.workstation.development.packages;
 in
 {
-  imports = [
-    inputs.niri.nixosModules.niri
-  ];
-
   options.custom.roles.workstation.development.packages = with lib; {
     enable = mkEnableOption "Enable development packages";
   };
 
   config = lib.mkIf cfg.enable {
-    nixpkgs.overlays = [ inputs.niri.overlays.niri ];
-
-    virtualisation.vmware.host.enable = true;
-
     environment.systemPackages = with pkgs; [
       iw
       mtr
@@ -142,12 +134,14 @@ in
       kdeconnect.enable = true;
       niri = {
         enable = true;
-        package = pkgs.niri-unstable;
+        useNautilus = false;
       };
       nix-index.enable = true;
       obs-studio.enable = true;
       steam.enable = true;
     };
+
+    virtualisation.vmware.host.enable = true;
 
     fonts = {
       packages = with pkgs; [

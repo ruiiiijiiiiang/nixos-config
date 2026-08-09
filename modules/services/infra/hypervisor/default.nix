@@ -201,7 +201,7 @@ in
         allowedBridges = [ cfg.lanBridge ];
       };
 
-      nixos-vm-provisioner = {
+      nixos-vm-provisioner.host = {
         enable = true;
         inherit (cfg) volumeGroup;
         inherit nixvirtDefaults guests;

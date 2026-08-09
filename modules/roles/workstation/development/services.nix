@@ -16,7 +16,10 @@ in
     boot.binfmt.emulatedSystems = [ "aarch64-linux" ]; # to build aarch64 kernel for pi
 
     services = {
-      displayManager.plasma-login-manager.enable = true;
+      displayManager = {
+        plasma-login-manager.enable = true;
+        defaultSession = "niri";
+      };
       desktopManager.plasma6.enable = true;
       gnome.gnome-keyring.enable = lib.mkForce false;
     };

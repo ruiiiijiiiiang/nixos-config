@@ -1,4 +1,4 @@
-{ helpers, inputs, ... }:
+{ helpers, ... }:
 let
   inherit (helpers) getHostAddress;
   hostName = "vm-app";
@@ -9,14 +9,10 @@ let
   databaseBackupPath = "${backupPath}/databases";
 in
 {
-  imports = [
-    inputs.nixos-vm-provisioner.nixosModules.guest-base
-  ];
-
   system.stateVersion = "25.11";
   networking.hostName = hostName;
 
-  nixos-vm-provisioner.guest.enable = true;
+  virtualisation.nixos-vm-provisioner.guest.enable = true;
 
   custom = {
     platforms.vm = {
