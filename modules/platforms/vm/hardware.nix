@@ -37,6 +37,7 @@ in
         "can"
         "cramfs"
         "dccp"
+        "firewire-core"
         "freevxfs"
         "hfs"
         "hfsplus"

@@ -31,6 +31,7 @@ in
           nixos.enable = true;
           packages.enable = true;
           services.enable = true;
+          treefmt.enable = true;
         };
       };
     };

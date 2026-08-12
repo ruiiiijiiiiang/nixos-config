@@ -4,5 +4,6 @@
     ./nixos.nix
     ./packages.nix
     ./services.nix
+    ./treefmt.nix
   ];
 }

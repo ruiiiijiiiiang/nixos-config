@@ -44,6 +44,7 @@ in
       imagemagick
       inputs.agenix.packages.${stdenv.hostPlatform.system}.default
       inputs.lazynmap.packages.${stdenv.hostPlatform.system}.default
+      inputs.pyroclear.packages.${stdenv.hostPlatform.system}.default
       inputs.rs-top.packages.${stdenv.hostPlatform.system}.default
       kmon
       lazyjournal
@@ -59,6 +60,7 @@ in
       tree
       unrar
       unzip
+      wakeonlan
       xplr
       yq
 
@@ -120,7 +122,6 @@ in
       python3
       rustup
       shellcheck
-      shfmt
       uv
       yaml-language-server
     ];

@@ -42,6 +42,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     noctalia.url = "github:noctalia-dev/noctalia/legacy-v4";
+    pyroclear.url = "github:shreyanth-sureshkrishnaa/pyroclear";
     rs-top.url = "github:ruiiiijiiiiang/rs-top";
     rust-overlay = {
       url = "github:oxalica/rust-overlay";
@@ -52,6 +53,10 @@
     wezterm.url = "github:wezterm/wezterm?dir=nix";
     windsurf.url = "github:Exafunction/windsurf.nvim";
     zen-browser.url = "github:0xc000022070/zen-browser-flake";
+    treefmt-nix = {
+      url = "github:numtide/treefmt-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =

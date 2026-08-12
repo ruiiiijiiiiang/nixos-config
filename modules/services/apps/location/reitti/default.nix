@@ -18,6 +18,7 @@ let
   inherit (helpers) mkOciUser mkVirtualHost mkNotifyService;
   cfg = config.custom.services.apps.location.reitti;
   fqdn = "${subdomains.${config.networking.hostName}.reitti}.${domain}";
+  resticExcludePaths = [ "/var/lib/reitti/postgis" ];
 in
 {
   options.custom.services.apps.location.reitti = with lib; {
@@ -108,6 +109,10 @@ in
       extraConfig = ''
         client_max_body_size 200M;
       '';
+    };
+
+    custom.services.infra.restic = {
+      extraExcludes = lib.mkIf config.custom.services.infra.restic.enable resticExcludePaths;
     };
   };
 }

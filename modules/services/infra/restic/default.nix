@@ -27,6 +27,10 @@ let
       "/var/lib/machines"
       "/var/lib/swapfile"
       "**/.cache"
+      "**/*.db-shm"
+      "**/*.db-wal"
+      "**/diagnostic.data/**"
+      "**/*.tmp"
     ]
     ++ cfg.extraExcludes;
 
@@ -101,6 +105,8 @@ in
         repository = "rclone:proton-drive:backup/restic-repo-${hostName}";
         rcloneConfigFile = config.age.secrets.rclone-conf.path;
         rcloneOptions = {
+          retries = "5";
+          low-level-retries = "10";
           transfers = "1";
           checkers = "1";
           tpslimit = "1";
