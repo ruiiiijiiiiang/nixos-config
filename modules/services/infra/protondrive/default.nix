@@ -389,7 +389,7 @@ in
       };
     };
 
-    custom.services.infra.restic.extraExcludes = lib.mkIf config.custom.services.infra.restic.enable [
+    custom.services.infra.restic.extraExcludes = [
       runtimeDirectory
     ];
   };

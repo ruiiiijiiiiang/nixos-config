@@ -175,7 +175,7 @@ in
           ];
         };
       };
-      restic.extraExcludes = lib.mkIf config.custom.services.infra.restic.enable resticExcludePaths;
+      restic.extraExcludes = resticExcludePaths;
     };
   };
 }

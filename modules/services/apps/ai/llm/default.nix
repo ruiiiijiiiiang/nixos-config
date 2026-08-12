@@ -20,7 +20,6 @@ let
   fqdn = "${subdomains.${config.networking.hostName}.openwebui}.${domain}";
   hasGpuPassthrough = config.custom.platforms.vm.hardware.gpuPassthrough;
   resticExcludePaths = [
-    "/var/lib/ollama/.cache"
     "/var/lib/ollama/.ollama/models"
     "/var/lib/open-webui/cache"
   ];
@@ -117,7 +116,7 @@ in
     };
 
     custom.services.infra.restic = {
-      extraExcludes = lib.mkIf config.custom.services.infra.restic.enable resticExcludePaths;
+      extraExcludes = resticExcludePaths;
     };
   };
 }

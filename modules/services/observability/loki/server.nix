@@ -60,7 +60,7 @@ in
     networking.firewall.allowedTCPPorts = [ ports.loki.server ];
 
     custom.services.infra.restic = {
-      extraExcludes = lib.mkIf config.custom.services.infra.restic.enable resticExcludePaths;
+      extraExcludes = resticExcludePaths;
     };
   };
 }

@@ -14,6 +14,86 @@ let
     ;
   inherit (helpers) dailyTaskToSystemd dailyTaskToCron;
   cfg = config.custom.services.infra.podman;
+
+  # Original list: https://github.com/RealOrangeOne/docker-db-auto-backup/blob/master/db-auto-backup.py
+  databaseProviders = [
+    {
+      images = [
+        "postgres"
+        "tensorchord/pgvecto-rs"
+        "nextcloud/aio-postgresql"
+        "timescale/timescaledb"
+        "pgvector/pgvector"
+        "pgautoupgrade/pgautoupgrade"
+        "immich-app/postgres"
+        "postgis/postgis"
+        "kartoza/postgis"
+      ];
+      dataPath = "/var/lib/postgresql/data";
+    }
+    {
+      images = [
+        "mysql"
+        "mariadb"
+        "linuxserver/mariadb"
+      ];
+      dataPath = "/var/lib/mysql";
+    }
+    {
+      images = [ "redis" ];
+      dataPath = "/data";
+    }
+  ];
+
+  normalizeImage =
+    image:
+    let
+      withoutDigest = lib.head (lib.splitString "@" image);
+      components = lib.splitString "/" withoutDigest;
+      lastComponent = lib.last components;
+      withoutTag = (lib.init components) ++ [ (lib.head (lib.splitString ":" lastComponent)) ];
+      withoutRegistry =
+        if
+          lib.length withoutTag > 1
+          && (
+            lib.hasInfix "." (lib.head withoutTag)
+            || lib.hasInfix ":" (lib.head withoutTag)
+            || lib.head withoutTag == "localhost"
+          )
+        then
+          lib.tail withoutTag
+        else
+          withoutTag;
+      normalized =
+        if lib.head withoutRegistry == "library" then lib.tail withoutRegistry else withoutRegistry;
+    in
+    lib.concatStringsSep "/" normalized;
+
+  getDatabaseProvider =
+    image:
+    lib.findFirst (provider: lib.elem (normalizeImage image) provider.images) null databaseProviders;
+
+  getDatabasePaths =
+    container:
+    let
+      provider = getDatabaseProvider container.image;
+    in
+    lib.optionals (provider != null) (
+      lib.concatMap (
+        volume:
+        let
+          parts = lib.splitString ":" volume;
+          source = lib.head parts;
+        in
+        lib.optionals (
+          lib.length parts >= 2 && lib.hasPrefix "/" source && lib.elemAt parts 1 == provider.dataPath
+        ) [ source ]
+      ) container.volumes
+    );
+
+  databasePaths = lib.unique (
+    lib.concatMap getDatabasePaths (lib.attrValues config.virtualisation.oci-containers.containers)
+  );
 in
 {
   options.custom.services.infra.podman = with lib; {
@@ -25,6 +105,12 @@ in
         type = types.nullOr types.str;
         default = null;
         description = "Absolute path to store database backups.";
+      };
+      databasePaths = mkOption {
+        type = types.listOf types.str;
+        default = lib.optionals cfg.autoBackup.enable databasePaths;
+        readOnly = true;
+        description = "Host database paths covered by automatic logical backups.";
       };
     };
   };
@@ -45,6 +131,10 @@ in
     }
 
     (lib.mkIf cfg.enable {
+      custom.services.infra.restic = {
+        extraExcludes = lib.optionals cfg.autoBackup.enable databasePaths;
+      };
+
       virtualisation = {
         podman = {
           enable = true;
