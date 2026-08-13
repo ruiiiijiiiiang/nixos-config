@@ -6,7 +6,7 @@
       "defaultRegistryUrlTemplate": "https://proton.me/download/drive/cli/version.json",
       "format": "json",
       "transformTemplates": [
-        "{\"releases\": $map(Releases[CategoryName = 'Stable'], function($release) { {\"version\": $release.Version, \"digest\": $release.Files[Platform = 'linux/x64'].Sha512CheckSum} })}"
+        "{\"releases\": $append([], $map(Releases[CategoryName = 'Stable'], function($release) { {\"version\": $release.Version, \"digest\": $release.Files[Platform = 'linux/x64'].Sha512CheckSum} }))}"
       ]
     }
   },

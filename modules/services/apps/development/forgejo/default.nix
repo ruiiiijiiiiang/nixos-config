@@ -4,6 +4,7 @@
   consts,
   helpers,
   lib,
+  pkgs,
   ...
 }:
 let
@@ -23,6 +24,10 @@ let
   cfg = config.custom.services.apps.development.forgejo;
   fqdn = "${subdomains.${config.networking.hostName}.forgejo}.${domain}";
   resticExcludePaths = [ "/var/lib/forgejo/cache" ];
+  runnerConfig = pkgs.writeText "forgejo-runner-config.yaml" /* yaml */ ''
+    container:
+      network: "podman"
+  '';
 in
 {
   options.custom.services.apps.development.forgejo = with lib; {
@@ -113,8 +118,10 @@ in
           "/run/podman/podman.sock:/var/run/docker.sock"
           "/var/lib/forgejo/runner:/data"
           "/var/lib/forgejo/cache:/.cache"
+          "${runnerConfig}:/data/config.yaml:ro"
         ];
         environment = {
+          CONFIG_FILE = "/data/config.yaml";
           GITEA_INSTANCE_URL = "http://${
             getHostAddress {
               inherit (config.networking) hostName;
