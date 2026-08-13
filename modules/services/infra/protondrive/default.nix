@@ -41,8 +41,8 @@ let
   );
 
   # renovate: datasource=custom.proton-drive depName=proton-drive versioning=semver
-  proton-drive-version = "0.7.0";
-  proton-drive-sha512 = "5a5affcbec04ea926a32d10e236c1342227f1b6d416cb797f88f943b2c4f1dcf53b5897a115f1c1aa9ce8ce92fd637e1c50bd223b04866577681f0584eccdbc6";
+  proton-drive-version = "0.8.0";
+  proton-drive-sha512 = "cf61c2688c45e1055d8add6221d9471a5a5b64bf3bcdb86460f5cb18414596cc4df3cdb6627c9097c94bec32a3c9915ada3211ef2ae5be33c46ebbc996ccaa28";
 
   proton-drive = pkgs.stdenvNoCC.mkDerivation {
     pname = "proton-drive";
@@ -166,7 +166,7 @@ let
         if proton-drive filesystem upload \
           --json \
           --folder-conflict-strategy merge \
-          --file-conflict-strategy merge \
+          --file-conflict-strategy create-new-revision \
           --skip-thumbnails \
           "$@" | tee "$summary_file"; then
           rm -f "$summary_file"
