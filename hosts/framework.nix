@@ -27,7 +27,6 @@ in
         catppuccin.enable = true;
         packages.enable = true;
         development = {
-          flatpak.enable = true;
           nixos.enable = true;
           packages.enable = true;
           services.enable = true;
