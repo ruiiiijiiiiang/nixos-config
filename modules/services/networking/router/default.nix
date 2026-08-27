@@ -31,6 +31,79 @@ let
   dnsIpsStr = lib.concatStringsSep ", " dnsIps;
   dnsIpsV6Str = lib.concatStringsSep ", " dnsIpsV6;
 
+  mkEnabledDmzHosts =
+    optionPath:
+    lib.filterAttrs (
+      hostName: hostConfig:
+      lib.hasAttr hostName addresses.dmz.hosts && lib.attrByPath optionPath false hostConfig.config
+    ) nixosConfigurations;
+
+  mkHostAddresses =
+    {
+      hosts,
+      isV6,
+    }:
+    lib.mapAttrsToList (
+      hostName: _:
+      getHostAddress {
+        inherit hostName isV6;
+        network = "dmz";
+      }
+    ) hosts;
+
+  lokiAgentHosts = mkEnabledDmzHosts [
+    "custom"
+    "services"
+    "observability"
+    "loki"
+    "agent"
+    "enable"
+  ];
+  lokiAgentIps = mkHostAddresses {
+    hosts = lokiAgentHosts;
+    isV6 = false;
+  };
+  lokiAgentIpsV6 = mkHostAddresses {
+    hosts = lokiAgentHosts;
+    isV6 = true;
+  };
+
+  wazuhAgentHosts = mkEnabledDmzHosts [
+    "custom"
+    "services"
+    "security"
+    "wazuh"
+    "agent"
+    "enable"
+  ];
+  wazuhAgentIps = mkHostAddresses {
+    hosts = wazuhAgentHosts;
+    isV6 = false;
+  };
+  wazuhAgentIpsV6 = mkHostAddresses {
+    hosts = wazuhAgentHosts;
+    isV6 = true;
+  };
+
+  trivyAgentHosts = mkEnabledDmzHosts [
+    "custom"
+    "services"
+    "security"
+    "trivy"
+    "scanning"
+    "enable"
+  ];
+  trivyAgentIps = mkHostAddresses {
+    hosts = trivyAgentHosts;
+    isV6 = false;
+  };
+  trivyAgentIpsV6 = mkHostAddresses {
+    hosts = trivyAgentHosts;
+    isV6 = true;
+  };
+
+  mkNftSet = ips: "{ ${lib.concatStringsSep ", " ips} }";
+
   mkSubnet =
     { network }:
     {
@@ -290,11 +363,15 @@ in
                 }
               } tcp dport { ${toString ports.http}, ${toString ports.https} } accept
 
+              # Allow DMZ services to send logs to Loki.
               ${lib.optionalString
-                nixosConfigurations.vm-monitor.config.custom.services.observability.loki.server.enable
+                (
+                  nixosConfigurations.vm-monitor.config.custom.services.observability.loki.server.enable
+                  && lokiAgentHosts != { }
+                )
                 /* bash */ ''
-                  iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip daddr ${getHostAddress "vm-monitor"} tcp dport ${toString ports.loki.server} accept
-                  iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip6 daddr ${
+                  iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip saddr ${mkNftSet lokiAgentIps} ip daddr ${getHostAddress "vm-monitor"} tcp dport ${toString ports.loki.server} accept
+                  iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip6 saddr ${mkNftSet lokiAgentIpsV6} ip6 daddr ${
                     getHostAddress {
                       hostName = "vm-monitor";
                       isV6 = true;
@@ -303,11 +380,15 @@ in
                 ''
               }
 
+              # Allow DMZ agents to reach Wazuh.
               ${lib.optionalString
-                nixosConfigurations.vm-monitor.config.custom.services.security.wazuh.server.enable
+                (
+                  nixosConfigurations.vm-monitor.config.custom.services.security.wazuh.server.enable
+                  && wazuhAgentHosts != { }
+                )
                 /* bash */ ''
-                  iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip daddr ${getHostAddress "vm-monitor"} tcp dport { ${toString ports.wazuh.agent.connection}, ${toString ports.wazuh.agent.enrollment} } accept
-                  iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip6 daddr ${
+                  iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip saddr ${mkNftSet wazuhAgentIps} ip daddr ${getHostAddress "vm-monitor"} tcp dport { ${toString ports.wazuh.agent.connection}, ${toString ports.wazuh.agent.enrollment} } accept
+                  iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip6 saddr ${mkNftSet wazuhAgentIpsV6} ip6 daddr ${
                     getHostAddress {
                       hostName = "vm-monitor";
                       isV6 = true;
@@ -316,11 +397,15 @@ in
                 ''
               }
 
+              # Allow DMZ services to reach Trivy.
               ${lib.optionalString
-                nixosConfigurations.vm-monitor.config.custom.services.security.trivy.server.enable
+                (
+                  nixosConfigurations.vm-monitor.config.custom.services.security.trivy.server.enable
+                  && trivyAgentHosts != { }
+                )
                 /* bash */ ''
-                  iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip daddr ${getHostAddress "vm-monitor"} tcp dport ${toString ports.trivy} accept
-                  iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip6 daddr ${
+                  iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip saddr ${mkNftSet trivyAgentIps} ip daddr ${getHostAddress "vm-monitor"} tcp dport ${toString ports.trivy} accept
+                  iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip6 saddr ${mkNftSet trivyAgentIpsV6} ip6 daddr ${
                     getHostAddress {
                       hostName = "vm-monitor";
                       isV6 = true;
@@ -329,6 +414,7 @@ in
                 ''
               }
 
+              # Allow WireGuard peers to reach internal networks.
               ${lib.optionalString
                 nixosConfigurations.vm-network.config.custom.services.networking.wireguard.server.enable
                 /* bash */ ''
@@ -336,6 +422,39 @@ in
                   iifname "${cfg.wgInterface}" oifname "${cfg.infraInterface}" accept
                   iifname "${cfg.wgInterface}" oifname "${cfg.dmzInterface}" accept
                   iifname "${cfg.wgInterface}" oifname "${cfg.wanInterface}" accept
+                ''
+              }
+
+              # Allow Prometheus to scrape SMART exporters on the home VLAN.
+              ${lib.optionalString
+                (
+                  nixosConfigurations.vm-monitor.config.custom.services.observability.prometheus.server.enable
+                  && lib.any (
+                    hostConfig:
+                    hostConfig.config.custom.services.observability.prometheus.exporters.smartctl.enable or false
+                  ) (builtins.attrValues nixosConfigurations)
+                )
+                /* bash */ ''
+                  iifname "${cfg.infraInterface}" oifname "${cfg.lanInterface}" \
+                    ip saddr ${
+                      getHostAddress {
+                        hostName = "vm-monitor";
+                        network = "infra";
+                      }
+                    } \
+                    ip daddr ${addresses.home.network} \
+                    tcp dport ${toString ports.prometheus.exporters.smartctl} accept
+
+                  iifname "${cfg.infraInterface}" oifname "${cfg.lanInterface}" \
+                    ip6 saddr ${
+                      getHostAddress {
+                        hostName = "vm-monitor";
+                        network = "infra";
+                        isV6 = true;
+                      }
+                    } \
+                    ip6 daddr ${addresses.home.network-v6} \
+                    tcp dport ${toString ports.prometheus.exporters.smartctl} accept
                 ''
               }
             }
