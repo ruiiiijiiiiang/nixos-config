@@ -1,6 +1,13 @@
-{ config, consts, lib, ... }:
+{
+  config,
+  consts,
+  helpers,
+  lib,
+  ...
+}:
 let
-  inherit (consts) addresses ports;
+  inherit (consts) ports;
+  inherit (helpers) getHostAddress;
   cfg = config.custom.services.observability.loki.agent;
 in
 {
@@ -8,7 +15,7 @@ in
     enable = mkEnableOption "Enable Loki log agent";
     serverAddress = mkOption {
       type = types.str;
-      default = addresses.localhost;
+      default = getHostAddress "vm-monitor";
       description = "Loki server address.";
     };
   };

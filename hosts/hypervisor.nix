@@ -1,4 +1,4 @@
-{ consts, helpers, ... }:
+{ consts, ... }:
 let
   inherit (consts)
     vlan-ids
@@ -6,7 +6,6 @@ let
     addresses
     hardware
     ;
-  inherit (helpers) getHostAddress;
   hostName = "hypervisor";
   volumeGroup = "vg-nvme";
   lanInterface = "enxc8a362bf0bb3";
@@ -183,10 +182,7 @@ in
           enable = true;
           interface = vlanInterface;
         };
-        loki.agent = {
-          enable = true;
-          serverAddress = getHostAddress "vm-monitor";
-        };
+        loki.agent.enable = true;
         prometheus.exporters = {
           libvirt.enable = true;
           nginx.enable = true;
@@ -199,10 +195,7 @@ in
 
       security = {
         fail2ban.enable = true;
-        wazuh.agent = {
-          enable = true;
-          interface = vlanInterface;
-        };
+        wazuh.agent.enable = true;
       };
     };
   };

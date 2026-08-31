@@ -1,6 +1,4 @@
-{ helpers, ... }:
 let
-  inherit (helpers) getHostAddress;
   hostName = "vm-app";
   lanInterface = "lan0";
   storagePath = "/mnt/usb-hdd-0/${hostName}/storage";
@@ -125,10 +123,7 @@ in
       observability = {
         beszel.agent.enable = true;
         dockhand.agent.enable = true;
-        loki.agent = {
-          enable = true;
-          serverAddress = getHostAddress "vm-monitor";
-        };
+        loki.agent.enable = true;
         prometheus.exporters = {
           nginx.enable = true;
           node.enable = true;
@@ -139,10 +134,7 @@ in
 
       security = {
         fail2ban.enable = true;
-        wazuh.agent = {
-          enable = true;
-          serverAddress = getHostAddress "vm-monitor";
-        };
+        wazuh.agent.enable = true;
       };
     };
   };

@@ -76,10 +76,7 @@ in
 
       security = {
         fail2ban.enable = true;
-        wazuh = {
-          server.enable = true;
-          agent.enable = true;
-        };
+        wazuh.server.enable = true;
       };
     };
   };

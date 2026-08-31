@@ -1,11 +1,9 @@
 {
   secretsDir,
   config,
-  helpers,
   ...
 }:
 let
-  inherit (helpers) getHostAddress;
   hostName = "vm-network";
   wanInterface = "wan0";
   lanInterface = "lan0";
@@ -131,10 +129,7 @@ in
           enable = true;
           interface = infraInterface;
         };
-        loki.agent = {
-          enable = true;
-          serverAddress = getHostAddress "vm-monitor";
-        };
+        loki.agent.enable = true;
         netalertx.enable = true;
         prometheus.exporters = {
           nginx.enable = true;
@@ -148,11 +143,7 @@ in
 
       security = {
         fail2ban.enable = true;
-        wazuh.agent = {
-          enable = true;
-          serverAddress = getHostAddress "vm-monitor";
-          interface = infraInterface;
-        };
+        wazuh.agent.enable = true;
       };
     };
   };

@@ -4,104 +4,110 @@
   consts,
   helpers,
   lib,
-  pkgs,
   ...
 }:
 let
-  inherit (consts)
-    addresses
-    domain
-    subdomains
-    ports
-    ;
-  inherit (helpers) ensureFile mkVirtualHost mkNotifyService;
+  inherit (consts) domain subdomains ports;
+  inherit (helpers) mkVirtualHost;
   cfg = config.custom.services.security.wazuh.server;
   fqdn = "${subdomains.${config.networking.hostName}.wazuh}.${domain}";
-  initialFile = pkgs.writeText "opensearch_dashboards.yml" (lib.readFile ./opensearch_dashboards.yml);
-  dashboardsFile = "/var/wazuh/opensearch_dashboards.yml";
+  credentials = config.age.secrets.wazuh-env.path;
+  rootCA = config.age.secrets.wazuh-root-ca.path;
 in
 {
-  options.custom.services.security.wazuh.server = with lib; {
-    enable = mkEnableOption "Enable Wazuh server";
+  options.custom.services.security.wazuh.server = {
+    enable = lib.mkEnableOption "Wazuh server";
   };
 
   config = lib.mkIf cfg.enable {
     age.secrets = {
-      wazuh-env.file = secretsDir + "/security/wazuh/env.age";
-      # INDEXER_USERNAME
-      # INDEXER_PASSWORD
+      wazuh-env = {
+        file = secretsDir + "/security/wazuh/env.age";
+        mode = "0400";
+        # INDEXER_USERNAME
+        # INDEXER_PASSWORD
+        # DASHBOARD_USERNAME
+        # DASHBOARD_PASSWORD
+        # API_USERNAME
+        # API_PASSWORD
+        # API_ADMIN_USERNAME
+        # API_ADMIN_PASSWORD
+      };
+      wazuh-root-ca = {
+        file = secretsDir + "/security/wazuh/root-ca.age";
+        mode = "0400";
+      };
+      wazuh-indexer-cert = {
+        file = secretsDir + "/security/wazuh/indexer-cert.age";
+        mode = "0400";
+      };
+      wazuh-indexer-key = {
+        file = secretsDir + "/security/wazuh/indexer-key.age";
+        mode = "0400";
+      };
+      wazuh-admin-cert = {
+        file = secretsDir + "/security/wazuh/admin-cert.age";
+        mode = "0400";
+      };
+      wazuh-admin-key = {
+        file = secretsDir + "/security/wazuh/admin-key.age";
+        mode = "0400";
+      };
+      wazuh-filebeat-cert = {
+        file = secretsDir + "/security/wazuh/filebeat-cert.age";
+        mode = "0400";
+      };
+      wazuh-filebeat-key = {
+        file = secretsDir + "/security/wazuh/filebeat-key.age";
+        mode = "0400";
+      };
     };
 
-    virtualisation.oci-containers.containers = {
-      wazuh-indexer = {
-        image = "wazuh/wazuh-indexer:${config.custom.services.security.wazuh.version}";
-        environment = {
-          OPENSEARCH_JAVA_OPTS = "-Xms1g -Xmx1g";
-        };
-        ports = [
-          "${toString ports.wazuh.agent.connection}:${toString ports.wazuh.agent.connection}"
-          "${toString ports.wazuh.agent.enrollment}:${toString ports.wazuh.agent.enrollment}"
-          "${addresses.localhost}:${toString ports.wazuh.dashboard}:${toString ports.wazuh.dashboard}"
-        ];
-        volumes = [
-          "wazuh-indexer-data:/var/lib/wazuh-indexer"
-          "/var/wazuh/certs/root-ca.pem:/usr/share/wazuh-indexer/config/certs/root-ca.pem"
-          "/var/wazuh/certs/wazuh-indexer.pem:/usr/share/wazuh-indexer/config/certs/indexer.pem"
-          "/var/wazuh/certs/wazuh-indexer-key.pem:/usr/share/wazuh-indexer/config/certs/indexer-key.pem"
-          "/var/wazuh/certs/admin.pem:/usr/share/wazuh-indexer/config/certs/admin.pem"
-          "/var/wazuh/certs/admin-key.pem:/usr/share/wazuh-indexer/config/certs/admin-key.pem"
-        ];
-        extraOptions = [
-          "--ulimit=memlock=-1:-1"
-          "--ulimit=nofile=65535:65535"
-        ];
+    services.wazuh = {
+      manager = {
+        enable = true;
+        environmentFile = credentials;
+        eventPort = ports.wazuh.agent.connection;
+        enrollmentPort = ports.wazuh.agent.enrollment;
+        apiPort = ports.wazuh.manager;
       };
 
-      wazuh-manager = {
-        image = "wazuh/wazuh-manager:${config.custom.services.security.wazuh.version}";
-        dependsOn = [ "wazuh-indexer" ];
-        networks = [ "container:wazuh-indexer" ];
-        environment = {
-          INDEXER_URL = "https://${addresses.localhost}";
-          FILEBEAT_SSL_VERIFICATION_MODE = "certificate";
-          SSL_CERTIFICATE_AUTHORITIES = "/etc/ssl/wazuh_certs/root-ca.pem";
-          SSL_CERTIFICATE = "/etc/ssl/wazuh_certs/wazuh-manager.pem";
-          SSL_KEY = "/etc/ssl/wazuh_certs/wazuh-manager-key.pem";
+      filebeat = {
+        enable = true;
+        environmentFile = credentials;
+        indexerUrl = "https://127.0.0.1:${toString ports.wazuh.indexer}";
+        certificates = {
+          inherit rootCA;
+          certificate = config.age.secrets.wazuh-filebeat-cert.path;
+          key = config.age.secrets.wazuh-filebeat-key.path;
         };
-        environmentFiles = [ config.age.secrets.wazuh-env.path ];
-        volumes = [
-          "wazuh-api-configuration:/var/ossec/api/configuration"
-          "wazuh-etc:/var/ossec/etc"
-          "wazuh-logs:/var/ossec/logs"
-          "wazuh-queue:/var/ossec/queue"
-          "wazuh-var-multigroups:/var/ossec/var/multigroups"
-          "wazuh-active-response:/var/ossec/active-response/bin"
-          "wazuh-wodles:/var/ossec/wodles"
-          "/var/wazuh/certs/root-ca.pem:/etc/ssl/wazuh_certs/root-ca.pem"
-          "/var/wazuh/certs/wazuh-manager.pem:/etc/ssl/wazuh_certs/wazuh-manager.pem"
-          "/var/wazuh/certs/wazuh-manager-key.pem:/etc/ssl/wazuh_certs/wazuh-manager-key.pem"
-        ];
-        hostname = "wazuh-manager";
       };
 
-      wazuh-dashboard = {
-        image = "wazuh/wazuh-dashboard:${config.custom.services.security.wazuh.version}";
-        dependsOn = [ "wazuh-indexer" ];
-        environment = {
-          INDEXER_URL = "https://${addresses.localhost}";
-          WAZUH_API_URL = "https://${addresses.localhost}";
-          SERVER_HOST = addresses.any;
+      indexer = {
+        enable = true;
+        port = ports.wazuh.indexer;
+        certificates = {
+          inherit rootCA;
+          nodeCertificate = config.age.secrets.wazuh-indexer-cert.path;
+          nodeKey = config.age.secrets.wazuh-indexer-key.path;
+          adminCertificate = config.age.secrets.wazuh-admin-cert.path;
+          adminKey = config.age.secrets.wazuh-admin-key.path;
         };
-        environmentFiles = [ config.age.secrets.wazuh-env.path ];
-        volumes = [
-          "wazuh-dashboard-config:/usr/share/wazuh-dashboard/config"
-          "wazuh-dashboard-custom:/usr/share/wazuh-dashboard/plugins/wazuh/public/assets/custom"
-          "/var/wazuh/certs/root-ca.pem:/usr/share/wazuh-dashboard/config/certs/root-ca.pem"
-          "/var/wazuh/certs/wazuh-dashboard.pem:/usr/share/wazuh-dashboard/config/certs/dashboard.pem"
-          "/var/wazuh/certs/wazuh-dashboard-key.pem:/usr/share/wazuh-dashboard/config/certs/dashboard-key.pem"
-          "/var/wazuh/opensearch_dashboards.yml:/usr/share/wazuh-dashboard/config/opensearch_dashboards.yml"
-        ];
-        networks = [ "container:wazuh-indexer" ];
+        securityBootstrap = {
+          enable = true;
+          environmentFile = credentials;
+        };
+      };
+
+      dashboard = {
+        enable = true;
+        environmentFile = credentials;
+        port = ports.wazuh.dashboard;
+        indexerUrl = "https://127.0.0.1:${toString ports.wazuh.indexer}";
+        managerApiPort = ports.wazuh.manager;
+        certificates = {
+          inherit rootCA;
+        };
       };
     };
 
@@ -109,42 +115,9 @@ in
       inherit fqdn;
       port = ports.wazuh.dashboard;
       extraConfig = ''
-        auth_request_set $email  $upstream_http_x_email;
+        auth_request_set $email $upstream_http_x_email;
         proxy_set_header X-Email $email;
       '';
     };
-
-    networking.firewall.allowedTCPPorts = [
-      ports.wazuh.agent.connection
-      ports.wazuh.agent.enrollment
-    ];
-
-    systemd.services = {
-      podman-wazuh-indexer = mkNotifyService { };
-      podman-wazuh-dashboard = {
-        preStart = lib.mkAfter ''
-          ${ensureFile {
-            source = initialFile;
-            destination = dashboardsFile;
-            mode = "0644";
-          }}
-        '';
-      };
-    };
   };
 }
-
-# Refer to https://documentation.wazuh.com/current/user-manual/wazuh-server-cluster/certificates-deployment.html#using-the-wazuh-certs-tool-sh-script-default-method
-# for instructions on how to generate certificates for the server. For a single node setup, use this as config.yml:
-# nodes:
-#   indexer:
-#     - name: wazuh-indexer
-#       ip: 127.0.0.1
-#   server:
-#     - name: wazuh-manager
-#       ip: 127.0.0.1
-#   dashboard:
-#     - name: wazuh-dashboard
-#       ip: 127.0.0.1
-# Once the certificates are copied to /var/wazuh/certs/, run the following command once:
-# sudo podman exec -u 0 -it wazuh-indexer env JAVA_HOME=/usr/share/wazuh-indexer/jdk bash /usr/share/wazuh-indexer/plugins/opensearch-security/tools/securityadmin.sh   -cd /usr/share/wazuh-indexer/config/opensearch-security   -icl   -nhnv   -cacert /usr/share/wazuh-indexer/config/certs/root-ca.pem   -cert /usr/share/wazuh-indexer/config/certs/admin.pem   -key /usr/share/wazuh-indexer/config/certs/admin-key.pem

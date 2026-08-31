@@ -8,7 +8,7 @@
 }:
 let
   inherit (consts) ports;
-  inherit (helpers) ensureFile getHostAddress;
+  inherit (helpers) getHostAddress;
   cfg = config.custom.services.security.wazuh.agent;
 
   nginxXml = ''
@@ -30,94 +30,39 @@ let
   '';
 
   extraLocalfiles = lib.concatStringsSep "\n" [
-    (if config.custom.services.networking.nginx.enable then nginxXml else "")
-    (if config.custom.services.security.suricata.enable then suricataXml else "")
+    (lib.optionalString config.custom.services.networking.nginx.enable nginxXml)
+    (lib.optionalString config.custom.services.security.suricata.enable suricataXml)
   ];
 
-  ossecContent =
+  ossecConfig =
     lib.replaceStrings
       [ "@AGENT_NAME@" "@SERVER_ADDRESS@" "@EXTRA_LOCALFILES@" ]
       [ config.networking.hostName cfg.serverAddress extraLocalfiles ]
       (lib.readFile ./ossec.conf);
-  initialFile = pkgs.writeText "ossec.conf" ossecContent;
-
-  ossecFile = "/var/wazuh/ossec.conf";
-  keysFile = "/var/wazuh/client.keys";
 in
 {
-  options.custom.services.security.wazuh.agent = with lib; {
-    enable = mkEnableOption "Enable Wazuh agent";
-    serverAddress = mkOption {
-      type = types.str;
+  options.custom.services.security.wazuh.agent = {
+    enable = lib.mkEnableOption "Wazuh agent";
+    serverAddress = lib.mkOption {
+      type = lib.types.str;
       default = getHostAddress "vm-monitor";
-      description = "Wazuh server address.";
-    };
-    interface = mkOption {
-      type = types.nullOr types.str;
-      default = null;
-      description = "Interface allowed to access agent ports.";
+      description = "Wazuh manager address.";
     };
   };
 
   config = lib.mkIf cfg.enable {
-    assertions = [
-      {
-        assertion = cfg.interface == null || cfg.interface != "";
-        message = "Wazuh agent interface must not be empty when set.";
-      }
+    services.wazuh.agent = {
+      enable = true;
+      managerAddress = cfg.serverAddress;
+      managerPort = ports.wazuh.agent.connection;
+      enrollmentPort = ports.wazuh.agent.enrollment;
+      config = ossecConfig;
+    };
+
+    systemd.services.wazuh-agent.path = [
+      pkgs.gnused
+      pkgs.nettools
+      pkgs.util-linux
     ];
-
-    virtualisation.oci-containers.containers = {
-      wazuh-agent = {
-        image = "wazuh/wazuh-agent:${config.custom.services.security.wazuh.version}";
-        volumes = [
-          "/var/wazuh/ossec.conf:/wazuh-config-mount/etc/ossec.conf"
-          "/var/wazuh/client.keys:/var/ossec/etc/client.keys"
-          "/:/host:ro"
-          "/sys:/host/sys:ro"
-          "/proc:/host/proc:ro"
-          "/var/log:/var/log:ro"
-          "/etc/machine-id:/etc/machine-id:ro"
-          "/etc/os-release:/etc/os-release:ro"
-        ];
-        networks = [ "host" ];
-        privileged = true;
-        extraOptions = [ "--pid=host" ];
-      };
-    };
-
-    networking.firewall =
-      if cfg.interface != null then
-        {
-          interfaces."${cfg.interface}".allowedTCPPorts = [
-            ports.wazuh.agent.connection
-            ports.wazuh.agent.enrollment
-          ];
-        }
-      else
-        {
-          allowedTCPPorts = [
-            ports.wazuh.agent.connection
-            ports.wazuh.agent.enrollment
-          ];
-        };
-
-    systemd.services.podman-wazuh-agent = {
-      restartIfChanged = false;
-
-      preStart = lib.mkAfter ''
-        ${ensureFile {
-          source = initialFile;
-          destination = ossecFile;
-        }}
-        if [ ! -f ${keysFile} ]; then
-          echo "Initializing empty ${keysFile} ..."
-          touch ${keysFile}
-          chmod 0666 ${keysFile}
-        else
-          echo "${keysFile} already exists. Preserving identity."
-        fi
-      '';
-    };
   };
 }

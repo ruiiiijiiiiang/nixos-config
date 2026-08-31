@@ -1,6 +1,4 @@
-{ helpers, ... }:
 let
-  inherit (helpers) getHostAddress;
   hostName = "vm-public";
   lanInterface = "lan0";
 in
@@ -47,10 +45,7 @@ in
       observability = {
         beszel.agent.enable = true;
         dockhand.agent.enable = true;
-        loki.agent = {
-          enable = true;
-          serverAddress = getHostAddress "vm-monitor";
-        };
+        loki.agent.enable = true;
         prometheus.exporters = {
           nginx.enable = true;
           node.enable = true;
@@ -61,10 +56,7 @@ in
       security = {
         fail2ban.enable = true;
         krawl.enable = true;
-        wazuh.agent = {
-          enable = true;
-          serverAddress = getHostAddress "vm-monitor";
-        };
+        wazuh.agent.enable = true;
       };
     };
   };
