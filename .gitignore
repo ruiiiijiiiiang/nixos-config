@@ -7,3 +7,5 @@ logs
 .gemini
 .codex
 .antigravitycli
+.agents
+.codebase-memory
