@@ -7,14 +7,14 @@
   ...
 }:
 let
-  inherit (consts) domain;
+  inherit (consts) domain subdomains;
   inherit (helpers) getHostAddress;
   cfg = config.custom.services.networking.cloudflared;
 
   tunneledSubdomains = [
-    "public"
-    "bin"
-    "krawl"
+    subdomains.vm-public.website
+    subdomains.vm-public.microbin
+    subdomains.vm-public.krawl
   ];
 
   mkIngress = fqdn: {
@@ -39,6 +39,7 @@ in
       cloudflared-tunnel-token.file = secretsDir + "/networking/cloudflare/tunnel-token.age";
     };
 
+    # To add a tunnel, do `cloudflared tunnel route dns home {subdomain}.ruijiang.me` after `cloudflared tunnel login`
     services.cloudflared = {
       enable = true;
       tunnels = {

@@ -72,7 +72,7 @@ rec {
       microbin = "bin";
       searxng = "searxng";
       krawl = "krawl";
-      website = "public";
+      website = "www";
       zeroclaw = "zeroclaw";
     };
   };
