@@ -125,10 +125,6 @@ in
           enable = true;
           interface = infraInterface;
         };
-        dockhand.agent = {
-          enable = true;
-          interface = infraInterface;
-        };
         loki.agent.enable = true;
         netalertx.enable = true;
         prometheus.exporters = {

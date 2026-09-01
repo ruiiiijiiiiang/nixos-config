@@ -83,7 +83,7 @@ in
       protonmail-bridge-gui
       remmina
       simplenote
-      # stirling-pdf-desktop
+      stirling-pdf-desktop
       telegram-desktop
       vivaldi
       vlc

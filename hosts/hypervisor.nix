@@ -159,10 +159,6 @@ in
             };
           };
         };
-        podman = {
-          enable = true;
-          autoUpdate.enable = true;
-        };
         restic = {
           enable = true;
           repo = backupPath;
@@ -178,16 +174,11 @@ in
           interface = vlanInterface;
         };
         cockpit.enable = true;
-        dockhand.agent = {
-          enable = true;
-          interface = vlanInterface;
-        };
         loki.agent.enable = true;
         prometheus.exporters = {
           libvirt.enable = true;
           nginx.enable = true;
           node.enable = true;
-          podman.enable = true;
           smartctl.enable = true;
           interface = vlanInterface;
         };

@@ -26,10 +26,6 @@ let
         paths = [ ".config/bat" ];
       }
       {
-        name = "bottom";
-        paths = [ ".config/bottom" ];
-      }
-      {
         name = "btop";
         paths = [ ".config/btop" ];
       }
@@ -50,10 +46,6 @@ let
         paths = [ ".config/helix" ];
       }
       {
-        name = "kitty";
-        paths = [ ".config/kitty" ];
-      }
-      {
         name = "lazygit";
         paths = [ ".config/lazygit" ];
       }
@@ -66,38 +58,8 @@ let
         paths = [ ".config/niri/config.kdl" ];
       }
       {
-        name = "noctalia";
-        paths = [
-          ".config/noctalia/colorschemes"
-        ];
-      }
-      {
-        name = "noxdir";
-        paths = [ ".noxdir" ];
-      }
-      {
-        name = "nvim";
-        paths = [
-          {
-            src = ".config/nvim-headless";
-            target = ".config/nvim";
-          }
-        ];
-      }
-      {
-        name = "posting";
-        paths = [
-          ".config/posting"
-          ".local/share/posting/themes"
-        ];
-      }
-      {
         name = "starship";
         paths = [ ".config/starship.toml" ];
-      }
-      {
-        name = "superfile";
-        paths = [ ".config/superfile" ];
       }
       {
         name = "wezterm";
@@ -113,6 +75,14 @@ let
   workstationLinks = lib.foldl' lib.recursiveUpdate { } (
     map mkDotfileLink [
       {
+        name = "bottom";
+        paths = [ ".config/bottom" ];
+      }
+      {
+        name = "kitty";
+        paths = [ ".config/kitty" ];
+      }
+      {
         name = "nvim";
         paths = [
           {
@@ -122,8 +92,23 @@ let
         ];
       }
       {
+        name = "noxdir";
+        paths = [ ".noxdir" ];
+      }
+      {
+        name = "posting";
+        paths = [
+          ".config/posting"
+          ".local/share/posting/themes"
+        ];
+      }
+      {
         name = "rs-top";
         paths = [ ".config/rs-top.toml" ];
+      }
+      {
+        name = "superfile";
+        paths = [ ".config/superfile" ];
       }
       {
         name = "zed";
@@ -150,6 +135,7 @@ let
       {
         name = "noctalia";
         paths = [
+          ".config/noctalia/colorschemes"
           {
             src = ".config/noctalia/settings-desktop.json";
             target = ".config/noctalia/settings.json";
@@ -177,6 +163,7 @@ let
       {
         name = "noctalia";
         paths = [
+          ".config/noctalia/colorschemes"
           {
             src = ".config/noctalia/settings-framework.json";
             target = ".config/noctalia/settings.json";
