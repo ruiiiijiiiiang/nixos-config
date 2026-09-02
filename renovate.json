@@ -34,6 +34,10 @@
   "dependencyDashboardApproval": true,
   "packageRules": [
     {
+      "matchUpdateTypes": ["lockFileMaintenance"],
+      "dependencyDashboardApproval": false
+    },
+    {
       "matchPackageNames": ["proton-drive"],
       "dependencyDashboardApproval": false
     }
