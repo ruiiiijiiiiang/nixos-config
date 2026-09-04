@@ -27,16 +27,9 @@
   "nix": {
     "enabled": true
   },
-  "lockFileMaintenance": {
-    "enabled": true
-  },
   "dependencyDashboard": true,
   "dependencyDashboardApproval": true,
   "packageRules": [
-    {
-      "matchUpdateTypes": ["lockFileMaintenance"],
-      "dependencyDashboardApproval": false
-    },
     {
       "matchPackageNames": ["proton-drive"],
       "dependencyDashboardApproval": false

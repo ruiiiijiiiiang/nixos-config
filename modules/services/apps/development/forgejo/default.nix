@@ -43,6 +43,12 @@ in
       # FORGEJO__DATABASE__NAME
       # FORGEJO__DATABASE__USER
       # FORGEJO__DATABASE__PASSWD
+      # FORGEJO__MAILER__PROTOCOL
+      # FORGEJO__MAILER__SMTP_ADDR
+      # FORGEJO__MAILER__SMTP_PORT
+      # FORGEJO__MAILER__USER
+      # FORGEJO__MAILER__PASSWD
+      # FORGEJO__MAILER__FROM
       # GITEA_RUNNER_REGISTRATION_TOKEN
     };
 
@@ -103,6 +109,8 @@ in
           FORGEJO__PACKAGE__ENABLED = "true";
           FORGEJO__PACKAGE__STORAGE_TYPE = "local";
           FORGEJO__PACKAGE__PACKAGES_PATH = "data/packages";
+          FORGEJO__MAILER__ENABLED = "true";
+          FORGEJO__SERVICE__ENABLE_NOTIFY_MAIL = "true";
         };
         environmentFiles = [ config.age.secrets.forgejo-env.path ];
         labels = {

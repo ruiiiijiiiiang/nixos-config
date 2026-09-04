@@ -27,10 +27,10 @@ in
 
     services = {
       logrotate.enable = true;
-      journald.extraConfig = ''
-        SystemMaxUse=1G
-        Storage=persistent
-      '';
+      journald.settings.Journal = {
+        SystemMaxUse = "1G";
+        Storage = "persistent";
+      };
 
       xserver.enable = false;
       printing.enable = false;

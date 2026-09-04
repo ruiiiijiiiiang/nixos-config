@@ -49,6 +49,7 @@ in
       kmon
       lazyjournal
       miller
+      netwatch
       noxdir
       ouch
       pastel

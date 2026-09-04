@@ -40,7 +40,7 @@
       url = "github:AshleyYakeley/NixVirt";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    noctalia.url = "github:noctalia-dev/noctalia/legacy-v4";
+    noctalia.url = "github:noctalia-dev/noctalia";
     pyroclear.url = "github:shreyanth-sureshkrishnaa/pyroclear";
     rs-top.url = "github:ruiiiijiiiiang/rs-top";
     rust-overlay = {

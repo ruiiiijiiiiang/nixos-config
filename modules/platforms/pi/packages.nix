@@ -15,7 +15,7 @@ in
   config = lib.mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
       libraspberrypi
-      raspberrypi-eeprom
+      # raspberrypi-eeprom
     ];
     # raspberrypi-eeprom is used to update the pi firmware,
     # but since nixos has a different filesystem structure,

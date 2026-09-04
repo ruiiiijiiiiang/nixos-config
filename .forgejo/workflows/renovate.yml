@@ -18,4 +18,4 @@ jobs:
           RENOVATE_TOKEN: "${{ secrets.RENOVATE_TOKEN }}"
           RENOVATE_GITHUB_COM_TOKEN: "${{ secrets.RENOVATE_GITHUB_TOKEN }}"
           RENOVATE_AUTODISCOVER: "false"
-          RENOVATE_REPOSITORIES: "rui/nixos-config,rui/wazuh-flake"
+          RENOVATE_REPOSITORIES: "rui/nixos-config,rui/wazuh-flake,rui/nixos-cis-validator"
