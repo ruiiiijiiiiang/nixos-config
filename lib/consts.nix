@@ -366,7 +366,7 @@ rec {
     vm-network = {
       uuid = "2b7de5db-e0e6-4f81-b5f4-4efc928ee475";
       cpu = 6;
-      memory = 2048;
+      memory = 4096;
       storage = {
         type = "lvm";
         size = "50G";
