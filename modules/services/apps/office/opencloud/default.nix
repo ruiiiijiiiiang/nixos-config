@@ -30,6 +30,8 @@ let
       (lib.readFile ./csp.yaml);
   initialFile = pkgs.writeText "csp.yaml" cspContent;
   cspFile = "/var/lib/opencloud/config/csp.yaml";
+  onlyofficeInitialFile = ./onlyoffice.json;
+  onlyofficeConfigFile = "/var/lib/onlyoffice/config/local.json";
   opencloud-port = "9200";
 in
 {
@@ -54,6 +56,7 @@ in
       # WEB_OIDC_CLIENT_ID
       # OC_JWT_SECRET
       # JWT_SECRET
+      # COLLABORATION_WOPI_SECRET
     };
 
     virtualisation.oci-containers.containers = {
@@ -76,11 +79,11 @@ in
           OC_INSECURE = "true";
 
           OC_ADD_RUN_SERVICES = "nats,collaboration";
-          COLLABORATION_APP_ADDR = "http://localhost:80";
-          COLLABORATION_WOPI_SRC = "http://localhost:${opencloud-port}";
+          COLLABORATION_APP_ADDR = "https://${onlyoffice-fqdn}";
+          COLLABORATION_WOPI_SRC = "https://${opencloud-fqdn}";
           COLLABORATION_APP_NAME = "OnlyOffice";
           COLLABORATION_APP_PRODUCT = "OnlyOffice";
-          COLLABORATION_APP_INSECURE = "true";
+          COLLABORATION_APP_INSECURE = "false";
 
           OC_OIDC_ISSUER = "https://${endpoints.oidc-issuer}";
           OC_EXCLUDE_RUN_SERVICES = "idp";
@@ -108,6 +111,7 @@ in
           "onlyoffice-log:/var/log/onlyoffice"
           "onlyoffice-lib:/var/lib/onlyoffice"
           "onlyoffice-db:/var/lib/postgresql"
+          "${onlyofficeConfigFile}:/etc/onlyoffice/documentserver/local.json"
         ];
         environment = {
           JWT_ENABLED = "true";
@@ -127,16 +131,27 @@ in
     systemd = {
       tmpfiles.rules = [
         "d /var/lib/opencloud/config 0755 ${toString oci-uids.opencloud} ${toString oci-uids.opencloud} - -"
+        "d /var/lib/onlyoffice/config 0755 root root - -"
         "d ${cfg.storagePath}/opencloud 0755 ${toString oci-uids.opencloud} ${toString oci-uids.opencloud} - -"
       ];
 
-      services.podman-opencloud = (mkNotifyService { timeout = 600; }) // {
-        preStart = lib.mkAfter ''
+      services = {
+        podman-opencloud = (mkNotifyService { timeout = 600; }) // {
+          preStart = lib.mkAfter ''
+            ${ensureFile {
+              source = initialFile;
+              destination = cspFile;
+              user = toString oci-uids.opencloud;
+              group = toString oci-uids.opencloud;
+              mode = "0644";
+            }}
+          '';
+        };
+
+        podman-onlyoffice.preStart = lib.mkAfter ''
           ${ensureFile {
-            source = initialFile;
-            destination = cspFile;
-            user = toString oci-uids.opencloud;
-            group = toString oci-uids.opencloud;
+            source = onlyofficeInitialFile;
+            destination = onlyofficeConfigFile;
             mode = "0644";
           }}
         '';

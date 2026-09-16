@@ -1,0 +1,37 @@
+{
+  "services": {
+    "CoAuthoring": {
+      "server": {
+        "limits_tempfile_upload": 524288000
+      }
+    }
+  },
+  "FileConverter": {
+    "converter": {
+      "maxDownloadBytes": 524288000,
+      "inputLimits": [
+        {
+          "type": "docx;dotx;docm;dotm",
+          "zip": {
+            "uncompressed": "500MB",
+            "template": "*.xml"
+          }
+        },
+        {
+          "type": "xlsx;xltx;xlsm;xltm",
+          "zip": {
+            "uncompressed": "500MB",
+            "template": "*.xml"
+          }
+        },
+        {
+          "type": "pptx;ppsx;potx;pptm;ppsm;potm",
+          "zip": {
+            "uncompressed": "500MB",
+            "template": "*.xml"
+          }
+        }
+      ]
+    }
+  }
+}

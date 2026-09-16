@@ -1,44 +1,12 @@
 # AI Agent Project Context: nixos-config
 
-## Project Overview
-
-This repository contains a fully declarative and reproducible NixOS configuration for a personal homelab, managed via **Nix Flakes**. It follows a **Domain-Driven Design** architecture, organizing system components into four composable layers.
-
-- **Foundational Stack:** NixOS, Nix Flakes, `flake-parts`.
-- **Infrastructure Management:** `disko` (disk partitioning), `agenix` (secret management), `NixVirt` (libvirt virtualization).
-- **Home Environment:** `home-manager` for user-specific configurations and dotfiles.
-- **Hardware:** Desktop (Workstation), Framework Laptop (Workstation), Raspberry Pi 4 (IoT/DNS), and a Mini PC (Hypervisor) running multiple specialized VMs.
-- **Domain Info:** The primary domain `ruijiang.me` is purchased through Namecheap (expires annually on June 28th), but all DNS records for the domain and its subdomains are handled by Cloudflare.
-
-## Directory Structure Highlights
-
-- `homes/`: Home-manager configurations and modules.
-- `hosts/`: Host-specific NixOS configurations and flake-module entry point.
-- `lib/`: Shared constants and helper functions.
-- `modules/`: The core of the NixOS modular system (core, platforms, roles, services).
-- `secrets/`: Encrypted secrets (agenix).
-- `shells/`: Development shells defined as flakes.
-
-### Architectural Layers (`modules/`)
-
-1. **core:** Universal system baselines (networking, users, core packages).
-2. **platforms:** Hardware-specific abstractions and disk layouts (Framework, Pi, VM).
-3. **roles:** Host "personalities" (Workstation, Headless Server, Cyber Research).
-4. **services:** Functional applications categorized by domain (apps, infra, networking, observability, security).
-
 ## Deployment and Build Rules
 
-- **Explicit Command Ban:** Under no circumstances should an AI agent attempt to run commands involving `nix build`, `nixos-rebuild`, or any other Nix build/deployment tools (including remote execution over SSH). The only exception is `nix eval`, which agents are explicitly allowed to execute for inspecting attribute values and expressions.
-- **Strictly Manual Deployments:** All building, testing, and deployments are handled manually by the user. The agent's output is strictly limited to making configuration changes.
+- **Explicitly Authorized Builds:** An AI agent must not run `nix build` or any other command that builds Nix derivations, locally or remotely, unless explicitly instructed to do so by the operator. Agents may run `nix eval` without separate authorization when inspecting attribute values and expressions.
+- **Strictly Manual Deployments:** `nixos-rebuild`, deployment tools, and other commands that modify a running system must be performed manually by the operator. An instruction to build or test a configuration does not authorize its deployment.
 - **Strict Investigation & Modification Flow:** When tasked to investigate an issue, the agent must always report findings first and present a proposed solution. Under no circumstances should the agent update any codebase or configuration files directly without receiving explicit manual confirmation from the user for the proposed changes.
 
 ## Development Conventions
-
-### Modular Configuration
-
-- Custom NixOS options are defined under the `custom` prefix (e.g., `custom.services.apps.media.jellyfin.enable`).
-- Hosts are defined in `hosts/flake-module.nix` and their individual configuration files in `hosts/`.
-- Home-manager configurations are defined in `homes/flake-module.nix` and `homes/configs/`.
 
 ### OCI Container Setup Convention
 

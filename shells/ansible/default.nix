@@ -3,6 +3,7 @@ pkgs.mkShell {
   packages = with pkgs; [
     ansible
     ansible-lint
+    ansible-navigator
     molecule
     sshpass
   ];
