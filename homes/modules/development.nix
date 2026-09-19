@@ -34,6 +34,10 @@ in
         file = secretsDir + "/personal/nix/nix.conf.age";
         path = "${home.homeDirectory}/.config/nix/nix.conf";
       };
+      fish-env = {
+        file = secretsDir + "/personal/fish/env.aws.age";
+        path = "${home.homeDirectory}/.config/fish/conf.d/aws-secrets.fish";
+      };
     };
 
     programs = {
