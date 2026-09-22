@@ -239,7 +239,6 @@ in
     schedule = mkOption {
       type = types.str;
       description = "Systemd calendar expression controlling original-file uploads.";
-      example = "Mon *-*-* 06:00:00";
     };
     remoteRoot = mkOption {
       type = types.str;

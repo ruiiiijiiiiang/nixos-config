@@ -25,6 +25,11 @@ in
       default = null;
       description = "Interface allowed to access exporter ports.";
     };
+    scrapeAddress = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = "Address Prometheus uses to scrape this host; null resolves the host's primary internal address.";
+    };
   };
 
   config = {
@@ -32,6 +37,10 @@ in
       {
         assertion = cfg.interface == null || cfg.interface != "";
         message = "Prometheus exporters interface must not be empty when set.";
+      }
+      {
+        assertion = cfg.scrapeAddress == null || cfg.scrapeAddress != "";
+        message = "Prometheus exporters scrapeAddress must not be empty when set.";
       }
       {
         assertion = (!cfg.libvirt.enable) || config.custom.services.infra.hypervisor.enable;

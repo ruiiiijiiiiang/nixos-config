@@ -1,5 +1,13 @@
-{ inputs, pkgs, ... }:
+{
+  consts,
+  inputs,
+  pkgs,
+  ...
+}:
 
+let
+  inherit (consts) task-schedules;
+in
 {
   imports = [ inputs.nixos-cis-validator.nixosModules.default ];
 
@@ -45,12 +53,12 @@
 
     optimise = {
       automatic = true;
-      dates = [ "weekly" ];
+      dates = [ task-schedules.common.nix-optimise ];
     };
 
     gc = {
       automatic = true;
-      dates = "daily";
+      dates = task-schedules.common.nix-gc;
       options = "--delete-older-than 7d";
     };
   };

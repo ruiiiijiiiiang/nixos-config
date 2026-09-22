@@ -54,14 +54,12 @@ in
           agent.enable = true;
         };
         dockhand.server.enable = true;
-        gatus.enable = true;
         grafana.enable = true;
         loki = {
           server.enable = true;
           agent.enable = true;
         };
         myspeed.enable = true;
-        ntfy.enable = true;
         prometheus = {
           server.enable = true;
           exporters = {

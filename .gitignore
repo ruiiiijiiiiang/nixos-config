@@ -9,3 +9,12 @@ logs
 .antigravitycli
 .agents
 .codebase-memory
+
+# Terraform runtime state and operator-specific inputs.
+**/.terraform/
+**/*.tfstate
+**/*.tfstate.*
+**/*.tfvars
+!**/*.tfvars.example
+**/backend.hcl
+**/*.tfplan

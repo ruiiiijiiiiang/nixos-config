@@ -2,3 +2,10 @@ result
 .direnv
 .antigravity
 .codebase-memory
+**/.terraform/
+**/*.tfstate
+**/*.tfstate.*
+**/*.tfvars
+!**/*.tfvars.example
+**/backend.hcl
+**/*.tfplan

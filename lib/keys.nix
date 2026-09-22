@@ -39,6 +39,10 @@
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDd50+RrfO1TG5woaD1wmkYX+Ne7PWOH5cmS26MS2lly rui@vm-cyber"
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAdsyJYOK/gGTezi8oG6huVbJAaQRDkNN+/Bafz0vkHg root@vm-cyber"
     ];
+    cloud-observe = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG7cspWliRvbzXSFrSkfu5XfXYggsz0IiN9eky4BYyql rui@cloud-observe"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFf6rAwPj2NqPKpOTJsEVt3+tL9MnAetA0tzUoZ6+GRV root@cloud-observe"
+    ];
     github-runner = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIXXmiNdwQD1JdRzZYP2nKb6vR7ZxFxPhSQnJVgG1Dpm github-runner";
     forgejo-runner = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINkz+sEEf6r1a8aNMD1Vd2mJArY9qUC/TTcQRy7wxpST forgejo-runner";
     beszel = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIItKDbSO8vCAHAAKH58q0rCgmWYe9Np7CiwyXmcLSiNV beszel";
@@ -51,6 +55,9 @@
     };
     framework = {
       publicKey = "SF5kt0KNGdReMPbXltYmgim/0jkbho7ZtBSWVkSUR3c=";
+    };
+    cloud-observe = {
+      publicKey = "B4ipZ+CiTdoAc/ZfYGwaP2R6dT9+z0mhqEdBThqnbWs=";
     };
     pixel-7 = {
       publicKey = "irSOyEPaup0nVlHvPIQlrsbx4drvc7+gjj0rc7Hhgzs=";

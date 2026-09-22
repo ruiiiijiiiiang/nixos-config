@@ -4,6 +4,7 @@
   helpers,
   inputs,
   lib,
+  secretsDir,
   ...
 }:
 let
@@ -13,6 +14,7 @@ let
     subdomains
     ports
     endpoints
+    edge-observability
     ;
   inherit (helpers)
     getHostAddress
@@ -33,7 +35,7 @@ let
       wireguard
       ;
   };
-  ntfyEnabled = nixosConfigurations.vm-monitor.config.custom.services.observability.ntfy.enable;
+  ntfyEnabled = edge-observability.enable;
   resticExcludePaths = [ "/var/lib/${config.services.prometheus.stateDir}" ];
 
   mkScrapeJob = exporterName: port: {
@@ -45,8 +47,14 @@ let
         hostConfig.config.custom.services.observability.prometheus.exporters.${exporterName}.enable or false
       ))
       (lib.mapAttrsToList (
-        hostname: _: {
-          targets = [ "${getHostAddress hostname}:${toString port}" ];
+        hostname: hostConfig:
+        let
+          scrapeAddress = hostConfig.config.custom.services.observability.prometheus.exporters.scrapeAddress;
+        in
+        {
+          targets = [
+            "${if scrapeAddress != null then scrapeAddress else getHostAddress hostname}:${toString port}"
+          ];
           labels.hostname = hostname;
         }
       ))
@@ -59,6 +67,11 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    age.secrets = lib.mkIf ntfyEnabled {
+      alertmanager-ntfy-publisher-config.file =
+        secretsDir + "/observability/ntfy/alertmanager-publisher.yml.age";
+    };
+
     services = {
       prometheus = {
         enable = true;
@@ -153,6 +166,7 @@ in
 
         alertmanager-ntfy = lib.mkIf ntfyEnabled {
           enable = true;
+          extraConfigFiles = [ config.age.secrets.alertmanager-ntfy-publisher-config.path ];
           settings = {
             http.addr = "${addresses.localhost}:${toString ports.prometheus.alertmanager}";
             ntfy = {

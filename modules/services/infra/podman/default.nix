@@ -1,7 +1,6 @@
 {
   config,
   consts,
-  helpers,
   lib,
   ...
 }:
@@ -10,9 +9,8 @@ let
     username
     addresses
     oci-uids
-    daily-tasks
+    task-schedules
     ;
-  inherit (helpers) dailyTaskToSystemd dailyTaskToCron;
   cfg = config.custom.services.infra.podman;
 
   # Original list: https://github.com/RealOrangeOne/docker-db-auto-backup/blob/master/db-auto-backup.py
@@ -142,7 +140,7 @@ in
           dockerSocket.enable = true;
           autoPrune = {
             enable = true;
-            dates = "weekly";
+            dates = task-schedules.common.podman-prune;
             flags = [ "--all" ];
           };
           defaultNetwork.settings = {
@@ -179,7 +177,7 @@ in
               "${cfg.autoBackup.path}:/var/backups"
             ];
             environment = {
-              SCHEDULE = dailyTaskToCron daily-tasks.${config.networking.hostName}.container-db-backup;
+              SCHEDULE = task-schedules.${config.networking.hostName}.container-db-backup;
               COMPRESSION = "gzip";
             };
             labels = {
@@ -203,7 +201,7 @@ in
           timerConfig = {
             OnCalendar = [
               ""
-              (dailyTaskToSystemd daily-tasks.${config.networking.hostName}.podman-update)
+              task-schedules.${config.networking.hostName}.podman-update
             ];
             RandomizedDelaySec = 0;
           };

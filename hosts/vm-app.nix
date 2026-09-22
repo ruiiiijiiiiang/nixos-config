@@ -1,4 +1,6 @@
+{ consts, ... }:
 let
+  inherit (consts) task-schedules;
   hostName = "vm-app";
   lanInterface = "lan0";
   storagePath = "/mnt/usb-hdd-0/${hostName}/storage";
@@ -102,7 +104,7 @@ in
         };
         protondrive = {
           enable = true;
-          schedule = "Mon *-*-* 06:00:00";
+          schedule = task-schedules.vm-app.protondrive-upload;
         };
         restic = {
           enable = true;

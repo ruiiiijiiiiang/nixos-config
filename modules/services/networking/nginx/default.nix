@@ -20,10 +20,16 @@ let
       inherit config;
     })
   );
+  acmeFqdns = lib.unique (map (name: "${name}.${domain}") subdomainList ++ cfg.additionalFqdns);
 in
 {
   options.custom.services.networking.nginx = with lib; {
     enable = mkEnableOption "Enable Nginx reverse proxy";
+    additionalFqdns = mkOption {
+      type = types.listOf types.str;
+      default = [ ];
+      description = "Additional FQDNs for which Nginx obtains ACME certificates.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -100,19 +106,19 @@ in
     security.acme = {
       acceptTerms = true;
       defaults.email = email;
-      certs = lib.genAttrs (map (name: "${name}.${domain}") subdomainList) (fqdn: {
+      certs = lib.genAttrs acmeFqdns (fqdn: {
         domain = fqdn;
         dnsProvider = "cloudflare";
         dnsResolver = "${addresses.infra.vip.dns}:${toString ports.dns}";
         environmentFile = config.age.secrets.cloudflare-token.path;
         group = "nginx";
         reloadServices = [ "nginx" ];
-        extraLegoFlags = [ "--dns.propagation-wait=30s" ];
+        extraLegoFlags = [ "--dns.propagation.wait=30s" ];
         extraLegoRenewFlags = [ "--ari-disable" ];
       });
     };
 
-    systemd.services = lib.genAttrs (map (name: "acme-${name}.${domain}") subdomainList) (fqdn: {
+    systemd.services = lib.genAttrs (map (fqdn: "acme-${fqdn}") acmeFqdns) (fqdn: {
       environment = {
         LEGO_DISABLE_CNAME_SUPPORT = "true";
       };

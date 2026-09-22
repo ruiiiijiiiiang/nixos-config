@@ -6,7 +6,7 @@
   ...
 }:
 let
-  inherit (consts) home;
+  inherit (consts) home task-schedules;
   cfg = config.custom.roles.workstation.development.nixos;
 in
 {
@@ -33,7 +33,7 @@ in
           Description = "Run flake-update daily";
         };
         timerConfig = {
-          OnCalendar = "daily";
+          OnCalendar = task-schedules.workstation.flake-update;
           Unit = "flake-update.service";
         };
         wantedBy = [ "timers.target" ];

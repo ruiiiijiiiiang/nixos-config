@@ -6,19 +6,10 @@
   ...
 }:
 let
-  inherit (consts) daily-tasks;
+  inherit (consts) task-schedules;
   cfg = config.custom.services.infra.smartd;
 
-  dailyTaskTime = daily-tasks.${config.networking.hostName}.smartd-test or null;
-
-  hour =
-    if dailyTaskTime != null then
-      let
-        parts = lib.splitString ":" dailyTaskTime;
-      in
-      lib.elemAt parts 0
-    else
-      null;
+  smartdTestSchedule = task-schedules.${config.networking.hostName}.smartd-test or null;
 in
 {
   options.custom.services.infra.smartd = with lib; {
@@ -35,7 +26,10 @@ in
       enable = true;
       autodetect = true;
       defaults.autodetected =
-        if dailyTaskTime != null then "-a -o on -s S/../.././${hour} -n standby" else "-a -n standby";
+        if smartdTestSchedule != null then
+          "-a -o on -s ${smartdTestSchedule} -n standby"
+        else
+          "-a -n standby";
     };
 
     systemd = lib.mkIf cfg.workstation {
@@ -59,7 +53,7 @@ in
         description = "Timer to trigger weekly SMART self-tests";
         wantedBy = [ "timers.target" ];
         timerConfig = {
-          OnCalendar = "weekly";
+          OnCalendar = task-schedules.workstation.smartd-test;
           Persistent = true;
         };
       };

@@ -21,6 +21,8 @@ in
     wireguard-server-private-key.file = secretsDir + "/networking/wireguard/server-private-key.age";
     wireguard-framework-preshared-key.file =
       secretsDir + "/networking/wireguard/framework-preshared-key.age";
+    wireguard-cloud-observe-preshared-key.file =
+      secretsDir + "/networking/wireguard/cloud-observe-preshared-key.age";
     wireguard-pixel-7-preshared-key.file =
       secretsDir + "/networking/wireguard/pixel-7-preshared-key.age";
     wireguard-iphone-17-preshared-key.file =
@@ -92,6 +94,10 @@ in
               presharedKeyFile = config.age.secrets.wireguard-framework-preshared-key.path;
             }
             {
+              hostName = "cloud-observe";
+              presharedKeyFile = config.age.secrets.wireguard-cloud-observe-preshared-key.path;
+            }
+            {
               hostName = "pixel-7";
               presharedKeyFile = config.age.secrets.wireguard-pixel-7-preshared-key.path;
             }
@@ -116,7 +122,10 @@ in
           };
         };
         dyndns.enable = true;
-        cloudflared.enable = true;
+        cloudflared = {
+          enable = true;
+          tunnelName = "home";
+        };
         nginx.enable = true;
       };
 

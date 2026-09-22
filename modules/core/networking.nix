@@ -14,6 +14,7 @@ let
         "infra"
         "home"
         "dmz"
+        "wg"
       ];
       makeHostEntry =
         hostName: ip:

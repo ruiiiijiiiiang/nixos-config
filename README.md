@@ -2,7 +2,7 @@
 
 **Welcome to the future of homelabbing.**
 
-This repository is a **fully declarative, reproducible infrastructure** definition for my personal homelab. Built on **NixOS** and **Nix Flakes**, it represents a complete paradigm shift from fragile, imperative administration to a robust, code-driven ecosystem. Every layer — from CPU/RAM allocation, disk partitioning, VLAN assignment, to application services, container orchestration, and secret management — is defined in code. Version controlled and GitOps-friendly, it emphasizes **stability** through atomic rollbacks, **observability** via a comprehensive monitoring stack, and **security** with hardened services and isolated networking.
+This repository is a **fully declarative, reproducible hybrid on-premise/cloud infrastructure** definition for my personal homelab. Built on **NixOS** and **Nix Flakes**, it combines local compute and storage with a small independent cloud observability edge, replacing fragile imperative administration with a robust, code-driven ecosystem. Every layer — from CPU/RAM allocation, disk partitioning, VLAN assignment, to cloud provisioning, application services, container orchestration, and secret management — is defined in code. Version controlled and GitOps-friendly, it emphasizes **stability** through atomic rollbacks, **observability** via a comprehensive monitoring stack, and **security** with hardened services and isolated networking.
 
 The hardware? A mini PC, a Raspberry Pi, an unmanaged switch, and some old hard drives. No enterprise racks. No excessive power draw. The goal is **maximum software efficiency** — proving that proper architecture, deliberate design, and disciplined engineering matter far more than raw specs. This setup runs a full production-grade stack: [virtual machine orchestration](./modules/services/infra/hypervisor/default.nix), [IPv4/IPv6 dual-stack VLAN-segmented networking](./modules/services/networking/router/default.nix), [VPN for remote access](./modules/services/networking/wireguard/server.nix), [high-availability DNS cluster](./modules/services/networking/dns/default.nix), [centralized logging and monitoring](./modules/services/observability/), [encrypted local and offsite backups](./modules/services/infra/restic/default.nix), [private code repositories with CI/CD pipelines](./modules/services/apps/development/forgejo/default.nix), [local binary cache](./modules/services/infra/harmonia/default.nix), [reverse proxies with automatic TLS](./modules/services/networking/nginx/default.nix), [SIEM platform](./modules/services/security/wazuh/server.nix), media servers, document management, smart home automation, and more.
 
@@ -122,13 +122,17 @@ The network relies on a high-availability DNS cluster between `vm-network` and `
 
 ### External Access
 
-To maintain a zero-exposure posture, all external access is brokered by **Cloudflare Tunnels**. This architecture ensures that no ports are open on the WAN interface (besides WireGuard), completely eliminating the need for traditional port forwarding. The `cloudflared` service (running on `vm-network`) establishes an encrypted outbound connection to the Cloudflare edge, securely routing traffic for public-facing subdomains directly to the internal application stack. Only services hosted in the DMZ (VLAN 88) are exposed to the internet — the Infra and Home networks remain completely isolated from external access.
+To maintain a zero-exposure posture, all external access is brokered by **Cloudflare Tunnels**. This architecture ensures that no ports are open on the WAN interface (besides WireGuard), completely eliminating the need for traditional port forwarding. The `cloudflared` services on `vm-network` and `cloud-observe` establish encrypted outbound connections to the Cloudflare edge, securely routing public subdomains to their respective origins. Services hosted in the DMZ (VLAN 88) use the home tunnel; `gatus.ruijiang.me` and `ntfy.ruijiang.me` use the dedicated cloud-observe tunnel. Infra and Home services remain isolated from external access.
 
 Furthermore, all web-facing services are placed behind an **Nginx reverse proxy**, which acts as a unified gateway. SSL/TLS certificates are automatically provisioned and managed by **ACME (Let's Encrypt)**, leveraging Cloudflare for DNS challenges, ensuring robust, always-on encryption without manual intervention.
 
+### Cloud Observability Edge
+
+`cloud-observe` is a headless cloud host provisioned by [Terraform](./infra/terraform/aws/edge). Its independent network location preserves external visibility when the home infrastructure, Internet connection, or `vm-network` router is unavailable: Gatus and Ntfy remain reachable through Cloudflare and can report the outage. When the homelab is available, its single persistent WireGuard interface, `wg0`, gives Gatus private monitoring access through `vm-network`.
+
 ## The Fleet
 
-This infrastructure comprises 9 distinct hosts. Here's the breakdown:
+This infrastructure comprises 10 distinct hosts. Here's the breakdown:
 
 ### [`desktop`](./hosts/desktop.nix)
 
@@ -168,9 +172,14 @@ This infrastructure comprises 9 distinct hosts. Here's the breakdown:
 
 ### [`vm-monitor`](./hosts/vm-monitor.nix)
 
-- **The Watchtower.** Dedicated to keeping the lights on. It hosts the **Beszel Hub**, **Prometheus**, **Loki**, **Wazuh Server**, and **Gatus** to visualize the health and security of the entire infrastructure.
+- **The Watchtower.** Dedicated to keeping the lights on. It hosts the **Beszel Hub**, **Prometheus**, **Loki**, and **Wazuh Server** to visualize the health and security of the entire infrastructure.
 - **Hardware**: 6 vCPU cores, 4GB RAM
 - **Network:** Infra (VLAN 20)
+
+### [`cloud-observe`](./hosts/cloud-observe.nix)
+
+- **The Outpost.** A Terraform-provisioned headless cloud host for Gatus and Ntfy, placed outside the homelab so outages remain externally visible. It uses `wg0` for private checks when home infrastructure is available and Cloudflare Tunnel/Nginx for its public endpoints.
+- **Network:** WireGuard (VLAN 128) and cloud-provider Internet egress; no public service listener is required outside the Cloudflare Tunnel.
 
 ### [`vm-public`](./hosts/vm-public.nix)
 

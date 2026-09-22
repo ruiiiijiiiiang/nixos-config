@@ -2,14 +2,12 @@
   secretsDir,
   config,
   consts,
-  helpers,
   lib,
   ...
 }:
 let
   inherit (config.networking) hostName;
-  inherit (consts) username daily-tasks;
-  inherit (helpers) dailyTaskToSystemd adjustTime;
+  inherit (consts) username task-schedules;
   cfg = config.custom.services.infra.restic;
   paths = [
     "/etc/ssh/ssh_host_*"
@@ -91,7 +89,7 @@ in
         paths = paths ++ cfg.localPaths;
         repository = "${cfg.repo}/restic-repo";
         timerConfig = {
-          OnCalendar = dailyTaskToSystemd daily-tasks.${hostName}.restic-backup;
+          OnCalendar = task-schedules.${hostName}.restic-backup;
         };
         pruneOpts = [
           "--keep-daily 3"
@@ -122,7 +120,7 @@ in
           "8"
         ];
         timerConfig = {
-          OnCalendar = dailyTaskToSystemd (adjustTime "+15m" daily-tasks.${hostName}.restic-backup);
+          OnCalendar = task-schedules.${hostName}.restic-backup-remote;
         };
         pruneOpts = [
           "--keep-last 3"

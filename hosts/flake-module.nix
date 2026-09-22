@@ -51,6 +51,7 @@ let
     {
       system ? "x86_64-linux",
       hardware ? [ ],
+      platformModules ? [ ],
       homeConfig ? null,
       dotfilesSource ? "flake",
     }:
@@ -70,6 +71,7 @@ let
         ../modules
         ../hosts/${hostname}.nix
       ]
+      ++ platformModules
       ++ hardware
       ++ lib.optionals (homeConfig != null) [
         inputs.home-manager.nixosModules.home-manager
@@ -118,6 +120,14 @@ in
 
     vm-cyber = mkHost "vm-cyber" {
       homeConfig = ../homes/configs/vm-cyber.nix;
+    };
+
+    cloud-observe = mkHost "cloud-observe" {
+      homeConfig = ../homes/configs/headless.nix;
+      platformModules = [
+        ../modules/platforms/cloud
+        ../modules/platforms/cloud/aws.nix
+      ];
     };
   };
 }

@@ -3,7 +3,6 @@
   config,
   consts,
   helpers,
-  inputs,
   lib,
   pkgs,
   ...
@@ -16,13 +15,15 @@ let
     subdomains
     ports
     oci-uids
-    daily-tasks
+    task-schedules
     endpoints
+    edge-observability
     ;
-  inherit (helpers) dailyTaskToSystemd mkVirtualHost;
+  inherit (helpers) mkVirtualHost;
   cfg = config.custom.services.infra.harmonia;
   fqdn = "${subdomains.${config.networking.hostName}.harmonia}.${domain}";
   hosts = [
+    "cloud-observe"
     "desktop"
     "framework"
     "hypervisor"
@@ -30,11 +31,9 @@ let
     "vm-app"
     "vm-monitor"
     "vm-public"
-    "vm-cyber"
   ];
   gcRoot = "/var/lib/nix-cache-roots";
-  ntfyEnabled =
-    inputs.self.nixosConfigurations.vm-monitor.config.custom.services.observability.ntfy.enable;
+  ntfyEnabled = edge-observability.enable;
 
   dailyNixBuildScriptText =
     lib.replaceStrings
@@ -79,6 +78,9 @@ in
         owner = "harmonia";
         group = "harmonia";
       };
+    }
+    // lib.optionalAttrs ntfyEnabled {
+      ntfy-publisher-environment.file = secretsDir + "/observability/ntfy/harmonia-publisher.env.age";
     };
 
     services = {
@@ -123,7 +125,7 @@ in
       timers.daily-nix-build = {
         wantedBy = [ "timers.target" ];
         timerConfig = {
-          OnCalendar = dailyTaskToSystemd daily-tasks.${config.networking.hostName}.nix-build;
+          OnCalendar = task-schedules.${config.networking.hostName}.nix-build;
           Unit = "daily-nix-build.service";
         };
       };
@@ -135,6 +137,7 @@ in
           User = username;
           WorkingDirectory = "${home}/nixos-config";
           ExecStart = "${dailyNixBuildScript}/bin/daily-nix-build";
+          EnvironmentFile = lib.optional ntfyEnabled config.age.secrets.ntfy-publisher-environment.path;
         };
       };
     };

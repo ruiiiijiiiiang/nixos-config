@@ -1,10 +1,12 @@
 {
   config,
+  consts,
   inputs,
   lib,
   ...
 }:
 let
+  inherit (consts) task-schedules;
   cfg = config.custom.roles.workstation.development.flatpak;
 in
 {
@@ -26,7 +28,7 @@ in
         }
       ];
       update.auto.enable = true;
-      update.auto.onCalendar = "weekly";
+      update.auto.onCalendar = task-schedules.workstation.flatpak-update;
 
       packages = [
         "com.spotify.Client"

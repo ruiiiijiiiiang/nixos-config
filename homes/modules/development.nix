@@ -7,7 +7,7 @@
 }:
 let
   inherit (config) home;
-  inherit (consts) ports endpoints;
+  inherit (consts) ports endpoints task-schedules;
   flakePath = "${home.homeDirectory}/nixos-config";
   cfg = config.custom.home.development;
 in
@@ -46,7 +46,7 @@ in
         flake = flakePath;
         clean = {
           enable = true;
-          dates = "weekly";
+          dates = task-schedules.workstation.nh-clean;
         };
       };
 

@@ -44,6 +44,7 @@ if [ "$CRITICAL" -gt 0 ] || [ "$HIGH" -gt 0 ]; then
   if [ "$NTFY_ENABLED" = "true" ]; then
     SUMMARY="Trivy scan on ${HOST_NAME}: $CRITICAL CRITICAL, $HIGH HIGH vulnerabilities"
     curl --fail --silent --show-error \
+      -H "Authorization: Bearer $NTFY_TOKEN" \
       -H "Title: Trivy Alert - ${HOST_NAME}" \
       -H "Priority: high" \
       -H "Tags: warning,skull" \

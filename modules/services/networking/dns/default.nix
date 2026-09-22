@@ -13,6 +13,7 @@ let
     endpoints
     subdomains
     ports
+    task-schedules
     ;
   inherit (helpers) getHostAddress mkVirtualHost;
   cfg = config.custom.services.networking.dns;
@@ -317,7 +318,7 @@ in
         description = "Timer to update Pi-hole Gravity weekly";
         wantedBy = [ "timers.target" ];
         timerConfig = {
-          OnCalendar = "Sun *-*-* 04:00:00";
+          OnCalendar = task-schedules.vm-network.pihole-update-gravity;
           Persistent = true;
           RandomizedDelaySec = "5m";
         };

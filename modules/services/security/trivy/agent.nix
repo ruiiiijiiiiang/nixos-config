@@ -2,18 +2,22 @@
   config,
   consts,
   helpers,
-  inputs,
   lib,
   pkgs,
+  secretsDir,
   ...
 }:
 let
   inherit (config.networking) hostName;
-  inherit (consts) daily-tasks ports endpoints;
-  inherit (helpers) dailyTaskToSystemd getHostAddress;
+  inherit (consts)
+    edge-observability
+    endpoints
+    ports
+    task-schedules
+    ;
+  inherit (helpers) getHostAddress;
   cfg = config.custom.services.security.trivy.scanning;
-  ntfyEnabled =
-    inputs.self.nixosConfigurations.vm-monitor.config.custom.services.observability.ntfy.enable;
+  ntfyEnabled = edge-observability.enable;
 
   scriptText =
     lib.replaceStrings
@@ -66,6 +70,10 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    age.secrets = lib.mkIf ntfyEnabled {
+      ntfy-publisher-environment.file = secretsDir + "/observability/ntfy/trivy-publisher.env.age";
+    };
+
     environment.systemPackages = [ pkgs.trivy ];
 
     systemd = {
@@ -78,13 +86,14 @@ in
           User = "root";
           LogsDirectory = "trivy";
           CacheDirectory = "trivy";
+          EnvironmentFile = lib.optional ntfyEnabled config.age.secrets.ntfy-publisher-environment.path;
         };
       };
 
       timers.trivy-scan = {
         wantedBy = [ "timers.target" ];
         timerConfig = {
-          OnCalendar = dailyTaskToSystemd daily-tasks.${hostName}.trivy-scan;
+          OnCalendar = task-schedules.${hostName}.trivy-scan;
           RandomizedDelaySec = 0;
         };
       };

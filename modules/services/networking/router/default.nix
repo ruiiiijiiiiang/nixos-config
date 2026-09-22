@@ -414,14 +414,17 @@ in
                 ''
               }
 
-              # Allow WireGuard peers to reach internal networks.
+              # Allow traffic between WireGuard peers and internal networks.
               ${lib.optionalString
                 nixosConfigurations.vm-network.config.custom.services.networking.wireguard.server.enable
                 /* bash */ ''
+                  iifname "${cfg.infraInterface}" oifname "${cfg.wgInterface}" accept
                   iifname "${cfg.wgInterface}" oifname "${cfg.lanInterface}" accept
                   iifname "${cfg.wgInterface}" oifname "${cfg.infraInterface}" accept
                   iifname "${cfg.wgInterface}" oifname "${cfg.dmzInterface}" accept
                   iifname "${cfg.wgInterface}" oifname "${cfg.wanInterface}" accept
+                  iifname "${cfg.wgInterface}" oifname "${cfg.wgInterface}" ip saddr ${addresses.wg.network} ip daddr ${addresses.wg.network} accept
+                  iifname "${cfg.wgInterface}" oifname "${cfg.wgInterface}" ip6 saddr ${addresses.wg.network-v6} ip6 daddr ${addresses.wg.network-v6} accept
                 ''
               }
 

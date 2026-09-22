@@ -10,6 +10,7 @@ notify_build_failures() {
   local failed_hosts_csv="$1"
 
   curl --fail --silent --show-error \
+    -H "Authorization: Bearer $NTFY_TOKEN" \
     -H "Title: Nix build failures" \
     -H "Priority: high" \
     -H "Tags: warning,computer" \

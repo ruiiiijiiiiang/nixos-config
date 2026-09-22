@@ -36,7 +36,7 @@ let
           }
         }/128"
       ];
-      dns = [
+      dns = lib.optionals cfg.enableDns [
         addresses.infra.vip.dns
         addresses.infra.vip.dns-v6
       ];
@@ -116,6 +116,17 @@ in
       ];
       description = "Subnets routed through the WireGuard tunnel.";
     };
+    enableDns = mkEnableOption "Install the internal DNS servers through the WireGuard profile" // {
+      default = true;
+    };
+    activationMode = mkOption {
+      type = types.enum [
+        "dispatcher"
+        "persistent"
+      ];
+      default = "dispatcher";
+      description = "Whether NetworkManager selects the tunnel or one profile starts persistently.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -138,27 +149,43 @@ in
         assertion = cfg.allowedIPs != [ ];
         message = "WireGuard client requires at least one allowed IP/network.";
       }
+      {
+        assertion = cfg.activationMode != "dispatcher" || config.networking.networkmanager.enable;
+        message = "WireGuard dispatcher activation requires NetworkManager.";
+      }
     ];
 
-    networking.wg-quick.interfaces = {
-      "${cfg.wgInterface}-split" = mkWgInterface {
-        autostart = false;
-      };
-      "${cfg.wgInterface}-full" = mkWgInterface {
-        autostart = false;
-        allowedIPs = [
-          "${addresses.any}/0"
-          "${addresses.any-v6}/0"
-        ];
-      };
-    };
+    networking.wg-quick.interfaces =
+      if cfg.activationMode == "persistent" then
+        {
+          "${cfg.wgInterface}" = mkWgInterface { };
+        }
+      else
+        {
+          "${cfg.wgInterface}-split" = mkWgInterface {
+            autostart = false;
+          };
+          "${cfg.wgInterface}-full" = mkWgInterface {
+            autostart = false;
+            allowedIPs = [
+              "${addresses.any}/0"
+              "${addresses.any-v6}/0"
+            ];
+          };
+        };
 
-    systemd.services."wg-quick-${cfg.wgInterface}-split" = wgServiceConfig;
-    systemd.services."wg-quick-${cfg.wgInterface}-full" = wgServiceConfig;
+    systemd.services =
+      if cfg.activationMode == "persistent" then
+        { "wg-quick-${cfg.wgInterface}" = wgServiceConfig; }
+      else
+        {
+          "wg-quick-${cfg.wgInterface}-split" = wgServiceConfig;
+          "wg-quick-${cfg.wgInterface}-full" = wgServiceConfig;
+        };
 
-    environment.systemPackages = [ wgToggle ];
+    environment.systemPackages = lib.optionals (cfg.activationMode == "dispatcher") [ wgToggle ];
 
-    networking.networkmanager.dispatcherScripts = [
+    networking.networkmanager.dispatcherScripts = lib.optionals (cfg.activationMode == "dispatcher") [
       {
         source = "${wgToggle}/bin/wg-toggle";
         type = "basic";

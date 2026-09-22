@@ -59,10 +59,8 @@ rec {
     vm-monitor = {
       beszel = "beszel";
       dockhand = "dockhand";
-      gatus = "gatus";
       grafana = "grafana";
       myspeed = "myspeed";
-      ntfy = "ntfy";
       prometheus = "prometheus";
       scanopy = "scanopy";
       termix = "termix";
@@ -163,6 +161,8 @@ rec {
         iphone-17-v6 = "${addresses.home-prefix-v6}:${toString vlan-ids.wg}::4";
         github-action = "${addresses.home-prefix}.${toString vlan-ids.wg}.5";
         github-action-v6 = "${addresses.home-prefix-v6}:${toString vlan-ids.wg}::5";
+        cloud-observe = "${addresses.home-prefix}.${toString vlan-ids.wg}.6";
+        cloud-observe-v6 = "${addresses.home-prefix-v6}:${toString vlan-ids.wg}::6";
       };
     };
     podman = {
@@ -415,37 +415,67 @@ rec {
     };
   };
 
-  daily-tasks = {
+  task-schedules = {
+    common = {
+      nix-gc = "*-*-* 00:00:00";
+      nix-optimise = "Mon *-*-* 00:00:00";
+      podman-prune = "Mon *-*-* 00:00:00";
+    };
+    workstation = {
+      flatpak-update = "Mon *-*-* 00:00:00";
+      flake-update = "*-*-* 00:00:00";
+      nh-clean = "Sun *-*-* 04:00:00";
+      smartd-test = "Sat *-*-* 03:00:00";
+    };
     hypervisor = {
-      podman-update = "03:00";
-      trivy-scan = "03:10";
-      restic-backup = "06:30";
-      smartd-test = "02:00";
+      podman-update = "*-*-* 03:00:00";
+      trivy-scan = "*-*-* 03:10:00";
+      restic-backup = "*-*-* 06:30:00";
+      restic-backup-remote = "*-*-* 06:45:00";
+      smartd-test = "S/../.././02";
     };
     pi = {
-      podman-update = "03:00";
+      podman-update = "*-*-* 03:00:00";
     };
     vm-network = {
-      podman-update = "03:05";
-      trivy-scan = "03:15";
-      restic-backup = "06:35";
+      podman-update = "*-*-* 03:05:00";
+      trivy-scan = "*-*-* 03:15:00";
+      restic-backup = "*-*-* 06:35:00";
+      restic-backup-remote = "*-*-* 06:50:00";
+      pihole-update-gravity = "Sun *-*-* 04:00:00";
     };
     vm-app = {
-      podman-update = "03:10";
-      trivy-scan = "03:25";
-      restic-backup = "04:00";
-      container-db-backup = "03:30";
-      nix-build = "05:30";
+      podman-update = "*-*-* 03:10:00";
+      trivy-scan = "*-*-* 03:25:00";
+      restic-backup = "*-*-* 04:00:00";
+      restic-backup-remote = "*-*-* 04:15:00";
+      container-db-backup = "30 3 * * *";
+      nix-build = "*-*-* 05:30:00";
+      protondrive-upload = "Mon *-*-* 06:00:00";
     };
     vm-monitor = {
-      podman-update = "03:30";
-      trivy-scan = "03:50";
-      restic-backup = "06:45";
-      container-db-backup = "03:45";
+      podman-update = "*-*-* 03:30:00";
+      trivy-scan = "*-*-* 03:50:00";
+      restic-backup = "*-*-* 06:45:00";
+      restic-backup-remote = "*-*-* 07:00:00";
+      container-db-backup = "45 3 * * *";
     };
     vm-public = {
-      podman-update = "03:35";
-      trivy-scan = "03:50";
+      podman-update = "*-*-* 03:35:00";
+      trivy-scan = "*-*-* 03:50:00";
+    };
+  };
+
+  edge-observability = {
+    enable = true;
+    hostName = "cloud-observe";
+    gatus-server = "gatus.${domain}";
+    ntfy-server = "ntfy.${domain}";
+    ntfy-topics = {
+      prometheus-alerts = "prometheus-alerts";
+      harmonia-alerts = "harmonia-alerts";
+      gatus-alerts = "gatus-alerts";
+      trivy = "trivy-alerts";
     };
   };
 
@@ -453,12 +483,6 @@ rec {
     oidc-issuer = "${subdomains.vm-app.pocketid}.${domain}";
     private-repo = "${subdomains.vm-app.forgejo}.${domain}";
     vpn-server = "vpn.${domain}";
-    ntfy-server = "${subdomains.vm-monitor.ntfy}.${domain}";
-    ntfy-topics = {
-      prometheus-alerts = "prometheus-alerts";
-      harmonia-alerts = "harmonia-alerts";
-      gatus-alerts = "gatus-alerts";
-      trivy = "trivy-alerts";
-    };
+    inherit (edge-observability) gatus-server ntfy-server ntfy-topics;
   };
 }

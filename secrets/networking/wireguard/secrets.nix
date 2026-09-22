@@ -26,6 +26,14 @@ in
     publicKeys = ssh.vm-network;
     armor = true;
   };
+  "networking/wireguard/cloud-observe-preshared-key.age" = {
+    publicKeys = ssh.vm-network ++ ssh.cloud-observe;
+    armor = true;
+  };
+  "networking/wireguard/cloud-observe-private-key.age" = {
+    publicKeys = ssh.cloud-observe;
+    armor = true;
+  };
   "networking/wireguard/proton-private-key.age" = {
     publicKeys = ssh.vm-app;
     armor = true;

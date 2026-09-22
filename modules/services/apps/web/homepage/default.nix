@@ -9,6 +9,7 @@ let
   inherit (consts)
     addresses
     domain
+    endpoints
     subdomains
     ports
     ;
@@ -433,9 +434,9 @@ in
               {
                 "Gatus" = {
                   icon = "gatus";
-                  href = "https://${subdomains.vm-monitor.gatus}.${domain}";
+                  href = "https://${endpoints.gatus-server}";
                   description = "Server Health Monitoring";
-                  siteMonitor = "https://${subdomains.vm-monitor.gatus}.${domain}";
+                  siteMonitor = "https://${endpoints.gatus-server}";
                 };
               }
               {
@@ -473,9 +474,9 @@ in
               {
                 "ntfy" = {
                   icon = "ntfy";
-                  href = "https://${subdomains.vm-monitor.ntfy}.${domain}";
+                  href = "https://${endpoints.ntfy-server}";
                   description = "Notification Service";
-                  siteMonitor = "https://${subdomains.vm-monitor.ntfy}.${domain}";
+                  siteMonitor = "https://${endpoints.ntfy-server}";
                 };
               }
               {
