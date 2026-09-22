@@ -12,6 +12,15 @@ let
     ;
 in
 rec {
+  getEnabledHosts =
+    nixosConfigurations: optionPath:
+    lib.filterAttrs (
+      _: nixosConfiguration: lib.attrByPath optionPath false nixosConfiguration.config
+    ) nixosConfigurations;
+
+  anyHostEnabled =
+    nixosConfigurations: optionPath: getEnabledHosts nixosConfigurations optionPath != { };
+
   ensureFile =
     {
       source,

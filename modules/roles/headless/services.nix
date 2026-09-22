@@ -1,6 +1,7 @@
 {
   config,
   consts,
+  helpers,
   inputs,
   keys,
   lib,
@@ -10,8 +11,15 @@ let
   cfg = config.custom.roles.headless.services;
   inherit (consts) username;
   inherit (keys) ssh;
-  termixEnabled =
-    inputs.self.nixosConfigurations.vm-monitor.config.custom.services.observability.termix.enable;
+  inherit (helpers) anyHostEnabled;
+  inherit (inputs.self) nixosConfigurations;
+  termixEnabled = anyHostEnabled nixosConfigurations [
+    "custom"
+    "services"
+    "observability"
+    "termix"
+    "enable"
+  ];
 in
 {
   options.custom.roles.headless.services = with lib; {

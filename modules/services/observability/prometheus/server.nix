@@ -14,14 +14,22 @@ let
     subdomains
     ports
     endpoints
-    edge-observability
+    ntfy-topics
     ;
   inherit (helpers)
     getHostAddress
     mkVirtualHost
+    anyHostEnabled
     ;
   inherit (inputs.self) nixosConfigurations;
   cfg = config.custom.services.observability.prometheus.server;
+  ntfyEnabled = anyHostEnabled nixosConfigurations [
+    "custom"
+    "services"
+    "observability"
+    "ntfy"
+    "enable"
+  ];
   fqdn = "${subdomains.${config.networking.hostName}.prometheus}.${domain}";
   monitoredExporters = {
     inherit (ports.prometheus.exporters)
@@ -35,7 +43,6 @@ let
       wireguard
       ;
   };
-  ntfyEnabled = edge-observability.enable;
   resticExcludePaths = [ "/var/lib/${config.services.prometheus.stateDir}" ];
 
   mkScrapeJob = exporterName: port: {
@@ -172,7 +179,7 @@ in
             ntfy = {
               baseurl = "https://${endpoints.ntfy-server}";
               notification = {
-                topic = endpoints.ntfy-topics.prometheus-alerts;
+                topic = ntfy-topics.prometheus-alerts;
                 priority = ''status == "firing" ? "high" : "default"'';
                 templates = {
                   title = ''{{ if eq .Status "resolved" }}Resolved: {{ end }}{{ index .Annotations "summary" }}'';

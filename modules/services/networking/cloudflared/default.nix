@@ -10,67 +10,57 @@ let
   inherit (consts)
     addresses
     domain
-    edge-observability
-    ports
+    endpoints
     subdomains
     ;
   inherit (helpers) getHostAddress;
   cfg = config.custom.services.networking.cloudflared;
 
-  homeSubdomains = [
+  homeIngressFqdns = map (subdomain: "${subdomain}.${domain}") [
     subdomains.vm-public.website
     subdomains.vm-public.microbin
     subdomains.vm-public.krawl
   ];
-  edgeObserveSubdomains = [
-    {
-      fqdn = edge-observability.gatus-server;
-      port = ports.gatus;
-    }
-    {
-      fqdn = edge-observability.ntfy-server;
-      port = ports.ntfy;
-    }
+  edgeObserveIngressFqdns = [
+    endpoints.gatus-server
+    endpoints.ntfy-server
   ];
 
   mkIngress =
     {
       service,
-      originRequest ? null,
+      originServerName,
+      noTLSVerify ? null,
     }:
-    { inherit service; } // lib.optionalAttrs (originRequest != null) { inherit originRequest; };
-
-  mkHomeIngress =
-    fqdn:
-    mkIngress {
-      service = "https://${getHostAddress "vm-public"}:443";
+    {
+      inherit service;
       originRequest = {
-        originServerName = fqdn;
-        noTLSVerify = true;
-      };
+        inherit originServerName;
+      }
+      // lib.optionalAttrs (noTLSVerify != null) { inherit noTLSVerify; };
     };
-
-  defaultHomeIngress = lib.genAttrs (map (
-    subdomain: "${subdomain}.${domain}"
-  ) homeSubdomains) mkHomeIngress;
-
-  mkEdgeObserveIngress =
-    { fqdn, port }:
-    lib.nameValuePair fqdn (mkIngress {
-      service = "https://${addresses.localhost}:443";
-      originRequest.originServerName = fqdn;
-    });
-
-  defaultEdgeObserveIngress = lib.listToAttrs (map mkEdgeObserveIngress edgeObserveSubdomains);
 
   tunnelDefinitions = {
     home = {
       credentialsSecretFile = secretsDir + "/networking/cloudflare/home-tunnel-credentials.age";
-      ingress = defaultHomeIngress;
+      ingress = lib.genAttrs homeIngressFqdns (
+        fqdn:
+        mkIngress {
+          service = "https://${getHostAddress "vm-public"}:443";
+          originServerName = fqdn;
+          noTLSVerify = true;
+        }
+      );
     };
-    edge-observe = {
-      credentialsSecretFile = secretsDir + "/networking/cloudflare/edge-observe-tunnel-credentials.age";
-      ingress = defaultEdgeObserveIngress;
+    edge = {
+      credentialsSecretFile = secretsDir + "/networking/cloudflare/edge-tunnel-credentials.age";
+      ingress = lib.genAttrs edgeObserveIngressFqdns (
+        fqdn:
+        mkIngress {
+          service = "https://${addresses.localhost}:443";
+          originServerName = fqdn;
+        }
+      );
     };
   };
 in

@@ -33,15 +33,14 @@ This infrastructure is engineered following a rigorous **Domain-Driven Design** 
 ```ascii
                   +--------------+        +-----------------+        +--------------------+
                   | The Internet |        | Cloudflare Edge |        | Remote VPN Clients |
-                  +--------------+        +-----------------+        +--------------------+
-                         ^                         |                           |
-                         |                         |                           |
+                  +--------------+        +-----------------+        | cloud-observe      |
+                         ^                         |                 +--------------------+
                        (WAN)              (Cloudflare Tunnel)          (WireGuard Tunnel)
                          |                         |                           |
                          |                         v                           v
 +-------------------------------------------------------------------------------------------------------+
 | [vm-network] (libvirt VM)                                                                             |
-| 6 vCPU, 2GB RAM, NIC Passthru                                                                         |
+| 6 vCPU, 4GB RAM, NIC Passthru                                                                         |
 | Role: Router, Firewall (nftables), DHCP (Kea), DNS master (Pi-hole/Unbound), VPN Gateway (WireGuard)  |
 +-------------------------------------------------------------------------------------------------------+
                                                    ^
@@ -138,13 +137,13 @@ This infrastructure comprises 10 distinct hosts. Here's the breakdown:
 
 - **The Command Center.** The primary high-performance development workstation, acting as the main anchor for local coding and daily work.
 - **Hardware**: AMD 3600, 32GB RAM, AMD Radeon RX 570
-- **Network:** Home (Native)
+- **Network:** Home (VLAN 2)
 
 ### [`framework`](./hosts/framework.nix)
 
 - **The Mobile Outpost.** A portable laptop configured for on-the-go development, remote operations, and on-site troubleshooting.
 - **Hardware**: AMD 7640U, 32GB RAM
-- **Network:** Home (Native), WireGuard (VLAN 128)
+- **Network:** Home (VLAN 2), WireGuard (VLAN 128)
 
 ### [`pi`](./hosts/pi.nix)
 
@@ -161,7 +160,7 @@ This infrastructure comprises 10 distinct hosts. Here's the breakdown:
 ### [`vm-network`](./hosts/vm-network.nix)
 
 - **The Sentinel.** The primary router, firewall, and DNS authority. It manages the Cloudflare Tunnels, WireGuard VPNs, and Suricata IDS/IPS. A physical NIC is passed through from the hypervisor to serve as the WAN interface, providing direct hardware access for maximum throughput and security.
-- **Hardware**: 6 vCPU cores, 2GB RAM, NIC passthrough (WAN)
+- **Hardware**: 6 vCPU cores, 4GB RAM, NIC passthrough (WAN)
 - **Network:** Gateway (WAN, Home, Infra, DMZ)
 
 ### [`vm-app`](./hosts/vm-app.nix)
@@ -176,11 +175,6 @@ This infrastructure comprises 10 distinct hosts. Here's the breakdown:
 - **Hardware**: 6 vCPU cores, 4GB RAM
 - **Network:** Infra (VLAN 20)
 
-### [`cloud-observe`](./hosts/cloud-observe.nix)
-
-- **The Outpost.** A Terraform-provisioned headless cloud host for Gatus and Ntfy, placed outside the homelab so outages remain externally visible. It uses `wg0` for private checks when home infrastructure is available and Cloudflare Tunnel/Nginx for its public endpoints.
-- **Network:** WireGuard (VLAN 128) and cloud-provider Internet egress; no public service listener is required outside the Cloudflare Tunnel.
-
 ### [`vm-public`](./hosts/vm-public.nix)
 
 - **The Public Face.** A DMZ-hosted server exposing personal projects and services to the world.
@@ -192,6 +186,11 @@ This infrastructure comprises 10 distinct hosts. Here's the breakdown:
 - **The Armory.** A specialized, security-focused desktop environment loaded with tools for penetration testing, forensics, and reverse engineering. Isolated in VLAN 88 (DMZ) with no access to Home or Infra subnets, designated exclusively for isolated security research and offensive tooling.
 - **Hardware**: 4 vCPU cores, 6GB RAM
 - **Network:** DMZ (VLAN 88)
+
+### [`cloud-observe`](./hosts/cloud-observe.nix)
+
+- **The Outpost.** A Terraform-provisioned headless cloud host for Gatus and Ntfy, placed outside the homelab so outages remain externally visible. It uses `wg0` for private checks when home infrastructure is available and Cloudflare Tunnel/Nginx for its public endpoints.
+- **Network:** WireGuard (VLAN 128)
 
 ### Shared Services
 

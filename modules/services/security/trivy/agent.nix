@@ -2,6 +2,7 @@
   config,
   consts,
   helpers,
+  inputs,
   lib,
   pkgs,
   secretsDir,
@@ -10,15 +11,21 @@
 let
   inherit (config.networking) hostName;
   inherit (consts)
-    edge-observability
     endpoints
+    ntfy-topics
     ports
     task-schedules
     ;
-  inherit (helpers) getHostAddress;
+  inherit (helpers) getHostAddress anyHostEnabled;
+  inherit (inputs.self) nixosConfigurations;
   cfg = config.custom.services.security.trivy.scanning;
-  ntfyEnabled = edge-observability.enable;
-
+  ntfyEnabled = anyHostEnabled nixosConfigurations [
+    "custom"
+    "services"
+    "observability"
+    "ntfy"
+    "enable"
+  ];
   scriptText =
     lib.replaceStrings
       [
@@ -34,7 +41,7 @@ let
         (lib.escapeShellArg (builtins.concatStringsSep "," cfg.scanners))
         (lib.escapeShellArg endpoints.ntfy-server)
         (lib.escapeShellArg (lib.boolToString ntfyEnabled))
-        (lib.escapeShellArg endpoints.ntfy-topics.trivy)
+        (lib.escapeShellArg ntfy-topics.trivy)
         (lib.escapeShellArg hostName)
       ]
       (lib.readFile ./trivy-scan.sh);

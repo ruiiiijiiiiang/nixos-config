@@ -22,7 +22,7 @@ in
     publicKeys = ssh.vm-network;
     armor = true;
   };
-  "networking/cloudflare/edge-observe-tunnel-credentials.age" = {
+  "networking/cloudflare/edge-tunnel-credentials.age" = {
     publicKeys = ssh.cloud-observe;
     armor = true;
   };

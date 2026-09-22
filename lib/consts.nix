@@ -73,6 +73,10 @@ rec {
       website = "www";
       zeroclaw = "zeroclaw";
     };
+    cloud-observe = {
+      gatus = "gatus";
+      ntfy = "ntfy";
+    };
   };
 
   vlan-ids = {
@@ -466,23 +470,18 @@ rec {
     };
   };
 
-  edge-observability = {
-    enable = true;
-    hostName = "cloud-observe";
-    gatus-server = "gatus.${domain}";
-    ntfy-server = "ntfy.${domain}";
-    ntfy-topics = {
-      prometheus-alerts = "prometheus-alerts";
-      harmonia-alerts = "harmonia-alerts";
-      gatus-alerts = "gatus-alerts";
-      trivy = "trivy-alerts";
-    };
+  ntfy-topics = {
+    prometheus-alerts = "prometheus-alerts";
+    harmonia-alerts = "harmonia-alerts";
+    gatus-alerts = "gatus-alerts";
+    trivy = "trivy-alerts";
   };
 
   endpoints = {
     oidc-issuer = "${subdomains.vm-app.pocketid}.${domain}";
     private-repo = "${subdomains.vm-app.forgejo}.${domain}";
     vpn-server = "vpn.${domain}";
-    inherit (edge-observability) gatus-server ntfy-server ntfy-topics;
+    gatus-server = "${subdomains.cloud-observe.gatus}.${domain}";
+    ntfy-server = "${subdomains.cloud-observe.ntfy}.${domain}";
   };
 }

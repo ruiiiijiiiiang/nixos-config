@@ -21,7 +21,7 @@ let
       <check_pids>yes</check_pids>
       <check_ports>yes</check_ports>
       <check_if>yes</check_if>
-      <frequency>43200</frequency>
+      <frequency>86400</frequency>
       <rootkit_files>etc/shared/rootkit_files.txt</rootkit_files>
       <rootkit_trojans>etc/shared/rootkit_trojans.txt</rootkit_trojans>
       <skip_nfs>yes</skip_nfs>
@@ -31,18 +31,18 @@ let
 
     <wodle name="syscollector">
       <disabled>no</disabled>
-      <interval>1h</interval>
-      <scan_on_start>yes</scan_on_start>
-      <hardware>yes</hardware>
+      <interval>6h</interval>
+      <scan_on_start>no</scan_on_start>
+      <hardware>no</hardware>
       <network>yes</network>
-      <os>yes</os>
+      <os>no</os>
       <packages>no</packages>
-      <ports all="yes">yes</ports>
+      <ports all="no">yes</ports>
       <processes>yes</processes>
       <users>yes</users>
       <groups>yes</groups>
       <services>yes</services>
-      <browser_extensions>yes</browser_extensions>
+      <browser_extensions>no</browser_extensions>
       <synchronization>
         <max_eps>10</max_eps>
       </synchronization>
@@ -50,15 +50,15 @@ let
 
     <sca>
       <enabled>yes</enabled>
-      <scan_on_start>yes</scan_on_start>
-      <interval>12h</interval>
+      <scan_on_start>no</scan_on_start>
+      <interval>24h</interval>
       <skip_nfs>yes</skip_nfs>
     </sca>
 
     <syscheck>
       <disabled>no</disabled>
-      <frequency>43200</frequency>
-      <scan_on_start>yes</scan_on_start>
+      <frequency>86400</frequency>
+      <scan_on_start>no</scan_on_start>
       <ignore>/etc</ignore>
       <ignore>/usr/bin</ignore>
       <ignore type="sregex">.log$|.swp$</ignore>

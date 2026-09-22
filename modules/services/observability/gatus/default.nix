@@ -11,12 +11,25 @@ let
   inherit (consts)
     addresses
     domain
-    edge-observability
+    endpoints
+    ntfy-topics
     ports
     ;
-  inherit (helpers) getEnabledServices getHostAddress mkVirtualHost;
+  inherit (helpers)
+    getEnabledServices
+    getHostAddress
+    mkVirtualHost
+    anyHostEnabled
+    ;
   inherit (inputs.self) nixosConfigurations;
   cfg = config.custom.services.observability.gatus;
+  ntfyEnabled = anyHostEnabled nixosConfigurations [
+    "custom"
+    "services"
+    "observability"
+    "ntfy"
+    "enable"
+  ];
   standardAlert = {
     type = "ntfy";
     failure-threshold = 3;
@@ -76,16 +89,16 @@ let
     url = "https://${monitor.fqdn}${monitor.policy.path}";
     interval = "10m";
     inherit (monitor.policy) conditions;
-    alerts = [ standardAlert ];
+    alerts = lib.optionals ntfyEnabled [ standardAlert ];
   }) serviceMonitors;
   infrastructureEndpoints = [
     {
       name = "ntfy public route";
       group = "edge-dependencies";
-      url = "https://${edge-observability.ntfy-server}/v1/health";
+      url = "https://${endpoints.ntfy-server}/v1/health";
       interval = "5m";
       conditions = [ "[STATUS] == 200" ];
-      alerts = [ standardAlert ];
+      alerts = lib.optionals ntfyEnabled [ standardAlert ];
     }
     {
       name = "Home WireGuard gateway";
@@ -93,7 +106,7 @@ let
       url = "icmp://${addresses.wg.hosts.vm-network}";
       interval = "1m";
       conditions = [ "[CONNECTED] == true" ];
-      alerts = [ standardAlert ];
+      alerts = lib.optionals ntfyEnabled [ standardAlert ];
     }
   ];
 in
@@ -103,14 +116,15 @@ in
 
     fqdn = lib.mkOption {
       type = lib.types.str;
-      default = edge-observability.gatus-server;
+      default = endpoints.gatus-server;
       description = "Externally advertised Gatus FQDN.";
     };
   };
 
   config = lib.mkIf cfg.enable {
-    age.secrets.gatus-ntfy-publisher-environment.file =
-      secretsDir + "/observability/ntfy/gatus-publisher.env.age";
+    age.secrets = lib.mkIf ntfyEnabled {
+      gatus-ntfy-publisher-environment.file = secretsDir + "/observability/ntfy/gatus-publisher.env.age";
+    };
 
     networking.extraHosts = lib.mkAfter (lib.concatStringsSep "\n" privateServiceHosts);
 
@@ -118,19 +132,21 @@ in
 
     services.gatus = {
       enable = true;
-      environmentFile = config.age.secrets.gatus-ntfy-publisher-environment.path;
+      environmentFile = lib.mkIf ntfyEnabled config.age.secrets.gatus-ntfy-publisher-environment.path;
       settings = {
         endpoints = serviceEndpoints ++ infrastructureEndpoints;
         web = {
           address = addresses.localhost;
           port = ports.gatus;
         };
-        alerting.ntfy = {
-          url = "http://${addresses.localhost}:${toString ports.ntfy}";
-          topic = edge-observability.ntfy-topics.gatus-alerts;
-          token = "\${NTFY_TOKEN}";
-          priority = 4;
-          click = "https://${cfg.fqdn}";
+        alerting = lib.optionalAttrs ntfyEnabled {
+          ntfy = {
+            url = "http://${addresses.localhost}:${toString ports.ntfy}";
+            topic = ntfy-topics.gatus-alerts;
+            token = "\${NTFY_TOKEN}";
+            priority = 4;
+            click = "https://${cfg.fqdn}";
+          };
         };
       };
     };

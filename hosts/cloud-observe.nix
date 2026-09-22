@@ -34,7 +34,7 @@ in
       networking = {
         cloudflared = {
           enable = true;
-          tunnelName = "edge-observe";
+          tunnelName = "edge";
         };
         nginx.enable = true;
 
@@ -54,6 +54,7 @@ in
           interface = wgInterface;
         };
         gatus.enable = true;
+        loki.agent.enable = true;
         ntfy.enable = true;
         prometheus = {
           exporters = {
@@ -67,6 +68,7 @@ in
 
       security = {
         fail2ban.enable = true;
+        wazuh.agent.enable = true;
       };
     };
   };

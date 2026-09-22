@@ -12,7 +12,7 @@ let
     ports
     vlan-ids
     ;
-  inherit (helpers) getHostAddress;
+  inherit (helpers) getHostAddress getEnabledHosts;
   inherit (inputs.self) nixosConfigurations;
   cfg = config.custom.services.networking.router;
 
@@ -31,23 +31,26 @@ let
   dnsIpsStr = lib.concatStringsSep ", " dnsIps;
   dnsIpsV6Str = lib.concatStringsSep ", " dnsIpsV6;
 
-  mkEnabledDmzHosts =
-    optionPath:
-    lib.filterAttrs (
-      hostName: hostConfig:
-      lib.hasAttr hostName addresses.dmz.hosts && lib.attrByPath optionPath false hostConfig.config
-    ) nixosConfigurations;
+  enabledHosts = getEnabledHosts nixosConfigurations;
+
+  mkEnabledNetworkHosts =
+    network: optionPath:
+    lib.filterAttrs (hostName: _: lib.hasAttr hostName addresses.${network}.hosts) (
+      enabledHosts optionPath
+    );
+
+  mkEnabledDmzHosts = mkEnabledNetworkHosts "dmz";
 
   mkHostAddresses =
     {
       hosts,
       isV6,
+      network ? "dmz",
     }:
     lib.mapAttrsToList (
       hostName: _:
       getHostAddress {
-        inherit hostName isV6;
-        network = "dmz";
+        inherit hostName isV6 network;
       }
     ) hosts;
 
@@ -59,14 +62,6 @@ let
     "agent"
     "enable"
   ];
-  lokiAgentIps = mkHostAddresses {
-    hosts = lokiAgentHosts;
-    isV6 = false;
-  };
-  lokiAgentIpsV6 = mkHostAddresses {
-    hosts = lokiAgentHosts;
-    isV6 = true;
-  };
 
   wazuhAgentHosts = mkEnabledDmzHosts [
     "custom"
@@ -76,14 +71,6 @@ let
     "agent"
     "enable"
   ];
-  wazuhAgentIps = mkHostAddresses {
-    hosts = wazuhAgentHosts;
-    isV6 = false;
-  };
-  wazuhAgentIpsV6 = mkHostAddresses {
-    hosts = wazuhAgentHosts;
-    isV6 = true;
-  };
 
   trivyAgentHosts = mkEnabledDmzHosts [
     "custom"
@@ -93,16 +80,88 @@ let
     "scanning"
     "enable"
   ];
-  trivyAgentIps = mkHostAddresses {
-    hosts = trivyAgentHosts;
-    isV6 = false;
-  };
-  trivyAgentIpsV6 = mkHostAddresses {
-    hosts = trivyAgentHosts;
-    isV6 = true;
-  };
 
   mkNftSet = ips: "{ ${lib.concatStringsSep ", " ips} }";
+
+  serverOptionPaths = {
+    loki = [
+      "custom"
+      "services"
+      "observability"
+      "loki"
+      "server"
+      "enable"
+    ];
+    wazuh = [
+      "custom"
+      "services"
+      "security"
+      "wazuh"
+      "server"
+      "enable"
+    ];
+    trivy = [
+      "custom"
+      "services"
+      "security"
+      "trivy"
+      "server"
+      "enable"
+    ];
+  };
+  serverHosts = lib.mapAttrs (_: mkEnabledNetworkHosts "infra") serverOptionPaths;
+  prometheusHosts = mkEnabledNetworkHosts "infra" [
+    "custom"
+    "services"
+    "observability"
+    "prometheus"
+    "server"
+    "enable"
+  ];
+  smartctlHosts = mkEnabledNetworkHosts "home" [
+    "custom"
+    "services"
+    "observability"
+    "prometheus"
+    "exporters"
+    "smartctl"
+    "enable"
+  ];
+
+  mkInfraAddressSet =
+    hosts: isV6:
+    mkNftSet (mkHostAddresses {
+      inherit hosts isV6;
+      network = "infra";
+    });
+
+  mkDmzServiceRules =
+    {
+      agents,
+      servers,
+      tcpPorts,
+    }:
+    lib.optionalString (agents != { } && servers != { }) (
+      lib.concatMapStrings
+        (
+          isV6:
+          let
+            family = if isV6 then "ip6" else "ip";
+            sources = mkNftSet (mkHostAddresses {
+              hosts = agents;
+              inherit isV6;
+            });
+            destinations = mkInfraAddressSet servers isV6;
+          in
+          /* bash */ ''
+            iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ${family} saddr ${sources} ${family} daddr ${destinations} tcp dport ${mkNftSet (map toString tcpPorts)} accept
+          ''
+        )
+        [
+          false
+          true
+        ]
+    );
 
   mkSubnet =
     { network }:
@@ -210,47 +269,52 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    assertions = [
-      {
-        assertion = cfg.wanInterface != null && cfg.lanInterface != null;
-        message = "Router requires WAN and LAN interfaces.";
-      }
-      {
-        assertion =
-          let
-            wanFirewall = config.networking.firewall.interfaces.${cfg.wanInterface};
-          in
-          lib.all (allowed: allowed == [ ]) [
-            wanFirewall.allowedTCPPorts
-            wanFirewall.allowedTCPPortRanges
-            wanFirewall.allowedUDPPortRanges
-          ]
-          &&
-            lib.unique wanFirewall.allowedUDPPorts
-            == lib.optional config.custom.services.networking.wireguard.server.enable ports.wireguard;
-        message = "Router WAN interface may only expose the WireGuard UDP port when the WireGuard server is enabled; all other WAN ports and port ranges must remain closed.";
-      }
-      {
-        assertion =
-          lib.length (
-            lib.unique [
-              cfg.wanInterface
-              cfg.lanInterface
-              cfg.podmanInterface
-              cfg.infraInterface
-              cfg.dmzInterface
+    assertions =
+      (lib.mapAttrsToList (service: optionPath: {
+        assertion = lib.length (builtins.attrNames (enabledHosts optionPath)) <= 1;
+        message = "Only one ${service} server may be enabled until clients support multiple endpoints.";
+      }) serverOptionPaths)
+      ++ [
+        {
+          assertion = cfg.wanInterface != null && cfg.lanInterface != null;
+          message = "Router requires WAN and LAN interfaces.";
+        }
+        {
+          assertion =
+            let
+              wanFirewall = config.networking.firewall.interfaces.${cfg.wanInterface};
+            in
+            lib.all (allowed: allowed == [ ]) [
+              wanFirewall.allowedTCPPorts
+              wanFirewall.allowedTCPPortRanges
+              wanFirewall.allowedUDPPortRanges
             ]
-          ) == 5;
-        message = "Router interface names must all be distinct.";
-      }
-      {
-        assertion =
-          lib.hasAttrByPath [ "home" "hosts" config.networking.hostName ] addresses
-          && lib.hasAttrByPath [ "infra" "hosts" config.networking.hostName ] addresses
-          && lib.hasAttrByPath [ "dmz" "hosts" config.networking.hostName ] addresses;
-        message = "Router hostName must exist in addresses.home/infra/dmz host maps.";
-      }
-    ];
+            &&
+              lib.unique wanFirewall.allowedUDPPorts
+              == lib.optional config.custom.services.networking.wireguard.server.enable ports.wireguard;
+          message = "Router WAN interface may only expose the WireGuard UDP port when the WireGuard server is enabled; all other WAN ports and port ranges must remain closed.";
+        }
+        {
+          assertion =
+            lib.length (
+              lib.unique [
+                cfg.wanInterface
+                cfg.lanInterface
+                cfg.podmanInterface
+                cfg.infraInterface
+                cfg.dmzInterface
+              ]
+            ) == 5;
+          message = "Router interface names must all be distinct.";
+        }
+        {
+          assertion =
+            lib.hasAttrByPath [ "home" "hosts" config.networking.hostName ] addresses
+            && lib.hasAttrByPath [ "infra" "hosts" config.networking.hostName ] addresses
+            && lib.hasAttrByPath [ "dmz" "hosts" config.networking.hostName ] addresses;
+          message = "Router hostName must exist in addresses.home/infra/dmz host maps.";
+        }
+      ];
 
     boot.kernel.sysctl = {
       "net.ipv4.ip_forward" = "1";
@@ -280,12 +344,9 @@ in
           cfg.infraInterface
           cfg.dmzInterface
         ]
-        ++
-          lib.optionals
-            nixosConfigurations.vm-network.config.custom.services.networking.wireguard.server.enable
-            [
-              cfg.wgInterface
-            ];
+        ++ lib.optionals config.custom.services.networking.wireguard.server.enable [
+          cfg.wgInterface
+        ];
       };
 
       firewall = {
@@ -363,103 +424,49 @@ in
                 }
               } tcp dport { ${toString ports.http}, ${toString ports.https} } accept
 
-              # Allow DMZ services to send logs to Loki.
-              ${lib.optionalString
-                (
-                  nixosConfigurations.vm-monitor.config.custom.services.observability.loki.server.enable
-                  && lokiAgentHosts != { }
-                )
-                /* bash */ ''
-                  iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip saddr ${mkNftSet lokiAgentIps} ip daddr ${getHostAddress "vm-monitor"} tcp dport ${toString ports.loki.server} accept
-                  iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip6 saddr ${mkNftSet lokiAgentIpsV6} ip6 daddr ${
-                    getHostAddress {
-                      hostName = "vm-monitor";
-                      isV6 = true;
-                    }
-                  } tcp dport ${toString ports.loki.server} accept
-                ''
-              }
-
-              # Allow DMZ agents to reach Wazuh.
-              ${lib.optionalString
-                (
-                  nixosConfigurations.vm-monitor.config.custom.services.security.wazuh.server.enable
-                  && wazuhAgentHosts != { }
-                )
-                /* bash */ ''
-                  iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip saddr ${mkNftSet wazuhAgentIps} ip daddr ${getHostAddress "vm-monitor"} tcp dport { ${toString ports.wazuh.agent.connection}, ${toString ports.wazuh.agent.enrollment} } accept
-                  iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip6 saddr ${mkNftSet wazuhAgentIpsV6} ip6 daddr ${
-                    getHostAddress {
-                      hostName = "vm-monitor";
-                      isV6 = true;
-                    }
-                  } tcp dport { ${toString ports.wazuh.agent.connection}, ${toString ports.wazuh.agent.enrollment} } accept
-                ''
-              }
-
-              # Allow DMZ services to reach Trivy.
-              ${lib.optionalString
-                (
-                  nixosConfigurations.vm-monitor.config.custom.services.security.trivy.server.enable
-                  && trivyAgentHosts != { }
-                )
-                /* bash */ ''
-                  iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip saddr ${mkNftSet trivyAgentIps} ip daddr ${getHostAddress "vm-monitor"} tcp dport ${toString ports.trivy} accept
-                  iifname "${cfg.dmzInterface}" oifname "${cfg.infraInterface}" ip6 saddr ${mkNftSet trivyAgentIpsV6} ip6 daddr ${
-                    getHostAddress {
-                      hostName = "vm-monitor";
-                      isV6 = true;
-                    }
-                  } tcp dport ${toString ports.trivy} accept
-                ''
-              }
+              # Allow DMZ agents to reach enabled Infra providers.
+              ${mkDmzServiceRules {
+                agents = lokiAgentHosts;
+                servers = serverHosts.loki;
+                tcpPorts = [ ports.loki.server ];
+              }}
+              ${mkDmzServiceRules {
+                agents = wazuhAgentHosts;
+                servers = serverHosts.wazuh;
+                tcpPorts = [
+                  ports.wazuh.agent.connection
+                  ports.wazuh.agent.enrollment
+                ];
+              }}
+              ${mkDmzServiceRules {
+                agents = trivyAgentHosts;
+                servers = serverHosts.trivy;
+                tcpPorts = [ ports.trivy ];
+              }}
 
               # Allow traffic between WireGuard peers and internal networks.
-              ${lib.optionalString
-                nixosConfigurations.vm-network.config.custom.services.networking.wireguard.server.enable
-                /* bash */ ''
-                  iifname "${cfg.infraInterface}" oifname "${cfg.wgInterface}" accept
-                  iifname "${cfg.wgInterface}" oifname "${cfg.lanInterface}" accept
-                  iifname "${cfg.wgInterface}" oifname "${cfg.infraInterface}" accept
-                  iifname "${cfg.wgInterface}" oifname "${cfg.dmzInterface}" accept
-                  iifname "${cfg.wgInterface}" oifname "${cfg.wanInterface}" accept
-                  iifname "${cfg.wgInterface}" oifname "${cfg.wgInterface}" ip saddr ${addresses.wg.network} ip daddr ${addresses.wg.network} accept
-                  iifname "${cfg.wgInterface}" oifname "${cfg.wgInterface}" ip6 saddr ${addresses.wg.network-v6} ip6 daddr ${addresses.wg.network-v6} accept
-                ''
-              }
+              ${lib.optionalString config.custom.services.networking.wireguard.server.enable /* bash */ ''
+                iifname "${cfg.infraInterface}" oifname "${cfg.wgInterface}" accept
+                iifname "${cfg.wgInterface}" oifname "${cfg.lanInterface}" accept
+                iifname "${cfg.wgInterface}" oifname "${cfg.infraInterface}" accept
+                iifname "${cfg.wgInterface}" oifname "${cfg.dmzInterface}" accept
+                iifname "${cfg.wgInterface}" oifname "${cfg.wanInterface}" accept
+                iifname "${cfg.wgInterface}" oifname "${cfg.wgInterface}" ip saddr ${addresses.wg.network} ip daddr ${addresses.wg.network} accept
+                iifname "${cfg.wgInterface}" oifname "${cfg.wgInterface}" ip6 saddr ${addresses.wg.network-v6} ip6 daddr ${addresses.wg.network-v6} accept
+              ''}
 
               # Allow Prometheus to scrape SMART exporters on the home VLAN.
-              ${lib.optionalString
-                (
-                  nixosConfigurations.vm-monitor.config.custom.services.observability.prometheus.server.enable
-                  && lib.any (
-                    hostConfig:
-                    hostConfig.config.custom.services.observability.prometheus.exporters.smartctl.enable or false
-                  ) (builtins.attrValues nixosConfigurations)
-                )
-                /* bash */ ''
-                  iifname "${cfg.infraInterface}" oifname "${cfg.lanInterface}" \
-                    ip saddr ${
-                      getHostAddress {
-                        hostName = "vm-monitor";
-                        network = "infra";
-                      }
-                    } \
-                    ip daddr ${addresses.home.network} \
-                    tcp dport ${toString ports.prometheus.exporters.smartctl} accept
+              ${lib.optionalString (prometheusHosts != { } && smartctlHosts != { }) /* bash */ ''
+                iifname "${cfg.infraInterface}" oifname "${cfg.lanInterface}" \
+                  ip saddr ${mkInfraAddressSet prometheusHosts false} \
+                  ip daddr ${addresses.home.network} \
+                  tcp dport ${toString ports.prometheus.exporters.smartctl} accept
 
-                  iifname "${cfg.infraInterface}" oifname "${cfg.lanInterface}" \
-                    ip6 saddr ${
-                      getHostAddress {
-                        hostName = "vm-monitor";
-                        network = "infra";
-                        isV6 = true;
-                      }
-                    } \
-                    ip6 daddr ${addresses.home.network-v6} \
-                    tcp dport ${toString ports.prometheus.exporters.smartctl} accept
-                ''
-              }
+                iifname "${cfg.infraInterface}" oifname "${cfg.lanInterface}" \
+                  ip6 saddr ${mkInfraAddressSet prometheusHosts true} \
+                  ip6 daddr ${addresses.home.network-v6} \
+                  tcp dport ${toString ports.prometheus.exporters.smartctl} accept
+              ''}
             }
           '';
         };

@@ -7,7 +7,7 @@
   ...
 }:
 let
-  inherit (consts) addresses edge-observability ports;
+  inherit (consts) addresses endpoints ports;
   inherit (helpers) mkVirtualHost;
   cfg = config.custom.services.observability.ntfy;
 in
@@ -17,7 +17,7 @@ in
 
     fqdn = lib.mkOption {
       type = lib.types.str;
-      default = edge-observability.ntfy-server;
+      default = endpoints.ntfy-server;
       description = "Externally advertised ntfy FQDN.";
     };
   };

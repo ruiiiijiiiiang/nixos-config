@@ -3,6 +3,7 @@
   config,
   consts,
   helpers,
+  inputs,
   lib,
   pkgs,
   ...
@@ -17,10 +18,18 @@ let
     oci-uids
     task-schedules
     endpoints
-    edge-observability
+    ntfy-topics
     ;
-  inherit (helpers) mkVirtualHost;
+  inherit (helpers) mkVirtualHost anyHostEnabled;
+  inherit (inputs.self) nixosConfigurations;
   cfg = config.custom.services.infra.harmonia;
+  ntfyEnabled = anyHostEnabled nixosConfigurations [
+    "custom"
+    "services"
+    "observability"
+    "ntfy"
+    "enable"
+  ];
   fqdn = "${subdomains.${config.networking.hostName}.harmonia}.${domain}";
   hosts = [
     "cloud-observe"
@@ -33,8 +42,6 @@ let
     "vm-public"
   ];
   gcRoot = "/var/lib/nix-cache-roots";
-  ntfyEnabled = edge-observability.enable;
-
   dailyNixBuildScriptText =
     lib.replaceStrings
       [
@@ -51,7 +58,7 @@ let
         (lib.escapeShellArg gcRoot)
         (lib.escapeShellArg endpoints.ntfy-server)
         (lib.escapeShellArg (lib.boolToString ntfyEnabled))
-        (lib.escapeShellArg endpoints.ntfy-topics.harmonia-alerts)
+        (lib.escapeShellArg ntfy-topics.harmonia-alerts)
       ]
       (lib.readFile ./daily-nix-build.sh);
 
