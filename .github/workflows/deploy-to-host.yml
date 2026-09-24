@@ -40,10 +40,21 @@ jobs:
         with:
           host: ${{ inputs.target_host }}
 
+      - name: Resolve vm-app address
+        id: cache-host
+        uses: ./.github/actions/resolve-host-ip
+        with:
+          host: vm-app
+
       - name: Install and Connect WireGuard
         uses: ./.github/actions/connect-wireguard
         with:
           config: ${{ secrets.WG_CONF }}
+
+      - name: Configure Harmonia cache
+        uses: ./.github/actions/configure-harmonia
+        with:
+          host-ip: ${{ steps.cache-host.outputs.ip }}
 
       - name: Setup SSH
         uses: ./.github/actions/setup-ssh

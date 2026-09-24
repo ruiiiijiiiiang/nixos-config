@@ -1,0 +1,23 @@
+name: Configure Harmonia
+description: Configure the private Nix cache after connecting to the home network
+inputs:
+  host-ip:
+    description: vm-app IP address
+    required: true
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        CACHE_IP: ${{ inputs.host-ip }}
+      run: |
+        printf '%s %s\n' "$CACHE_IP" cache.ruijiang.me | sudo tee -a /etc/hosts > /dev/null
+        resolved_ip=$(getent ahostsv4 cache.ruijiang.me | awk 'NR == 1 { print $1 }')
+        test "$resolved_ip" = "$CACHE_IP"
+        curl --fail --silent --show-error --retry 3 --connect-timeout 10 --noproxy '*' \
+          https://cache.ruijiang.me/nix-cache-info > /dev/null
+        printf '%s\n' \
+          'extra-substituters = https://cache.ruijiang.me' \
+          'extra-trusted-public-keys = cache.ruijiang.me-1:uSB517/xV6UnlCkzOYvmCSRG0sOqPPAGla5tY4iSQf0=' \
+          | sudo tee -a /etc/nix/nix.conf > /dev/null
+        sudo systemctl restart nix-daemon.service

@@ -63,6 +63,11 @@ jobs:
         with:
           config: ${{ secrets.WG_CONF }}
 
+      - name: Configure Harmonia cache
+        uses: ./.github/actions/configure-harmonia
+        with:
+          host-ip: ${{ steps.destination.outputs.ip }}
+
       - name: Configure SSH
         uses: ./.github/actions/setup-ssh
         with:

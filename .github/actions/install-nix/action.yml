@@ -1,5 +1,5 @@
 name: Install Nix
-description: Install Nix with GitHub access and the Harmonia cache
+description: Install Nix with GitHub access
 inputs:
   github-token:
     description: GitHub token for fetching Nix flake inputs
@@ -12,5 +12,3 @@ runs:
         nix_path: nixpkgs=channel:nixos-unstable
         extra_nix_config: |
           access-tokens = github.com=${{ inputs.github-token }}
-          extra-substituters = https://cache.ruijiang.me
-          extra-trusted-public-keys = cache.ruijiang.me-1:uSB517/xV6UnlCkzOYvmCSRG0sOqPPAGla5tY4iSQf0=

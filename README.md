@@ -224,14 +224,14 @@ Instead of manual disk preparation and interactive guest configurations, the pro
 
 A private **Harmonia** binary cache runs on `vm-app` and serves signed Nix store paths at `cache.ruijiang.me`. The [daily GitHub Actions workflow](./.github/workflows/daily-nix-build.yml) runs on a schedule or by manual dispatch and builds the locked system configurations for `cloud-observe`, `desktop`, `framework`, `hypervisor`, `pi`, `vm-network`, `vm-app`, `vm-monitor`, and `vm-public`. The `pi` job uses an ARM runner; the others use x86-64 runners.
 
-Before building, each job checks whether its expected system path is already in the `vm-app` store. If it is, the job skips the build and transfer. Otherwise, it builds the missing closure using Harmonia as a substituter, copies the result to `vm-app` over WireGuard and SSH, and pins the path there so garbage collection cannot remove it. Failed jobs trigger an Ntfy alert using the `HARMONIA_NTFY_TOKEN` GitHub secret. The workflow runs against the GitHub mirror with read-only repository permissions and does not push changes or update the flake lock file.
+Before building, each job checks whether its expected system path is already in the `vm-app` store. If it is, the job skips the build and transfer. Otherwise, it builds the missing closure using Harmonia as a substituter, copies the result to `vm-app` over WireGuard and SSH, and pins the path there so garbage collection cannot remove it.
 
 ### Deployment Workflows
 
 Deployments are started manually through either Forgejo or GitHub Actions:
 
 - **[Forgejo deployment](./.forgejo/workflows/deploy-to-host.yml):** Deploys `hypervisor`, `vm-app`, `vm-cyber`, `vm-monitor`, `vm-network`, or `vm-public` over SSH, with the target host acting as the build host. This workflow runs on the self-hosted Forgejo infrastructure.
-- **[GitHub Actions deployment](./.github/workflows/deploy-to-host.yml):** Deploys those hosts plus `cloud-observe` and `pi`. It resolves the selected host's address from `lib/consts.nix`, connects to the home network over WireGuard, and runs `nixos-rebuild switch` over SSH. The `pi` deployment uses an ARM runner. The shared Nix setup trusts the Harmonia cache, so deployments can substitute artifacts from the daily build when available.
+- **[GitHub Actions deployment](./.github/workflows/deploy-to-host.yml):** Deploys those hosts plus `cloud-observe` and `pi`. It resolves the selected host's address from `lib/consts.nix`, connects to the home network over WireGuard, then configures Harmonia using the private `vm-app` address before running `nixos-rebuild switch` over SSH. The `pi` deployment uses an ARM runner and can substitute artifacts from the daily build when available.
 
 Both deployment workflows activate the selected configuration immediately. The GitHub workflows use `WG_CONF` and `SSH_PRIVATE_KEY` secrets for access to the home network. They check out the mirrored commit without persisting credentials and have read-only repository permissions; they do not push changes back to GitHub or Forgejo.
 
