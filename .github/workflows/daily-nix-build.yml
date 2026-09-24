@@ -1,0 +1,136 @@
+name: Daily Nix build
+
+on:
+  schedule:
+    - cron: "30 5 * * *"
+      timezone: America/Chicago
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: daily-nix-build
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build ${{ matrix.host }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        host:
+          - cloud-observe
+          - desktop
+          - framework
+          - hypervisor
+          - vm-network
+          - vm-app
+          - vm-monitor
+          - vm-public
+    steps:
+      - name: Check out mirrored commit
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            access-tokens = github.com=${{ github.token }}
+
+      - name: Build locked system closure
+        id: build
+        run: |
+          store_path=$(nix build \
+            --no-update-lock-file \
+            --no-link \
+            --print-out-paths \
+            ".#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel")
+          echo "store_path=$store_path" >> "$GITHUB_OUTPUT"
+          echo "Built ${{ matrix.host }} from $GITHUB_SHA: $store_path" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Resolve vm-app address
+        id: destination
+        run: |
+          vm_app_ip=$(nix eval --impure --raw --expr '(import ./lib/consts.nix).addresses.infra.hosts.vm-app')
+          echo "ip=$vm_app_ip" >> "$GITHUB_OUTPUT"
+
+      - name: Connect to home network
+        env:
+          WG_CONF: ${{ secrets.WG_CONF }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wireguard-tools
+          sudo install -m 600 /dev/null /etc/wireguard/wg0.conf
+          printf '%s\n' "$WG_CONF" | sudo tee /etc/wireguard/wg0.conf > /dev/null
+          sudo wg-quick up wg0
+
+      - name: Configure SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          VM_APP_IP: ${{ steps.destination.outputs.ip }}
+        run: |
+          install -m 700 -d "$HOME/.ssh"
+          printf '%s\n' "$SSH_PRIVATE_KEY" > "$HOME/.ssh/id_ed25519"
+          chmod 600 "$HOME/.ssh/id_ed25519"
+          ssh-keyscan -T 10 -H "$VM_APP_IP" >> "$HOME/.ssh/known_hosts"
+          ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "root@$VM_APP_IP" true
+
+      - name: Copy closure to vm-app
+        env:
+          STORE_PATH: ${{ steps.build.outputs.store_path }}
+          VM_APP_IP: ${{ steps.destination.outputs.ip }}
+        run: nix copy --to "ssh://root@$VM_APP_IP" "$STORE_PATH"
+
+      - name: Pin closure for Harmonia
+        env:
+          STORE_PATH: ${{ steps.build.outputs.store_path }}
+          VM_APP_IP: ${{ steps.destination.outputs.ip }}
+        run: |
+          ssh -o BatchMode=yes "root@$VM_APP_IP" \
+            bash -s -- "${{ matrix.host }}" "$STORE_PATH" <<'REMOTE'
+          set -euo pipefail
+          host=$1
+          store_path=$2
+          root=/var/lib/nix-cache-roots
+          test -d "$root"
+          test -d "$store_path"
+          tmp=$(mktemp -d "$root/.${host}.XXXXXX")
+          ln -s "$store_path" "$tmp/link"
+          mv -Tf "$tmp/link" "$root/$host"
+          rmdir "$tmp"
+          REMOTE
+
+  report:
+    name: Report build result
+    needs: build
+    if: always()
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check all host builds
+        env:
+          BUILD_RESULT: ${{ needs.build.result }}
+          NTFY_TOKEN: ${{ secrets.HARMONIA_NTFY_TOKEN }}
+        run: |
+          if [ "$BUILD_RESULT" != success ]; then
+            echo "One or more host builds or cache transfers failed. See the host jobs above." >> "$GITHUB_STEP_SUMMARY"
+            if [ -z "$NTFY_TOKEN" ]; then
+              echo "HARMONIA_NTFY_TOKEN is required for failure alerts." >&2
+              exit 1
+            fi
+            curl --fail --silent --show-error --retry 3 \
+              -H "Authorization: Bearer $NTFY_TOKEN" \
+              -H "Title: Nix build failures" \
+              -H "Priority: high" \
+              -H "Tags: warning,computer" \
+              -H "Click: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
+              -d "Daily Nix build failed for $GITHUB_SHA. Open the run to see which hosts failed." \
+              https://ntfy.ruijiang.me/harmonia-alerts
+            exit 1
+          fi
+          echo "All host closures were copied and pinned on vm-app." >> "$GITHUB_STEP_SUMMARY"

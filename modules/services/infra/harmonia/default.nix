@@ -3,74 +3,21 @@
   config,
   consts,
   helpers,
-  inputs,
   lib,
-  pkgs,
   ...
 }:
 let
   inherit (consts)
     username
-    home
     domain
     subdomains
     ports
     oci-uids
-    task-schedules
-    endpoints
-    ntfy-topics
     ;
-  inherit (helpers) mkVirtualHost anyHostEnabled;
-  inherit (inputs.self) nixosConfigurations;
+  inherit (helpers) mkVirtualHost;
   cfg = config.custom.services.infra.harmonia;
-  ntfyEnabled = anyHostEnabled nixosConfigurations [
-    "custom"
-    "services"
-    "observability"
-    "ntfy"
-    "enable"
-  ];
   fqdn = "${subdomains.${config.networking.hostName}.harmonia}.${domain}";
-  hosts = [
-    "cloud-observe"
-    "desktop"
-    "framework"
-    "hypervisor"
-    "vm-network"
-    "vm-app"
-    "vm-monitor"
-    "vm-public"
-  ];
   gcRoot = "/var/lib/nix-cache-roots";
-  dailyNixBuildScriptText =
-    lib.replaceStrings
-      [
-        "@HOME@"
-        "@HOSTS@"
-        "@GC_ROOT@"
-        "@NTFY_SERVER@"
-        "@NTFY_ENABLED@"
-        "@NTFY_TOPIC@"
-      ]
-      [
-        (lib.escapeShellArg home)
-        (lib.concatMapStringsSep " " lib.escapeShellArg hosts)
-        (lib.escapeShellArg gcRoot)
-        (lib.escapeShellArg endpoints.ntfy-server)
-        (lib.escapeShellArg (lib.boolToString ntfyEnabled))
-        (lib.escapeShellArg ntfy-topics.harmonia-alerts)
-      ]
-      (lib.readFile ./daily-nix-build.sh);
-
-  dailyNixBuildScript = pkgs.writeShellApplication {
-    name = "daily-nix-build";
-    runtimeInputs = with pkgs; [
-      curl
-      nix
-      git
-    ];
-    text = dailyNixBuildScriptText;
-  };
 in
 {
   options.custom.services.infra.harmonia = with lib; {
@@ -85,9 +32,6 @@ in
         owner = "harmonia";
         group = "harmonia";
       };
-    }
-    // lib.optionalAttrs ntfyEnabled {
-      ntfy-publisher-environment.file = secretsDir + "/observability/ntfy/harmonia-publisher.env.age";
     };
 
     services = {
@@ -128,25 +72,6 @@ in
         "d ${gcRoot} 0755 ${toString oci-uids.user} ${toString oci-uids.user} - -"
         "L+ /nix/var/nix/gcroots/per-user/${username}/daily-builds - - - - ${gcRoot}"
       ];
-
-      timers.daily-nix-build = {
-        wantedBy = [ "timers.target" ];
-        timerConfig = {
-          OnCalendar = task-schedules.${config.networking.hostName}.nix-build;
-          Unit = "daily-nix-build.service";
-        };
-      };
-
-      services.daily-nix-build = {
-        description = "Update flake.lock, build system";
-        serviceConfig = {
-          Type = "oneshot";
-          User = username;
-          WorkingDirectory = "${home}/nixos-config";
-          ExecStart = "${dailyNixBuildScript}/bin/daily-nix-build";
-          EnvironmentFile = lib.optional ntfyEnabled config.age.secrets.ntfy-publisher-environment.path;
-        };
-      };
     };
   };
 }

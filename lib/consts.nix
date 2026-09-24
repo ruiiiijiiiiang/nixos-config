@@ -454,7 +454,6 @@ rec {
       restic-backup = "*-*-* 04:00:00";
       restic-backup-remote = "*-*-* 04:15:00";
       container-db-backup = "30 3 * * *";
-      nix-build = "*-*-* 05:30:00";
       protondrive-upload = "Mon *-*-* 06:00:00";
     };
     vm-monitor = {
