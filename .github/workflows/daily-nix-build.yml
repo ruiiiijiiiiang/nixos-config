@@ -16,7 +16,7 @@ concurrency:
 jobs:
   build:
     name: Build ${{ matrix.host }}
-    runs-on: ubuntu-24.04
+    runs-on: ${{ matrix.host == 'pi' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
     timeout-minutes: 360
     strategy:
       fail-fast: false
@@ -27,6 +27,7 @@ jobs:
           - desktop
           - framework
           - hypervisor
+          - pi
           - vm-network
           - vm-app
           - vm-monitor
@@ -38,58 +39,75 @@ jobs:
           persist-credentials: false
 
       - name: Install Nix
-        uses: cachix/install-nix-action@v31
+        uses: ./.github/actions/install-nix
         with:
-          extra_nix_config: |
-            access-tokens = github.com=${{ github.token }}
+          github-token: ${{ github.token }}
 
-      - name: Build locked system closure
-        id: build
+      - name: Evaluate locked system path
+        id: expected
         run: |
-          store_path=$(nix build \
+          store_path=$(nix eval \
+            --raw \
+            --no-update-lock-file \
+            ".#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel.outPath")
+          echo "store_path=$store_path" >> "$GITHUB_OUTPUT"
+
+      - name: Resolve vm-app address
+        id: destination
+        uses: ./.github/actions/resolve-host-ip
+        with:
+          host: vm-app
+
+      - name: Connect to home network
+        uses: ./.github/actions/connect-wireguard
+        with:
+          config: ${{ secrets.WG_CONF }}
+
+      - name: Configure SSH
+        uses: ./.github/actions/setup-ssh
+        with:
+          private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          host-ip: ${{ steps.destination.outputs.ip }}
+
+      - name: Check vm-app store
+        id: cache
+        env:
+          STORE_PATH: ${{ steps.expected.outputs.store_path }}
+          VM_APP_IP: ${{ steps.destination.outputs.ip }}
+        run: |
+          if ssh -o BatchMode=yes "root@$VM_APP_IP" nix path-info "$STORE_PATH" > /dev/null 2>&1; then
+            echo 'hit=true' >> "$GITHUB_OUTPUT"
+            echo "Already in Harmonia: $STORE_PATH" >> "$GITHUB_STEP_SUMMARY"
+          else
+            status=$?
+            if [ "$status" -ne 1 ]; then
+              echo "Could not check the vm-app store (SSH exit status $status)." >&2
+              exit "$status"
+            fi
+            echo 'hit=false' >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build missing system closure
+        if: steps.cache.outputs.hit != 'true'
+        run: |
+          built_path=$(nix build \
             --no-update-lock-file \
             --no-link \
             --print-out-paths \
             ".#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel")
-          echo "store_path=$store_path" >> "$GITHUB_OUTPUT"
-          echo "Built ${{ matrix.host }} from $GITHUB_SHA: $store_path" >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Resolve vm-app address
-        id: destination
-        run: |
-          vm_app_ip=$(nix eval --impure --raw --expr '(import ./lib/consts.nix).addresses.infra.hosts.vm-app')
-          echo "ip=$vm_app_ip" >> "$GITHUB_OUTPUT"
-
-      - name: Connect to home network
-        env:
-          WG_CONF: ${{ secrets.WG_CONF }}
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y wireguard-tools
-          sudo install -m 600 /dev/null /etc/wireguard/wg0.conf
-          printf '%s\n' "$WG_CONF" | sudo tee /etc/wireguard/wg0.conf > /dev/null
-          sudo wg-quick up wg0
-
-      - name: Configure SSH
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          VM_APP_IP: ${{ steps.destination.outputs.ip }}
-        run: |
-          install -m 700 -d "$HOME/.ssh"
-          printf '%s\n' "$SSH_PRIVATE_KEY" > "$HOME/.ssh/id_ed25519"
-          chmod 600 "$HOME/.ssh/id_ed25519"
-          ssh-keyscan -T 10 -H "$VM_APP_IP" >> "$HOME/.ssh/known_hosts"
-          ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "root@$VM_APP_IP" true
+          test "$built_path" = "${{ steps.expected.outputs.store_path }}"
+          echo "Built ${{ matrix.host }} from $GITHUB_SHA: $built_path" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Copy closure to vm-app
+        if: steps.cache.outputs.hit != 'true'
         env:
-          STORE_PATH: ${{ steps.build.outputs.store_path }}
+          STORE_PATH: ${{ steps.expected.outputs.store_path }}
           VM_APP_IP: ${{ steps.destination.outputs.ip }}
         run: nix copy --to "ssh://root@$VM_APP_IP" "$STORE_PATH"
 
       - name: Pin closure for Harmonia
         env:
-          STORE_PATH: ${{ steps.build.outputs.store_path }}
+          STORE_PATH: ${{ steps.expected.outputs.store_path }}
           VM_APP_IP: ${{ steps.destination.outputs.ip }}
         run: |
           ssh -o BatchMode=yes "root@$VM_APP_IP" \

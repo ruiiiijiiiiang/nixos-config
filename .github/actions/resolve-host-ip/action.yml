@@ -1,0 +1,31 @@
+name: Resolve host IP
+description: Resolve a host address from lib/consts.nix
+inputs:
+  host:
+    description: Host name in the NixOS flake
+    required: true
+outputs:
+  ip:
+    description: Resolved host IP address
+    value: ${{ steps.resolve.outputs.ip }}
+runs:
+  using: composite
+  steps:
+    - id: resolve
+      shell: bash
+      env:
+        TARGET_HOST: ${{ inputs.host }}
+      run: |
+        # The Nix interpolation below must stay literal in the shell string.
+        # shellcheck disable=SC2016
+        target_ip=$(nix eval --impure --raw --expr '
+          let
+            addresses = (import ./lib/consts.nix).addresses;
+            host = builtins.getEnv "TARGET_HOST";
+            networks = [ addresses.infra.hosts addresses.dmz.hosts addresses.wg.hosts ];
+            matches = builtins.filter (hosts: builtins.hasAttr host hosts) networks;
+          in
+            if matches == [] then throw "Unknown host: ${host}"
+            else builtins.getAttr host (builtins.head matches)
+        ')
+        printf 'ip=%s\n' "$target_ip" >> "$GITHUB_OUTPUT"

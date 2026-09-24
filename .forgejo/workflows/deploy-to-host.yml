@@ -8,6 +8,7 @@ on:
         type: choice
         default: vm-app
         options:
+          - cloud-observe
           - hypervisor
           - vm-app
           - vm-cyber
@@ -21,57 +22,32 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
-
-      - name: Set Host IP Address
-        id: config
-        run: |
-          case "${{ inputs.target_host }}" in
-            "hypervisor")
-              echo "TARGET_IP=192.168.20.254" >> $GITHUB_ENV
-              ;;
-            "vm-app")
-              echo "TARGET_IP=192.168.20.2" >> $GITHUB_ENV
-              ;;
-            "vm-cyber")
-              echo "TARGET_IP=192.168.88.10" >> $GITHUB_ENV
-              ;;
-            "vm-monitor")
-              echo "TARGET_IP=192.168.20.3" >> $GITHUB_ENV
-              ;;
-            "vm-network")
-              echo "TARGET_IP=192.168.20.1" >> $GITHUB_ENV
-              ;;
-            "vm-public")
-              echo "TARGET_IP=192.168.88.2" >> $GITHUB_ENV
-              ;;
-            *)
-              echo "Unknown host selected"
-              exit 1
-              ;;
-          esac
+        with:
+          persist-credentials: false
 
       - name: Install Nix
         uses: https://github.com/cachix/install-nix-action@v31
         with:
           nix_path: nixpkgs=channel:nixos-unstable
 
+      - name: Resolve host IP address
+        id: destination
+        uses: ./.github/actions/resolve-host-ip
+        with:
+          host: ${{ inputs.target_host }}
+
       - name: Setup SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          eval $(ssh-agent -s)
-          ssh-add ~/.ssh/id_ed25519
-          ssh-keyscan -H ${{ env.TARGET_IP }} >> ~/.ssh/known_hosts
+        uses: ./.github/actions/setup-ssh
+        with:
+          private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          host-ip: ${{ steps.destination.outputs.ip }}
 
       - name: NixOS Rebuild & Switch
-        env:
-          NIX_SSHOPTS: "-o StrictHostKeyChecking=no"
         run: |
           nix run github:nixos/nixpkgs/nixos-unstable#nixos-rebuild -- switch \
             --flake .#${{ inputs.target_host }} \
-            --target-host root@${{ env.TARGET_IP }} \
-            --build-host root@${{ env.TARGET_IP }} \
+            --target-host root@${{ steps.destination.outputs.ip }} \
+            --build-host root@${{ steps.destination.outputs.ip }} \
             --refresh \
             --option substituters "https://cache.ruijiang.me https://cache.nixos.org https://nix-community.cachix.org" \
             --option trusted-public-keys "cache.ruijiang.me-1:uSB517/xV6UnlCkzOYvmCSRG0sOqPPAGla5tY4iSQf0= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=" \

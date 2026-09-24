@@ -1,0 +1,22 @@
+name: Set up SSH
+description: Configure SSH credentials and verify the target host
+inputs:
+  private-key:
+    description: SSH private key
+    required: true
+  host-ip:
+    description: Target host IP address
+    required: true
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        SSH_PRIVATE_KEY: ${{ inputs.private-key }}
+        HOST_IP: ${{ inputs.host-ip }}
+      run: |
+        install -m 700 -d "$HOME/.ssh"
+        printf '%s\n' "$SSH_PRIVATE_KEY" > "$HOME/.ssh/id_ed25519"
+        chmod 600 "$HOME/.ssh/id_ed25519"
+        ssh-keyscan -T 10 -H "$HOST_IP" >> "$HOME/.ssh/known_hosts"
+        ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "root@$HOST_IP" true
