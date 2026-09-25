@@ -23,6 +23,14 @@ classes: {
       font-color: "#c6d0f5"
     }
   }
+  external: {
+    style: {
+      fill: "#233227"
+      stroke: "#A6D189"
+      stroke-width: 3
+      font-color: "#c6d0f5"
+    }
+  }
   vm: {
     style: {
       fill: "#292C3C"
@@ -80,6 +88,22 @@ wg: "WG VLAN\n192.168.128.0/24" {
 
 
 # Physical and Virtual Infrastructure
+cloud-observe: "Cloud Observe\n(External Host)" {
+  class: external
+  grid-columns: 1
+  
+    gatus: "gatus" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/gatus.png"
+}
+
+  ntfy: "ntfy" {
+  class: service
+  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/ntfy.png"
+}
+
+}
+
 desktop: "Desktop\n(Workstation)" {
   class: physical
   grid-columns: 1
@@ -230,11 +254,6 @@ vm-app: "vm-app\n(Application Server)" {
   icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/open-cloud.png"
 }
 
-                    openwebui: "openwebui" {
-  class: service
-  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/open-webui.png"
-}
-
                     ovumcy: "ovumcy" {
   class: service
   icon: "https://raw.githubusercontent.com/ovumcy/ovumcy-web/refs/heads/main/web/static/brand/ovumcy-icon-dark.svg"
@@ -278,11 +297,6 @@ vm-app: "vm-app\n(Application Server)" {
                     sonarr: "sonarr" {
   class: service
   icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/sonarr.png"
-}
-
-                    stirlingpdf: "stirlingpdf" {
-  class: service
-  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/stirling-pdf.png"
 }
 
                     syncthing: "syncthing" {
@@ -342,11 +356,6 @@ vm-app: "vm-app\n(Application Server)" {
   icon: "https://cdn.jsdelivr.net/gh/selfhst/icons@main/png/dockhand.png"
 }
 
-                    gatus: "gatus" {
-  class: service
-  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/gatus.png"
-}
-
                     grafana: "grafana" {
   class: service
   icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/grafana.png"
@@ -357,19 +366,9 @@ vm-app: "vm-app\n(Application Server)" {
   icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/myspeed.png"
 }
 
-                    ntfy: "ntfy" {
-  class: service
-  icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/ntfy.png"
-}
-
                     prometheus: "prometheus" {
   class: service
   icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/prometheus.png"
-}
-
-                    scanopy: "scanopy" {
-  class: service
-  icon: "https://raw.githubusercontent.com/scanopy/scanopy/main/media/logo.png"
 }
 
                     termix: "termix" {
@@ -463,6 +462,12 @@ pi: "Raspberry Pi 4\n(IoT)" {
 
 
 # Network Interconnections
+wg -- cloud-observe: "192.168.128.6" {
+  style.stroke: "#A6D189"
+  style.stroke-width: 2
+  style.font-color: "#c6d0f5"
+}
+
 home -- desktop: "192.168.2.11" {
   style.stroke: "#8CAAEE"
   style.stroke-width: 2

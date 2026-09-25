@@ -43,6 +43,15 @@ jobs:
         with:
           github-token: ${{ github.token }}
 
+      - name: Update flake inputs
+        id: lock
+        run: |
+          nix flake update
+          lock_sha256=$(sha256sum flake.lock)
+          lock_sha256=${lock_sha256%% *}
+          printf 'sha256=%s\n' "$lock_sha256" >> "$GITHUB_OUTPUT"
+          echo "Updated flake.lock SHA-256: $lock_sha256" >> "$GITHUB_STEP_SUMMARY"
+
       - name: Evaluate locked system path
         id: expected
         run: |
@@ -101,7 +110,7 @@ jobs:
             --print-out-paths \
             ".#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel")
           test "$built_path" = "${{ steps.expected.outputs.store_path }}"
-          echo "Built ${{ matrix.host }} from $GITHUB_SHA: $built_path" >> "$GITHUB_STEP_SUMMARY"
+          echo "Built ${{ matrix.host }} from $GITHUB_SHA with flake.lock SHA-256 ${{ steps.lock.outputs.sha256 }}: $built_path" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Copy closure to vm-app
         if: steps.cache.outputs.hit != 'true'

@@ -228,6 +228,8 @@
               "Raspberry Pi 4\\n(IoT)"
             else if hostName == "hypervisor" then
               "Mini PC\\n(Hypervisor)"
+            else if hostName == "cloud-observe" then
+              "Cloud Observe\\n(External Host)"
             else
               hostName;
         in
@@ -236,7 +238,7 @@
         else
           ''
             ${hostName}: "${label}" {
-              class: physical
+              class: ${if hostName == "cloud-observe" then "external" else "physical"}
               ${if hostName == "hypervisor" then "direction: right" else "grid-columns: 1"}
               ${lib.optionalString (hostName == "hypervisor") ''
                 mgmt: "Host Management" {
@@ -337,6 +339,14 @@
             style: {
               fill: "#303446"
               stroke: "#51576D"
+              stroke-width: 3
+              font-color: "#c6d0f5"
+            }
+          }
+          external: {
+            style: {
+              fill: "#233227"
+              stroke: "#A6D189"
               stroke-width: 3
               font-color: "#c6d0f5"
             }
