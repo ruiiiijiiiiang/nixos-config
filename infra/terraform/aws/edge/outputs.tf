@@ -3,6 +3,11 @@ output "public_address" {
   value       = aws_instance.edge.public_ip
 }
 
+output "edge_public_ipv6" {
+  description = "Public IPv6 address assigned to the edge instance."
+  value       = aws_instance.edge.ipv6_addresses[0]
+}
+
 output "instance_id" {
   description = "Provider-created instance identity."
   value       = aws_instance.edge.id

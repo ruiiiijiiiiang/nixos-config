@@ -3,9 +3,10 @@ locals {
 }
 
 resource "aws_vpc" "edge" {
-  cidr_block           = var.vpc_cidr
-  enable_dns_hostnames = true
-  enable_dns_support   = true
+  cidr_block                       = var.vpc_cidr
+  assign_generated_ipv6_cidr_block = true
+  enable_dns_hostnames             = true
+  enable_dns_support               = true
 
   tags = {
     Name = "edge-production"
@@ -23,6 +24,7 @@ resource "aws_internet_gateway" "edge" {
 resource "aws_subnet" "edge" {
   vpc_id                  = aws_vpc.edge.id
   cidr_block              = local.public_subnet_cidr
+  ipv6_cidr_block         = cidrsubnet(aws_vpc.edge.ipv6_cidr_block, 8, 0)
   availability_zone       = local.edge_availability_zone
   map_public_ip_on_launch = true
 
@@ -48,6 +50,11 @@ resource "aws_route_table" "edge" {
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.edge.id
+  }
+
+  route {
+    ipv6_cidr_block = "::/0"
+    gateway_id      = aws_internet_gateway.edge.id
   }
 
   tags = {

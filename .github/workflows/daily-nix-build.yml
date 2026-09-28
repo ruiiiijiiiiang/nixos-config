@@ -2,7 +2,7 @@ name: Daily Nix build
 
 on:
   schedule:
-    - cron: "30 5 * * *"
+    - cron: "30 0 * * *"
       timezone: America/Chicago
   workflow_dispatch:
 

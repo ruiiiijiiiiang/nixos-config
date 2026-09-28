@@ -427,7 +427,7 @@ rec {
     };
     workstation = {
       flatpak-update = "Mon *-*-* 00:00:00";
-      flake-update = "*-*-* 00:00:00";
+      flake-update = "*-*-* 00:30:00";
       nh-clean = "Sun *-*-* 04:00:00";
       smartd-test = "Sat *-*-* 03:00:00";
     };

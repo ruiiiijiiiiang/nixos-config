@@ -56,6 +56,7 @@ resource "aws_instance" "edge" {
   subnet_id                   = aws_subnet.edge.id
   vpc_security_group_ids      = [aws_security_group.edge.id]
   associate_public_ip_address = true
+  ipv6_address_count          = 1
 
   credit_specification {
     cpu_credits = "standard"

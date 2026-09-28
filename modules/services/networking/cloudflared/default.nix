@@ -97,6 +97,7 @@ in
           tunnels.${cfg.tunnelName} = {
             default = "http_status:404";
             credentialsFile = config.age.secrets.${credentialsSecretName}.path;
+            edgeIPVersion = "6";
             inherit (tunnel) ingress;
           };
         };
