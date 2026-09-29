@@ -21,6 +21,11 @@ in
   };
 
   custom = {
+    platforms.cloud = {
+      enable = true;
+      aws.enable = true;
+    };
+
     roles = {
       headless = {
         networking.enable = true;
@@ -42,6 +47,16 @@ in
           enable = true;
           inherit hostName wgInterface;
           activationMode = "persistent";
+          allowedIPs = with addresses; [
+            home.network
+            home.network-v6
+            infra.network
+            infra.network-v6
+            dmz.network
+            dmz.network-v6
+            wg.network
+            wg.network-v6
+          ];
           enableDns = false;
           privateKeyFile = config.age.secrets.wireguard-cloud-observe-private-key.path;
           presharedKeyFile = config.age.secrets.wireguard-cloud-observe-preshared-key.path;

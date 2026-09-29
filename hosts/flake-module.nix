@@ -123,11 +123,8 @@ in
     };
 
     cloud-observe = mkHost "cloud-observe" {
+      platformModules = [ ../modules/platforms/cloud/aws/image.nix ];
       homeConfig = ../homes/configs/headless.nix;
-      platformModules = [
-        ../modules/platforms/cloud
-        ../modules/platforms/cloud/aws.nix
-      ];
     };
   };
 }

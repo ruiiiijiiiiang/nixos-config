@@ -53,6 +53,7 @@ resource "aws_instance" "edge" {
   ami                         = data.aws_ami.nixos.id
   instance_type               = "t3.micro"
   key_name                    = aws_key_pair.bootstrap.key_name
+  iam_instance_profile        = aws_iam_instance_profile.edge.name
   subnet_id                   = aws_subnet.edge.id
   vpc_security_group_ids      = [aws_security_group.edge.id]
   associate_public_ip_address = true

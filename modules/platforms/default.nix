@@ -1,5 +1,6 @@
 {
   imports = [
+    ./cloud
     ./desktop
     ./laptop
     ./minipc

@@ -4,7 +4,7 @@
 
 This repository is a **fully declarative, reproducible hybrid on-premise/cloud infrastructure** definition for my personal homelab. Built on **NixOS** and **Nix Flakes**, it combines local compute and storage with a small independent cloud observability edge, replacing fragile imperative administration with a robust, code-driven ecosystem. Every layer — from CPU/RAM allocation, disk partitioning, VLAN assignment, to cloud provisioning, application services, container orchestration, and secret management — is defined in code. Version controlled and GitOps-friendly, it emphasizes **stability** through atomic rollbacks, **observability** via a comprehensive monitoring stack, and **security** with hardened services and isolated networking.
 
-The hardware? A mini PC, a Raspberry Pi, an unmanaged switch, and some old hard drives. No enterprise racks. No excessive power draw. The goal is **maximum software efficiency** — proving that proper architecture, deliberate design, and disciplined engineering matter far more than raw specs. This setup runs a full production-grade stack: [virtual machine orchestration](./modules/services/infra/hypervisor/default.nix), [IPv4/IPv6 dual-stack VLAN-segmented networking](./modules/services/networking/router/default.nix), [VPN for remote access](./modules/services/networking/wireguard/server.nix), [high-availability DNS cluster](./modules/services/networking/dns/default.nix), [centralized logging and monitoring](./modules/services/observability/), [encrypted local and offsite backups](./modules/services/infra/restic/default.nix), [private code repositories with CI/CD pipelines](./modules/services/apps/development/forgejo/default.nix), [local binary cache](./modules/services/infra/harmonia/default.nix), [reverse proxies with automatic TLS](./modules/services/networking/nginx/default.nix), [SIEM platform](./modules/services/security/wazuh/server.nix), media servers, document management, smart home automation, and more.
+The hardware? A mini PC, a Raspberry Pi, an unmanaged switch, and some old hard drives. No enterprise racks. No excessive power draw. The goal is **maximum software efficiency** — proving that proper architecture, deliberate design, and disciplined engineering matter far more than raw specs. This setup runs a full production-ready stack: [virtual machine orchestration](./modules/services/infra/hypervisor/default.nix), [IPv4/IPv6 dual-stack VLAN-segmented networking](./modules/services/networking/router/default.nix), [VPN for remote access](./modules/services/networking/wireguard/server.nix), [high-availability DNS cluster](./modules/services/networking/dns/default.nix), [centralized logging and monitoring](./modules/services/observability/), [encrypted local and offsite backups](./modules/services/infra/restic/default.nix), [private code repositories with CI/CD pipelines](./modules/services/apps/development/forgejo/default.nix), [local binary cache](./modules/services/infra/harmonia/default.nix), [reverse proxies with automatic TLS](./modules/services/networking/nginx/default.nix), [SIEM platform](./modules/services/security/wazuh/server.nix), media servers, document management, smart home automation, and more.
 
 The beauty of this setup? **Total vertical alignment.** The entire infrastructure is declared in one monolithic Nix flake and accessible to all hosts. Change a VM's VLAN assignment? Update one value in Nix, rebuild, and the entire networking stack reconfigures. Need to migrate a service between hosts? Move the configuration block and redeploy — the entire dependency chain follows atomically.
 
@@ -16,10 +16,10 @@ The beauty of this setup? **Total vertical alignment.** The entire infrastructur
 
 This infrastructure is engineered following a rigorous **Domain-Driven Design** philosophy. The modules are organized into four distinct, composable layers:
 
-1. **core ([`modules/core`](./modules/core)):** The foundational DNA. Universal baselines shared across all systems, defining the essential "NixOS-ness" of the fleet.
-2. **platform ([`modules/platforms`](./modules/platforms)):** The hardware abstraction layer. Whether it's a Raspberry Pi ARM chip or a virtualized x86 hypervisor, this layer handles the metal. Disk partitioning is fully declarative using **Disko**, defining GPT layouts, LVM volume groups for guest VM disks, and filesystem mounts.
-3. **roles ([`modules/roles`](./modules/roles)):** The personality injection. A host is defined by its mission: a hardened **Headless Server** guarding the network, or a feature-rich **Workstation** designed for development.
-4. **services ([`modules/services`](./modules/services)):** The functional payload. Granular, plug-and-play applications categorized by domain:
+1. **core ([`modules/core`](./modules/core))**: The foundational DNA. Universal baselines shared across all systems, defining the essential "NixOS-ness" of the fleet.
+2. **platform ([`modules/platforms`](./modules/platforms))**: The hardware abstraction layer. Whether it's a Raspberry Pi ARM chip or a virtualized x86 hypervisor, this layer handles the metal. Disk partitioning is fully declarative using **Disko**, defining GPT layouts, LVM volume groups for guest VM disks, and filesystem mounts.
+3. **roles ([`modules/roles`](./modules/roles))**: The personality injection. A host is defined by its mission: a hardened **Headless Server** guarding the network, or a feature-rich **Workstation** designed for development.
+4. **services ([`modules/services`](./modules/services))**: The functional payload. Granular, plug-and-play applications categorized by domain:
    - [**infra**](./modules/services/infra): The backbone utilities (binary cache, hypervisor, backup).
    - [**networking**](./modules/services/networking): The mesh that connects it all (DNS, routing, VPN).
    - [**observability**](./modules/services/observability): The eyes and ears (monitoring, logging, tracking agents).
@@ -94,16 +94,16 @@ The `vm-network` VM serves as the nerve center of the home network. It replaces 
 
 The network is physically connected via two interfaces, but logically segmented into distinct security zones using VLANs and virtual interfaces:
 
-- **WAN:** The shield against the public internet.
-- **LAN:** The physical trunk carrying multiple logical networks:
-  - **Home/Native (VLAN 2):** Trusted user devices (e.g., `desktop`, `framework`).
-    - _Routing:_ Unrestricted access to WAN, Infra, DMZ, and VPN.
-  - **Infra (VLAN 20):** Dedicated management lane for servers and critical infrastructure (e.g., `pi`, `vm-app`, `vm-monitor`).
-    - _Routing:_ Access to WAN. Isolated from Home.
-  - **DMZ (VLAN 88):** Isolated zone for untrusted workloads (e.g., `vm-cyber`).
-    - _Routing:_ Access to WAN. Restricted access to Infra for DNS (UDP/TCP 53) only. No access to Home.
-- **WireGuard (VLAN 128):** Secure remote access tunnel.
-  - _Routing:_ Authenticated peers get full access to Home, Infra, and DMZ networks.
+- **WAN**: The shield against the public internet.
+- **LAN**: The physical trunk carrying multiple logical networks:
+  - **Home/Native (VLAN 2)**: Trusted user devices (e.g., `desktop`, `framework`).
+    - _Routing_: Unrestricted access to WAN, Infra, DMZ, and VPN.
+  - **Infra (VLAN 20)**: Dedicated management lane for servers and critical infrastructure (e.g., `pi`, `vm-app`, `vm-monitor`).
+    - _Routing_: Access to WAN. Isolated from Home.
+  - **DMZ (VLAN 88)**: Isolated zone for untrusted workloads (e.g., `vm-cyber`).
+    - _Routing_: Access to WAN. Restricted access to Infra for DNS (UDP/TCP 53) only. No access to Home.
+- **WireGuard (VLAN 128)**: Secure remote access tunnel.
+  - _Routing_: Authenticated peers get full access to Home, Infra, and DMZ networks.
 
 ### Dual-Stack IPv4/IPv6 Routing
 
@@ -116,8 +116,8 @@ The homelab runs a dual-stack IPv4/IPv6 network managed by the `vm-network` rout
 
 The network relies on a high-availability DNS cluster between `vm-network` and `pi` to ensure that ad-blocking and name resolution never sleep.
 
-- **The Stack:** **Pi-hole** for network-wide ad-blocking + **Unbound** for recursive, privacy-respecting DNS-over-TLS resolution.
-- **The Redundancy:** **Keepalived** manages a Virtual IP (VIP) that floats across the cluster. If the master node blinks, the VIP instantly migrates to a backup, keeping the network online without a hiccup.
+- **The Stack**: **Pi-hole** for network-wide ad-blocking + **Unbound** for recursive, privacy-respecting DNS-over-TLS resolution.
+- **The Redundancy**: **Keepalived** manages a Virtual IP (VIP) that floats across the cluster. If the master node blinks, the VIP instantly migrates to a backup, keeping the network online without a hiccup.
 
 ### External Access
 
@@ -135,72 +135,73 @@ This infrastructure comprises 10 distinct hosts. Here's the breakdown:
 
 ### [`desktop`](./hosts/desktop.nix)
 
-- **The Command Center.** The primary high-performance development workstation, acting as the main anchor for local coding and daily work.
+- **The Command Center**. The primary high-performance development workstation, acting as the main anchor for local coding and daily work.
 - **Hardware**: AMD 3600, 32GB RAM, AMD Radeon RX 570
-- **Network:** Home (VLAN 2)
+- **Network**: Home (VLAN 2)
 
 ### [`framework`](./hosts/framework.nix)
 
-- **The Mobile Outpost.** A portable laptop configured for on-the-go development, remote operations, and on-site troubleshooting.
+- **The Mobile Outpost**. A portable laptop configured for on-the-go development, remote operations, and on-site troubleshooting.
 - **Hardware**: AMD 7640U, 32GB RAM
-- **Network:** Home (VLAN 2), WireGuard (VLAN 128)
+- **Network**: Home (VLAN 2), WireGuard (VLAN 128)
 
 ### [`pi`](./hosts/pi.nix)
 
-- **The Physical Bridge.** Armed with **Z-Wave** and **Zigbee** radios, acting as the smart hub running Home Assistant while standing watch as a backup DNS node.
+- **The Physical Bridge**. Armed with **Z-Wave** and **Zigbee** radios, acting as the smart hub running Home Assistant while standing watch as a backup DNS node.
 - **Hardware**: Raspberry Pi 4 with 2GB RAM
-- **Network:** Infra (VLAN 20)
+- **Network**: Infra (VLAN 20)
 
 ### [`hypervisor`](./hosts/hypervisor.nix)
 
-- **The Bedrock.** This mini PC runs **NixOS with libvirt** as a headless hypervisor host. It spawns and manages four virtual machines (`vm-network`, `vm-app`, `vm-monitor`, `vm-cyber`), powered by the NixVirt module. The entire virtualization stack — from VLAN-filtered bridges to PCI passthrough to VM lifecycle management — is defined declaratively.
+- **The Bedrock**. This mini PC runs **NixOS with libvirt** as a headless hypervisor host. It spawns and manages four virtual machines (`vm-network`, `vm-app`, `vm-monitor`, `vm-cyber`), powered by the NixVirt module. The entire virtualization stack — from VLAN-filtered bridges to PCI passthrough to VM lifecycle management — is defined declaratively.
 - **Hardware**: AMD 6900HX, 32GB RAM
-- **Network:** Infra (VLAN 20)
+- **Network**: Infra (VLAN 20)
 
 ### [`vm-network`](./hosts/vm-network.nix)
 
-- **The Sentinel.** The primary router, firewall, and DNS authority. It manages the Cloudflare Tunnels, WireGuard VPNs, and Suricata IDS/IPS. A physical NIC is passed through from the hypervisor to serve as the WAN interface, providing direct hardware access for maximum throughput and security.
+- **The Sentinel**. The primary router, firewall, and DNS authority. It manages the Cloudflare Tunnels, WireGuard VPNs, and Suricata IDS/IPS. A physical NIC is passed through from the hypervisor to serve as the WAN interface, providing direct hardware access for maximum throughput and security.
 - **Hardware**: 6 vCPU cores, 4GB RAM, NIC passthrough (WAN)
-- **Network:** Gateway (WAN, Home, Infra, DMZ)
+- **Network**: Gateway (WAN, Home, Infra, DMZ)
 
 ### [`vm-app`](./hosts/vm-app.nix)
 
-- **The Powerhouse.** The main application server. GPU passthrough enables hardware-accelerated transcoding for Jellyfin. It runs my complete suite of user-facing services: Immich for photos, Paperless-ngx for documents, Forgejo for code, and more.
+- **The Powerhouse**. The main application server. GPU passthrough enables hardware-accelerated transcoding for Jellyfin. It runs my complete suite of user-facing services: Immich for photos, Paperless-ngx for documents, Forgejo for code, and more.
 - **Hardware**: 12 vCPU cores, 10GB RAM, GPU passthrough
-- **Network:** Infra (VLAN 20)
+- **Network**: Infra (VLAN 20)
 
 ### [`vm-monitor`](./hosts/vm-monitor.nix)
 
-- **The Watchtower.** Dedicated to keeping the lights on. It hosts the **Beszel Hub**, **Prometheus**, **Loki**, and **Wazuh Server** to visualize the health and security of the entire infrastructure.
+- **The Watchtower**. Dedicated to keeping the lights on. It hosts the **Beszel Hub**, **Prometheus**, **Loki**, and **Wazuh Server** to visualize the health and security of the entire infrastructure.
 - **Hardware**: 6 vCPU cores, 6GB RAM
-- **Network:** Infra (VLAN 20)
+- **Network**: Infra (VLAN 20)
 
 ### [`vm-public`](./hosts/vm-public.nix)
 
-- **The Public Face.** A DMZ-hosted server exposing personal projects and services to the world.
+- **The Public Face**. A DMZ-hosted server exposing personal projects and services to the world.
 - **Hardware**: 4 vCPU cores, 2GB RAM
-- **Network:** DMZ (VLAN 88)
+- **Network**: DMZ (VLAN 88)
 
 ### [`vm-cyber`](./hosts/vm-cyber.nix)
 
-- **The Armory.** A specialized, security-focused desktop environment loaded with tools for penetration testing, forensics, and reverse engineering. Isolated in VLAN 88 (DMZ) with no access to Home or Infra subnets, designated exclusively for isolated security research and offensive tooling.
+- **The Armory**. A specialized, security-focused desktop environment loaded with tools for penetration testing, forensics, and reverse engineering. Isolated in VLAN 88 (DMZ) with no access to Home or Infra subnets, designated exclusively for isolated security research and offensive tooling.
 - **Hardware**: 4 vCPU cores, 6GB RAM
-- **Network:** DMZ (VLAN 88)
+- **Network**: DMZ (VLAN 88)
 
 ### [`cloud-observe`](./hosts/cloud-observe.nix)
 
-- **The Outpost.** A Terraform-provisioned headless cloud host for Gatus and Ntfy, placed outside the homelab so outages remain externally visible. It uses `wg0` for private checks when home infrastructure is available and Cloudflare Tunnel/Nginx for its public endpoints.
-- **Network:** WireGuard (VLAN 128)
+- **The Outpost**. A Terraform-provisioned headless cloud host for Gatus and Ntfy, placed outside the homelab so outages remain externally visible. It uses `wg0` for private checks when home infrastructure is available and Cloudflare Tunnel/Nginx for its public endpoints.
+- **Hardware**: T3 Micro EC2 Instance, 2 vCPU cores, 1GB RAM
+- **Network**: WireGuard (VLAN 128)
 
 ### Shared Services
 
-Every server host (`pi`, `vm-network`, `vm-app`, `vm-monitor`) comes equipped with a standard observability and security sidecar:
+Every server host comes equipped with a standard observability and security sidecar:
 
-- **Prometheus Exporters:** Granular telemetry for Nginx, Node, Podman, etc.
-- **Alloy:** Grafana Loki agent for collecting `systemd-journal` logs.
-- **Beszel Agent:** Custom monitoring agent for real-time insights and control.
-- **Dockhand Agent (Hawser):** Lightweight container agent for OCI container monitoring and management.
-- **Wazuh Agent:** Enterprise-grade security monitoring and intrusion detection.
+- **Prometheus Exporters**: Granular telemetry for Nginx, Node, Podman, etc.
+- **Alloy**: Grafana Loki agent for collecting `systemd-journal` logs.
+- **Beszel Agent**: Custom monitoring agent for real-time insights and control.
+- **Dockhand Agent (Hawser)**: Lightweight container agent for OCI container monitoring and management.
+- **Wazuh Agent**: Enterprise-grade security monitoring and intrusion detection.
 
 ## Secret Management
 

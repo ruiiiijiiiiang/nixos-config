@@ -89,8 +89,7 @@ let
 in
 {
   imports = [
-    inputs.nixos-vm-provisioner.nixosModules.host-base
-    inputs.NixVirt.nixosModules.default
+    inputs.nixos-vm-provisioner.nixosModules.host
   ];
 
   options.custom.services.infra.hypervisor = with lib; {
