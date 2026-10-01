@@ -20,9 +20,6 @@ in
 
     services.journald.settings.Journal.SystemMaxUse = lib.mkForce "256M";
 
-    zramSwap = {
-      enable = true;
-      memoryPercent = 50;
-    };
+    zramSwap.memoryPercent = 50;
   };
 }
