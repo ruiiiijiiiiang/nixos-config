@@ -1,0 +1,85 @@
+name: Daily edge Terraform plan
+
+on:
+  schedule:
+    - cron: "0 3 * * *"
+      timezone: America/Chicago
+  workflow_dispatch:
+
+concurrency:
+  group: daily-edge-terraform-plan
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    name: Check AWS edge resources
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      id-token: write
+    defaults:
+      run:
+        working-directory: infra/terraform/aws/edge
+    env:
+      TF_IN_AUTOMATION: "true"
+      TF_VAR_aws_region: us-east-1
+      TF_VAR_availability_zone: us-east-1a
+      TF_VAR_bootstrap_ssh_enabled: "false"
+      TF_VAR_bootstrap_ssh_public_key: ${{ vars.EDGE_BOOTSTRAP_SSH_PUBLIC_KEY }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Check required repository variables
+        env:
+          ROLE_ARN: ${{ vars.EDGE_TERRAFORM_PLAN_ROLE_ARN }}
+        run: |
+          if [ -z "$ROLE_ARN" ] || [ -z "$TF_VAR_bootstrap_ssh_public_key" ]; then
+            echo 'Set EDGE_TERRAFORM_PLAN_ROLE_ARN and EDGE_BOOTSTRAP_SSH_PUBLIC_KEY as Actions repository variables.' >&2
+            exit 1
+          fi
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v6.3.0
+        with:
+          role-to-assume: ${{ vars.EDGE_TERRAFORM_PLAN_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v4
+        with:
+          terraform_version: 1.16.4
+          terraform_wrapper: false
+
+      - name: Initialize Terraform
+        run: |
+          terraform init -input=false -lockfile=readonly \
+            -backend-config=bucket=rui-terraform-state-997229934634-us-east-1 \
+            -backend-config=key=edge/aws/terraform.tfstate \
+            -backend-config=region=us-east-1
+
+      - name: Check for proposed changes
+        run: |
+          if terraform plan -input=false -no-color -detailed-exitcode -lock-timeout=5m; then
+            echo 'Terraform proposes no changes to the AWS edge resources.' >> "$GITHUB_STEP_SUMMARY"
+          else
+            status=$?
+            case "$status" in
+              2)
+                echo 'Terraform proposes AWS edge changes. Review the plan output; changes may reflect drift or a newer AMI.' >> "$GITHUB_STEP_SUMMARY"
+                exit 1
+                ;;
+              1)
+                echo 'Terraform could not complete the AWS edge plan. Review the job log.' >> "$GITHUB_STEP_SUMMARY"
+                exit 1
+                ;;
+              *)
+                echo "Terraform returned unexpected exit status $status." >&2
+                exit "$status"
+                ;;
+            esac
+          fi
