@@ -102,85 +102,44 @@ data "aws_iam_policy_document" "github_edge_plan" {
   }
 
   statement {
-    sid = "ReadEdgeIAMRole"
+    sid = "ReadEdgeIAMResources"
     actions = [
-      "iam:GetRole",
-      "iam:GetRolePolicy",
-      "iam:ListRolePolicies",
-      "iam:ListRoleTags",
-      "iam:ListAttachedRolePolicies",
-      "iam:ListInstanceProfilesForRole",
+      "iam:Get*",
+      "iam:List*",
     ]
-    resources = ["arn:${data.aws_partition.current.partition}:iam::${data.aws_caller_identity.current.account_id}:role/edge-production-ssm"]
+    resources = [
+      "arn:${data.aws_partition.current.partition}:iam::${data.aws_caller_identity.current.account_id}:role/edge-production-ssm",
+      "arn:${data.aws_partition.current.partition}:iam::${data.aws_caller_identity.current.account_id}:instance-profile/edge-production-ssm",
+      local.github_edge_plan_role_arn,
+      local.github_edge_plan_policy_arn,
+    ]
   }
 
   statement {
-    sid = "ReadEdgeInstanceProfile"
+    sid = "ReadCloudObserveHealthChecks"
     actions = [
-      "iam:GetInstanceProfile",
-      "iam:ListInstanceProfileTags",
-    ]
-    resources = ["arn:${data.aws_partition.current.partition}:iam::${data.aws_caller_identity.current.account_id}:instance-profile/edge-production-ssm"]
-  }
-
-  statement {
-    sid = "ReadPlanIAMRole"
-    actions = [
-      "iam:GetRole",
-      "iam:GetRolePolicy",
-      "iam:ListRolePolicies",
-      "iam:ListRoleTags",
-      "iam:ListAttachedRolePolicies",
-      "iam:ListInstanceProfilesForRole",
-    ]
-    resources = [local.github_edge_plan_role_arn]
-  }
-
-  statement {
-    sid = "ReadPlanIAMPolicy"
-    actions = [
-      "iam:GetPolicy",
-      "iam:GetPolicyVersion",
-      "iam:ListPolicyTags",
-    ]
-    resources = [local.github_edge_plan_policy_arn]
-  }
-
-  statement {
-    sid = "ReadCloudObserveHealthCheck"
-    actions = [
-      "route53:GetHealthCheck",
-      "route53:ListTagsForResource",
+      "route53:Get*",
+      "route53:List*",
     ]
     resources = ["arn:${data.aws_partition.current.partition}:route53:::healthcheck/*"]
   }
 
   statement {
-    sid       = "DescribeCloudWatchAlarms"
-    actions   = ["cloudwatch:DescribeAlarms"]
+    sid = "ReadCloudWatch"
+    actions = [
+      "cloudwatch:Describe*",
+      "cloudwatch:List*",
+    ]
     resources = ["*"]
-  }
-
-  statement {
-    sid       = "ReadCloudObserveAlarmTags"
-    actions   = ["cloudwatch:ListTagsForResource"]
-    resources = [local.cloud_observe_alarm_arn]
   }
 
   statement {
     sid = "ReadCloudObserveSNSTopic"
     actions = [
-      "sns:GetTopicAttributes",
-      "sns:ListSubscriptionsByTopic",
-      "sns:ListTagsForResource",
+      "sns:Get*",
+      "sns:List*",
     ]
     resources = [local.cloud_observe_alerts_topic_arn]
-  }
-
-  statement {
-    sid       = "ReadCloudObserveSNSSubscription"
-    actions   = ["sns:GetSubscriptionAttributes"]
-    resources = ["${local.cloud_observe_alerts_topic_arn}:*"]
   }
 }
 
