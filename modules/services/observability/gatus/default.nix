@@ -152,7 +152,7 @@ in
     };
 
     services.nginx.virtualHosts."${cfg.fqdn}" = mkVirtualHost {
-      fqdn = cfg.fqdn;
+      inherit (cfg) fqdn;
       port = ports.gatus;
     };
   };

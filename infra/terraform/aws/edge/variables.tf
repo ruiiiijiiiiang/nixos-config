@@ -3,6 +3,12 @@ variable "aws_region" {
   description = "AWS region in which to create the edge host."
 }
 
+variable "alert_email" {
+  type        = string
+  default     = "me@ruijiang.me"
+  description = "Email address for cloud-observe outage and recovery alerts. The SNS subscription must be confirmed from this inbox."
+}
+
 variable "availability_zone" {
   type        = string
   default     = null
