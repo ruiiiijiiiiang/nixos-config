@@ -14,6 +14,10 @@ in
     publicKeys = ssh.framework ++ ssh.desktop;
     armor = true;
   };
+  "personal/fish/env.cloudflare.age" = {
+    publicKeys = ssh.framework ++ ssh.desktop;
+    armor = true;
+  };
   "personal/nix/nix.conf.age" = {
     publicKeys = ssh.framework ++ ssh.desktop;
     armor = true;

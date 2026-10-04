@@ -34,9 +34,13 @@ in
         file = secretsDir + "/personal/nix/nix.conf.age";
         path = "${home.homeDirectory}/.config/nix/nix.conf";
       };
-      fish-env = {
+      fish-env-aws = {
         file = secretsDir + "/personal/fish/env.aws.age";
         path = "${home.homeDirectory}/.config/fish/conf.d/aws-secrets.fish";
+      };
+      fish-env-cloudflare = {
+        file = secretsDir + "/personal/fish/env.cloudflare.age";
+        path = "${home.homeDirectory}/.config/fish/conf.d/cloudflare-secrets.fish";
       };
     };
 

@@ -10,6 +10,5 @@ pkgs.mkShell {
 
   shellHook = ''
     echo "🏗️  Terraform Dev Env Loaded"
-    exec fish -l
   '';
 }
