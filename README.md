@@ -129,6 +129,12 @@ Furthermore, all web-facing services are placed behind an **Nginx reverse proxy*
 
 `cloud-observe` is a headless cloud host provisioned by [Terraform](./infra/terraform/aws/edge). Its independent network location preserves external visibility when the home infrastructure, Internet connection, or `vm-network` router is unavailable: Gatus and Ntfy remain reachable through Cloudflare and can report the outage. When the homelab is available, its single persistent WireGuard interface, `wg0`, gives Gatus private monitoring access through `vm-network`.
 
+### Cloud Integrations
+
+- **AWS:** [Terraform](./infra/terraform/aws/edge) provisions the `cloud-observe` EC2 host and its network. A Route 53 health check and CloudWatch alarm send public endpoint outage alerts through SNS.
+- **Cloudflare:** [Terraform](./infra/terraform/cloudflare/dns) manages selected `ruijiang.me` DNS records, including email routing and verification records.
+- **Drift detection:** Daily, plan-only GitHub Actions workflows check [AWS](./.github/workflows/daily-edge-terraform-plan.yml) and [Cloudflare DNS](./.github/workflows/daily-cloudflare-dns-terraform-plan.yml) for changes and flag differences for review.
+
 ## The Fleet
 
 This infrastructure comprises 10 distinct hosts. Here's the breakdown:

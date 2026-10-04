@@ -31,7 +31,6 @@ let
   initialFile = pkgs.writeText "csp.yaml" cspContent;
   cspFile = "/var/lib/opencloud/config/csp.yaml";
   onlyofficeInitialFile = ./onlyoffice.json;
-  onlyofficeConfigFile = "/var/lib/onlyoffice/config/local.json";
   opencloud-port = "9200";
 in
 {
@@ -111,7 +110,7 @@ in
           "onlyoffice-log:/var/log/onlyoffice"
           "onlyoffice-lib:/var/lib/onlyoffice"
           "onlyoffice-db:/var/lib/postgresql"
-          "${onlyofficeConfigFile}:/etc/onlyoffice/documentserver/local.json"
+          "${onlyofficeInitialFile}:/etc/onlyoffice/documentserver/local-production-linux.json:ro"
         ];
         environment = {
           JWT_ENABLED = "true";
@@ -131,7 +130,6 @@ in
     systemd = {
       tmpfiles.rules = [
         "d /var/lib/opencloud/config 0755 ${toString oci-uids.opencloud} ${toString oci-uids.opencloud} - -"
-        "d /var/lib/onlyoffice/config 0755 root root - -"
         "d ${cfg.storagePath}/opencloud 0755 ${toString oci-uids.opencloud} ${toString oci-uids.opencloud} - -"
       ];
 
@@ -147,14 +145,6 @@ in
             }}
           '';
         };
-
-        podman-onlyoffice.preStart = lib.mkAfter ''
-          ${ensureFile {
-            source = onlyofficeInitialFile;
-            destination = onlyofficeConfigFile;
-            mode = "0644";
-          }}
-        '';
       };
     };
 
