@@ -29,8 +29,14 @@ variable "nixos_ami_name_pattern" {
 
 variable "bootstrap_ssh_public_key" {
   type        = string
+  default     = null
   sensitive   = true
-  description = "Temporary operator SSH public key used only during host enrolment."
+  description = "Optional operator SSH public key for bootstrapping a new edge instance."
+
+  validation {
+    condition     = var.bootstrap_ssh_public_key == null ? true : length(trimspace(var.bootstrap_ssh_public_key)) > 0
+    error_message = "bootstrap_ssh_public_key must be a non-empty public key when set."
+  }
 }
 
 variable "bootstrap_operator_cidr" {
@@ -41,6 +47,6 @@ variable "bootstrap_operator_cidr" {
 
 variable "bootstrap_ssh_enabled" {
   type        = bool
-  default     = true
-  description = "Whether to create the temporary TCP/22 bootstrap ingress rule. Set false after WireGuard enrolment succeeds."
+  default     = false
+  description = "Whether to create the temporary TCP/22 bootstrap ingress rule during host enrolment."
 }

@@ -25,8 +25,6 @@ jobs:
       TF_IN_AUTOMATION: "true"
       TF_VAR_aws_region: us-east-1
       TF_VAR_availability_zone: us-east-1a
-      TF_VAR_bootstrap_ssh_enabled: "false"
-      TF_VAR_bootstrap_ssh_public_key: ${{ vars.EDGE_BOOTSTRAP_SSH_PUBLIC_KEY }}
 
     steps:
       - name: Check out repository
@@ -38,8 +36,8 @@ jobs:
         env:
           ROLE_ARN: ${{ vars.EDGE_TERRAFORM_PLAN_ROLE_ARN }}
         run: |
-          if [ -z "$ROLE_ARN" ] || [ -z "$TF_VAR_bootstrap_ssh_public_key" ]; then
-            echo 'Set EDGE_TERRAFORM_PLAN_ROLE_ARN and EDGE_BOOTSTRAP_SSH_PUBLIC_KEY as Actions repository variables.' >&2
+          if [ -z "$ROLE_ARN" ]; then
+            echo 'Set EDGE_TERRAFORM_PLAN_ROLE_ARN as an Actions repository variable.' >&2
             exit 1
           fi
 

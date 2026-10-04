@@ -41,6 +41,7 @@ locals {
 }
 
 resource "aws_key_pair" "bootstrap" {
+  count      = nonsensitive(var.bootstrap_ssh_public_key != null) ? 1 : 0
   key_name   = "edge-production-bootstrap"
   public_key = var.bootstrap_ssh_public_key
 
@@ -52,7 +53,7 @@ resource "aws_key_pair" "bootstrap" {
 resource "aws_instance" "edge" {
   ami                         = data.aws_ami.nixos.id
   instance_type               = "t3.micro"
-  key_name                    = aws_key_pair.bootstrap.key_name
+  key_name                    = one(aws_key_pair.bootstrap[*].key_name)
   iam_instance_profile        = aws_iam_instance_profile.edge.name
   subnet_id                   = aws_subnet.edge.id
   vpc_security_group_ids      = [aws_security_group.edge.id]
