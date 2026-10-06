@@ -52,7 +52,7 @@ jobs:
           github-token: ${{ github.token }}
 
       - name: Render Terraform inputs
-        run: nix eval --json --file ../inputs.nix | jq -e '.cloudflareDns' > terraform.auto.tfvars.json
+        run: nix eval --json --file ../inputs.nix --apply 'inputs: inputs.cloudflareDns' > terraform.auto.tfvars.json
 
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v4
