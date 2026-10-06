@@ -20,7 +20,7 @@ jobs:
       id-token: write
     defaults:
       run:
-        working-directory: infra/aws
+        working-directory: cloud/aws
     env:
       TF_IN_AUTOMATION: "true"
 

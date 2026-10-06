@@ -20,7 +20,7 @@ jobs:
       id-token: write
     defaults:
       run:
-        working-directory: infra/cloudflare
+        working-directory: cloud/cloudflare
     env:
       TF_IN_AUTOMATION: "true"
 
