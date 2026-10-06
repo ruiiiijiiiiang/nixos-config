@@ -6,6 +6,20 @@ rec {
   domain = "ruijiang.me";
   email = "me@${domain}";
 
+  cloud = {
+    aws = {
+      account-id = "997229934634";
+      region = "us-east-1";
+      availability-zone = "us-east-1a";
+      edge-vpc-cidr = "10.42.0.0/20";
+      nixos-ami-name-pattern = "nixos/25.11*";
+    };
+
+    cloudflare = {
+      zone-id = "cd8e41e7dbca7a917ce11f247e8c69b9";
+    };
+  };
+
   subdomains = {
     hypervisor = {
       cockpit = "cockpit";

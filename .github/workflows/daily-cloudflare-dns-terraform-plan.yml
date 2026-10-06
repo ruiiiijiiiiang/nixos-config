@@ -20,10 +20,9 @@ jobs:
       id-token: write
     defaults:
       run:
-        working-directory: infra/terraform/cloudflare/dns
+        working-directory: infra/cloudflare
     env:
       TF_IN_AUTOMATION: "true"
-      TF_VAR_cloudflare_zone_id: ${{ vars.CLOUDFLARE_DNS_ZONE_ID }}
 
     steps:
       - name: Check out repository
@@ -36,8 +35,8 @@ jobs:
           ROLE_ARN: ${{ vars.CLOUDFLARE_DNS_TERRAFORM_PLAN_ROLE_ARN }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_DNS_READ_TOKEN }}
         run: |
-          if [ -z "$ROLE_ARN" ] || [ -z "$TF_VAR_cloudflare_zone_id" ] || [ -z "$CLOUDFLARE_API_TOKEN" ]; then
-            echo 'Set CLOUDFLARE_DNS_TERRAFORM_PLAN_ROLE_ARN and CLOUDFLARE_DNS_ZONE_ID as repository variables, and CLOUDFLARE_DNS_READ_TOKEN as a repository secret.' >&2
+          if [ -z "$ROLE_ARN" ] || [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo 'Set CLOUDFLARE_DNS_TERRAFORM_PLAN_ROLE_ARN as a repository variable and CLOUDFLARE_DNS_READ_TOKEN as a repository secret.' >&2
             exit 1
           fi
 
@@ -46,6 +45,14 @@ jobs:
         with:
           role-to-assume: ${{ vars.CLOUDFLARE_DNS_TERRAFORM_PLAN_ROLE_ARN }}
           aws-region: us-east-1
+
+      - name: Install Nix
+        uses: ./.github/actions/install-nix
+        with:
+          github-token: ${{ github.token }}
+
+      - name: Render Terraform inputs
+        run: nix eval --json --file ../inputs.nix | jq -e '.cloudflareDns' > terraform.auto.tfvars.json
 
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v4

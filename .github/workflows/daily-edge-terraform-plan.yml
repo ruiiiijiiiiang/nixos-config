@@ -20,11 +20,9 @@ jobs:
       id-token: write
     defaults:
       run:
-        working-directory: infra/terraform/aws/edge
+        working-directory: infra/aws
     env:
       TF_IN_AUTOMATION: "true"
-      TF_VAR_aws_region: us-east-1
-      TF_VAR_availability_zone: us-east-1a
 
     steps:
       - name: Check out repository
@@ -46,6 +44,14 @@ jobs:
         with:
           role-to-assume: ${{ vars.EDGE_TERRAFORM_PLAN_ROLE_ARN }}
           aws-region: us-east-1
+
+      - name: Install Nix
+        uses: ./.github/actions/install-nix
+        with:
+          github-token: ${{ github.token }}
+
+      - name: Render Terraform inputs
+        run: nix eval --json --file ../inputs.nix | jq -e '.awsEdge' > terraform.auto.tfvars.json
 
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v4
