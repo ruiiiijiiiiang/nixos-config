@@ -51,7 +51,9 @@ jobs:
           github-token: ${{ github.token }}
 
       - name: Render Terraform inputs
-        run: nix eval --json --file ../inputs.nix --apply 'inputs: inputs.awsEdge' > terraform.auto.tfvars.json
+        run: |
+          nix eval --json --file ../inputs.nix \
+            --apply 'inputs: inputs.awsEdge' > terraform.auto.tfvars.json
 
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v4
