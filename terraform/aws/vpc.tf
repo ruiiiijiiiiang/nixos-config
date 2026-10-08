@@ -21,6 +21,14 @@ resource "aws_internet_gateway" "edge" {
   }
 }
 
+resource "aws_egress_only_internet_gateway" "edge" {
+  vpc_id = aws_vpc.edge.id
+
+  tags = {
+    Name = "edge-production"
+  }
+}
+
 resource "aws_subnet" "edge" {
   vpc_id                  = aws_vpc.edge.id
   cidr_block              = local.public_subnet_cidr
@@ -53,8 +61,8 @@ resource "aws_route_table" "edge" {
   }
 
   route {
-    ipv6_cidr_block = "::/0"
-    gateway_id      = aws_internet_gateway.edge.id
+    ipv6_cidr_block        = "::/0"
+    egress_only_gateway_id = aws_egress_only_internet_gateway.edge.id
   }
 
   tags = {

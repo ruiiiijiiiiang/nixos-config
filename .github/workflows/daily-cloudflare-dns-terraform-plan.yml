@@ -69,26 +69,9 @@ jobs:
             -backend-config=key=cloudflare/ruijiang.me/dns/terraform.tfstate \
             -backend-config=region=us-east-1
 
-      - name: Check for proposed changes
+      - name: Assess drift and health checks
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_DNS_READ_TOKEN }}
         run: |
-          if terraform plan -input=false -no-color -detailed-exitcode -lock-timeout=5m; then
-            echo 'Terraform proposes no changes to the Cloudflare DNS records.' >> "$GITHUB_STEP_SUMMARY"
-          else
-            status=$?
-            case "$status" in
-              2)
-                echo 'Terraform proposes Cloudflare DNS changes. Review the plan output for configuration changes or drift.' >> "$GITHUB_STEP_SUMMARY"
-                exit 1
-                ;;
-              1)
-                echo 'Terraform could not complete the Cloudflare DNS plan. Review the job log.' >> "$GITHUB_STEP_SUMMARY"
-                exit 1
-                ;;
-              *)
-                echo "Terraform returned unexpected exit status $status." >&2
-                exit "$status"
-                ;;
-            esac
-          fi
+          python3 "$GITHUB_WORKSPACE/.github/scripts/terraform-health.py" \
+            --label "Cloudflare DNS"

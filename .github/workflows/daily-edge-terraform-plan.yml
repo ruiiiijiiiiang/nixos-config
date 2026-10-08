@@ -68,24 +68,7 @@ jobs:
             -backend-config=key=edge/aws/terraform.tfstate \
             -backend-config=region=us-east-1
 
-      - name: Check for proposed changes
+      - name: Assess drift and health checks
         run: |
-          if terraform plan -input=false -no-color -detailed-exitcode -lock-timeout=5m; then
-            echo 'Terraform proposes no changes to the AWS edge resources.' >> "$GITHUB_STEP_SUMMARY"
-          else
-            status=$?
-            case "$status" in
-              2)
-                echo 'Terraform proposes AWS edge changes. Review the plan output; changes may reflect drift or a newer AMI.' >> "$GITHUB_STEP_SUMMARY"
-                exit 1
-                ;;
-              1)
-                echo 'Terraform could not complete the AWS edge plan. Review the job log.' >> "$GITHUB_STEP_SUMMARY"
-                exit 1
-                ;;
-              *)
-                echo "Terraform returned unexpected exit status $status." >&2
-                exit "$status"
-                ;;
-            esac
-          fi
+          python3 "$GITHUB_WORKSPACE/.github/scripts/terraform-health.py" \
+            --label "AWS edge"
