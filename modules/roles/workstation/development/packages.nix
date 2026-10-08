@@ -19,6 +19,7 @@ in
       mtr
       nmap
       rsync
+      p7zip
 
       # Desktop Environment: Niri
       wl-clipboard

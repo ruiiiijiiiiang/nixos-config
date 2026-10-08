@@ -16,6 +16,14 @@ on:
           - vm-monitor
           - vm-network
           - vm-public
+      deploy_mode:
+        description: "Deploy mode (switch now or boot on next reboot)"
+        required: true
+        type: choice
+        default: switch
+        options:
+          - switch
+          - boot
 
 permissions:
   contents: read
@@ -62,11 +70,12 @@ jobs:
           private-key: ${{ secrets.SSH_PRIVATE_KEY }}
           host-ip: ${{ steps.destination.outputs.ip }}
 
-      - name: NixOS Rebuild & Switch
+      - name: NixOS Rebuild (${{ inputs.deploy_mode }})
         env:
           NIX_SSHOPTS: "-o StrictHostKeyChecking=no"
+          DEPLOY_MODE: ${{ inputs.deploy_mode }}
         run: |
-          nix run github:nixos/nixpkgs/nixos-unstable#nixos-rebuild -- switch \
+          nix run github:nixos/nixpkgs/nixos-unstable#nixos-rebuild -- "$DEPLOY_MODE" \
             --flake .#${{ inputs.target_host }} \
             --target-host root@${{ steps.destination.outputs.ip }} \
             --show-trace
