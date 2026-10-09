@@ -8,6 +8,13 @@
       url = "github:ryantm/agenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    agenix-rekey-helper = {
+      url = "github:ruiiiijiiiiang/agenix-rekey-helper";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        agenix.follows = "agenix";
+      };
+    };
     catppuccin = {
       url = "github:catppuccin/nix";
       inputs.nixpkgs.follows = "nixpkgs";

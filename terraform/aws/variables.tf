@@ -3,11 +3,6 @@ variable "aws_region" {
   description = "AWS region in which to create the edge host."
 }
 
-variable "alert_email" {
-  type        = string
-  description = "Email address for cloud-observe outage and recovery alerts. The SNS subscription must be confirmed from this inbox."
-}
-
 variable "availability_zone" {
   type        = string
   description = "Optional availability zone for the public subnet and instance. Terraform selects the first zone offering t3.micro when null."
@@ -21,6 +16,11 @@ variable "vpc_cidr" {
 variable "nixos_ami_name_pattern" {
   type        = string
   description = "Name filter for the official x86_64 NixOS AMI. Review the selected AMI in every Terraform plan."
+}
+
+variable "alert_email" {
+  type        = string
+  description = "Email address for cloud-observe outage and recovery alerts. The SNS subscription must be confirmed from this inbox."
 }
 
 variable "bootstrap_ssh_public_key" {

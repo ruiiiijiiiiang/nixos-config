@@ -12,40 +12,78 @@ import tempfile
 
 def cell(value):
     """Keep Terraform addresses/messages inside a Markdown table cell."""
-    return html.escape(str(value)).replace("|", "&#124;").replace("\r", " ").replace("\n", " ")
+    return (
+        html.escape(str(value))
+        .replace("|", "&#124;")
+        .replace("\r", " ")
+        .replace("\n", " ")
+    )
 
 
 def summarize(plan, exit_code, label):
     lines = [f"## {cell(label)} health assessment", ""]
-    failed = exit_code != 0
-    if exit_code not in (0, 2):
+    # Exit 2 can mean only scheduled reads of check-scoped data sources.
+    # Determine drift from the plan contents, not the exit code alone.
+    plan_error = exit_code not in (0, 2)
+    failed = plan_error
+    if plan_error:
         lines.append(f"**Plan: error** (exit {exit_code}). Review the job log.")
-    elif exit_code == 2:
-        lines.append("**Plan: changes proposed.** These may reflect drift, configuration edits, or updated data sources such as a newer AMI.")
-    else:
-        lines.append("**Plan: no changes proposed.**")
 
     if plan is None:
-        lines.extend(["", "**Checks: unavailable.** Terraform did not produce a readable plan."])
+        if not plan_error:
+            lines.append(
+                "**Plan: unavailable.** Cannot determine whether infrastructure changes are proposed."
+            )
+        lines.extend(
+            ["", "**Checks: unavailable.** Terraform did not produce a readable plan."]
+        )
         return "\n".join(lines) + "\n", 1
 
     if str(plan.get("format_version", "")).split(".")[0] != "1":
         raise ValueError("Unsupported Terraform plan JSON format")
 
     changes = [
-        change for change in plan.get("resource_changes", [])
-        if change.get("mode") == "managed"
-        and change["change"]["actions"] != ["no-op"]
+        change
+        for change in plan.get("resource_changes", [])
+        if change.get("mode") == "managed" and change["change"]["actions"] != ["no-op"]
     ]
+    output_changes = {
+        name: change
+        for name, change in plan.get("output_changes", {}).items()
+        if change["actions"] != ["no-op"]
+    }
+    if not plan_error:
+        if changes or output_changes:
+            lines.append(
+                "**Plan: resource or output changes proposed.** These may reflect drift, configuration edits, or updated data sources such as a newer AMI."
+            )
+        else:
+            lines.append(
+                "**Plan: no resource or output changes proposed.** Data-source reads are excluded from drift detection."
+            )
+
     if changes:
         failed = True
         lines.extend(["", "| Resource | Proposed action |", "| --- | --- |"])
         for change in changes:
-            lines.append(f"| {cell(change['address'])} | {cell(', '.join(change['change']['actions']))} |")
+            lines.append(
+                f"| {cell(change['address'])} | {cell(', '.join(change['change']['actions']))} |"
+            )
+
+    if output_changes:
+        failed = True
+        lines.extend(["", "| Output | Proposed action |", "| --- | --- |"])
+        for name, change in output_changes.items():
+            lines.append(f"| {cell(name)} | {cell(', '.join(change['actions']))} |")
 
     checks = plan.get("checks", [])
     if not checks:
-        lines.extend(["", "**Checks: unavailable.** No check results were returned; health is inconclusive."])
+        lines.extend(
+            [
+                "",
+                "**Checks: unavailable.** No check results were returned; health is inconclusive.",
+            ]
+        )
         return "\n".join(lines) + "\n", 1
 
     counts = dict.fromkeys(("pass", "fail", "unknown", "error"), 0)
@@ -60,24 +98,39 @@ def summarize(plan, exit_code, label):
                 status = "error"
             counts[status] += 1
             failed |= status != "pass"
-            address = instance.get("address", {}).get("to_display", check["address"]["to_display"])
-            messages = "; ".join(problem["message"] for problem in instance.get("problems", []))
+            address = instance.get("address", {}).get(
+                "to_display", check["address"]["to_display"]
+            )
+            messages = "; ".join(
+                problem["message"] for problem in instance.get("problems", [])
+            )
             if status == "unknown" and not messages:
                 messages = "Inconclusive: not evaluated during this plan."
             if status == "error" and not messages:
-                messages = "Evaluation error; review the Terraform diagnostics in the job log."
+                messages = (
+                    "Evaluation error; review the Terraform diagnostics in the job log."
+                )
             rows.append(f"| {cell(address)} | {status} | {cell(messages)} |")
 
-    lines.extend([
-        "",
-        "**Checks:** " + ", ".join(f"{count} {status}" for status, count in counts.items()) + ".",
-        "",
-        "| Check | Result | Details |",
-        "| --- | --- | --- |",
-        *rows,
-    ])
+    lines.extend(
+        [
+            "",
+            "**Checks:** "
+            + ", ".join(f"{count} {status}" for status, count in counts.items())
+            + ".",
+            "",
+            "| Check | Result | Details |",
+            "| --- | --- | --- |",
+            *rows,
+        ]
+    )
     if counts["unknown"]:
-        lines.extend(["", "Unknown results make this assessment inconclusive and fail the job; they are not counted as healthy."])
+        lines.extend(
+            [
+                "",
+                "Unknown results make this assessment inconclusive and fail the job; they are not counted as healthy.",
+            ]
+        )
     return "\n".join(lines) + "\n", int(failed)
 
 
@@ -86,15 +139,25 @@ def assess(label):
     # them or print the full JSON; only the selected assessment fields are shown.
     with tempfile.TemporaryDirectory(prefix="terraform-health-") as directory:
         plan_path = Path(directory) / "assessment.tfplan"
-        result = subprocess.run([
-            "terraform", "plan", "-input=false", "-no-color",
-            "-detailed-exitcode", "-lock-timeout=5m", f"-out={plan_path}",
-        ], check=False)
+        result = subprocess.run(
+            [
+                "terraform",
+                "plan",
+                "-input=false",
+                "-no-color",
+                "-detailed-exitcode",
+                "-lock-timeout=5m",
+                f"-out={plan_path}",
+            ],
+            check=False,
+        )
         plan = None
         if plan_path.exists():
             shown = subprocess.run(
                 ["terraform", "show", "-json", str(plan_path)],
-                stdout=subprocess.PIPE, text=True, check=False,
+                stdout=subprocess.PIPE,
+                text=True,
+                check=False,
             )
             if shown.returncode == 0:
                 plan = json.loads(shown.stdout)

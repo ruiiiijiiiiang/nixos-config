@@ -488,7 +488,7 @@ rec {
     aws = {
       account-id = "997229934634";
       region = "us-east-1";
-      availability-zone = "us-east-1a";
+      availability-zone = "${cloud.aws.region}a";
       edge-vpc-cidr = "10.42.0.0/20";
       nixos-ami-name-pattern = "nixos/25.11*";
     };

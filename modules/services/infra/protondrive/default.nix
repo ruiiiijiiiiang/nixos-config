@@ -41,8 +41,8 @@ let
   );
 
   # renovate: datasource=custom.proton-drive depName=proton-drive versioning=semver
-  proton-drive-version = "0.8.0";
-  proton-drive-sha512 = "cf61c2688c45e1055d8add6221d9471a5a5b64bf3bcdb86460f5cb18414596cc4df3cdb6627c9097c94bec32a3c9915ada3211ef2ae5be33c46ebbc996ccaa28";
+  proton-drive-version = "0.9.0";
+  proton-drive-sha512 = "3533025ba69ae112b64e3e01fbcc1ad0688136a4043f6cf6a72886967d85fdcd9ec235479c2e113171614be5225bfba93427509a05ca5aa6071d924fa7e91ca8";
 
   proton-drive = pkgs.stdenvNoCC.mkDerivation {
     pname = "proton-drive";

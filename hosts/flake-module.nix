@@ -1,4 +1,9 @@
-{ inputs, lib, ... }:
+{
+  inputs,
+  lib,
+  self,
+  ...
+}:
 let
   consts = import ../lib/consts.nix;
   keys = import ../lib/keys.nix;
@@ -80,6 +85,30 @@ let
     };
 in
 {
+  perSystem =
+    { pkgs, ... }:
+    {
+      apps.rekey-secrets = inputs.agenix-rekey-helper.lib.mkRekeyApp {
+        inherit pkgs;
+        rules = "secrets/secrets.nix";
+        sources = [
+          "secrets"
+          "lib/keys.nix"
+        ];
+        hosts =
+          lib.mapAttrs
+            (hostname: _: {
+              target = "root@${hostname}";
+              identity = "/etc/ssh/ssh_host_ed25519_key";
+            })
+            (
+              lib.filterAttrs (
+                _: host: host.config.custom.roles.headless.services.enable
+              ) self.nixosConfigurations
+            );
+      };
+    };
+
   flake.nixosConfigurations = {
     framework = mkHost "framework" {
       hardware = [ inputs.nixos-hardware.nixosModules.framework-13-7040-amd ];
