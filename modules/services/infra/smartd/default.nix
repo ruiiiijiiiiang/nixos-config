@@ -54,7 +54,6 @@ in
         wantedBy = [ "timers.target" ];
         timerConfig = {
           OnCalendar = task-schedules.workstation.smartd-test;
-          Persistent = true;
         };
       };
     };
