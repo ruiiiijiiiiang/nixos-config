@@ -8,8 +8,8 @@
       url = "github:ryantm/agenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    agenix-rekey-helper = {
-      url = "github:ruiiiijiiiiang/agenix-rekey-helper";
+    agenix-toolkit = {
+      url = "github:ruiiiijiiiiang/agenix-toolkit";
       inputs = {
         nixpkgs.follows = "nixpkgs";
         agenix.follows = "agenix";

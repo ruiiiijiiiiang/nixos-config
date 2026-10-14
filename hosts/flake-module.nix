@@ -88,8 +88,9 @@ in
   perSystem =
     { pkgs, ... }:
     {
-      apps.rekey-secrets = inputs.agenix-rekey-helper.lib.mkRekeyApp {
+      apps = inputs.agenix-toolkit.lib.mkApps {
         inherit pkgs;
+        inherit (self) nixosConfigurations;
         rules = "secrets/secrets.nix";
         sources = [
           "secrets"
@@ -99,7 +100,6 @@ in
           lib.mapAttrs
             (hostname: _: {
               target = "root@${hostname}";
-              identity = "/etc/ssh/ssh_host_ed25519_key";
             })
             (
               lib.filterAttrs (

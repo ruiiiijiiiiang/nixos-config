@@ -216,6 +216,8 @@ Every server host comes equipped with a standard observability and security side
 
 No more `.env` files leaking in git history. Sensitive data is encrypted at rest using **agenix**. Secrets are decrypted only at runtime, in-memory, and only by the specific host identity that requires them. It is cryptographically secure and zero-trust by default.
 
+The fully custom-built [agenix-toolkit](https://github.com/ruiiiijiiiiang/agenix-toolkit) reads, edits, and rekeys secrets through authorized hosts, using ephemeral local keys for read/edit access without copying host private keys.
+
 ## Operations & Maintenance
 
 **Atomic. Reproducible. Resilient.**
