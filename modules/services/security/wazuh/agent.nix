@@ -62,7 +62,11 @@ let
       <ignore>/etc</ignore>
       <ignore>/usr/bin</ignore>
       <ignore type="sregex">.log$|.swp$</ignore>
-      <nodiff>/etc/ssl/private.key</nodiff>
+      <nodiff type="sregex">^/etc/ssl/private/|^/etc/pki/tls/private/</nodiff>
+      <nodiff>/etc/shadow</nodiff>
+      <nodiff>/etc/shadow-</nodiff>
+      <nodiff>/etc/gshadow</nodiff>
+      <nodiff>/etc/gshadow-</nodiff>
       <skip_nfs>yes</skip_nfs>
       <skip_dev>yes</skip_dev>
       <skip_proc>yes</skip_proc>

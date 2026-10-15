@@ -70,8 +70,16 @@ in
     };
 
     custom.services.infra.restic = {
-      localPaths = [ "/var/ossec/etc" ];
-      remotePaths = [ "/var/ossec/etc" ];
+      localPaths = [
+        "/var/ossec/etc"
+        "/var/lib/wazuh-certificates"
+        "/var/lib/wazuh-credentials"
+      ];
+      remotePaths = [
+        "/var/ossec/etc"
+        "/var/lib/wazuh-certificates"
+        "/var/lib/wazuh-credentials"
+      ];
     };
   };
 }
