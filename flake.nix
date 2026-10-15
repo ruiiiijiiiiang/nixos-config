@@ -8,8 +8,8 @@
       url = "github:ryantm/agenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    agenix-toolkit = {
-      url = "github:ruiiiijiiiiang/agenix-toolkit";
+    agenix-helper = {
+      url = "github:ruiiiijiiiiang/agenix-helper";
       inputs = {
         nixpkgs.follows = "nixpkgs";
         agenix.follows = "agenix";

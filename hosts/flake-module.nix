@@ -88,7 +88,7 @@ in
   perSystem =
     { pkgs, ... }:
     {
-      apps = inputs.agenix-toolkit.lib.mkApps {
+      apps = inputs.agenix-helper.lib.mkApps {
         inherit pkgs;
         inherit (self) nixosConfigurations;
         rules = "secrets/secrets.nix";
@@ -105,7 +105,11 @@ in
               lib.filterAttrs (
                 _: host: host.config.custom.roles.headless.services.enable
               ) self.nixosConfigurations
-            );
+            )
+          // {
+            framework.local = "auto";
+            desktop.local = "auto";
+          };
       };
     };
 
