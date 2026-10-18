@@ -107,8 +107,16 @@ in
               ) self.nixosConfigurations
             )
           // {
-            framework.local = "auto";
-            desktop.local = "auto";
+            framework = {
+              identityPaths = [ "~/.ssh/id_ed25519" ];
+              local = "auto";
+              target = "root@framework";
+            };
+            desktop = {
+              identityPaths = [ "~/.ssh/id_ed25519" ];
+              local = "auto";
+              target = "root@desktop";
+            };
           };
       };
     };

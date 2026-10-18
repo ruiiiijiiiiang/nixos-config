@@ -85,7 +85,6 @@ in
       protonmail-bridge-gui
       remmina
       simplenote
-      stirling-pdf-desktop
       telegram-desktop
       vivaldi
       vlc

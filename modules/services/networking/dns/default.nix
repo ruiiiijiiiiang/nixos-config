@@ -65,6 +65,18 @@ let
     in
     concatStringsSep "\n" (filter (s: s != "") (generatedEntries ++ manualEntries));
 
+  unboundLocalData = lib.unique (
+    lib.concatMap (
+      entry:
+      let
+        fields = lib.splitString " " entry;
+        ip = builtins.head fields;
+        recordType = if lib.hasInfix ":" ip then "AAAA" else "A";
+      in
+      map (fqdn: "${fqdn}. 60 IN ${recordType} ${ip}") (builtins.tail fields)
+    ) (lib.splitString "\n" getFullExtraHosts)
+  );
+
   checkDnsHealthScript = pkgs.writeShellApplication {
     name = "check_dns_health";
     runtimeInputs = with pkgs; [
@@ -176,6 +188,7 @@ in
             private-domain = [ domain ];
             domain-insecure = [ domain ];
             local-zone = [ "\"${domain}\" transparent" ];
+            local-data = unboundLocalData;
           };
 
           forward-zone = [
