@@ -553,15 +553,19 @@ in
     services = {
       avahi = {
         enable = true;
-        reflector = true;
-        ipv6 = true;
         nssmdns4 = true;
         nssmdns6 = true;
 
-        allowInterfaces = [
-          cfg.lanInterface
-          cfg.infraInterface
-        ];
+        settings = {
+          reflector.enable-reflector = true;
+          server = {
+            use-ipv6 = true;
+            allow-interfaces = [
+              cfg.lanInterface
+              cfg.infraInterface
+            ];
+          };
+        };
       };
 
       kea = {

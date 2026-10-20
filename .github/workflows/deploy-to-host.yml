@@ -70,12 +70,59 @@ jobs:
           private-key: ${{ secrets.SSH_PRIVATE_KEY }}
           host-ip: ${{ steps.destination.outputs.ip }}
 
+      - name: Setup SSH for vm-app
+        uses: ./.github/actions/setup-ssh
+        with:
+          private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          host-ip: ${{ steps.cache-host.outputs.ip }}
+
+      - name: Build system closure
+        id: build
+        env:
+          TARGET_HOST: ${{ inputs.target_host }}
+        run: |
+          store_path=$(nix build \
+            --no-update-lock-file \
+            --no-link \
+            --print-out-paths \
+            ".#nixosConfigurations.$TARGET_HOST.config.system.build.toplevel")
+          echo "store_path=$store_path" >> "$GITHUB_OUTPUT"
+
+      - name: Copy closure to vm-app
+        env:
+          STORE_PATH: ${{ steps.build.outputs.store_path }}
+          VM_APP_IP: ${{ steps.cache-host.outputs.ip }}
+        run: nix copy --no-check-sigs --to "ssh-ng://root@$VM_APP_IP" "$STORE_PATH"
+
+      - name: Pin closure for Harmonia
+        env:
+          TARGET_HOST: ${{ inputs.target_host }}
+          STORE_PATH: ${{ steps.build.outputs.store_path }}
+          VM_APP_IP: ${{ steps.cache-host.outputs.ip }}
+        run: |
+          ssh -o BatchMode=yes "root@$VM_APP_IP" \
+            bash -s -- "$TARGET_HOST" "$STORE_PATH" <<'REMOTE'
+          set -euo pipefail
+          host=$1
+          store_path=$2
+          root=/var/lib/nix-cache-roots
+          test -d "$root"
+          test -d "$store_path"
+          tmp=$(mktemp -d "$root/.${host}.XXXXXX")
+          ln -s "$store_path" "$tmp/link"
+          mv -Tf "$tmp/link" "$root/$host"
+          rmdir "$tmp"
+          REMOTE
+
       - name: NixOS Rebuild (${{ inputs.deploy_mode }})
         env:
           NIX_SSHOPTS: "-o StrictHostKeyChecking=no"
           DEPLOY_MODE: ${{ inputs.deploy_mode }}
+          STORE_PATH: ${{ steps.build.outputs.store_path }}
         run: |
           nix run github:nixos/nixpkgs/nixos-unstable#nixos-rebuild -- "$DEPLOY_MODE" \
-            --flake .#${{ inputs.target_host }} \
+            --store-path "$STORE_PATH" \
             --target-host "ssh-ng://root@${{ steps.destination.outputs.ip }}" \
+            --use-substitutes \
+            --no-reexec \
             --show-trace

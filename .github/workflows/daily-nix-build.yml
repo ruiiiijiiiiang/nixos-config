@@ -117,7 +117,7 @@ jobs:
         env:
           STORE_PATH: ${{ steps.expected.outputs.store_path }}
           VM_APP_IP: ${{ steps.destination.outputs.ip }}
-        run: nix copy --to "ssh-ng://root@$VM_APP_IP" "$STORE_PATH"
+        run: nix copy --no-check-sigs --to "ssh-ng://root@$VM_APP_IP" "$STORE_PATH"
 
       - name: Pin closure for Harmonia
         env:

@@ -1,7 +1,3 @@
-# Unusable at the moment. There's a massive crowdsec module refactor pr on nixpkgs right now:
-# https://github.com/NixOS/nixpkgs/pull/446307
-# Will finish setting this up once the pr is merged.
-
 {
   lib,
   config,
@@ -22,11 +18,16 @@ in
       default = null;
       description = "CrowdSec LAPI server address.";
     };
+    bouncerApiKeyFile = mkOption {
+      type = types.nullOr types.path;
+      default = null;
+      description = "Runtime path to the CrowdSec bouncer API key, provisioned with agenix.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
     assertions =
-      (lib.mkIf cfg.isBouncer [
+      (lib.optionals cfg.isBouncer [
         {
           assertion = cfg.serverAddress != null;
           message = "CrowdSec bouncer requires serverAddress.";
@@ -34,6 +35,10 @@ in
         {
           assertion = cfg.serverAddress != "";
           message = "CrowdSec bouncer serverAddress must not be empty.";
+        }
+        {
+          assertion = cfg.bouncerApiKeyFile != null;
+          message = "CrowdSec bouncer requires bouncerApiKeyFile.";
         }
       ])
       ++ [
@@ -46,6 +51,10 @@ in
     services = {
       crowdsec = {
         enable = true;
+        extraGroups = [
+          "systemd-journal"
+        ]
+        ++ lib.optional config.custom.services.networking.nginx.enable "nginx";
 
         hub.collections = [
           "crowdsecurity/linux"
@@ -54,53 +63,45 @@ in
         ++ lib.optional config.custom.services.apps.development.forgejo.enable "crowdsecurity/gitea"
         ++ lib.optional config.custom.services.apps.tools.homeassistant.enable "crowdsecurity/home-assistant";
 
-        localConfig.acquisitions =
-          (lib.optional config.services.openssh.enable {
-            source = "journalctl";
-            journalctl_filter = [ "_SYSTEMD_UNIT=sshd.service" ];
-            labels.type = "syslog";
-          })
-          ++ (lib.optional config.custom.services.networking.nginx.enable {
-            source = "file";
-            filenames = [
-              "/var/log/nginx/access.log"
-              "/var/log/nginx/error.log"
-            ];
-            labels.type = "nginx";
-          })
-          ++ (lib.optional config.custom.services.apps.development.forgejo.enable {
-            source = "journalctl";
-            journalctl_filter = [ "_SYSTEMD_UNIT=podman-forgejo-server.service" ];
-            labels.type = "gitea";
-          })
-          ++ (lib.optional config.custom.services.apps.tools.homeassistant.enable {
-            source = "file";
-            filenames = [ "/var/lib/home-assistant/home-assistant.log" ];
-            labels.type = "home-assistant";
-          });
+        settings = {
+          acquisitions =
+            (lib.optional config.services.openssh.enable {
+              source = "journalctl";
+              journalctl_filter = [ "_SYSTEMD_UNIT=sshd.service" ];
+              labels.type = "syslog";
+            })
+            ++ (lib.optional config.custom.services.networking.nginx.enable {
+              source = "file";
+              filenames = [
+                "/var/log/nginx/access.log"
+                "/var/log/nginx/error.log"
+              ];
+              labels.type = "nginx";
+            })
+            ++ (lib.optional config.custom.services.apps.development.forgejo.enable {
+              source = "journalctl";
+              journalctl_filter = [ "_SYSTEMD_UNIT=podman-forgejo-server.service" ];
+              labels.type = "gitea";
+            })
+            ++ (lib.optional config.custom.services.apps.tools.homeassistant.enable {
+              source = "file";
+              filenames = [ "/var/lib/home-assistant/home-assistant.log" ];
+              labels.type = "home-assistant";
+            });
 
-        settings.general.api.server = {
-          # enable = cfg.isServer;
-          listen_uri = "${addresses.any}:${toString ports.crowdsec.lapi}";
+          config.api.server = {
+            # enable = cfg.isServer;
+            listen_uri = "${addresses.any}:${toString ports.crowdsec.lapi}";
+          };
         };
       };
 
       crowdsec-firewall-bouncer = lib.mkIf cfg.isBouncer {
         enable = true;
-        settings = {
-          api_url = "http://${cfg.serverAddress}:${toString ports.crowdsec.lapi}";
-          api_key = "<BOUNCER_API_KEY>";
-        };
+        registerBouncer.enable = false;
+        secrets.apiKeyPath = cfg.bouncerApiKeyFile;
+        settings.api_url = "http://${cfg.serverAddress}:${toString ports.crowdsec.lapi}";
       };
     };
-
-    systemd.services.crowdsec-firewall-bouncer = lib.mkIf cfg.isBouncer {
-      serviceConfig.After = [ "nftables.service" ];
-    };
-
-    users.users.crowdsec.extraGroups = [
-      "systemd-journal"
-    ]
-    ++ lib.optional config.custom.services.networking.nginx.enable "nginx";
   };
 }

@@ -1,9 +1,11 @@
 {
   secretsDir,
   config,
+  consts,
   ...
 }:
 let
+  inherit (consts) addresses;
   hostName = "vm-network";
   wanInterface = "wan0";
   lanInterface = "lan0";
@@ -18,6 +20,10 @@ in
   networking.hostName = hostName;
 
   age.secrets = {
+    crowdsec-bouncer = {
+      file = secretsDir + "/security/crowdsec/vm-network-api-key.age";
+      mode = "0400";
+    };
     wireguard-server-private-key.file = secretsDir + "/networking/wireguard/server-private-key.age";
     wireguard-framework-preshared-key.file =
       secretsDir + "/networking/wireguard/framework-preshared-key.age";
@@ -137,6 +143,7 @@ in
         loki.agent.enable = true;
         netalertx.enable = true;
         prometheus.exporters = {
+          crowdsec.enable = true;
           nginx.enable = true;
           node.enable = true;
           podman.enable = true;
@@ -147,6 +154,12 @@ in
       };
 
       security = {
+        crowdsec = {
+          enable = true;
+          isBouncer = true;
+          serverAddress = addresses.localhost;
+          bouncerApiKeyFile = config.age.secrets.crowdsec-bouncer.path;
+        };
         fail2ban.enable = true;
         wazuh.agent.enable = true;
       };

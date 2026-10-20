@@ -2,6 +2,10 @@ let
   inherit (import ../../lib/keys.nix) ssh;
 in
 {
+  "security/crowdsec/vm-network-api-key.age" = {
+    publicKeys = ssh.vm-network;
+    armor = true;
+  };
   "security/krawl/env.age" = {
     publicKeys = ssh.vm-public;
     armor = true;

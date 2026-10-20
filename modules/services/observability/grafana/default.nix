@@ -93,7 +93,7 @@ let
           "$1" > "$out/$2"
         }
 
-        # install_dash ${crowdsec-dashboard} "crowdsec-dashboard.json"
+        install_dash ${crowdsec-dashboard} "crowdsec-dashboard.json"
         install_dash ${libvirt-exporter-dashboard} "libvirt-exporter.json"
         install_dash ${nginx-exporter-dashboard} "nginx-exporter.json"
         install_dash ${node-exporter-dashboard} "node-exporter.json"

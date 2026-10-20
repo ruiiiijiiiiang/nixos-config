@@ -111,10 +111,11 @@ in
         };
       };
 
-      crowdsec.settings.general.prometheus = lib.mkIf cfg.crowdsec.enable {
+      crowdsec.settings.config.prometheus = lib.mkIf cfg.crowdsec.enable {
         enabled = true;
-        listen_addr = addresses.localhost;
-        listen_port = toString ports.prometheus.exporters.crowdsec;
+        listen_addr =
+          if cfg.scrapeAddress != null then cfg.scrapeAddress else getHostAddress config.networking.hostName;
+        listen_port = ports.prometheus.exporters.crowdsec;
       };
     };
 

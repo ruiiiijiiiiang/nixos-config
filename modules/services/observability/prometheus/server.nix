@@ -33,7 +33,7 @@ let
   fqdn = "${subdomains.${config.networking.hostName}.prometheus}.${domain}";
   monitoredExporters = {
     inherit (ports.prometheus.exporters)
-      # crowdsec
+      crowdsec
       libvirt
       nginx
       node
