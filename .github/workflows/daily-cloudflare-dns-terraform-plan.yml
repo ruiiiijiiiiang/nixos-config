@@ -23,6 +23,8 @@ jobs:
         working-directory: terraform/cloudflare
     env:
       TF_IN_AUTOMATION: "true"
+      TF_STATE_BUCKET: ${{ vars.TF_STATE_BUCKET }}
+      TF_STATE_REGION: ${{ vars.TF_STATE_REGION }}
 
     steps:
       - name: Check out repository
@@ -30,11 +32,15 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Check required credentials
+      - name: Check required variables and credentials
         env:
           ROLE_ARN: ${{ vars.CLOUDFLARE_DNS_TERRAFORM_PLAN_ROLE_ARN }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_DNS_READ_TOKEN }}
         run: |
+          if [ -z "$TF_STATE_BUCKET" ] || [ -z "$TF_STATE_REGION" ]; then
+            echo 'Set TF_STATE_BUCKET and TF_STATE_REGION as Actions repository variables.' >&2
+            exit 1
+          fi
           if [ -z "$ROLE_ARN" ] || [ -z "$CLOUDFLARE_API_TOKEN" ]; then
             echo 'Set CLOUDFLARE_DNS_TERRAFORM_PLAN_ROLE_ARN as a repository variable and CLOUDFLARE_DNS_READ_TOKEN as a repository secret.' >&2
             exit 1
@@ -44,7 +50,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v6.3.0
         with:
           role-to-assume: ${{ vars.CLOUDFLARE_DNS_TERRAFORM_PLAN_ROLE_ARN }}
-          aws-region: us-east-1
+          aws-region: ${{ env.TF_STATE_REGION }}
 
       - name: Install Nix
         uses: ./.github/actions/install-nix
@@ -65,9 +71,9 @@ jobs:
       - name: Initialize Terraform
         run: |
           terraform init -input=false -lockfile=readonly \
-            -backend-config=bucket=rui-terraform-state-997229934634-us-east-1 \
+            -backend-config="bucket=$TF_STATE_BUCKET" \
             -backend-config=key=cloudflare/ruijiang.me/dns/terraform.tfstate \
-            -backend-config=region=us-east-1
+            -backend-config="region=$TF_STATE_REGION"
 
       - name: Assess drift and health checks
         env:

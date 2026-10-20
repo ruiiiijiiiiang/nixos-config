@@ -19,5 +19,7 @@ in
   githubRepository = {
     aws_account_id = consts.cloud.aws.account-id;
     cloudflare_zone_id = consts.cloud.cloudflare.zone-id;
+    tf_state_bucket = consts.cloud.aws.terraform-state-bucket;
+    tf_state_region = consts.cloud.aws.region;
   };
 }
