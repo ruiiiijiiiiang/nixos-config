@@ -73,7 +73,7 @@ let
         ip = builtins.head fields;
         recordType = if lib.hasInfix ":" ip then "AAAA" else "A";
       in
-      map (fqdn: "${fqdn}. 60 IN ${recordType} ${ip}") (builtins.tail fields)
+      map (fqdn: "\"${fqdn}. 60 IN ${recordType} ${ip}\"") (builtins.tail fields)
     ) (lib.splitString "\n" getFullExtraHosts)
   );
 

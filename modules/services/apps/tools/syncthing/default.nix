@@ -17,6 +17,12 @@ let
   cfg = config.custom.services.apps.tools.syncthing;
   fqdn =
     if cfg.proxied then "${subdomains.${config.networking.hostName}.syncthing}.${domain}" else "";
+  memoryPeers = [
+    "framework"
+    "desktop"
+    "vm-app"
+  ];
+  memoryPeer = lib.elem config.networking.hostName memoryPeers;
 in
 {
   options.custom.services.apps.tools.syncthing = with lib; {
@@ -25,6 +31,18 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    systemd.tmpfiles.rules = lib.optionals memoryPeer [
+      "d ${home}/infrastructure-memory 0700 ${username} ${username} - -"
+      "d ${home}/infrastructure-memory/records 0700 ${username} ${username} - -"
+    ];
+
+    custom.services.infra.restic =
+      lib.mkIf (config.networking.hostName == "vm-app" && config.custom.services.infra.restic.enable)
+        {
+          localPaths = [ "${home}/infrastructure-memory" ];
+          remotePaths = [ "${home}/infrastructure-memory" ];
+        };
+
     services = {
       syncthing = {
         enable = true;
@@ -51,6 +69,12 @@ in
           };
 
           folders = {
+            "infrastructure-memory" = lib.mkIf memoryPeer {
+              id = "infrastructure-memory";
+              path = "${home}/infrastructure-memory";
+              devices = memoryPeers;
+              ignorePatterns = [ ".pending-*" ];
+            };
             "default" = {
               id = "default";
               path = "~/Sync";

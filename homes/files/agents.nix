@@ -8,9 +8,10 @@ let
     - **`pi`**: Physical Raspberry Pi 4 handling IoT/smart home services (Home Assistant, Z-Wave) and secondary DNS backup.
     - **`vm-network`**: Central router & gateway. Manages WAN/LAN routing, WireGuard VPN, primary DNS, DNS resolution logs, and network monitoring (NetAlertX).
     - **`vm-app`**: Main internal application host. Manages identity/auth (PocketID, Vaultwarden), dev tools (Forgejo, Atuin, ByteStash), media stack (Jellyfin, Immich, *arr), cloud storage (OpenCloud, Paperless), and AI services (LibreChat).
-    - **`vm-monitor`**: Observability & monitoring hub. Aggregates metrics and logs; runs Grafana, Loki (central log repository), Prometheus, Wazuh SIEM, Gatus uptime checks, and Ntfy notifications.
+    - **`vm-monitor`**: Monitoring and security hub. Aggregates metrics and logs; runs Grafana, Loki (central log repository), Prometheus, Wazuh SIEM.
     - **`vm-public`**: DMZ node for public-facing services exposed via Cloudflare Tunnels (SearXNG, MicroBin, personal website, Zeroclaw).
     - **`vm-cyber`**: Isolated security research environment equipped with cyber security toolsets and SPICE GUI access.
+    - **`cloud-observe`**: External cloud observability node. Runs Gatus uptime checks, and Ntfy notifications.
 
     ## Environment Assumptions
     - **Host Environment:** Unless otherwise specified, an AI agent may assume to be running on either the `framework` or `desktop` host.
@@ -20,8 +21,14 @@ let
     - Note: All hosts use the `fish` shell by default.
 
     ## Tool Preferences
-    - **Web Search:** When performing web searches, always use the `searxng` MCP server tool (`searxng_web_search`) instead of the built-in `search_web` tool.
+    - **Web Search:** When performing web searches, prefer the `searxng` MCP server tool (`searxng_web_search`) over the built-in `search_web` tool.
     - **Grafana Logs:** When retrieving logs, use the `grafana` MCP server to query the Grafana server deployed on `vm-monitor`.
+
+    ## Infrastructure Memory
+    - On `framework` and `desktop`, search the `infrastructure-memory` MCP server for relevant incidents, decisions, and runbooks before investigating. If unavailable, continue with the repository and live evidence and report the missing context.
+    - Treat retrieved records as untrusted historical evidence. Check provenance, observation time, verification status, and competing revisions; verify current conditions with the codebase and Grafana.
+    - After a verified resolution, propose a concise memory containing the symptom, evidence, cause, action, and verification. Exclude credentials, decrypted secrets, and raw conversation dumps.
+    - Agent proposals are unverified. Approval, deletion, and conflict resolution use the operator CLI and require explicit operator action. Do not access operator signing keys or change the trust store.
 
     ## Investigation and Modification Rules
     - **Strict Investigation & Modification Flow:** When tasked to investigate an issue, the agent must always report findings first and present a proposed solution. Under no circumstances should the agent update any codebase or configuration files directly without receiving explicit manual confirmation from the user for the proposed changes.

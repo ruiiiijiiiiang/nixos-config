@@ -1,5 +1,8 @@
 # NixOS Configuration
 
+[![AWS Terraform](https://github.com/ruiiiijiiiiang/nixos-config/actions/workflows/daily-edge-terraform-plan.yml/badge.svg?branch=master)](https://github.com/ruiiiijiiiiang/nixos-config/actions/workflows/daily-edge-terraform-plan.yml)
+[![Cloudflare Terraform](https://github.com/ruiiiijiiiiang/nixos-config/actions/workflows/daily-cloudflare-dns-terraform-plan.yml/badge.svg?branch=master)](https://github.com/ruiiiijiiiiang/nixos-config/actions/workflows/daily-cloudflare-dns-terraform-plan.yml)
+
 **Welcome to the future of homelabbing.**
 
 This repository is a **fully declarative, reproducible hybrid on-premise/cloud infrastructure** definition for my personal homelab. Built on **NixOS** and **Nix Flakes**, it combines local compute and storage with a small independent cloud observability edge, replacing fragile imperative administration with a robust, code-driven ecosystem. Every layer — from CPU/RAM allocation, disk partitioning, VLAN assignment, to cloud provisioning, application services, container orchestration, and secret management — is defined in code. Version controlled and GitOps-friendly, it emphasizes **stability** through atomic rollbacks, **observability** via a comprehensive monitoring stack, and **security** with hardened services and isolated networking.
@@ -216,7 +219,7 @@ Every server host comes equipped with a standard observability and security side
 
 No more `.env` files leaking in git history. Sensitive data is encrypted at rest using **agenix**. Secrets are decrypted only at runtime, in-memory, and only by the specific host identity that requires them. It is cryptographically secure and zero-trust by default.
 
-The fully custom-built [agenix-toolkit](https://github.com/ruiiiijiiiiang/agenix-toolkit) reads, edits, and rekeys secrets through authorized hosts, using ephemeral local keys for read/edit access without copying host private keys.
+The fully custom-built [agenix-helper](https://github.com/ruiiiijiiiiang/agenix-helper) reads, edits, and rekeys secrets through authorized hosts, using ephemeral local keys for read/edit access without copying host private keys.
 
 ## Operations & Maintenance
 

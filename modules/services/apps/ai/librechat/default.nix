@@ -32,6 +32,7 @@ in
       # POSTGRES_PASSWORD
       # MEILI_MASTER_KEY
       # GEMINI_API_KEY
+      # OPENAI_API_KEY
       # JWT_SECRET
       # JWT_REFRESH_SECRET
       # OPENID_CLIENT_ID
@@ -128,8 +129,6 @@ in
           OPENID_ISSUER = "https://${endpoints.oidc-issuer}";
           OPENID_SCOPE = "openid profile email";
           OPENID_CALLBACK_URL = "/oauth/openid/callback";
-
-          GOOGLE_MODELS = "gemini-3.1-pro-preview,gemini-3.5-flash,gemini-3.1-flash-lite";
         };
         environmentFiles = [ config.age.secrets.librechat-env.path ];
         labels = {

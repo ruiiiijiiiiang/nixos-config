@@ -9,6 +9,7 @@ logs
 .antigravitycli
 .agents
 .codebase-memory
+.ruff_cache
 
 # Terraform runtime state and operator-specific inputs.
 **/.terraform/

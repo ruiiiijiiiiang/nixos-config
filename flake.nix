@@ -30,6 +30,10 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    infrastructure-memory = {
+      url = "github:ruiiiijiiiiang/infrastructure-memory";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     lazynmap.url = "github:ruiiiijiiiiang/lazynmap";
     llm-agents.url = "github:numtide/llm-agents.nix";
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";

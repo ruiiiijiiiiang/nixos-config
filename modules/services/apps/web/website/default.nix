@@ -28,9 +28,15 @@ in
       description = "Website service";
       after = [ "network.target" ];
       wantedBy = [ "multi-user.target" ];
-      preStart = ''
-        rm -rf /var/lib/website/public
-        mkdir -p /var/lib/website/public
+      preStart = /* bash */ ''
+        mkdir -p /var/lib/website/public/assets
+
+        ${pkgs.findutils}/bin/find /var/lib/website/public \
+          -mindepth 1 -maxdepth 1 ! -name assets \
+          -exec rm -rf -- {} +
+
+        ${pkgs.findutils}/bin/find /var/lib/website/public/assets \
+          -type f -mtime +400 -delete
 
         cp -f --no-preserve=mode ${
           inputs.website.packages.${pkgs.stdenv.hostPlatform.system}.default
