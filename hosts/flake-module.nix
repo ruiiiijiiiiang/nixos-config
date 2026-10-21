@@ -7,7 +7,7 @@
 let
   consts = import ../lib/consts.nix;
   keys = import ../lib/keys.nix;
-  secrets = import ../secrets/secrets.nix;
+  secrets = import ../secrets/agenix-rules.nix;
   secretsDir = ../secrets;
 
   pkgs = inputs.nixpkgs.legacyPackages."x86_64-linux";
@@ -91,7 +91,7 @@ in
       apps = inputs.agenix-helper.lib.mkApps {
         inherit pkgs;
         inherit (self) nixosConfigurations;
-        rules = "secrets/secrets.nix";
+        rules = "secrets/agenix-rules.nix";
         sources = [
           "secrets"
           "lib/keys.nix"

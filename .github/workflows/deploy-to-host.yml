@@ -114,6 +114,12 @@ jobs:
           rmdir "$tmp"
           REMOTE
 
+      - name: Copy closure to target host
+        env:
+          STORE_PATH: ${{ steps.build.outputs.store_path }}
+          TARGET_IP: ${{ steps.destination.outputs.ip }}
+        run: nix copy --no-check-sigs --to "ssh-ng://root@$TARGET_IP" "$STORE_PATH"
+
       - name: NixOS Rebuild (${{ inputs.deploy_mode }})
         env:
           NIX_SSHOPTS: "-o StrictHostKeyChecking=no"

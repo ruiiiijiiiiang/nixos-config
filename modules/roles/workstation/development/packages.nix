@@ -143,7 +143,7 @@ in
       steam.enable = true;
     };
 
-    virtualisation.vmware.host.enable = true;
+    # virtualisation.vmware.host.enable = true;
 
     fonts = {
       packages = with pkgs; [

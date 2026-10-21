@@ -28,7 +28,7 @@
       in
       {
         assertion = isAuthorized;
-        message = "The host '${config.networking.hostName}' requires agenix secret '${name}' (${secretRelativePath}), but the host's SSH public key is not configured in secrets/secrets.nix.";
+        message = "The host '${config.networking.hostName}' requires agenix secret '${name}' (${secretRelativePath}), but the host's SSH public key is not configured in secrets/agenix-rules.nix.";
       }
     ) activeSecrets;
 

@@ -220,7 +220,11 @@ in
 
     services.avahi = {
       enable = true;
-      ipv6 = true;
+      settings = {
+        server = {
+          use-ipv6 = true;
+        };
+      };
       nssmdns4 = true;
       nssmdns6 = true;
     };

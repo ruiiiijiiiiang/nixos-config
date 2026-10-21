@@ -10,7 +10,8 @@ let
   cfg = config.custom.home.memory;
   package = inputs.infrastructure-memory.packages.${pkgs.stdenv.hostPlatform.system}.default;
   settingsPath = "${config.xdg.configHome}/infrastructure-memory/config.json";
-  statePath = "${config.xdg.stateHome}/infrastructure-memory";
+  memoryPath = "${config.xdg.stateHome}/infrastructure-memory";
+  statePath = "${memoryPath}/local";
   command = pkgs.writeShellApplication {
     name = "infra-memory";
     text = /* bash */ ''
@@ -44,15 +45,28 @@ in
           name = "nixos-config";
           path = "${homeDirectory}/nixos-config";
           include = [
+            "README.md"
             "hosts/*.nix"
             "lib/consts.nix"
             "lib/helpers.nix"
             "modules/services/*.nix"
             "homes/modules/memory.nix"
             "homes/configs/*.nix"
-            "topology/*.d2"
+          ];
+        }
+        {
+          name = "dotfiles";
+          path = "${homeDirectory}/dotfiles";
+          include = [
             "README.md"
-            "docs/infrastructure-memory.md"
+            "fish/.config/fish/config.fish"
+            "fish/.config/fish/functions/*.fish"
+            "wezterm/.config/wezterm/*.lua"
+            "niri/.config/niri/*.kdl"
+            "nvim/.config/nvim*/init.lua"
+            "nvim/.config/nvim/lua/*.lua"
+            "nvim/.config/nvim*/lazyvim.json"
+            "git/.gitconfig"
           ];
         }
       ];
@@ -65,13 +79,12 @@ in
 
     xdg.configFile = {
       "infrastructure-memory/config.json".text = builtins.toJSON {
-        records = "${homeDirectory}/infrastructure-memory/records";
+        records = "${memoryPath}/shared/records";
         state = statePath;
         cache = "${config.xdg.cacheHome}/infrastructure-memory";
         inherit (cfg) repositories;
         semantic = cfg.semanticSearch;
         interval = 15;
-        # The application derives the socket from XDG_RUNTIME_DIR at runtime.
       };
       "infrastructure-memory/mcp.json".text = builtins.toJSON {
         mcpServers.infrastructure-memory = {
