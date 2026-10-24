@@ -6,7 +6,7 @@
   ...
 }:
 let
-  inherit (consts) domain ports;
+  inherit (consts) ports;
   inherit (keys) ssh;
   cfg = config.custom.services.observability.beszel.agent;
 in
@@ -33,7 +33,6 @@ in
         enable = true;
         environment = {
           KEY = ssh.beszel;
-          HUB_URL = "https://beszel.${domain}";
         };
       };
     };

@@ -64,6 +64,23 @@ in
         ++ lib.optional config.custom.services.apps.tools.homeassistant.enable "crowdsecurity/home-assistant";
 
         settings = {
+          parsers = {
+            s02Enrich = [
+              {
+                name = "local/infra-ssh-allowlist";
+                description = "Allow SSH checks from the infrastructure subnet";
+                filter = "evt.Meta.service == 'ssh'";
+                whitelist = {
+                  reason = "Trusted infrastructure hosts";
+                  cidr = [
+                    addresses.infra.network
+                    addresses.infra.network-v6
+                  ];
+                };
+              }
+            ];
+          };
+
           acquisitions =
             (lib.optional config.services.openssh.enable {
               source = "journalctl";
@@ -101,6 +118,16 @@ in
         registerBouncer.enable = false;
         secrets.apiKeyPath = cfg.bouncerApiKeyFile;
         settings.api_url = "http://${cfg.serverAddress}:${toString ports.crowdsec.lapi}";
+      };
+    };
+
+    systemd = {
+      services = {
+        crowdsec = {
+          reloadTriggers = [
+            (builtins.toJSON config.services.crowdsec.settings.parsers)
+          ];
+        };
       };
     };
   };
