@@ -29,10 +29,7 @@ in
       apps.tools.syncthing.enable = true;
       infra = {
         podman.enable = true;
-        smartd = {
-          enable = true;
-          workstation = true;
-        };
+        smartd.enable = true;
       };
 
       observability.prometheus.exporters = {

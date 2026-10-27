@@ -394,6 +394,13 @@ in
         tables.router-flow = {
           family = "inet";
           content = /* bash */ ''
+            chain postrouting {
+              type nat hook postrouting priority srcnat; policy accept;
+
+              iifname "${cfg.dmzInterface}" oifname "${cfg.wanInterface}" \
+                ip6 saddr ${addresses.dmz.network-v6} counter masquerade
+            }
+
             chain forward {
               type filter hook forward priority 0; policy drop;
               ct state established,related accept

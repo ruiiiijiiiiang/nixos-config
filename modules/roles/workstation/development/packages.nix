@@ -97,6 +97,7 @@ in
       tty-clock
 
       # Nix tools
+      inputs.self.packages.${stdenv.hostPlatform.system}.agenix-helper
       nix-inspect
       nix-tree
 

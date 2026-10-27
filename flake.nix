@@ -48,6 +48,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     noctalia.url = "github:noctalia-dev/noctalia";
+    noxdir.url = "github:crumbyte/noxdir";
     pyroclear.url = "github:shreyanth-sureshkrishnaa/pyroclear";
     rs-top.url = "github:ruiiiijiiiiang/rs-top";
     rust-overlay = {

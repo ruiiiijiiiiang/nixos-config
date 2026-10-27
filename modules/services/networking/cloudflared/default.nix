@@ -1,7 +1,6 @@
 {
   config,
   consts,
-  helpers,
   lib,
   secretsDir,
   ...
@@ -13,7 +12,6 @@ let
     endpoints
     subdomains
     ;
-  inherit (helpers) getHostAddress;
   cfg = config.custom.services.networking.cloudflared;
 
   homeIngressFqdns = map (subdomain: "${subdomain}.${domain}") [
@@ -30,14 +28,12 @@ let
     {
       service,
       originServerName,
-      noTLSVerify ? null,
     }:
     {
       inherit service;
       originRequest = {
         inherit originServerName;
-      }
-      // lib.optionalAttrs (noTLSVerify != null) { inherit noTLSVerify; };
+      };
     };
 
   tunnelDefinitions = {
@@ -46,9 +42,8 @@ let
       ingress = lib.genAttrs homeIngressFqdns (
         fqdn:
         mkIngress {
-          service = "https://${getHostAddress "vm-public"}:443";
+          service = "https://${addresses.localhost}:443";
           originServerName = fqdn;
-          noTLSVerify = true;
         }
       );
     };

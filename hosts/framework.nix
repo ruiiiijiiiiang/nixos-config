@@ -40,10 +40,7 @@ in
 
       infra = {
         podman.enable = true;
-        smartd = {
-          enable = true;
-          workstation = true;
-        };
+        smartd.enable = true;
       };
 
       networking.wireguard.client = {

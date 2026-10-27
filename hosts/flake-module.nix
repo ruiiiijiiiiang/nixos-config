@@ -88,36 +88,38 @@ in
   perSystem =
     { pkgs, ... }:
     {
-      apps = inputs.agenix-helper.lib.mkApps {
-        inherit pkgs;
-        inherit (self) nixosConfigurations;
-        rules = "secrets/agenix-rules.nix";
-        sources = [
-          "secrets"
-          "lib/keys.nix"
-        ];
-        hosts =
-          lib.mapAttrs
-            (hostname: _: {
-              target = "root@${hostname}";
-            })
-            (
-              lib.filterAttrs (
-                _: host: host.config.custom.roles.headless.services.enable
-              ) self.nixosConfigurations
-            )
-          // {
-            framework = {
-              identityPaths = [ "~/.ssh/id_ed25519" ];
-              local = "auto";
-              target = "root@framework";
+      packages = {
+        agenix-helper = inputs.agenix-helper.lib.mkPackage {
+          inherit pkgs;
+          inherit (self) nixosConfigurations;
+          rules = "secrets/agenix-rules.nix";
+          sources = [
+            "secrets"
+            "lib/keys.nix"
+          ];
+          hosts =
+            lib.mapAttrs
+              (hostname: _: {
+                target = "root@${hostname}";
+              })
+              (
+                lib.filterAttrs (
+                  _: host: host.config.custom.roles.headless.services.enable
+                ) self.nixosConfigurations
+              )
+            // {
+              framework = {
+                identityPaths = [ "~/.ssh/id_ed25519" ];
+                local = "auto";
+                target = "root@framework";
+              };
+              desktop = {
+                identityPaths = [ "~/.ssh/id_ed25519" ];
+                local = "auto";
+                target = "root@desktop";
+              };
             };
-            desktop = {
-              identityPaths = [ "~/.ssh/id_ed25519" ];
-              local = "auto";
-              target = "root@desktop";
-            };
-          };
+        };
       };
     };
 

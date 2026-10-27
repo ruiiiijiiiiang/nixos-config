@@ -429,14 +429,12 @@ rec {
       flatpak-update = "Mon *-*-* 00:00:00";
       flake-update = "*-*-* 00:30:00";
       nh-clean = "Sun *-*-* 04:00:00";
-      smartd-test = "Sat *-*-* 03:00:00";
     };
     hypervisor = {
       podman-update = "*-*-* 03:00:00";
       trivy-scan = "*-*-* 03:10:00";
       restic-backup = "*-*-* 06:30:00";
       restic-backup-remote = "*-*-* 06:45:00";
-      smartd-test = "S/../.././02";
     };
     pi = {
       podman-update = "*-*-* 03:00:00";

@@ -128,10 +128,6 @@ in
           };
         };
         dyndns.enable = true;
-        cloudflared = {
-          enable = true;
-          tunnelName = "home";
-        };
         nginx.enable = true;
       };
 

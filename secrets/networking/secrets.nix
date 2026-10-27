@@ -19,7 +19,7 @@ in
     armor = true;
   };
   "networking/cloudflare/home-tunnel-credentials.age" = {
-    publicKeys = ssh.vm-network;
+    publicKeys = ssh.vm-public;
     armor = true;
   };
   "networking/cloudflare/edge-tunnel-credentials.age" = {

@@ -40,7 +40,13 @@ in
         };
       };
 
-      networking.nginx.enable = true;
+      networking = {
+        cloudflared = {
+          enable = true;
+          tunnelName = "home";
+        };
+        nginx.enable = true;
+      };
 
       observability = {
         beszel.agent.enable = true;
