@@ -198,6 +198,7 @@ in
         };
         dbus.enable = true;
         allowedBridges = [ cfg.lanBridge ];
+        onShutdown = "shutdown";
       };
 
       nixos-vm-provisioner.host = {
