@@ -345,6 +345,10 @@ rec {
       address = "0000:02:00.0";
     };
 
+    usb-adapter = {
+      id = "7825:a2a4";
+    };
+
     storage = {
       minipc = {
         nvme-ssd-0 = "nvme-WD_PC_SN810_SDCPNRY-512G-1006_23302N805496";

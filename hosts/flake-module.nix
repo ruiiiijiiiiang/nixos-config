@@ -89,6 +89,16 @@ in
     { pkgs, ... }:
     {
       packages = {
+        pi-image =
+          (self.nixosConfigurations.pi.extendModules {
+            modules = [
+              (inputs.nixpkgs + "/nixos/modules/installer/sd-card/sd-image-aarch64.nix")
+              {
+                sdImage.rootVolumeLabel = "NIXROOT";
+              }
+            ];
+          }).config.system.build.sdImage;
+
         agenix-helper = inputs.agenix-helper.lib.mkPackage {
           inherit pkgs;
           inherit (self) nixosConfigurations;
@@ -137,7 +147,12 @@ in
 
     pi = mkHost "pi" {
       system = "aarch64-linux";
-      hardware = [ inputs.nixos-hardware.nixosModules.raspberry-pi-4 ];
+      hardware = [
+        inputs.nixos-hardware.nixosModules.raspberry-pi-4
+        {
+          hardware.raspberry-pi.firmware.uboot.enable = true;
+        }
+      ];
     };
 
     hypervisor = mkHost "hypervisor" {

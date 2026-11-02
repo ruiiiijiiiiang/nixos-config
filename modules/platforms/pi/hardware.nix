@@ -1,11 +1,13 @@
 {
   config,
+  consts,
   lib,
   pkgs,
   ...
 }:
 let
   cfg = config.custom.platforms.pi.hardware;
+  inherit (consts.hardware) usb-adapter;
 in
 {
   options.custom.platforms.pi.hardware = with lib; {
@@ -19,11 +21,12 @@ in
         generic-extlinux-compatible.enable = true;
       };
       kernelPackages = pkgs.linuxPackages;
+      kernelParams = [ "usb-storage.quirks=${usb-adapter.id}:u" ];
     };
 
     fileSystems = {
       "/" = {
-        device = "/dev/disk/by-label/NIXOS_SD";
+        device = "/dev/disk/by-label/NIXROOT";
         fsType = "ext4";
         options = [
           "noatime"
