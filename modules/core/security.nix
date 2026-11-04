@@ -1,3 +1,4 @@
+{ pkgs, ... }:
 {
   boot = {
     kernel = {
@@ -35,5 +36,11 @@
     apparmor.enable = true;
     polkit.enable = true;
     pam.services.su.requireWheel = true;
+
+    cisValidator = {
+      enable = pkgs.stdenv.hostPlatform.isx86_64;
+      profile = "ubuntu-24.04-l1-server";
+      failureMode = "warn";
+    };
   };
 }

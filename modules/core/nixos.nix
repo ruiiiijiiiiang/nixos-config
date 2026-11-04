@@ -1,12 +1,13 @@
 {
   consts,
   inputs,
-  pkgs,
+  lib,
   ...
 }:
 
 let
   inherit (consts) task-schedules;
+  inherit (lib) mkDefault;
 in
 {
   imports = [ inputs.nixos-cis-validator.nixosModules.default ];
@@ -14,8 +15,17 @@ in
   nix = {
     registry.nixpkgs.flake = inputs.nixpkgs;
 
+    daemonCPUSchedPolicy = mkDefault "batch";
+    daemonIOSchedClass = mkDefault "best-effort";
+    daemonIOSchedPriority = mkDefault 7;
+
     settings = {
       nix-path = [ "nixpkgs=${inputs.nixpkgs}" ];
+
+      builders-use-substitutes = mkDefault true;
+
+      min-free = mkDefault (1024 * 1024 * 1024);
+      max-free = mkDefault (3 * 1024 * 1024 * 1024);
 
       experimental-features = [
         "nix-command"
@@ -64,9 +74,15 @@ in
     };
   };
 
-  security.cisValidator = {
-    enable = pkgs.stdenv.hostPlatform.isx86_64;
-    profile = "ubuntu-24.04-l1-server";
-    failureMode = "warn";
+  systemd.services = {
+    nix-daemon.serviceConfig = {
+      OOMScoreAdjust = mkDefault 250;
+    };
+
+    nix-gc.serviceConfig = {
+      CPUSchedulingPolicy = mkDefault "batch";
+      IOSchedulingClass = mkDefault "best-effort";
+      IOSchedulingPriority = mkDefault 7;
+    };
   };
 }
