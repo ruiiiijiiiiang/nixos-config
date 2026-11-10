@@ -37,7 +37,6 @@ in
       # TUI Apps
       broot
       cava
-      doxx
       dust
       dysk
       fx
@@ -50,7 +49,6 @@ in
       kmon
       lazyjournal
       miller
-      netwatch
       noxdir
       ouch
       pastel

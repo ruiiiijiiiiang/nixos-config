@@ -80,7 +80,6 @@ in
           changedetection.enable = true;
           karakeep.enable = true;
           mealie.enable = true;
-          ovumcy.enable = true;
           pricebuddy.enable = true;
           syncthing = {
             enable = true;

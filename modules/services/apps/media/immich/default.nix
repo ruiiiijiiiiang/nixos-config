@@ -19,7 +19,7 @@ let
   cfg = config.custom.services.apps.media.immich;
   fqdn = "${subdomains.${config.networking.hostName}.immich}.${domain}";
   hasGpuPassthrough = config.custom.platforms.vm.hardware.gpuPassthrough;
-  immich-version = "v3.3.5";
+  immich-version = "v3.3.6";
   resticExcludePaths = [
     "/var/lib/immich/model-cache"
     "${cfg.storagePath}/immich/thumbs"

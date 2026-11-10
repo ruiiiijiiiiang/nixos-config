@@ -18,11 +18,16 @@ in
     boot = {
       loader = {
         grub.enable = false;
-        generic-extlinux-compatible.enable = true;
+        generic-extlinux-compatible = {
+          enable = true;
+          useGenerationDeviceTree = true;
+        };
       };
       kernelPackages = pkgs.linuxPackages;
       kernelParams = [ "usb-storage.quirks=${usb-adapter.id}:u" ];
     };
+
+    hardware.deviceTree.name = "broadcom/bcm2711-rpi-4-b.dtb";
 
     fileSystems = {
       "/" = {

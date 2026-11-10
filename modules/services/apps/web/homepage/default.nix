@@ -320,14 +320,6 @@ in
                 };
               }
               {
-                "Ovumcy" = {
-                  icon = "https://raw.githubusercontent.com/ovumcy/ovumcy-web/refs/heads/main/web/static/brand/ovumcy-icon-dark.svg";
-                  href = "https://${subdomains.vm-app.ovumcy}.${domain}";
-                  description = "Ovumcy Web";
-                  siteMonitor = "https://${subdomains.vm-app.ovumcy}.${domain}";
-                };
-              }
-              {
                 "Pricebuddy" = {
                   icon = "price-buddy";
                   href = "https://${subdomains.vm-app.pricebuddy}.${domain}";

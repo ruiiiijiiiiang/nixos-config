@@ -198,6 +198,7 @@ in
         };
         dbus.enable = true;
         allowedBridges = [ cfg.lanBridge ];
+        onBoot = "ignore";
         onShutdown = "shutdown";
       };
 
@@ -221,12 +222,12 @@ in
 
     # In case I ever need to plug in an HDMI cable to natively troubleshoot
     systemd.services."delayed-gpu-guest-start" = lib.mkIf (gpuGuest != null) {
-      description = "Start ${gpuGuest} with a 5-minute delay";
+      description = "Start ${gpuGuest} with a 3-minute delay";
       after = [ "libvirtd.service" ];
       wantedBy = [ "multi-user.target" ];
       serviceConfig = {
         Type = "oneshot";
-        ExecStart = "${pkgs.bash}/bin/bash -c 'sleep 300 && ${pkgs.libvirt}/bin/virsh start ${gpuGuest}'";
+        ExecStart = "${pkgs.bash}/bin/bash -c 'sleep 180 && ${pkgs.libvirt}/bin/virsh start ${gpuGuest}'";
         RemainAfterExit = true;
       };
     };
